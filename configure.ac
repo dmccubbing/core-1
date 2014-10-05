@@ -4071,6 +4071,11 @@ darwin*)
         PLATFORMID=ios_arm
         OS=IOS
         ;;
+    powerpc*)
+        CPUNAME=POWERPC
+        RTL_ARCH=PowerPC
+        PLATFORMID=macosx_powerpc
+        ;;
     i*86)
         AC_MSG_ERROR([Can't build 64-bit code in 32-bit OS])
         ;;
