@@ -41,6 +41,9 @@
 
 #include "premac.h"
 #include <objc/objc-runtime.h>
+#ifndef OBJC_EXPORT
+#include <objc/objc-api.h>
+#endif
 #include <Cocoa/Cocoa.h>
 #include "postmac.h"
 
