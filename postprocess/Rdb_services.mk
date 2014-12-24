@@ -128,7 +128,9 @@ $(eval $(call gb_Rdb_add_components,services,\
 			$(call gb_Helper_optional,AVMEDIA,avmedia/source/macavf/avmediaMacAVF) \
 		) \
 		$(if $(filter TRUE,$(ENABLE_MACOSX_SANDBOX)),, \
-			$(call gb_Helper_optional,AVMEDIA,avmedia/source/quicktime/avmediaQuickTime) \
+			$(if $(filter-out 1050,$(MACOSX_SDK_VERSION)), \
+				$(call gb_Helper_optional,AVMEDIA,avmedia/source/quicktime/avmediaQuickTime) \
+			) \
 		) \
 		lingucomponent/source/spellcheck/macosxspell/MacOSXSpell \
 		fpicker/source/aqua/fps_aqua \

@@ -36,10 +36,12 @@ $(eval $(call gb_Module_add_targets,avmedia,\
 endif
 
 ifeq ($(OS),MACOSX)
+ifneq (1050,$(MACOSX_SDK_VERSION))
 ifneq ($(ENABLE_MACOSX_SANDBOX),TRUE)
 $(eval $(call gb_Module_add_targets,avmedia,\
 	Library_avmediaQuickTime \
 ))
+endif
 endif
 endif
 
