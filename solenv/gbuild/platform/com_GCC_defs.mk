@@ -90,7 +90,9 @@ endif
 
 ifeq ($(HAVE_GCC_VISIBILITY_FEATURE),TRUE)
 gb_VISIBILITY_FLAGS := -DHAVE_GCC_VISIBILITY_FEATURE
-# If CC or CXX already include -fvisibility=hidden, don't duplicate it
+# avoid -fvisibility=hidden when building for OS X 10.5
+ifneq ($(MACOSX_SDK_VERSION),1050)
+# don't duplicate -fvisibility=hidden if CC or CXX already include it
 ifeq (,$(filter -fvisibility=hidden,$(CC)))
 gb__visibility_hidden := -fvisibility=hidden
 ifeq ($(COM_GCC_IS_CLANG),TRUE)
@@ -100,6 +102,8 @@ endif
 endif
 gb_VISIBILITY_FLAGS += $(gb__visibility_hidden)
 endif
+endif
+
 ifneq ($(HAVE_GCC_VISIBILITY_BROKEN),TRUE)
 gb_VISIBILITY_FLAGS_CXX := -fvisibility-inlines-hidden
 endif
