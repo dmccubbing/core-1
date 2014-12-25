@@ -113,9 +113,9 @@ endif # ENABLE_NPAPI_FROM_BROWSER=TRUE
 
 ifeq ($(OS),MACOSX)
 $(eval $(call gb_Module_add_targets,extensions,\
-	Library_OOoSpotlightImporter \
-	Package_mdibundle \
-	Package_OOoSpotlightImporter \
+	$(if $(filter-out 1050,$(MACOSX_SDK_VERSION)),Library_OOoSpotlightImporter) \
+	$(if $(filter-out 1050,$(MACOSX_SDK_VERSION)),Package_mdibundle) \
+	$(if $(filter-out 1050,$(MACOSX_SDK_VERSION)),Package_OOoSpotlightImporter) \
 ))
 endif # OS=MACOSX
 

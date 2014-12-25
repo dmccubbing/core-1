@@ -408,6 +408,7 @@ End
 #endif
 
 #ifdef MACOSX
+#if MACOSX_SDK_VERSION >= 1060
 File gid_File_Spotlight_Bundle
     TXT_FILE_BODY;
     Dir = FILELIST_DIR;
@@ -421,6 +422,7 @@ File gid_File_Spotlight_Bundle_lib
     Name = "extensions_OOoSpotlightImporter.filelist";
     Styles = (FILELIST,USE_INTERNAL_RIGHTS);
 End
+#endif
 #endif
 
 File gid_File_Images
