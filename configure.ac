@@ -10438,11 +10438,15 @@ dnl =================================================
 dnl Check whether to build with OpenCL support.
 dnl =================================================
 
-if test $_os != iOS -a $_os != Android; then
+if test "$_os" = "Darwin" -a "$with_macosx_sdk" = "10.5"; then
+    HAVE_FEATURE_OPENCL=
+else
+  if test $_os != iOS -a $_os != Android; then
     # OPENCL in BUILD_TYPE tells that OpenCL is potentially available on the platform (optional at run-time,
     # used through clew).
     BUILD_TYPE="$BUILD_TYPE OPENCL"
     AC_DEFINE(HAVE_FEATURE_OPENCL)
+  fi
 fi
 
 dnl ===================================================================
