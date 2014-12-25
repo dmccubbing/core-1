@@ -82,7 +82,7 @@ static typelib_TypeClass cpp2uno_call(
     ng++;
 
     // stack space
-    OSL_ENSURE( sizeof(void *) == sizeof(sal_Int32), "### unexpected size!" );
+    assert( sizeof(void *) == sizeof(sal_Int32) && "### unexpected size!" );
     // parameters
     void ** pUnoArgs = (void **)alloca( 4 * sizeof(void *) * nParams );
     void ** pCppArgs = pUnoArgs + nParams;
@@ -332,7 +332,7 @@ static typelib_TypeClass cpp_mediate(
         void ** gpreg, void ** fpreg, void ** ovrflw,
     sal_Int64 * pRegisterReturn /* space for register return */ )
 {
-    OSL_ENSURE( sizeof(sal_Int32)==sizeof(void *), "### unexpected!" );
+    assert( sizeof(sal_Int32)==sizeof(void *) && "### unexpected!" );
 
     // gpreg:  [ret *], this, [other gpr params]
     // fpreg:  [fpr params]
@@ -356,7 +356,7 @@ static typelib_TypeClass cpp_mediate(
 
     typelib_InterfaceTypeDescription * pTypeDescr = pCppI->getTypeDescr();
 
-    OSL_ENSURE( nFunctionIndex < pTypeDescr->nMapFunctionIndexToMemberIndex, "### illegal vtable index!" );
+    assert( nFunctionIndex < pTypeDescr->nMapFunctionIndexToMemberIndex && "### illegal vtable index!" );
     if (nFunctionIndex >= pTypeDescr->nMapFunctionIndexToMemberIndex)
     {
         throw RuntimeException( "illegal vtable index!", (XInterface *)pThis );
@@ -364,7 +364,7 @@ static typelib_TypeClass cpp_mediate(
 
     // determine called method
     sal_Int32 nMemberPos = pTypeDescr->pMapFunctionIndexToMemberIndex[nFunctionIndex];
-    OSL_ENSURE( nMemberPos < pTypeDescr->nAllMembers, "### illegal member index!" );
+    assert( nMemberPos < pTypeDescr->nAllMembers && "### illegal member index!" );
 
     TypeDescription aMemberDescr( pTypeDescr->ppAllMembers[nMemberPos] );
 
@@ -537,8 +537,8 @@ unsigned char *  codeSnippet( unsigned char * code, sal_Int32 functionIndex, sal
 
     unsigned long * p = (unsigned long *) code;
 
-    // OSL_ASSERT( sizeof (long) == 4 );
-    OSL_ASSERT((((unsigned long)code) & 0x3) == 0 );  //aligned to 4 otherwise a mistake
+    // assert( sizeof (long) == 4 );
+    assert((((unsigned long)code) & 0x3) == 0 );  //aligned to 4 otherwise a mistake
 
     /* generate this code */
     // # so first save gpr 3 to gpr 10 (aligned to 4)
@@ -688,7 +688,7 @@ unsigned char * bridges::cpp_uno::shared::VtableFactory::addLocalFunctions(
     for (sal_Int32 i = 0; i < type->nMembers; ++i) {
         typelib_TypeDescription * member = 0;
         TYPELIB_DANGER_GET(&member, type->ppMembers[i]);
-        OSL_ASSERT(member != 0);
+        assert(member != 0);
         switch (member->eTypeClass) {
         case typelib_TypeClass_INTERFACE_ATTRIBUTE:
             // Getter:
@@ -721,7 +721,7 @@ unsigned char * bridges::cpp_uno::shared::VtableFactory::addLocalFunctions(
             break;
 
         default:
-            OSL_ASSERT(false);
+            assert(false);
             break;
         }
         TYPELIB_DANGER_RELEASE(member);
