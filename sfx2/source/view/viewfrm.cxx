@@ -3270,8 +3270,11 @@ void SfxViewFrame::RemoveInfoBar( const OUString& sId )
     {
         SfxInfoBarContainerWindow* pInfoBarContainer = static_cast<SfxInfoBarContainerWindow*>(pChild->GetWindow());
         SfxInfoBarWindow* pInfoBar = pInfoBarContainer->getInfoBar(sId);
-        pInfoBarContainer->removeInfoBar(pInfoBar);
-        ShowChildWindow(nId);
+        if ( pInfoBar )
+        {
+            pInfoBarContainer->removeInfoBar(pInfoBar);
+            ShowChildWindow(nId);
+        }
     }
 }
 
