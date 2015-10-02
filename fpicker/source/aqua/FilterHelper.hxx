@@ -82,18 +82,17 @@ public:
 
     //XFilterManager delegates
     void SAL_CALL appendFilter( const OUString& aTitle, const OUString& aFilter )
-        throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException );
+        /*throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException )*/ ;
 
     void SAL_CALL setCurrentFilter( const OUString& aTitle )
-        throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException );
+        /*throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException )*/ ;
 
     OUString SAL_CALL getCurrentFilter(  )
-        throw( ::com::sun::star::uno::RuntimeException );
+        /*throw( ::com::sun::star::uno::RuntimeException )*/ ;
 
     //XFilterGroupManager delegates
     void SAL_CALL appendFilterGroup( const OUString& sGroupTitle, const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::StringPair >& aFilters )
-        throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException);
-
+        /*throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException)*/ ;
 
     //accessor
     FilterList* getFilterList();

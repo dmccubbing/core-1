@@ -34,9 +34,6 @@
 #include <postmac.h>
 
 
-// class declaration
-
-
 class SalAquaPicker
 {
 public:
@@ -73,13 +70,16 @@ protected:
     NavigationServices_DialogType m_nDialogType;
 
     void implsetTitle( const OUString& aTitle )
-        throw( ::com::sun::star::uno::RuntimeException );
+        /*throw( ::com::sun::star::uno::RuntimeException )*/
+        ;
 
     void implsetDisplayDirectory( const OUString& rDirectory )
-        throw( com::sun::star::lang::IllegalArgumentException, com::sun::star::uno::RuntimeException );
+        /*throw( com::sun::star::lang::IllegalArgumentException, com::sun::star::uno::RuntimeException )*/
+        ;
 
     OUString implgetDisplayDirectory(  )
-        throw( com::sun::star::uno::RuntimeException );
+        /*throw( com::sun::star::uno::RuntimeException )*/
+        ;
 
     void implInitialize( );
 

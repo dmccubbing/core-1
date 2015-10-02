@@ -310,13 +310,15 @@ void FilterHelper::SetFilters()
 }
 
 void FilterHelper::appendFilter(const ::rtl::OUString& aTitle, const ::rtl::OUString& aFilterString)
-throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException ) {
+//throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException )
+{
     DBG_PRINT_ENTRY(CLASS_NAME, __func__, "title", aTitle, "filter", aFilterString);
 
     SolarMutexGuard aGuard;
 
     if( FilterNameExists( aTitle ) ) {
-        throw com::sun::star::lang::IllegalArgumentException();
+        /* throw com::sun::star::lang::IllegalArgumentException(); */
+        return;
     }
 
     // ensure that we have a filter list
@@ -331,7 +333,8 @@ throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::
 }
 
 void FilterHelper::setCurrentFilter( const ::rtl::OUString& aTitle )
-throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException ) {
+//throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException )
+{
     DBG_PRINT_ENTRY(CLASS_NAME, __func__, "aTitle", OUStringToOString(aTitle, RTL_TEXTENCODING_UTF8).getStr());
 
     SetCurFilter(aTitle);
@@ -340,7 +343,8 @@ throw( ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::
 }
 
 ::rtl::OUString SAL_CALL FilterHelper::getCurrentFilter(  )
-throw( ::com::sun::star::uno::RuntimeException ) {
+//throw( ::com::sun::star::uno::RuntimeException )
+{
     DBG_PRINT_ENTRY(CLASS_NAME, __func__);
 
     ::rtl::OUString sReturn = (m_aCurrentFilter);
@@ -351,8 +355,8 @@ throw( ::com::sun::star::uno::RuntimeException ) {
 }
 
 void SAL_CALL FilterHelper::appendFilterGroup( const ::rtl::OUString& sGroupTitle, const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::StringPair >& aFilters )
-throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException) {
-
+//throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException)
+{
     DBG_PRINT_ENTRY(CLASS_NAME, __func__, "title", OUStringToOString(sGroupTitle, RTL_TEXTENCODING_UTF8).getStr());
 
     SolarMutexGuard aGuard;

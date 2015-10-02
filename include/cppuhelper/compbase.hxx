@@ -76,25 +76,45 @@ public:
         WeakComponentImplHelperBase(mutex) {}
 
     css::uno::Any SAL_CALL queryInterface(css::uno::Type const & aType)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE
     { return WeakComponentImplHelper_query(aType, cd::get(), this, this); }
 
-    void SAL_CALL acquire() throw () SAL_OVERRIDE
+    void SAL_CALL acquire()
+#ifndef __OBJC__
+        throw ()
+#endif
+        SAL_OVERRIDE
     { WeakComponentImplHelperBase::acquire(); }
 
-    void SAL_CALL release() throw () SAL_OVERRIDE
+    void SAL_CALL release()
+#ifndef __OBJC__
+        throw ()
+#endif
+        SAL_OVERRIDE
     { WeakComponentImplHelperBase::release(); }
 
-    void SAL_CALL dispose() throw (css::uno::RuntimeException, std::exception)
+    void SAL_CALL dispose()
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
         SAL_OVERRIDE
     { WeakComponentImplHelperBase::dispose(); }
 
     css::uno::Sequence<css::uno::Type> SAL_CALL getTypes()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE
     { return WeakComponentImplHelper_getTypes(cd::get()); }
 
     css::uno::Sequence<sal_Int8> SAL_CALL getImplementationId()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE
     { return css::uno::Sequence<sal_Int8>(); }
 };
 
@@ -114,17 +134,26 @@ class SAL_NO_VTABLE SAL_DLLPUBLIC_TEMPLATE WeakComponentImplHelper:
     public PartialWeakComponentImplHelper<Ifc...>
 {
 public:
-    WeakComponentImplHelper(osl::Mutex & mutex) throw ():
-        PartialWeakComponentImplHelper<Ifc...>(mutex) {}
+    WeakComponentImplHelper(osl::Mutex & mutex)
+#ifndef __OBJC__
+        throw ()
+#endif
+        : PartialWeakComponentImplHelper<Ifc...>(mutex) {}
 
     void SAL_CALL addEventListener(
         css::uno::Reference<css::lang::XEventListener> const & xListener)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE
     { WeakComponentImplHelperBase::addEventListener(xListener); }
 
     void SAL_CALL removeEventListener(
         css::uno::Reference<css::lang::XEventListener> const & aListener)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+#ifndef __OBJC__
+        throw (css::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE
     { WeakComponentImplHelperBase::removeEventListener(aListener); }
 };
 

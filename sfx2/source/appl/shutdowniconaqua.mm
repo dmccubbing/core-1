@@ -148,7 +148,7 @@ class RecentFilesStringLength : public ::cppu::WeakImplHelper< ::com::sun::star:
 
         // XStringWidth
         sal_Int32 SAL_CALL queryStringWidth( const ::rtl::OUString& aString )
-            throw (::com::sun::star::uno::RuntimeException) SAL_OVERRIDE
+            /*throw (::com::sun::star::uno::RuntimeException)*/ SAL_OVERRIDE
         {
             return aString.getLength();
         }

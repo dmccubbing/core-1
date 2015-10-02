@@ -69,19 +69,42 @@ public:
 
     virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
         ::com::sun::star::uno::Type const & rType )
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw (::com::sun::star::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE;
+
     virtual void SAL_CALL acquire()
-        throw () SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw ()
+#endif
+        SAL_OVERRIDE;
+
     virtual void SAL_CALL release()
-        throw () SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw ()
+#endif
+        SAL_OVERRIDE;
+
     virtual void SAL_CALL dispose()
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw (::com::sun::star::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE;
+
     virtual void SAL_CALL addEventListener(
         ::com::sun::star::uno::Reference< ::com::sun::star::lang::XEventListener > const & xListener )
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw (::com::sun::star::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE;
+
     virtual void SAL_CALL removeEventListener(
         ::com::sun::star::uno::Reference< ::com::sun::star::lang::XEventListener > const & xListener )
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+#ifndef __OBJC__
+        throw (::com::sun::star::uno::RuntimeException, std::exception)
+#endif
+        SAL_OVERRIDE;
 };
 
 /** Implementation helper base class for components. Inherits from ::cppu::OWeakAggObject and

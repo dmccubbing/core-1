@@ -409,14 +409,22 @@ bool CppuType::dumpFile(
         throw CannotDumpException("cannot open " + tmpUri + " for writing");
     }
     codemaker::cppumaker::Includes includes(m_typeMgr, m_dependencies, hpp);
+#ifdef __OBJC__
+    @try {
+#else
     try {
+#endif
         if (hpp) {
             addGetCppuTypeIncludes(includes);
             dumpHxxFile(out, includes);
         } else {
             dumpHFile(out, includes);
         }
+#ifdef __OBJC__
+    } @catch (...) {
+#else
     } catch (...) {
+#endif
         out.close();
         // Remove existing type file if something goes wrong to ensure
         // consistency:
@@ -3385,11 +3393,11 @@ static OUString failsToSupply(const OUString& name_, const OString& baseName)
 {
     return OUString(
             "\n"
-            "#if OSL_DEBUG_LEVEL > 0\n"
+            "#  if OSL_DEBUG_LEVEL > 0\n"
             "                ::rtl::OUString(\"component context fails to supply service '" + name_ + "' of type '" + OStringToOUString(baseName, RTL_TEXTENCODING_UTF8) + "'\")\n"
-            "#else\n"
+            "#  else\n"
             "                ::rtl::OUString(\"service not supplied\")\n"
-            "#endif\n");
+            "#  endif\n");
 }
 
 void ServiceType::dumpHxxFile(
@@ -3494,7 +3502,12 @@ void ServiceType::dumpHxxFile(
                 inc();
                 o << indent() << "assert(the_context.is());\n" << indent()
                   << "::css::uno::Reference< " << scopedBaseName
-                  << " > the_instance;\n" << indent() << "try {\n";
+                  << " > the_instance;\n"
+                  << "#ifdef __OBJC__\n"
+                  << indent() << "@try {\n"
+                  << "#else\n"
+                  << indent() << "try {\n"
+                  << "#endif\n";
                 inc();
                 o << ("#if defined LO_URE_CURRENT_ENV && defined "
                       "LO_URE_CTOR_ENV_")
@@ -3519,7 +3532,14 @@ void ServiceType::dumpHxxFile(
                   << name_
                   << "\" ), the_context), ::css::uno::UNO_QUERY);\n#endif\n";
                 dec();
-                o << indent()
+                o << "#ifdef __OBJC__\n"
+                  << indent() << "} @catch ( ... ) {\n";
+                inc();
+                o << indent() << "@throw;\n";
+                dec();
+                o << indent() << "}\n"
+                  << "#else\n"
+                  << indent()
                   << "} catch (const ::css::uno::RuntimeException &) {\n";
                 inc();
                 o << indent() << "throw;\n";
@@ -3540,7 +3560,9 @@ void ServiceType::dumpHxxFile(
                   << failsToSupply(name_, baseName)
                   << ", the_context);\n";
                 dec();
-                o << indent() << "}\n" << indent() << "return the_instance;\n";
+                o << indent() << "}\n"
+                  << "#endif\n"
+                  << indent() << "return the_instance;\n";
                 dec();
                 o << indent() << "}\n\n";
             } else {
