@@ -95,8 +95,7 @@
 #include <comphelper/unwrapargs.hxx>
 #include <cppuhelper/bootstrap.hxx>
 #include <cppuhelper/exc_hlp.hxx>
-#include <cppuhelper/implbase2.hxx>
-#include <cppuhelper/implbase3.hxx>
+#include <cppuhelper/implbase.hxx>
 #include <cppuhelper/implementationentry.hxx>
 #include <cppuhelper/weakref.hxx>
 #include <cstddef>

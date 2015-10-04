@@ -109,9 +109,6 @@
 #include <comphelper/unwrapargs.hxx>
 #include <cppuhelper/bootstrap.hxx>
 #include <cppuhelper/implbase.hxx>
-#include <cppuhelper/implbase1.hxx>
-#include <cppuhelper/implbase2.hxx>
-#include <cppuhelper/implbase3.hxx>
 #include <cppuhelper/implementationentry.hxx>
 #include <editeng/acorrcfg.hxx>
 #include <i18nlangtag/languagetag.hxx>

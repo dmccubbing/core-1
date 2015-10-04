@@ -107,8 +107,7 @@
 #include <comphelper/string.hxx>
 #include <cppu/macros.hxx>
 #include <cppuhelper/factory.hxx>
-#include <cppuhelper/implbase1.hxx>
-#include <cppuhelper/implbase3.hxx>
+#include <cppuhelper/implbase.hxx>
 #include <cppuhelper/supportsservice.hxx>
 #include <iostream>
 #include <memory>

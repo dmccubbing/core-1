@@ -119,8 +119,8 @@
 #include <config_vclplug.h>
 #include <config_version.h>
 #include <cppuhelper/bootstrap.hxx>
-#include <cppuhelper/compbase3.hxx>
-#include <cppuhelper/implbase1.hxx>
+#include <cppuhelper/compbase.hxx>
+#include <cppuhelper/implbase.hxx>
 #include <cppuhelper/supportsservice.hxx>
 #include <cstdio>
 #include <i18nlangtag/lang.h>

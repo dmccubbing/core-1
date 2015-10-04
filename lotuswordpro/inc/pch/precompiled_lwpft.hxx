@@ -38,8 +38,7 @@
 #include <com/sun/star/xml/sax/XParser.hpp>
 #include <comphelper/processfactory.hxx>
 #include <cppuhelper/factory.hxx>
-#include <cppuhelper/implbase1.hxx>
-#include <cppuhelper/implbase3.hxx>
+#include <cppuhelper/implbase.hxx>
 #include <cppuhelper/supportsservice.hxx>
 #include <i18nlangtag/languagetagicu.hxx>
 #include <limits.h>

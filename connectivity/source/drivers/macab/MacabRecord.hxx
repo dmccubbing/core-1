@@ -20,8 +20,6 @@
 #ifndef INCLUDED_CONNECTIVITY_SOURCE_DRIVERS_MACAB_MACABRECORD_HXX
 #define INCLUDED_CONNECTIVITY_SOURCE_DRIVERS_MACAB_MACABRECORD_HXX
 
-#include <cppuhelper/compbase3.hxx>
-
 #include <premac.h>
 #include <Carbon/Carbon.h>
 #include <AddressBook/ABAddressBookC.h>
