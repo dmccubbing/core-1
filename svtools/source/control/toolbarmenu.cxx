@@ -1442,7 +1442,7 @@ void ToolbarMenu::implPaint(vcl::RenderContext& rRenderContext, ToolbarMenuEntry
                     aTmpPos.Y() += nTextOffsetY;
                     DrawTextFlags nStyle = nTextStyle|DrawTextFlags::Mnemonic;
 
-                    rRenderContext.DrawCtrlText(aTmpPos, pEntry->maText, 0, pEntry->maText.getLength(), nStyle, NULL, NULL);
+                    rRenderContext.DrawCtrlText(aTmpPos, pEntry->maText, 0, pEntry->maText.getLength(), nStyle);
                 }
 
                 if (pThisOnly && bHighlighted)
@@ -1549,8 +1549,8 @@ public:
     ToolbarMenuStatusListener( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& xFrame,
                                ToolbarMenu& rToolbarMenu );
 
-    virtual void SAL_CALL dispose() throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL statusChanged( const ::com::sun::star::frame::FeatureStateEvent& Event ) throw ( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL dispose() throw (::com::sun::star::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL statusChanged( const ::com::sun::star::frame::FeatureStateEvent& Event ) throw ( ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
     VclPtr<ToolbarMenu> mpMenu;
 };

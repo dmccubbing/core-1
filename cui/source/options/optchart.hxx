@@ -46,7 +46,7 @@ private:
     DECL_LINK_TYPED( ResetToDefaults, Button *, void );
     DECL_LINK_TYPED( AddChartColor, Button *, void );
     DECL_LINK_TYPED( RemoveChartColor, Button *, void );
-    DECL_LINK( ListClickedHdl, ColorLB * );
+    DECL_LINK_TYPED( ListClickedHdl, ListBox&, void );
     DECL_LINK_TYPED(BoxClickedHdl, ValueSet*, void);
 
     void FillColorBox();
@@ -55,13 +55,13 @@ private:
 public:
     SvxDefaultColorOptPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~SvxDefaultColorOptPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rInAttrs );
-    virtual bool        FillItemSet( SfxItemSet* rOutAttrs ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rInAttrs ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rOutAttrs ) override;
+    virtual void        Reset( const SfxItemSet* rInAttrs ) override;
 };
 
 #endif // INCLUDED_CUI_SOURCE_OPTIONS_OPTCHART_HXX

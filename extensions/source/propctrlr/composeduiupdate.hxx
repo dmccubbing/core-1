@@ -184,8 +184,8 @@ namespace pcr
         void    callback_inspectorUIChanged_throw();
 
     private:
-        ComposedPropertyUIUpdate( const ComposedPropertyUIUpdate& ) SAL_DELETED_FUNCTION;
-        ComposedPropertyUIUpdate& operator=( const ComposedPropertyUIUpdate& ) SAL_DELETED_FUNCTION;
+        ComposedPropertyUIUpdate( const ComposedPropertyUIUpdate& ) = delete;
+        ComposedPropertyUIUpdate& operator=( const ComposedPropertyUIUpdate& ) = delete;
     };
 
     class ComposedUIAutoFireGuard
@@ -193,7 +193,7 @@ namespace pcr
     private:
         ComposedPropertyUIUpdate&   m_rUIUpdate;
     public:
-        ComposedUIAutoFireGuard( ComposedPropertyUIUpdate& _rUIUpdate )
+        explicit ComposedUIAutoFireGuard( ComposedPropertyUIUpdate& _rUIUpdate )
             :m_rUIUpdate( _rUIUpdate )
         {
             m_rUIUpdate.suspendAutoFire();

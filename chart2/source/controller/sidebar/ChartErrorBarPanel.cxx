@@ -45,6 +45,12 @@ namespace chart { namespace sidebar {
 
 namespace {
 
+enum class ErrorBarDirection
+{
+    POSITIVE,
+    NEGATIVE
+};
+
 css::uno::Reference<css::beans::XPropertySet> getErrorBarPropSet(
         css::uno::Reference<css::frame::XModel> xModel, const OUString& rCID)
 {
@@ -175,7 +181,7 @@ void setTypePos(css::uno::Reference<css::frame::XModel> xModel,
 }
 
 double getValue(css::uno::Reference<css::frame::XModel> xModel,
-        const OUString& rCID, bool bNeg)
+        const OUString& rCID, ErrorBarDirection eDir)
 {
     css::uno::Reference<css::beans::XPropertySet> xPropSet =
         getErrorBarPropSet(xModel, rCID);
@@ -184,7 +190,7 @@ double getValue(css::uno::Reference<css::frame::XModel> xModel,
         return 0;
 
     OUString aName = "PositiveError";
-    if (bNeg)
+    if (eDir == ErrorBarDirection::NEGATIVE)
         aName = "NegativeError";
 
     css::uno::Any aAny = xPropSet->getPropertyValue(aName);
@@ -199,7 +205,7 @@ double getValue(css::uno::Reference<css::frame::XModel> xModel,
 }
 
 void setValue(css::uno::Reference<css::frame::XModel> xModel,
-        const OUString& rCID, double nVal, bool bPos)
+        const OUString& rCID, double nVal, ErrorBarDirection eDir)
 {
     css::uno::Reference<css::beans::XPropertySet> xPropSet =
         getErrorBarPropSet(xModel, rCID);
@@ -208,7 +214,7 @@ void setValue(css::uno::Reference<css::frame::XModel> xModel,
         return;
 
     OUString aName = "PositiveError";
-    if (!bPos)
+    if (eDir == ErrorBarDirection::NEGATIVE)
         aName = "NegativeError";
 
     xPropSet->setPropertyValue(aName, css::uno::makeAny(nVal));
@@ -286,6 +292,9 @@ void ChartErrorBarPanel::Initialize()
 {
     css::uno::Reference<css::util::XModifyBroadcaster> xBroadcaster(mxModel, css::uno::UNO_QUERY_THROW);
     xBroadcaster->addModifyListener(mxListener);
+    mpRBNeg->Check(false);
+    mpRBPos->Check(false);
+    mpRBPosAndNeg->Check(false);
 
     updateData();
 
@@ -296,7 +305,7 @@ void ChartErrorBarPanel::Initialize()
 
     mpLBType->SetSelectHdl(LINK(this, ChartErrorBarPanel, ListBoxHdl));
 
-    Link<> aLink2 = LINK(this, ChartErrorBarPanel, NumericFieldHdl);
+    Link<Edit&,void> aLink2 = LINK(this, ChartErrorBarPanel, NumericFieldHdl);
     mpMFPos->SetModifyHdl(aLink2);
     mpMFNeg->SetModifyHdl(aLink2);
 }
@@ -334,8 +343,8 @@ void ChartErrorBarPanel::updateData()
         else
             mpMFNeg->Disable();
 
-        double nValPos = getValue(mxModel, aCID, true);
-        double nValNeg = getValue(mxModel, aCID, false);
+        double nValPos = getValue(mxModel, aCID, ErrorBarDirection::POSITIVE);
+        double nValNeg = getValue(mxModel, aCID, ErrorBarDirection::NEGATIVE);
 
         mpMFPos->SetValue(nValPos);
         mpMFNeg->SetValue(nValNeg);
@@ -412,26 +421,22 @@ IMPL_LINK_NOARG_TYPED(ChartErrorBarPanel, RadioBtnHdl, RadioButton&, void)
     setShowNegativeError(mxModel, aCID, bNeg);
 }
 
-IMPL_LINK_NOARG(ChartErrorBarPanel, ListBoxHdl)
+IMPL_LINK_NOARG_TYPED(ChartErrorBarPanel, ListBoxHdl, ListBox&, void)
 {
     OUString aCID = getCID(mxModel);
     sal_Int32 nPos = mpLBType->GetSelectEntryPos();
 
     setTypePos(mxModel, aCID, nPos);
-
-    return 0;
 }
 
-IMPL_LINK(ChartErrorBarPanel, NumericFieldHdl, NumericField*, pMetricField)
+IMPL_LINK_TYPED(ChartErrorBarPanel, NumericFieldHdl, Edit&, rMetricField, void)
 {
     OUString aCID = getCID(mxModel);
-    double nVal = pMetricField->GetValue();
-    if (pMetricField == mpMFPos.get())
-        setValue(mxModel, aCID, nVal, true);
-    else if (pMetricField == mpMFNeg.get())
-        setValue(mxModel, aCID, nVal, false);
-
-    return 0;
+    double nVal = static_cast<NumericField&>(rMetricField).GetValue();
+    if (&rMetricField == mpMFPos.get())
+        setValue(mxModel, aCID, nVal, ErrorBarDirection::POSITIVE);
+    else if (&rMetricField == mpMFNeg.get())
+        setValue(mxModel, aCID, nVal, ErrorBarDirection::NEGATIVE);
 }
 
 }} // end of namespace ::chart::sidebar

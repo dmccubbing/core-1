@@ -38,13 +38,13 @@ public:
                     ScDbNameDlg( SfxBindings* pB, SfxChildWindow* pCW, vcl::Window* pParent,
                                  ScViewData*    ptrViewData );
                     virtual ~ScDbNameDlg();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
+    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
 
-    virtual bool    IsRefInputMode() const SAL_OVERRIDE;
-    virtual void    SetActive() SAL_OVERRIDE;
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    IsRefInputMode() const override;
+    virtual void    SetActive() override;
+    virtual bool    Close() override;
 
 private:
     VclPtr<ComboBox>           m_pEdName;
@@ -95,8 +95,8 @@ private:
     DECL_LINK_TYPED( OkBtnHdl, Button*, void );
     DECL_LINK_TYPED( AddBtnHdl, Button*, void );
     DECL_LINK_TYPED( RemoveBtnHdl, Button*, void );
-    DECL_LINK( NameModifyHdl, void * );
-    DECL_LINK( AssModifyHdl, void * );
+    DECL_LINK_TYPED( NameModifyHdl, Edit&, void );
+    DECL_LINK_TYPED( AssModifyHdl, Edit&, void );
 };
 
 #endif // INCLUDED_SC_SOURCE_UI_INC_DBNAMDLG_HXX

@@ -60,8 +60,8 @@ private:
     SVX_DLLPRIVATE void ImpSetVisAreaSize();
 
 protected:
-    virtual sdr::contact::ViewContact* CreateObjectSpecificViewContact() SAL_OVERRIDE;
-    virtual sdr::properties::BaseProperties* CreateObjectSpecificProperties() SAL_OVERRIDE;
+    virtual sdr::contact::ViewContact* CreateObjectSpecificViewContact() override;
+    virtual sdr::properties::BaseProperties* CreateObjectSpecificProperties() override;
 
 public:
     OUString GetStyleString();
@@ -103,15 +103,15 @@ public:
     const OUString& GetProgName() const;
     bool IsEmpty() const;
 
-    void SetObjRef(const com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject >& rNewObjRef);
-    com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > GetObjRef() const;
+    void SetObjRef(const css::uno::Reference < css::embed::XEmbeddedObject >& rNewObjRef);
+    css::uno::Reference < css::embed::XEmbeddedObject > GetObjRef() const;
 
-    SVX_DLLPRIVATE com::sun::star::uno::Reference < com::sun::star::embed::XEmbeddedObject > GetObjRef_NoInit() const;
+    SVX_DLLPRIVATE css::uno::Reference < css::embed::XEmbeddedObject > GetObjRef_NoInit() const;
 
     void AbandonObject();
 
-    virtual void SetPage(SdrPage* pNewPage) SAL_OVERRIDE;
-    virtual void SetModel(SdrModel* pModel) SAL_OVERRIDE;
+    virtual void SetPage(SdrPage* pNewPage) override;
+    virtual void SetModel(SdrModel* pModel) override;
 
     /** Change the IsClosedObj attribute
 
@@ -121,34 +121,34 @@ public:
     void SetClosedObj( bool bIsClosed );
 
     // FullDrag support
-    virtual SdrObject* getFullDragClone() const SAL_OVERRIDE;
+    virtual SdrObject* getFullDragClone() const override;
 
-    virtual void TakeObjInfo(SdrObjTransformInfoRec& rInfo) const SAL_OVERRIDE;
-    virtual sal_uInt16 GetObjIdentifier() const SAL_OVERRIDE;
-    virtual OUString TakeObjNameSingul() const SAL_OVERRIDE;
-    virtual OUString TakeObjNamePlural() const SAL_OVERRIDE;
+    virtual void TakeObjInfo(SdrObjTransformInfoRec& rInfo) const override;
+    virtual sal_uInt16 GetObjIdentifier() const override;
+    virtual OUString TakeObjNameSingul() const override;
+    virtual OUString TakeObjNamePlural() const override;
 
-    virtual SdrOle2Obj* Clone() const SAL_OVERRIDE;
-    virtual SdrOle2Obj* CloneWithShellIDs( const OUString& rSrcShellID, const OUString& rDestShellID ) const SAL_OVERRIDE;
+    virtual SdrOle2Obj* Clone() const override;
+    virtual SdrOle2Obj* CloneWithShellIDs( const OUString& rSrcShellID, const OUString& rDestShellID ) const override;
 
     SdrOle2Obj& assignFrom( const SdrOle2Obj& rObj, const OUString& rSrcShellID, const OUString& rDestShellID );
     SdrOle2Obj& operator=(const SdrOle2Obj& rObj);
 
-    virtual void NbcMove(const Size& rSize) SAL_OVERRIDE;
-    virtual void NbcResize(const Point& rRef, const Fraction& xFact, const Fraction& yFact) SAL_OVERRIDE;
-    virtual void NbcSetSnapRect(const Rectangle& rRect) SAL_OVERRIDE;
-    virtual void NbcSetLogicRect(const Rectangle& rRect) SAL_OVERRIDE;
-    virtual void SetGeoData(const SdrObjGeoData& rGeo) SAL_OVERRIDE;
+    virtual void NbcMove(const Size& rSize) override;
+    virtual void NbcResize(const Point& rRef, const Fraction& xFact, const Fraction& yFact) override;
+    virtual void NbcSetSnapRect(const Rectangle& rRect) override;
+    virtual void NbcSetLogicRect(const Rectangle& rRect) override;
+    virtual void SetGeoData(const SdrObjGeoData& rGeo) override;
 
-    static bool CanUnloadRunningObj( const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XEmbeddedObject >& xObj,
+    static bool CanUnloadRunningObj( const css::uno::Reference< css::embed::XEmbeddedObject >& xObj,
                                          sal_Int64 nAspect );
-    static bool Unload( const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XEmbeddedObject >& xObj, sal_Int64 nAspect );
+    static bool Unload( const css::uno::Reference< css::embed::XEmbeddedObject >& xObj, sal_Int64 nAspect );
     bool Unload();
     void Connect();
     void Disconnect();
     void ObjectLoaded();
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel > getXModel() const;
+    css::uno::Reference< css::frame::XModel > getXModel() const;
 
     bool IsChart() const;
     bool IsReal3DChart() const;
@@ -161,20 +161,20 @@ public:
 
     // allows to transfer the graphics to the object helper
     void SetGraphicToObj( const Graphic& aGraphic, const OUString& aMediaType );
-    void SetGraphicToObj( const ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >& xGrStream,
+    void SetGraphicToObj( const css::uno::Reference< css::io::XInputStream >& xGrStream,
                           const OUString& aMediaType );
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel > GetParentXModel()  const;
+    css::uno::Reference< css::frame::XModel > GetParentXModel()  const;
     bool CalculateNewScaling( Fraction& aScaleWidth, Fraction& aScaleHeight, Size& aObjAreaSize );
     bool AddOwnLightClient();
 
     // handy to get the empty replacement graphic without accessing all the old stuff
     static Graphic GetEmptyOLEReplacementGraphic();
 
-    void SetWindow(const com::sun::star::uno::Reference < com::sun::star::awt::XWindow >& _xWindow);
+    void SetWindow(const css::uno::Reference < css::awt::XWindow >& _xWindow);
 
     // #i118485# missing converter added
-    virtual SdrObject* DoConvertToPolyObj(bool bBezier, bool bAddText) const SAL_OVERRIDE;
+    virtual SdrObject* DoConvertToPolyObj(bool bBezier, bool bAddText) const override;
 };
 
 #endif // INCLUDED_SVX_SVDOOLE2_HXX

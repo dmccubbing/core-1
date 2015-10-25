@@ -247,7 +247,7 @@ void SwFEShell::SelectFlyFrm( SwFlyFrm& rFrm, bool bNew )
             pImpl->GetDrawView()->UnmarkAll();
 
         pImpl->GetDrawView()->MarkObj( rFrm.GetVirtDrawObj(),
-                                      pImpl->GetPageView(), false );
+                                      pImpl->GetPageView() );
         KillPams();
         ClearMark();
         SelFlyGrabCrsr();
@@ -523,7 +523,7 @@ Point SwFEShell::FindAnchorPos( const Point& rAbsPos, bool bMoveIt )
                         {
                             SwPosition pos = *aAnch.GetContentAnchor();
                             Point aTmpPnt( rAbsPos );
-                            if( pTextFrm->GetCrsrOfst( &pos, aTmpPnt, NULL ) )
+                            if( pTextFrm->GetCrsrOfst( &pos, aTmpPnt ) )
                             {
                                 SwRect aTmpRect;
                                 pTextFrm->GetCharRect( aTmpRect, pos );
@@ -912,8 +912,7 @@ void SwFEShell::InsertDrawObj( SdrObject& rDrawObj,
     if ( pFormat )
     {
         // select drawing object
-        Imp()->GetDrawView()->MarkObj( &rDrawObj, Imp()->GetPageView(),
-                                       false );
+        Imp()->GetDrawView()->MarkObj( &rDrawObj, Imp()->GetPageView() );
     }
     else
     {

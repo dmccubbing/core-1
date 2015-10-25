@@ -79,7 +79,7 @@ private:
     ::std::vector< long >   aVerbVector;
 
     DECL_LINK_TYPED( ClickSearchHdl, Button*, void );
-    DECL_LINK( ClickActionHdl, void * );
+    DECL_LINK_TYPED( ClickActionHdl, ListBox&, void );
     DECL_LINK_TYPED( SelectTreeHdl, SvTreeListBox*, void );
     DECL_LINK_TYPED( CheckFileHdl, Control&, void );
 
@@ -94,15 +94,15 @@ private:
 public:
             SdTPAction( vcl::Window* pParent, const SfxItemSet& rInAttrs );
             virtual ~SdTPAction();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static  VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet& );
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void    Construct();
 

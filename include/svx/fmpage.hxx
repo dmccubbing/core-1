@@ -40,7 +40,7 @@ class HelpEvent;
 
 class SVX_DLLPUBLIC FmFormPage : public SdrPage
 {
-    FmFormPage& operator=(const FmFormPage&) SAL_DELETED_FUNCTION;
+    FmFormPage& operator=(const FmFormPage&) = delete;
 
     friend class FmFormObj;
     FmFormPageImpl*     m_pImpl;
@@ -52,18 +52,18 @@ public:
     explicit FmFormPage(FmFormModel& rModel, bool bMasterPage=false);
     virtual ~FmFormPage();
 
-    virtual void    SetModel(SdrModel* pNewModel) SAL_OVERRIDE;
+    virtual void    SetModel(SdrModel* pNewModel) override;
 
-    virtual SdrPage* Clone() const SAL_OVERRIDE;
-    virtual SdrPage* Clone(SdrModel* pNewModel) const SAL_OVERRIDE;
+    virtual SdrPage* Clone() const override;
+    virtual SdrPage* Clone(SdrModel* pNewModel) const override;
 
     virtual void    InsertObject(SdrObject* pObj, size_t nPos = SAL_MAX_SIZE,
-                                    const SdrInsertReason* pReason=NULL) SAL_OVERRIDE;
+                                    const SdrInsertReason* pReason=NULL) override;
 
-    virtual SdrObject* RemoveObject(size_t nObjNum) SAL_OVERRIDE;
+    virtual SdrObject* RemoveObject(size_t nObjNum) override;
 
     // access to all forms
-    const ::com::sun::star::uno::Reference< ::com::sun::star::form::XForms>& GetForms( bool _bForceCreate = true ) const;
+    const css::uno::Reference< css::form::XForms>& GetForms( bool _bForceCreate = true ) const;
 
     FmFormPageImpl& GetImpl() const { return *m_pImpl; }
 

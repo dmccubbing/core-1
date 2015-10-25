@@ -46,9 +46,9 @@ public:
 
     explicit ScRetypePassDlg(vcl::Window* pParent);
     virtual ~ScRetypePassDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
 
     void SetDataFromDocument(const ScDocument& rDoc);
     void SetDesiredHash(ScPasswordHash eHash);
@@ -105,9 +105,9 @@ class ScRetypePassInputDlg : public ModalDialog
 public:
     explicit ScRetypePassInputDlg(vcl::Window* pParent, ScPassHashProtectable* pProtected);
     virtual ~ScRetypePassInputDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
 
     bool IsRemovePassword() const;
     OUString GetNewPassword() const;
@@ -134,7 +134,7 @@ private:
     DECL_LINK_TYPED( OKHdl, Button*, void );
     DECL_LINK_TYPED( RadioBtnHdl, Button*, void );
     DECL_LINK_TYPED( CheckBoxHdl, Button*, void );
-    DECL_LINK( PasswordModifyHdl, void* );
+    DECL_LINK_TYPED( PasswordModifyHdl, Edit&, void );
 
     ScPassHashProtectable* mpProtected;
 };

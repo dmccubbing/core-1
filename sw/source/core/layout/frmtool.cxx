@@ -1248,8 +1248,6 @@ void _InsertCnt( SwLayoutFrm *pLay, SwDoc *pDoc,
     SwPageFrm *pPage = pLay->FindPageFrm();
     const SwFrameFormats *pTable = pDoc->GetSpzFrameFormats();
     SwFrm       *pFrm = 0;
-    bool   bBreakAfter   = false;
-
     SwActualSection *pActualSection = 0;
     SwLayHelper *pPageMaker;
 
@@ -1260,6 +1258,7 @@ void _InsertCnt( SwLayoutFrm *pLay, SwDoc *pDoc,
     {
         // Attention: the SwLayHelper class uses references to the content-,
         // page-, layout-frame etc. and may change them!
+        bool   bBreakAfter   = false;
         pPageMaker = new SwLayHelper( pDoc, pFrm, pPrv, pPage, pLay,
                 pActualSection, bBreakAfter, nIndex, 0 == nEndIndex );
         if( bStartPercent )
@@ -3098,19 +3097,19 @@ const SwFrm* GetVirtualUpper( const SwFrm* pFrm, const Point& rPos )
     return pFrm;
 }
 
-bool Is_Lower_Of( const SwFrm *pCurrFrm, const SdrObject* pObj )
+bool Is_Lower_Of(const SwFrm *pCurrFrm, const SdrObject* pObj)
 {
     Point aPos;
     const SwFrm* pFrm;
-    if( dynamic_cast<const SwVirtFlyDrawObj*>( pObj) !=  nullptr )
+    if (const SwVirtFlyDrawObj *pFlyDrawObj = dynamic_cast<const SwVirtFlyDrawObj*>(pObj))
     {
-        const SwFlyFrm* pFly = static_cast<const SwVirtFlyDrawObj*>(pObj )->GetFlyFrm();
+        const SwFlyFrm* pFly = pFlyDrawObj->GetFlyFrm();
         pFrm = pFly->GetAnchorFrm();
         aPos = pFly->Frm().Pos();
     }
     else
     {
-        pFrm = static_cast<SwDrawContact*>(GetUserCall(pObj) )->GetAnchorFrm(pObj);
+        pFrm = static_cast<SwDrawContact*>(GetUserCall(pObj))->GetAnchorFrm(pObj);
         aPos = pObj->GetCurrentBoundRect().TopLeft();
     }
     OSL_ENSURE( pFrm, "8-( Fly is lost in Space." );
@@ -3241,7 +3240,7 @@ class SwFrmHolder : private SfxListener
 {
     SwFrm* pFrm;
     bool bSet;
-    virtual void Notify(  SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify(  SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 public:
     SwFrmHolder() : pFrm(0), bSet(false) {}
     void SetFrm( SwFrm* pHold );

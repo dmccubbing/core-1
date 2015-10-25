@@ -222,9 +222,9 @@ namespace
                         {
                             bRealExtensions = !_pDialog->ContentIsFolder( aURL.GetMainURL( INetURLObject::NO_DECODE ) );
                         }
-                        catch( const ::com::sun::star::uno::Exception& )
+                        catch( const css::uno::Exception& )
                         {
-                            DBG_WARNING( "Exception in lcl_autoUpdateFileExtension" );
+                            SAL_INFO( "fpicker", "Exception in lcl_autoUpdateFileExtension" );
                         }
                     }
                 }
@@ -375,7 +375,7 @@ public:
     {
     }
     virtual ~CustomContainer() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         _pFileView.clear();
         _pSplitter.clear();
@@ -400,7 +400,7 @@ public:
         m_pFocusWidgets[FocusState::Next] = pNext;
     }
 
-    virtual void Resize() SAL_OVERRIDE
+    virtual void Resize() override
     {
         Window::Resize();
 
@@ -450,7 +450,7 @@ public:
         }
     }
 
-    virtual void GetFocus() SAL_OVERRIDE
+    virtual void GetFocus() override
     {
         if( !_pFileView || !_pImp || !_pImp->_pPlaces )
             return;
@@ -469,7 +469,7 @@ public:
         }
     }
 
-    virtual bool Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE
+    virtual bool Notify( NotifyEvent& rNEvt ) override
     {
         if( rNEvt.GetType() == MouseNotifyEvent::GETFOCUS )
         {
@@ -1232,7 +1232,7 @@ void SvtFileDialog::EnableAutocompletion( bool _bEnable )
 
 
 
-IMPL_LINK_NOARG( SvtFileDialog, FilterSelectHdl_Impl )
+IMPL_LINK_NOARG_TYPED( SvtFileDialog, FilterSelectHdl_Impl, ListBox&, void )
 {
     OUString sSelectedFilterDisplayName;
     SvtFileDialogFilter_Impl* pSelectedFilter = _pImp->GetSelectedFilterEntry( sSelectedFilterDisplayName );
@@ -1302,8 +1302,6 @@ IMPL_LINK_NOARG( SvtFileDialog, FilterSelectHdl_Impl )
             }
         }
     }
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SvtFileDialog, FilterSelectTimerHdl_Impl, Timer*, void)
@@ -1320,10 +1318,9 @@ IMPL_LINK_NOARG_TYPED( SvtFileDialog, FileNameGetFocusHdl_Impl, Control&, void )
 
 
 
-IMPL_LINK_NOARG( SvtFileDialog, FileNameModifiedHdl_Impl )
+IMPL_LINK_NOARG_TYPED( SvtFileDialog, FileNameModifiedHdl_Impl, Edit&, void )
 {
     FileNameGetFocusHdl_Impl( *_pImp->_pEdFileName );
-    return 0;
 }
 
 
@@ -1584,11 +1581,9 @@ IMPL_LINK_NOARG_TYPED(SvtFileDialog, DblClickHdl_Impl, SvTreeListBox*, bool)
 
 
 
-IMPL_LINK_NOARG(SvtFileDialog, EntrySelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvtFileDialog, EntrySelectHdl_Impl, ComboBox&, void)
 {
     FileSelect();
-
-    return 0;
 }
 
 
@@ -1806,7 +1801,7 @@ short SvtFileDialog::Execute()
 }
 
 
-void SvtFileDialog::StartExecuteModal( const Link<>& rEndDialogHdl )
+void SvtFileDialog::StartExecuteModal( const Link<Dialog&,void>& rEndDialogHdl )
 {
     PrepareExecute();
 
@@ -1819,7 +1814,7 @@ void SvtFileDialog::onAsyncOperationStarted()
 {
     EnableUI( false );
     // the cancel button must be always enabled
-    _pImp->_pBtnCancel->Enable( true );
+    _pImp->_pBtnCancel->Enable();
     _pImp->_pBtnCancel->GrabFocus();
 }
 
@@ -1868,7 +1863,7 @@ void SvtFileDialog::displayIOException( const OUString& _rURL, IOErrorCode _eCod
 
         // let and interaction handler handle this exception
         ::comphelper::OInteractionRequest* pRequest = NULL;
-        Reference< ::com::sun::star::task::XInteractionRequest > xRequest = pRequest =
+        Reference< css::task::XInteractionRequest > xRequest = pRequest =
             new ::comphelper::OInteractionRequest( makeAny( aException ) );
         pRequest->addContinuation( new ::comphelper::OInteractionAbort( ) );
 
@@ -2159,14 +2154,14 @@ void SvtFileDialog::SetStandardDir( const OUString& rStdDir )
     _pImp->SetStandardDir( aObj.GetMainURL( INetURLObject::NO_DECODE ) );
 }
 
-void SvtFileDialog::SetBlackList( const ::com::sun::star::uno::Sequence< OUString >& rBlackList )
+void SvtFileDialog::SetBlackList( const css::uno::Sequence< OUString >& rBlackList )
 {
     _pImp->SetBlackList( rBlackList );
 }
 
 
 
-const ::com::sun::star::uno::Sequence< OUString >& SvtFileDialog::GetBlackList() const
+const css::uno::Sequence< OUString >& SvtFileDialog::GetBlackList() const
 {
     return _pImp->GetBlackList();
 }
@@ -2917,22 +2912,20 @@ IMPL_LINK_NOARG_TYPED(QueryFolderNameDialog, OKHdl, Button*, void)
 }
 
 
-IMPL_LINK_NOARG(QueryFolderNameDialog, NameHdl)
+IMPL_LINK_NOARG_TYPED(QueryFolderNameDialog, NameHdl, Edit&, void)
 {
     // trim the strings
     OUString aName = comphelper::string::strip(m_pNameEdit->GetText(), ' ');
     if ( !aName.isEmpty() )
     {
         if ( !m_pOKBtn->IsEnabled() )
-            m_pOKBtn->Enable( true );
+            m_pOKBtn->Enable();
     }
     else
     {
         if ( m_pOKBtn->IsEnabled() )
             m_pOKBtn->Enable( false );
     }
-
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

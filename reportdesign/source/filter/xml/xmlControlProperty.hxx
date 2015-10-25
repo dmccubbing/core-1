@@ -40,8 +40,8 @@ namespace rptxml
 
         ORptFilter& GetOwnImport();
         static ::com::sun::star::uno::Any convertString(const ::com::sun::star::uno::Type& _rExpectedType, const OUString& _rReadCharacters);
-        OXMLControlProperty(const OXMLControlProperty&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLControlProperty&) SAL_DELETED_FUNCTION;
+        OXMLControlProperty(const OXMLControlProperty&) = delete;
+        void operator =(const OXMLControlProperty&) = delete;
     public:
 
         OXMLControlProperty( ORptFilter& rImport
@@ -54,11 +54,11 @@ namespace rptxml
 
         virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
 
-        virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+        virtual void Characters( const OUString& rChars ) override;
 
 
         /** adds value to property

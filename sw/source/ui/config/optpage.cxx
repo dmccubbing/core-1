@@ -474,7 +474,7 @@ void    SwAddPrinterTabPage::Reset( const SfxItemSet*  )
     }
     if (m_pProspectCB->IsChecked())
     {
-        m_pProspectCB_RTL->Enable(true);
+        m_pProspectCB_RTL->Enable();
         m_pNoRB->Enable( false );
         m_pOnlyRB->Enable( false );
         m_pEndRB->Enable( false );
@@ -508,16 +508,15 @@ void  SwAddPrinterTabPage::SetFax( const std::vector<OUString>& rFaxLst )
     m_pFaxLB->SelectEntryPos(0);
 }
 
-IMPL_LINK_NOARG(SwAddPrinterTabPage, SelectHdl)
+IMPL_LINK_NOARG_TYPED(SwAddPrinterTabPage, SelectHdl, ListBox&, void)
 {
     bAttrModified=true;
-    return 0;
 }
 
 void SwAddPrinterTabPage::PageCreated( const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pListItem,SfxBoolItem,SID_FAX_LIST,false);
-    SFX_ITEMSET_ARG (&aSet,pPreviewItem,SfxBoolItem,SID_PREVIEWFLAG_TYPE,false);
+    const SfxBoolItem* pListItem = aSet.GetItem<SfxBoolItem>(SID_FAX_LIST, false);
+    const SfxBoolItem* pPreviewItem = aSet.GetItem<SfxBoolItem>(SID_PREVIEWFLAG_TYPE, false);
     if (pPreviewItem)
     {
         SetPreview(pPreviewItem->GetValue());
@@ -595,7 +594,7 @@ SwStdFontTabPage::SwStdFontTabPage( vcl::Window* pParent,
     pLabelBox   ->SetLoseFocusHdl( aFocusLink );
     pIdxBox     ->SetLoseFocusHdl( aFocusLink );
 
-    Link<> aModifyHeightLink( LINK( this, SwStdFontTabPage, ModifyHeightHdl));
+    Link<Edit&,void> aModifyHeightLink( LINK( this, SwStdFontTabPage, ModifyHeightHdl));
     pStandardHeightLB->SetModifyHdl( aModifyHeightLink );
     pTitleHeightLB->   SetModifyHdl( aModifyHeightLink );
     pListHeightLB->    SetModifyHdl( aModifyHeightLink );
@@ -1007,11 +1006,11 @@ IMPL_LINK_NOARG_TYPED(SwStdFontTabPage, StandardHdl, Button*, void)
             SFX_MAPUNIT_TWIP, 10 ));
 }
 
-IMPL_LINK( SwStdFontTabPage, ModifyHdl, ComboBox*, pBox )
+IMPL_LINK_TYPED( SwStdFontTabPage, ModifyHdl, Edit&, rBox, void )
 {
-    if(pBox == pStandardBox)
+    if(&rBox == pStandardBox)
     {
-        const OUString sEntry = pBox->GetText();
+        const OUString sEntry = rBox.GetText();
         if(bSetListDefault && bListDefault)
             pListBox->SetText(sEntry);
         if(bSetLabelDefault && bLabelDefault)
@@ -1019,26 +1018,25 @@ IMPL_LINK( SwStdFontTabPage, ModifyHdl, ComboBox*, pBox )
         if(bSetIdxDefault && bIdxDefault)
             pIdxBox->SetText(sEntry);
     }
-    else if(pBox == pListBox)
+    else if(&rBox == pListBox)
     {
         bSetListDefault = false;
     }
-    else if(pBox == pLabelBox)
+    else if(&rBox == pLabelBox)
     {
         bSetLabelDefault = false;
     }
-    else if(pBox == pIdxBox)
+    else if(&rBox == pIdxBox)
     {
         bSetIdxDefault = false;
     }
-    return 0;
 }
 
-IMPL_LINK( SwStdFontTabPage, ModifyHeightHdl, FontSizeBox*, pBox )
+IMPL_LINK_TYPED( SwStdFontTabPage, ModifyHeightHdl, Edit&, rBox, void )
 {
-    if(pBox == pStandardHeightLB)
+    if(&rBox == pStandardHeightLB)
     {
-        sal_Int64 nValue = pBox->GetValue(FUNIT_TWIP);
+        sal_Int64 nValue = static_cast<FontSizeBox&>(rBox).GetValue(FUNIT_TWIP);
         if(bSetListHeightDefault && bListHeightDefault)
             pListHeightLB->SetValue(nValue, FUNIT_TWIP);
         if(bSetLabelHeightDefault && bLabelHeightDefault)
@@ -1046,19 +1044,18 @@ IMPL_LINK( SwStdFontTabPage, ModifyHeightHdl, FontSizeBox*, pBox )
         if(bSetIndexHeightDefault && bIndexHeightDefault)
             pIndexHeightLB->SetValue(nValue, FUNIT_TWIP);
     }
-    else if(pBox == pListHeightLB)
+    else if(&rBox == pListHeightLB)
     {
         bSetListHeightDefault = false;
     }
-    else if(pBox == pLabelHeightLB)
+    else if(&rBox == pLabelHeightLB)
     {
         bSetLabelHeightDefault = false;
     }
-    else if(pBox == pIndexHeightLB)
+    else if(&rBox == pIndexHeightLB)
     {
         bSetIndexHeightDefault = false;
     }
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwStdFontTabPage, LoseFocusHdl, Control&, rControl, void )
@@ -1092,7 +1089,7 @@ IMPL_LINK_TYPED( SwStdFontTabPage, LoseFocusHdl, Control&, rControl, void )
 
 void SwStdFontTabPage::PageCreated( const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pFlagItem,SfxUInt16Item, SID_FONTMODE_TYPE, false);
+    const SfxUInt16Item* pFlagItem = aSet.GetItem<SfxUInt16Item>(SID_FONTMODE_TYPE, false);
     if (pFlagItem)
         SetFontMode(sal::static_int_cast< sal_uInt8, sal_uInt16>( pFlagItem->GetValue()));
 }
@@ -1309,7 +1306,7 @@ IMPL_LINK_NOARG_TYPED(SwTableOptionsTabPage, CheckBoxHdl, Button*, void)
 
 void SwTableOptionsTabPage::PageCreated( const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pWrtSh,SwWrtShellItem,SID_WRT_SHELL,false);
+    const SwWrtShellItem* pWrtSh = aSet.GetItem<SwWrtShellItem>(SID_WRT_SHELL, false);
     if (pWrtSh)
         SetWrtShell(pWrtSh->GetValue());
 }
@@ -1414,7 +1411,7 @@ VclPtr<SfxTabPage> SwShdwCrsrOptionsTabPage::Create( vcl::Window* pParent, const
 
 void SwShdwCrsrOptionsTabPage::PageCreated( const SfxAllItemSet& aSet )
 {
-    SFX_ITEMSET_ARG (&aSet,pWrtSh,SwWrtShellItem,SID_WRT_SHELL,false);
+    const SwWrtShellItem* pWrtSh = aSet.GetItem<SwWrtShellItem>(SID_WRT_SHELL, false);
     if (pWrtSh)
         SetWrtShell(pWrtSh->GetValue());
 }
@@ -1785,7 +1782,7 @@ SwRedlineOptionsTabPage::SwRedlineOptionsTabPage( vcl::Window* pParent,
     pDeletedLB->RemoveEntry(4);
     pDeletedLB->RemoveEntry(3);
 
-    Link<> aLk = LINK(this, SwRedlineOptionsTabPage, AttribHdl);
+    Link<ListBox&,void> aLk = LINK(this, SwRedlineOptionsTabPage, AttribHdl);
     pInsertLB->SetSelectHdl( aLk );
     pDeletedLB->SetSelectHdl( aLk );
     pChangedLB->SetSelectHdl( aLk );
@@ -2066,27 +2063,27 @@ void SwRedlineOptionsTabPage::Reset( const SfxItemSet*  )
     pMarkPosLB->SelectEntryPos(nPos);
 
     // show settings in preview
-    AttribHdl(pInsertLB);
-    ColorHdl(pInsertColorLB);
-    AttribHdl(pDeletedLB);
-    ColorHdl(pInsertColorLB);
-    AttribHdl(pChangedLB);
-    ColorHdl(pChangedColorLB);
+    AttribHdl(*pInsertLB);
+    ColorHdl(*pInsertColorLB);
+    AttribHdl(*pDeletedLB);
+    ColorHdl(*pInsertColorLB);
+    AttribHdl(*pChangedLB);
+    ColorHdl(*pChangedColorLB);
 
-    ChangedMaskPrevHdl();
+    ChangedMaskPrevHdl(*pMarkPosLB);
 }
 
-IMPL_LINK( SwRedlineOptionsTabPage, AttribHdl, ListBox *, pLB )
+IMPL_LINK_TYPED( SwRedlineOptionsTabPage, AttribHdl, ListBox&, rLB, void )
 {
     SvxFontPrevWindow *pPrev = 0;
     ColorListBox *pColorLB;
 
-    if (pLB == pInsertLB)
+    if (&rLB == pInsertLB)
     {
         pColorLB = pInsertColorLB;
         pPrev = pInsertedPreviewWN;
     }
-    else if (pLB == pDeletedLB)
+    else if (&rLB == pDeletedLB)
     {
         pColorLB = pDeletedColorLB;
         pPrev = pDeletedPreviewWN;
@@ -2130,11 +2127,11 @@ IMPL_LINK( SwRedlineOptionsTabPage, AttribHdl, ListBox *, pLB )
             break;
     }
 
-    nPos = pLB->GetSelectEntryPos();
+    nPos = rLB.GetSelectEntryPos();
     if( nPos == LISTBOX_ENTRY_NOTFOUND )
         nPos = 0;
 
-    CharAttr*   pAttr = static_cast<CharAttr*>(pLB->GetEntryData( nPos ));
+    CharAttr*   pAttr = static_cast<CharAttr*>(rLB.GetEntryData( nPos ));
     //switch off preview background color
     pPrev->ResetColor();
     switch (pAttr->nItemId)
@@ -2179,12 +2176,11 @@ IMPL_LINK( SwRedlineOptionsTabPage, AttribHdl, ListBox *, pLB )
     }
 
     pPrev->Invalidate();
-
-    return 0;
 }
 
-IMPL_LINK( SwRedlineOptionsTabPage, ColorHdl, ColorListBox *, pColorLB )
+IMPL_LINK_TYPED( SwRedlineOptionsTabPage, ColorHdl, ListBox&, rListBox, void )
 {
+    ColorListBox* pColorLB = static_cast<ColorListBox*>(&rListBox);
     SvxFontPrevWindow *pPrev = 0;
     ListBox* pLB;
 
@@ -2245,18 +2241,14 @@ IMPL_LINK( SwRedlineOptionsTabPage, ColorHdl, ColorListBox *, pColorLB )
     }
 
     pPrev->Invalidate();
-
-    return 0;
 }
 
-IMPL_LINK_NOARG(SwRedlineOptionsTabPage, ChangedMaskPrevHdl)
+IMPL_LINK_NOARG_TYPED(SwRedlineOptionsTabPage, ChangedMaskPrevHdl, ListBox&, void)
 {
     pMarkPreviewWN->SetMarkPos(pMarkPosLB->GetSelectEntryPos());
     pMarkPreviewWN->SetColor(pMarkColorLB->GetSelectEntryColor().GetColor());
 
     pMarkPreviewWN->Invalidate();
-
-    return 0;
 }
 
 void SwRedlineOptionsTabPage::InitFontStyle(SvxFontPrevWindow& rExampleWin)

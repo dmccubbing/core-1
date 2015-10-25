@@ -1332,10 +1332,10 @@ void DffPropertyReader::ApplyFillAttributes( SvStream& rIn, SfxItemSet& rSet, co
             {
                 Graphic aGraf;
                 // first try to get BLIP from cache
-                bool bOK = const_cast<SvxMSDffManager&>(rManager).GetBLIP( GetPropertyValue( DFF_Prop_fillBlip, 0 ), aGraf, NULL );
+                bool bOK = const_cast<SvxMSDffManager&>(rManager).GetBLIP( GetPropertyValue( DFF_Prop_fillBlip, 0 ), aGraf );
                 // then try directly from stream (i.e. Excel chart hatches/bitmaps)
                 if ( !bOK )
-                    bOK = SeekToContent( DFF_Prop_fillBlip, rIn ) && SvxMSDffManager::GetBLIPDirect( rIn, aGraf, NULL );
+                    bOK = SeekToContent( DFF_Prop_fillBlip, rIn ) && SvxMSDffManager::GetBLIPDirect( rIn, aGraf );
                 if ( bOK )
                 {
                     if ( eMSO_FillType == mso_fillPattern )
@@ -1424,11 +1424,10 @@ void DffPropertyReader::ApplyCustomShapeTextAttributes( SfxItemSet& rSet ) const
 
     if ( bVerticalText )
     {
-        eTVA = SDRTEXTVERTADJUST_BLOCK;
         eTHA = SDRTEXTHORZADJUST_CENTER;
 
         // read text anchor
-        MSO_Anchor eTextAnchor = (MSO_Anchor)GetPropertyValue( DFF_Prop_anchorText, mso_anchorTop );
+        sal_uInt32 eTextAnchor = GetPropertyValue( DFF_Prop_anchorText, mso_anchorTop );
 
         switch( eTextAnchor )
         {
@@ -1470,7 +1469,6 @@ void DffPropertyReader::ApplyCustomShapeTextAttributes( SfxItemSet& rSet ) const
     else
     {
         eTVA = SDRTEXTVERTADJUST_CENTER;
-        eTHA = SDRTEXTHORZADJUST_BLOCK;
 
         // read text anchor
         sal_uInt32 eTextAnchor = GetPropertyValue( DFF_Prop_anchorText, mso_anchorTop );
@@ -4170,10 +4168,9 @@ SdrObject* SvxMSDffManager::ImportShape( const DffRecordHeader& rHd, SvStream& r
 
     DffObjData aObjData( rHd, rClientRect, nCalledByGroup );
     aObjData.bRotateTextWithShape = ( GetSvxMSDffSettings() & SVXMSDFF_SETTINGS_IMPORT_EXCEL ) == 0;
-    maShapeRecords.Consume( rSt, false );
+    maShapeRecords.Consume( rSt );
     if( maShapeRecords.SeekToContent( rSt,
-        DFF_msofbtUDefProp,
-        SEEK_FROM_BEGINNING ) )
+        DFF_msofbtUDefProp ) )
     {
         sal_uInt32  nBytesLeft = maShapeRecords.Current()->nRecLen;
         while( 5 < nBytesLeft )
@@ -4194,7 +4191,7 @@ SdrObject* SvxMSDffManager::ImportShape( const DffRecordHeader& rHd, SvStream& r
             nBytesLeft  -= 6;
         }
     }
-    aObjData.bShapeType = maShapeRecords.SeekToContent( rSt, DFF_msofbtSp, SEEK_FROM_BEGINNING );
+    aObjData.bShapeType = maShapeRecords.SeekToContent( rSt, DFF_msofbtSp );
     if ( aObjData.bShapeType )
     {
         rSt.ReadUInt32( aObjData.nShapeId )
@@ -4519,17 +4516,17 @@ SdrObject* SvxMSDffManager::ImportShape( const DffRecordHeader& rHd, SvStream& r
                         pAny = ((SdrCustomShapeGeometryItem&)aGeometryItem).GetPropertyValueByName( sAdjustmentValues );
                         if ( pAny && ( *pAny >>= seqAdjustmentValues ) && seqAdjustmentValues.getLength() > 1 )
                         {
-                            double fNumber;
                             if ( seqAdjustmentValues[ 0 ].State == css::beans::PropertyState_DIRECT_VALUE )
                             {
+                                double fNumber;
                                 seqAdjustmentValues[ 0 ].Value >>= fNumber;
                                 nEndAngle = NormAngle360( - (sal_Int32)fNumber * 100 );
                             }
                             else
                             {
-                                fNumber = 270.0;
                                 //normal situation:if endAngle != 90,there will be a direct_value,but for damaged curve,the endAngle need to recalculate.
                                 Point cent = aPolyBoundRect.Center();
+                                double fNumber;
                                 if ( aStartPt.Y() == cent.Y() )
                                     fNumber = ( aStartPt.X() >= cent.X() ) ? 0:180.0;
                                 else if ( aStartPt.X() == cent.X() )
@@ -4546,13 +4543,13 @@ SdrObject* SvxMSDffManager::ImportShape( const DffRecordHeader& rHd, SvStream& r
 
                             if ( seqAdjustmentValues[ 1 ].State == css::beans::PropertyState_DIRECT_VALUE )
                             {
+                                double fNumber;
                                 seqAdjustmentValues[ 1 ].Value >>= fNumber;
                                 nStartAngle = NormAngle360( - (sal_Int32)fNumber * 100 );
                             }
                             else
                             {
-                                fNumber = 0.0;
-                                seqAdjustmentValues[ 1 ].Value <<= fNumber;
+                                seqAdjustmentValues[ 1 ].Value <<= 0.0;
                                 seqAdjustmentValues[ 1 ].State = css::beans::PropertyState_DIRECT_VALUE;
                             }
 
@@ -6454,7 +6451,7 @@ bool SvxMSDffManager::GetBLIPDirect( SvStream& rBLIPStream, Graphic& rData, Rect
         else
         {   // and unleash our filter
             GraphicFilter& rGF = GraphicFilter::GetGraphicFilter();
-            nRes = rGF.ImportGraphic( rData, "", *pGrStream, GRFILTER_FORMAT_DONTKNOW );
+            nRes = rGF.ImportGraphic( rData, "", *pGrStream );
 
             // SJ: I40472, sometimes the aspect ratio (aMtfSize100) does not match and we get scaling problems,
             // then it is better to use the prefsize that is stored within the metafile. Bug #72846# for what the
@@ -7088,8 +7085,7 @@ SdrOle2Obj* SvxMSDffManager::CreateSdrOLEFromStorage(
         aDstStgName += OUString::number( ++nMSOleObjCntr );
 
         {
-            tools::SvRef<SotStorage> xObjStg = rSrcStorage->OpenSotStorage( rStorageName,
-                                STREAM_READWRITE| StreamMode::SHARE_DENYALL );
+            tools::SvRef<SotStorage> xObjStg = rSrcStorage->OpenSotStorage( rStorageName );
             if( xObjStg.Is()  )
             {
                 {

@@ -94,17 +94,6 @@ namespace dbaui
             m_pTextSeparator->InsertEntry( m_aTextSeparatorList.getToken( i, '\t' ) );
         m_pTextSeparator->InsertEntry(m_aTextNone);
 
-        // set the modify handlers
-        m_pFieldSeparator->SetUpdateDataHdl(getControlModifiedLink());
-        m_pFieldSeparator->SetSelectHdl(getControlModifiedLink());
-        m_pTextSeparator->SetUpdateDataHdl(getControlModifiedLink());
-        m_pTextSeparator->SetSelectHdl(getControlModifiedLink());
-        m_pCharSet->SetSelectHdl(getControlModifiedLink());
-
-        m_pFieldSeparator->SetModifyHdl(getControlModifiedLink());
-        m_pTextSeparator->SetModifyHdl(getControlModifiedLink());
-        m_pDecimalSeparator->SetModifyHdl(getControlModifiedLink());
-        m_pThousandsSeparator->SetModifyHdl(getControlModifiedLink());
         m_pOwnExtension->SetModifyHdl(LINK(this, OTextConnectionHelper, OnEditModified));
         m_pAccessTextFiles->SetToggleHdl(LINK(this, OTextConnectionHelper, OnSetExtensionHdl));
         m_pAccessCSVFiles->SetToggleHdl(LINK(this, OTextConnectionHelper, OnSetExtensionHdl));
@@ -180,16 +169,9 @@ namespace dbaui
         TabPage::dispose();
     }
 
-    IMPL_LINK(OTextConnectionHelper, OnControlModified, Control*,)
-    {
-        callModifiedHdl();
-        return 0L;
-    }
-
-    IMPL_LINK(OTextConnectionHelper, OnEditModified, Edit*, /*_pEdit*/)
+    IMPL_LINK_NOARG_TYPED(OTextConnectionHelper, OnEditModified, Edit&, void)
     {
         m_aGetExtensionHandler.Call(this);
-        return 0L;
     }
 
     IMPL_LINK_NOARG_TYPED(OTextConnectionHelper, OnSetExtensionHdl, RadioButton&, void)
@@ -226,12 +208,12 @@ namespace dbaui
         if ( !_bValid )
             return;
 
-        SFX_ITEMSET_GET( _rSet, pDelItem, SfxStringItem, DSID_FIELDDELIMITER, true );
-        SFX_ITEMSET_GET( _rSet, pStrItem, SfxStringItem, DSID_TEXTDELIMITER, true );
-        SFX_ITEMSET_GET( _rSet, pDecdelItem, SfxStringItem, DSID_DECIMALDELIMITER, true );
-        SFX_ITEMSET_GET( _rSet, pThodelItem, SfxStringItem, DSID_THOUSANDSDELIMITER, true );
-        SFX_ITEMSET_GET( _rSet, pExtensionItem, SfxStringItem, DSID_TEXTFILEEXTENSION, true );
-        SFX_ITEMSET_GET( _rSet, pCharsetItem, SfxStringItem, DSID_CHARSET, true );
+        const SfxStringItem* pDelItem = _rSet.GetItem<SfxStringItem>(DSID_FIELDDELIMITER);
+        const SfxStringItem* pStrItem = _rSet.GetItem<SfxStringItem>(DSID_TEXTDELIMITER);
+        const SfxStringItem* pDecdelItem = _rSet.GetItem<SfxStringItem>(DSID_DECIMALDELIMITER);
+        const SfxStringItem* pThodelItem = _rSet.GetItem<SfxStringItem>(DSID_THOUSANDSDELIMITER);
+        const SfxStringItem* pExtensionItem = _rSet.GetItem<SfxStringItem>(DSID_TEXTFILEEXTENSION);
+        const SfxStringItem* pCharsetItem = _rSet.GetItem<SfxStringItem>(DSID_CHARSET);
 
         if ( ( m_nAvailableSections & TC_EXTENSION ) != 0 )
         {
@@ -241,7 +223,7 @@ namespace dbaui
 
         if ( ( m_nAvailableSections & TC_HEADER ) != 0 )
         {
-            SFX_ITEMSET_GET( _rSet, pHdrItem, SfxBoolItem, DSID_TEXTFILEHEADER, true );
+            const SfxBoolItem* pHdrItem = _rSet.GetItem<SfxBoolItem>(DSID_TEXTFILEHEADER);
             m_pRowHeader->Check( pHdrItem->GetValue() );
         }
 

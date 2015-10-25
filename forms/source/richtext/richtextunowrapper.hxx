@@ -46,8 +46,8 @@ namespace frm
 
 
     private:
-        ORichTextUnoWrapper( const ORichTextUnoWrapper& ) SAL_DELETED_FUNCTION;
-        ORichTextUnoWrapper& operator=( const ORichTextUnoWrapper& ) SAL_DELETED_FUNCTION;
+        ORichTextUnoWrapper( const ORichTextUnoWrapper& ) = delete;
+        ORichTextUnoWrapper& operator=( const ORichTextUnoWrapper& ) = delete;
     };
 
     class RichTextEditSource : public SvxEditSource
@@ -61,16 +61,16 @@ namespace frm
         RichTextEditSource( EditEngine& _rEngine, IEngineTextChangeListener* _pTextChangeListener );
 
         // SvxEditSource
-        virtual SvxEditSource*      Clone() const SAL_OVERRIDE;
-        virtual SvxTextForwarder*   GetTextForwarder() SAL_OVERRIDE;
-        virtual void                UpdateData() SAL_OVERRIDE;
+        virtual SvxEditSource*      Clone() const override;
+        virtual SvxTextForwarder*   GetTextForwarder() override;
+        virtual void                UpdateData() override;
 
     protected:
         virtual ~RichTextEditSource();
 
     private:
-        RichTextEditSource( const RichTextEditSource& _rSource ) SAL_DELETED_FUNCTION;
-        RichTextEditSource& operator=( const RichTextEditSource& ) SAL_DELETED_FUNCTION;
+        RichTextEditSource( const RichTextEditSource& _rSource ) = delete;
+        RichTextEditSource& operator=( const RichTextEditSource& ) = delete;
     };
 
 

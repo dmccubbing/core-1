@@ -35,47 +35,47 @@ class ZipStorage : public StorageBase
 {
 public:
     explicit            ZipStorage(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >& rxInStream );
+                            const css::uno::Reference< css::uno::XComponentContext >& rxContext,
+                            const css::uno::Reference< css::io::XInputStream >& rxInStream );
 
     explicit            ZipStorage(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::io::XStream >& rxStream );
+                            const css::uno::Reference< css::uno::XComponentContext >& rxContext,
+                            const css::uno::Reference< css::io::XStream >& rxStream );
 
     virtual             ~ZipStorage();
 
 private:
     explicit            ZipStorage(
                             const ZipStorage& rParentStorage,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XStorage >& rxStorage,
+                            const css::uno::Reference< css::embed::XStorage >& rxStorage,
                             const OUString& rElementName );
 
     /** Returns true, if the object represents a valid storage. */
-    virtual bool        implIsStorage() const SAL_OVERRIDE;
+    virtual bool        implIsStorage() const override;
 
     /** Returns the com.sun.star.embed.XStorage interface of the current storage. */
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::embed::XStorage >
-                        implGetXStorage() const SAL_OVERRIDE;
+    virtual css::uno::Reference< css::embed::XStorage >
+                        implGetXStorage() const override;
 
     /** Returns the names of all elements of this storage. */
-    virtual void        implGetElementNames( ::std::vector< OUString >& orElementNames ) const SAL_OVERRIDE;
+    virtual void        implGetElementNames( ::std::vector< OUString >& orElementNames ) const override;
 
     /** Opens and returns the specified sub storage from the storage. */
-    virtual StorageRef  implOpenSubStorage( const OUString& rElementName, bool bCreateMissing ) SAL_OVERRIDE;
+    virtual StorageRef  implOpenSubStorage( const OUString& rElementName, bool bCreateMissing ) override;
 
     /** Opens and returns the specified input stream from the storage. */
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >
-                        implOpenInputStream( const OUString& rElementName ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::io::XInputStream >
+                        implOpenInputStream( const OUString& rElementName ) override;
 
     /** Opens and returns the specified output stream from the storage. */
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream >
-                        implOpenOutputStream( const OUString& rElementName ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::io::XOutputStream >
+                        implOpenOutputStream( const OUString& rElementName ) override;
 
     /** Commits the current storage. */
-    virtual void        implCommit() const SAL_OVERRIDE;
+    virtual void        implCommit() const override;
 
 private:
-    ::com::sun::star::uno::Reference< ::com::sun::star::embed::XStorage >
+    css::uno::Reference< css::embed::XStorage >
                         mxStorage;      ///< Storage based on input or output stream.
 };
 

@@ -72,11 +72,11 @@ OfaAutoCorrDlg::OfaAutoCorrDlg(vcl::Window* pParent, const SfxItemSet* _pSet )
 
     if ( _pSet )
     {
-        SFX_ITEMSET_ARG( _pSet, pItem, SfxBoolItem, SID_AUTO_CORRECT_DLG, false );
+        const SfxBoolItem* pItem = SfxItemSet::GetItem<SfxBoolItem>(_pSet, SID_AUTO_CORRECT_DLG, false);
         if ( pItem && pItem->GetValue() )
             bShowSWOptions = true;
 
-        SFX_ITEMSET_ARG( _pSet, pItem2, SfxBoolItem, SID_OPEN_SMARTTAGOPTIONS, false );
+        const SfxBoolItem* pItem2 = SfxItemSet::GetItem<SfxBoolItem>(_pSet, SID_OPEN_SMARTTAGOPTIONS, false);
         if ( pItem2 && pItem2->GetValue() )
             bOpenSmartTagOptions = true;
     }
@@ -172,10 +172,10 @@ static bool lcl_FindEntry( ListBox& rLB, const OUString& rEntry,
     return false;
 }
 
-IMPL_LINK(OfaAutoCorrDlg, SelectLanguageHdl, ListBox*, pBox)
+IMPL_LINK_TYPED(OfaAutoCorrDlg, SelectLanguageHdl, ListBox&, rBox, void)
 {
-    sal_Int32 nPos = pBox->GetSelectEntryPos();
-    void* pVoid = pBox->GetEntryData(nPos);
+    sal_Int32 nPos = rBox.GetSelectEntryPos();
+    void* pVoid = rBox.GetEntryData(nPos);
     LanguageType eNewLang = (LanguageType)reinterpret_cast<sal_IntPtr>(pVoid);
     // save old settings and fill anew
     if(eNewLang != eLastDialogLanguage)
@@ -186,7 +186,6 @@ IMPL_LINK(OfaAutoCorrDlg, SelectLanguageHdl, ListBox*, pBox)
         else if (m_nExceptionsPageId == nPageId)
             static_cast<OfaAutocorrExceptPage*>(GetTabPage( nPageId ))->SetLanguage(eNewLang);
     }
-    return 0;
 }
 
 OfaAutocorrOptionsPage::OfaAutocorrOptionsPage(vcl::Window* pParent, const SfxItemSet& rSet)
@@ -312,7 +311,7 @@ public:
         get(m_pPrcntMF, "margin");
     }
     virtual ~OfaAutoFmtPrcntSet() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE { m_pPrcntMF.clear(); ModalDialog::dispose(); }
+    virtual void dispose() override { m_pPrcntMF.clear(); ModalDialog::dispose(); }
 
     MetricField& GetPrcntFld()
     {
@@ -334,7 +333,7 @@ public:
         const OUString& rStr ) : SvLBoxString(pEntry,nFlags,rStr){}
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 void OfaImpBrwString::Paint(const Point& rPos, SvTreeListBox& /*rDev*/, vcl::RenderContext& rRenderContext,
@@ -894,7 +893,7 @@ OfaAutocorrReplacePage::OfaAutocorrReplacePage( vcl::Window* pParent,
     pCharClass = new CharClass( aLanguageTag );
 
     static long aTabs[] = { 2 /* Tab-Count */, 1, 61 };
-    m_pReplaceTLB->SetTabs( &aTabs[0], MAP_APPFONT );
+    m_pReplaceTLB->SetTabs( &aTabs[0] );
 
     m_pReplaceTLB->SetStyle( m_pReplaceTLB->GetStyle()|WB_HSCROLL|WB_CLIPCHILDREN );
     m_pReplaceTLB->SetSelectHdl( LINK(this, OfaAutocorrReplacePage, SelectHdl) );
@@ -1144,7 +1143,7 @@ void OfaAutocorrReplacePage::SetLanguage(LanguageType eSet)
         pCompareClass = new CollatorWrapper( comphelper::getProcessComponentContext() );
         pCompareClass->loadDefaultCollator( aLanguageTag.getLocale(), 0 );
         pCharClass = new CharClass( aLanguageTag );
-        ModifyHdl(m_pShortED);
+        ModifyHdl(*m_pShortED);
     }
 }
 
@@ -1257,7 +1256,7 @@ bool OfaAutocorrReplacePage::NewDelHdl(void* pBtn)
         {
             DeleteEntry(SvTabListBox::GetEntryText(pEntry, 0), SvTabListBox::GetEntryText(pEntry, 1));
             m_pReplaceTLB->GetModel()->Remove(pEntry);
-            ModifyHdl(m_pShortED);
+            ModifyHdl(*m_pShortED);
             return false;
         }
     }
@@ -1314,15 +1313,15 @@ bool OfaAutocorrReplacePage::NewDelHdl(void* pBtn)
         // which means EndDialog() - has to be evaluated in KeyInput
         return false;
     }
-    ModifyHdl(m_pShortED);
+    ModifyHdl(*m_pShortED);
     return true;
 }
 
-IMPL_LINK(OfaAutocorrReplacePage, ModifyHdl, Edit*, pEdt)
+IMPL_LINK_TYPED(OfaAutocorrReplacePage, ModifyHdl, Edit&, rEdt, void)
 {
     SvTreeListEntry* pFirstSel = m_pReplaceTLB->FirstSelected();
-    bool bShort = pEdt == m_pShortED;
-    const OUString rEntry = pEdt->GetText();
+    bool bShort = &rEdt == m_pShortED;
+    const OUString rEntry = rEdt.GetText();
     const OUString rRepString = m_pReplaceED->GetText();
     OUString aWordStr( pCharClass->lowercase( rEntry ));
 
@@ -1403,8 +1402,6 @@ IMPL_LINK(OfaAutocorrReplacePage, ModifyHdl, Edit*, pEdt)
         }
     }
     m_pNewReplacePB->Enable( bEnableNew );
-
-    return 0;
 }
 
 static bool lcl_FindInArray(std::vector<OUString>& rStrings, const OUString& rString)
@@ -1614,8 +1611,8 @@ void OfaAutocorrExceptPage::SetLanguage(LanguageType eSet)
         delete pCompareClass;
         pCompareClass = new CollatorWrapper( comphelper::getProcessComponentContext() );
         pCompareClass->loadDefaultCollator( LanguageTag::convertToLocale( eLastDialogLanguage ), 0 );
-        ModifyHdl(m_pAbbrevED);
-        ModifyHdl(m_pDoubleCapsED);
+        ModifyHdl(*m_pAbbrevED);
+        ModifyHdl(*m_pDoubleCapsED);
     }
 }
 
@@ -1707,54 +1704,53 @@ bool OfaAutocorrExceptPage::NewDelHdl(void* pBtn)
         && !m_pAbbrevED->GetText().isEmpty())
     {
         m_pAbbrevLB->InsertEntry(m_pAbbrevED->GetText());
-        ModifyHdl(m_pAbbrevED);
+        ModifyHdl(*m_pAbbrevED);
     }
     else if(pBtn == m_pDelAbbrevPB)
     {
         m_pAbbrevLB->RemoveEntry(m_pAbbrevED->GetText());
-        ModifyHdl(m_pAbbrevED);
+        ModifyHdl(*m_pAbbrevED);
     }
     else if((pBtn == m_pNewDoublePB || pBtn == m_pDoubleCapsED.get() )
             && !m_pDoubleCapsED->GetText().isEmpty())
     {
         m_pDoubleCapsLB->InsertEntry(m_pDoubleCapsED->GetText());
-        ModifyHdl(m_pDoubleCapsED);
+        ModifyHdl(*m_pDoubleCapsED);
     }
     else if(pBtn == m_pDelDoublePB)
     {
         m_pDoubleCapsLB->RemoveEntry(m_pDoubleCapsED->GetText());
-        ModifyHdl(m_pDoubleCapsED);
+        ModifyHdl(*m_pDoubleCapsED);
     }
     return false;
 }
 
-IMPL_LINK(OfaAutocorrExceptPage, SelectHdl, ListBox*, pBox)
+IMPL_LINK_TYPED(OfaAutocorrExceptPage, SelectHdl, ListBox&, rBox, void)
 {
-    if (pBox == m_pAbbrevLB)
+    if (&rBox == m_pAbbrevLB)
     {
-        m_pAbbrevED->SetText(pBox->GetSelectEntry());
+        m_pAbbrevED->SetText(rBox.GetSelectEntry());
         m_pNewAbbrevPB->Enable(false);
         m_pDelAbbrevPB->Enable();
     }
     else
     {
-        m_pDoubleCapsED->SetText(pBox->GetSelectEntry());
+        m_pDoubleCapsED->SetText(rBox.GetSelectEntry());
         m_pNewDoublePB->Enable(false);
         m_pDelDoublePB->Enable();
     }
-    return 0;
 }
 
-IMPL_LINK(OfaAutocorrExceptPage, ModifyHdl, Edit*, pEdt)
+IMPL_LINK_TYPED(OfaAutocorrExceptPage, ModifyHdl, Edit&, rEdt, void)
 {
 //  sal_Bool bSame = pEdt->GetText() == ->GetSelectEntry();
-    const OUString& sEntry = pEdt->GetText();
+    const OUString& sEntry = rEdt.GetText();
     bool bEntryLen = !sEntry.isEmpty();
-    if(pEdt == m_pAbbrevED)
+    if(&rEdt == m_pAbbrevED)
     {
         bool bSame = lcl_FindEntry(*m_pAbbrevLB, sEntry, *pCompareClass);
         if(bSame && sEntry != m_pAbbrevLB->GetSelectEntry())
-            pEdt->SetText(m_pAbbrevLB->GetSelectEntry());
+            rEdt.SetText(m_pAbbrevLB->GetSelectEntry());
         m_pNewAbbrevPB->Enable(!bSame && bEntryLen);
         m_pDelAbbrevPB->Enable(bSame && bEntryLen);
     }
@@ -1762,11 +1758,10 @@ IMPL_LINK(OfaAutocorrExceptPage, ModifyHdl, Edit*, pEdt)
     {
         bool bSame = lcl_FindEntry(*m_pDoubleCapsLB, sEntry, *pCompareClass);
         if(bSame && sEntry != m_pDoubleCapsLB->GetSelectEntry())
-            pEdt->SetText(m_pDoubleCapsLB->GetSelectEntry());
+            rEdt.SetText(m_pDoubleCapsLB->GetSelectEntry());
         m_pNewDoublePB->Enable(!bSame && bEntryLen);
         m_pDelDoublePB->Enable(bSame && bEntryLen);
     }
-    return 0;
 }
 
 VCL_BUILDER_FACTORY(AutoCorrEdit)
@@ -1862,7 +1857,7 @@ OfaQuoteTabPage::OfaQuoteTabPage(vcl::Window* pParent, const SfxItemSet& rSet)
 
     bool bShowSWOptions = false;
 
-    SFX_ITEMSET_ARG( &rSet, pItem, SfxBoolItem, SID_AUTO_CORRECT_DLG, false );
+    const SfxBoolItem* pItem = rSet.GetItem<SfxBoolItem>(SID_AUTO_CORRECT_DLG, false);
     if ( pItem && pItem->GetValue() )
         bShowSWOptions = true;
 
@@ -2077,7 +2072,7 @@ IMPL_LINK_TYPED( OfaQuoteTabPage, QuoteHdl, Button*, pBtn, void )
     // start character selection dialog
     ScopedVclPtrInstance< SvxCharacterMap > pMap( this, true );
     pMap->SetCharFont( OutputDevice::GetDefaultFont(DefaultFontType::LATIN_TEXT,
-                        LANGUAGE_ENGLISH_US, GetDefaultFontFlags::OnlyOne, 0 ));
+                        LANGUAGE_ENGLISH_US, GetDefaultFontFlags::OnlyOne ));
     pMap->SetText(nMode < SGL_END ? m_sStartQuoteDlg  : m_sEndQuoteDlg );
     sal_UCS4 cDlg;
     SvxAutoCorrect* pAutoCorrect = SvxAutoCorrCfg::Get().GetAutoCorrect();
@@ -2638,7 +2633,7 @@ IMPL_LINK_NOARG_TYPED(OfaSmartTagOptionsTabPage, SelectHdl, SvTreeListBox*, void
 
     const lang::Locale aLocale( LanguageTag::convertToLocale( eLastDialogLanguage ) );
     if ( xRec->hasPropertyPage( nSmartTagIdx, aLocale ) )
-        m_pPropertiesPB->Enable( true );
+        m_pPropertiesPB->Enable();
     else
         m_pPropertiesPB->Enable( false );
 }

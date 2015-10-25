@@ -754,10 +754,17 @@ void SwWW8ImplReader::HandleLineNumbering(const wwSection &rSection)
     }
 }
 
-wwSection::wwSection(const SwPosition &rPos) : maStart(rPos.nNode),
-    mpSection(0), mpPage(0), meDir(FRMDIR_HORI_LEFT_TOP), mLinkId(0),
-    nPgWidth(SvxPaperInfo::GetPaperSize(PAPER_A4).Width()),
-    nPgLeft(MM_250), nPgRight(MM_250), mnBorders(0), mbHasFootnote(false)
+wwSection::wwSection(const SwPosition &rPos) : maStart(rPos.nNode)
+    , mpSection(0)
+    , mpPage(0)
+    , meDir(FRMDIR_HORI_LEFT_TOP)
+    , mLinkId(0)
+    , nPgWidth(SvxPaperInfo::GetPaperSize(PAPER_A4).Width())
+    , nPgLeft(MM_250)
+    , nPgRight(MM_250)
+    , mnVerticalAdjustment(drawing::TextVerticalAdjust_TOP)
+    , mnBorders(0)
+    , mbHasFootnote(false)
 {
 }
 
@@ -2510,6 +2517,21 @@ void SwWW8ImplReader::StopApo()
             const SvxBrushItem &rBrush = static_cast<const SvxBrushItem&>(rItm);
             if (rBrush.GetColor().GetColor() != COL_AUTO)
                 aBg = rBrush.GetColor();
+
+            if (m_pLastAnchorPos.get())
+            {
+                //If the last anchor pos is here, then clear the anchor pos.
+                //This "last anchor pos" is only used for fixing up the
+                //postions of things anchored to page breaks and here
+                //we are removing the last paragraph of a frame, so there
+                //cannot be a page break at this point so we can
+                //safely reset m_pLastAnchorPos to avoid any dangling
+                //SwIndex's pointing into the deleted paragraph
+                SwNodeIndex aLastAnchorPos(m_pLastAnchorPos->nNode);
+                SwNodeIndex aToBeJoined(aPref, 1);
+                if (aLastAnchorPos == aToBeJoined)
+                    m_pLastAnchorPos.reset();
+            }
 
             //Get rid of extra empty paragraph
             pNd->JoinNext();
@@ -4692,6 +4714,29 @@ sal_uInt32 SwWW8ImplReader::ExtractColour(const sal_uInt8* &rpData, bool bVer67)
     return aShade.aColor.GetColor();
 }
 
+void SwWW8ImplReader::Read_TextVerticalAdjustment( sal_uInt16, const sal_uInt8* pData, short nLen )
+{
+    if( nLen > 0 )
+    {
+        drawing::TextVerticalAdjust nVA = drawing::TextVerticalAdjust_TOP;
+        switch( *pData )
+        {
+            case 1:
+                nVA = drawing::TextVerticalAdjust_CENTER;
+                break;
+            case 2: //justify
+                nVA = drawing::TextVerticalAdjust_BLOCK;
+                break;
+            case 3:
+                nVA = drawing::TextVerticalAdjust_BOTTOM;
+                break;
+            default:
+                break;
+        }
+        m_aSectionManager.SetCurrentSectionVerticalAdjustment( nVA );
+    }
+}
+
 void SwWW8ImplReader::Read_Border(sal_uInt16 , const sal_uInt8*, short nLen)
 {
     if( nLen < 0 )
@@ -5968,7 +6013,7 @@ const wwSprmDispatcher *GetWW8SprmDispatcher()
                                                      //sep.dyaHdrBottom;dya;word;
         {0x3019, 0},                                 //"sprmSLBetween"
                                                      //sep.fLBetween;0 or 1;byte;
-        {0x301A, 0},                                 //"sprmSVjc" sep.vjc;vjc;byte;
+        {0x301A, &SwWW8ImplReader::Read_TextVerticalAdjustment},  //"sprmSVjc" sep.vjc;vjc;byte;
         {0x501B, 0},                                 //"sprmSLnnMin" sep.lnnMin;lnn;
                                                      //word;
         {0x501C, 0},                                 //"sprmSPgnStart" sep.pgnStart;

@@ -39,8 +39,6 @@ class OSXTransferable : public ::cppu::WeakImplHelper<com::sun::star::datatransf
                         private ::boost::noncopyable
 {
 public:
-  typedef com::sun::star::uno::Sequence< sal_Int8 > ByteSequence_t;
-
   explicit OSXTransferable(com::sun::star::uno::Reference< ::com::sun::star::datatransfer::XMimeContentTypeFactory> rXMimeCntFactory,
                            DataFlavorMapperPtr_t pDataFlavorMapper,
                            NSPasteboard* pasteboard);
@@ -50,13 +48,13 @@ public:
   // XTransferable
 
   virtual ::com::sun::star::uno::Any SAL_CALL getTransferData( const ::com::sun::star::datatransfer::DataFlavor& aFlavor )
-    throw( ::com::sun::star::datatransfer::UnsupportedFlavorException, ::com::sun::star::io::IOException, ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    throw( ::com::sun::star::datatransfer::UnsupportedFlavorException, ::com::sun::star::io::IOException, ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
   virtual ::com::sun::star::uno::Sequence< ::com::sun::star::datatransfer::DataFlavor > SAL_CALL getTransferDataFlavors(  )
-    throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
   virtual sal_Bool SAL_CALL isDataFlavorSupported( const ::com::sun::star::datatransfer::DataFlavor& aFlavor )
-    throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
   // Helper functions not part of the XTransferable interface
 

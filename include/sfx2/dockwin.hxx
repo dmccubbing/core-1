@@ -34,8 +34,8 @@ class SfxSplitWindow;
 class SfxDockingWindow_Impl;
 enum class SplitWindowItemFlags;
 
-void SFX2_DLLPUBLIC SAL_CALL SfxDockingWindowFactory( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& rFrame, const OUString& rDockingWindowName );
-bool SFX2_DLLPUBLIC SAL_CALL IsDockingWindowVisible( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& rFrame, const OUString& rDockingWindowName );
+void SFX2_DLLPUBLIC SAL_CALL SfxDockingWindowFactory( const css::uno::Reference< css::frame::XFrame >& rFrame, const OUString& rDockingWindowName );
+bool SFX2_DLLPUBLIC SAL_CALL IsDockingWindowVisible( const css::uno::Reference< css::frame::XFrame >& rFrame, const OUString& rDockingWindowName );
 
 class SFX2_DLLPUBLIC SfxDockingWindow : public DockingWindow
 {
@@ -47,8 +47,8 @@ private:
     SfxChildWindow*         pMgr;
     SfxDockingWindow_Impl*  pImp;
 
-    SfxDockingWindow(SfxDockingWindow &) SAL_DELETED_FUNCTION;
-    void operator =(SfxDockingWindow &) SAL_DELETED_FUNCTION;
+    SfxDockingWindow(SfxDockingWindow &) = delete;
+    void operator =(SfxDockingWindow &) = delete;
 
 protected:
     SfxChildAlignment   CalcAlignment(const Point& rPos, Rectangle& rRect );
@@ -56,16 +56,16 @@ protected:
     virtual SfxChildAlignment
                         CheckAlignment(SfxChildAlignment,SfxChildAlignment);
 
-    virtual void        Resize() SAL_OVERRIDE;
-    virtual bool        PrepareToggleFloatingMode() SAL_OVERRIDE;
-    virtual void        ToggleFloatingMode() SAL_OVERRIDE;
-    virtual void        StartDocking() SAL_OVERRIDE;
-    virtual bool        Docking( const Point& rPos, Rectangle& rRect ) SAL_OVERRIDE;
-    virtual void        EndDocking( const Rectangle& rRect, bool bFloatMode ) SAL_OVERRIDE;
-    virtual void        Resizing( Size& rSize ) SAL_OVERRIDE;
-    virtual void        Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
-    virtual bool        Close() SAL_OVERRIDE;
-    virtual void        Move() SAL_OVERRIDE;
+    virtual void        Resize() override;
+    virtual bool        PrepareToggleFloatingMode() override;
+    virtual void        ToggleFloatingMode() override;
+    virtual void        StartDocking() override;
+    virtual bool        Docking( const Point& rPos, Rectangle& rRect ) override;
+    virtual void        EndDocking( const Rectangle& rRect, bool bFloatMode ) override;
+    virtual void        Resizing( Size& rSize ) override;
+    virtual void        Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
+    virtual bool        Close() override;
+    virtual void        Move() override;
 
     SAL_DLLPRIVATE SfxChildWindow* GetChildWindow_Impl()    { return pMgr; }
 
@@ -83,11 +83,11 @@ public:
                                           vcl::Window* pParent,
                                           const OString& rID, const OUString& rUIXMLDescription );
                         virtual ~SfxDockingWindow();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     void                Initialize (SfxChildWinInfo* pInfo);
     virtual void        FillInfo(SfxChildWinInfo&) const;
-    virtual void        StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
+    virtual void        StateChanged( StateChangedType nStateChange ) override;
 
     void                SetDockingRects(const Rectangle& rOuter, const Rectangle& rInner)
                             { aInnerRect = rInner; aOuterRect = rOuter; }
@@ -102,7 +102,7 @@ public:
 
     void                SetMinOutputSizePixel( const Size& rSize );
     Size                GetMinOutputSizePixel() const;
-    virtual bool        Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual bool        Notify( NotifyEvent& rNEvt ) override;
     DECL_LINK_TYPED(TimerHdl, Idle *, void);
 
     SAL_DLLPRIVATE void Initialize_Impl();

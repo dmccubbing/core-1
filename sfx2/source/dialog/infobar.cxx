@@ -60,7 +60,7 @@ public:
 
     virtual ~SfxCloseButton() {}
 
-    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
+    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
 };
 
 void SfxCloseButton::Paint(vcl::RenderContext& rRenderContext, const Rectangle&)
@@ -127,11 +127,12 @@ SfxInfoBarWindow::SfxInfoBarWindow(vcl::Window* pParent, const OUString& sId,
     SetPosSizePixel(Point(0, 0), Size(nWidth, INFO_BAR_BASE_HEIGHT * nScaleFactor));
 
     m_pMessage->SetText(sMessage);
-    m_pMessage->SetBackground(Wallpaper(Color(constLightColor)));
     m_pMessage->Show();
 
     m_pCloseBtn->SetClickHdl(LINK(this, SfxInfoBarWindow, CloseHandler));
     m_pCloseBtn->Show();
+
+    EnableChildTransparentMode();
 
     Resize();
 }
@@ -172,9 +173,6 @@ void SfxInfoBarWindow::Paint(vcl::RenderContext& rRenderContext, const Rectangle
     BColor aLightColor;
     BColor aDarkColor;
     lclDetermineLightDarkColor(aLightColor, aDarkColor);
-
-    // Update the label background color
-    m_pMessage->SetBackground(Wallpaper(Color(aLightColor)));
 
     // Light background
     B2DPolygon aPolygon;

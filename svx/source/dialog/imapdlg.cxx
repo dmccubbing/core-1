@@ -177,7 +177,7 @@ SvxIMapDlg::SvxIMapDlg(SfxBindings *_pBindings, SfxChildWindow *pCW, vcl::Window
     pIMapWnd->SetUpdateLink( LINK( this, SvxIMapDlg, StateHdl ) );
 
     m_pURLBox->SetModifyHdl( LINK( this, SvxIMapDlg, URLModifyHdl ) );
-    m_pURLBox->SetSelectHdl( LINK( this, SvxIMapDlg, URLModifyHdl ) );
+    m_pURLBox->SetSelectHdl( LINK( this, SvxIMapDlg, URLModifyComboBoxHdl ) );
     m_pURLBox->SetLoseFocusHdl( LINK( this, SvxIMapDlg, URLLoseFocusHdl ) );
     m_pEdtText->SetModifyHdl( LINK( this, SvxIMapDlg, URLModifyHdl ) );
     m_pCbbTarget->SetLoseFocusHdl( LINK( this, SvxIMapDlg, URLLoseFocusHdl ) );
@@ -192,8 +192,8 @@ SvxIMapDlg::SvxIMapDlg(SfxBindings *_pBindings, SfxChildWindow *pCW, vcl::Window
     SetMinOutputSizePixel( aLastSize = GetOutputSizePixel() );
 
     m_pStbStatus->InsertItem( 1, 130, SIB_LEFT | SIB_IN | SIB_AUTOSIZE );
-    m_pStbStatus->InsertItem( 2, 10 + GetTextWidth( OUString(" 9999,99 cm / 9999,99 cm ") ), SIB_CENTER | SIB_IN );
-    m_pStbStatus->InsertItem( 3, 10 + GetTextWidth( OUString(" 9999,99 cm x 9999,99 cm ") ), SIB_CENTER | SIB_IN );
+    m_pStbStatus->InsertItem( 2, 10 + GetTextWidth( OUString(" 9999,99 cm / 9999,99 cm ") ) );
+    m_pStbStatus->InsertItem( 3, 10 + GetTextWidth( OUString(" 9999,99 cm x 9999,99 cm ") ) );
 
     m_pFtURL->Disable();
     m_pURLBox->Disable();
@@ -682,7 +682,12 @@ IMPL_LINK_TYPED( SvxIMapDlg, GraphSizeHdl, GraphCtrl*, pWnd, void )
     m_pStbStatus->SetItemText( 3, aStr );
 }
 
-IMPL_LINK_NOARG(SvxIMapDlg, URLModifyHdl)
+
+IMPL_LINK_NOARG_TYPED(SvxIMapDlg, URLModifyComboBoxHdl, ComboBox&, void)
+{
+    URLModifyHdl(*m_pURLBox);
+}
+IMPL_LINK_NOARG_TYPED(SvxIMapDlg, URLModifyHdl, Edit&, void)
 {
     NotifyInfo  aNewInfo;
 
@@ -691,8 +696,6 @@ IMPL_LINK_NOARG(SvxIMapDlg, URLModifyHdl)
     aNewInfo.aMarkTarget = m_pCbbTarget->GetText();
 
     pIMapWnd->ReplaceActualIMapInfo( aNewInfo );
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SvxIMapDlg, URLLoseFocusHdl, Control&, void)

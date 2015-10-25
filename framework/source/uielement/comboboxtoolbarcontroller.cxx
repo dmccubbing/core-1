@@ -36,12 +36,12 @@
 #include <vcl/combobox.hxx>
 
 using namespace ::com::sun::star;
-using namespace ::com::sun::star::uno;
-using namespace ::com::sun::star::beans;
-using namespace ::com::sun::star::lang;
-using namespace ::com::sun::star::frame;
-using namespace ::com::sun::star::frame::status;
-using namespace ::com::sun::star::util;
+using namespace css::uno;
+using namespace css::beans;
+using namespace css::lang;
+using namespace css::frame;
+using namespace css::frame::status;
+using namespace css::util;
 
 namespace framework
 {
@@ -55,15 +55,15 @@ class ComboBoxControl : public ComboBox
     public:
         ComboBoxControl( vcl::Window* pParent, WinBits nStyle, ComboboxToolbarController* pComboboxToolbarController );
         virtual ~ComboBoxControl();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void Select() SAL_OVERRIDE;
-        virtual void DoubleClick() SAL_OVERRIDE;
-        virtual void Modify() SAL_OVERRIDE;
-        virtual void KeyInput( const ::KeyEvent& rKEvt ) SAL_OVERRIDE;
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual void LoseFocus() SAL_OVERRIDE;
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void Select() override;
+        virtual void DoubleClick() override;
+        virtual void Modify() override;
+        virtual void KeyInput( const ::KeyEvent& rKEvt ) override;
+        virtual void GetFocus() override;
+        virtual void LoseFocus() override;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
 
     private:
         ComboboxToolbarController* m_pComboboxToolbarController;
@@ -252,7 +252,7 @@ bool ComboboxToolbarController::PreNotify( NotifyEvent& rNEvt )
     return false;
 }
 
-void ComboboxToolbarController::executeControlCommand( const ::com::sun::star::frame::ControlCommand& rControlCommand )
+void ComboboxToolbarController::executeControlCommand( const css::frame::ControlCommand& rControlCommand )
 {
     if ( rControlCommand.Command == "SetText" )
     {
@@ -379,7 +379,7 @@ void ComboboxToolbarController::executeControlCommand( const ::com::sun::star::f
         {
             if ( rControlCommand.Arguments[i].Name == "Color" )
             {
-                com::sun::star::util::Color aColor(0);
+                css::util::Color aColor(0);
                 if ( rControlCommand.Arguments[i].Value >>= aColor )
                 {
                     ::Color aBackColor( static_cast< sal_uInt32 >( aColor ));
@@ -395,7 +395,7 @@ void ComboboxToolbarController::executeControlCommand( const ::com::sun::star::f
         {
             if ( rControlCommand.Arguments[i].Name == "Color" )
             {
-                com::sun::star::util::Color aColor(0);
+                css::util::Color aColor(0);
                 if ( rControlCommand.Arguments[i].Value >>= aColor )
                 {
                     ::Color aForeColor( static_cast< sal_uInt32 >( aColor ));

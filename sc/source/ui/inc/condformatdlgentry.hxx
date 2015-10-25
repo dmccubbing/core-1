@@ -43,7 +43,7 @@ class ScCondFrmtEntry : public Control
 private:
     bool mbActive;
 
-    Link<> maClickHdl;
+    Link<ScCondFrmtEntry&,void> maClickHdl;
 
     //general ui elements
     VclPtr<FixedText> maFtCondNr;
@@ -65,9 +65,9 @@ protected:
 public:
     ScCondFrmtEntry( vcl::Window* pParent, ScDocument* pDoc, const ScAddress& rPos );
     virtual ~ScCondFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual bool Notify( NotifyEvent& rNEvt ) override;
 
     bool IsSelected() const { return mbActive;}
     void SetIndex(sal_Int32 nIndex);
@@ -98,11 +98,11 @@ class ScConditionFrmtEntry : public ScCondFrmtEntry, public SfxListener
 
     ScFormatEntry* createConditionEntry() const;
 
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
     void Init(ScCondFormatDlg* pDialogParent);
-    DECL_LINK( StyleSelectHdl, void* );
-    DECL_LINK( ConditionTypeSelectHdl, void* );
-    DECL_LINK( OnEdChanged, Edit* );
+    DECL_LINK_TYPED( StyleSelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( ConditionTypeSelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( OnEdChanged, Edit&, void );
 
     // Searches the lookup table for the entry position, given condition mode
     static sal_Int32 ConditionModeToEntryPos( ScConditionMode eMode );
@@ -112,23 +112,23 @@ class ScConditionFrmtEntry : public ScCondFrmtEntry, public SfxListener
     static sal_Int32 GetNumberEditFields( ScConditionMode eMode );
 
 protected:
-    virtual void Select() SAL_OVERRIDE;
-    virtual void Deselect() SAL_OVERRIDE;
+    virtual void Select() override;
+    virtual void Deselect() override;
 
 public:
     ScConditionFrmtEntry( vcl::Window* pParent, ScDocument* pDoc, ScCondFormatDlg* pDialogParent,
             const ScAddress& rPos, const ScCondFormatEntry* pFormatEntry = NULL );
     virtual ~ScConditionFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
 
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
     using ScCondFrmtEntry::Notify;
 
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::CONDITION; }
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::CONDITION; }
 };
 
 class ScFormulaFrmtEntry : public ScCondFrmtEntry
@@ -139,20 +139,20 @@ class ScFormulaFrmtEntry : public ScCondFrmtEntry
     VclPtr<formula::RefEdit> maEdFormula;
 
     ScFormatEntry* createFormulaEntry() const;
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
     void Init(ScCondFormatDlg* pDialogParent);
 
-    DECL_LINK( StyleSelectHdl, void* );
+    DECL_LINK_TYPED( StyleSelectHdl, ListBox&, void );
 
 public:
     ScFormulaFrmtEntry( vcl::Window* pParent, ScDocument* PDoc, ScCondFormatDlg* pDialogParent, const ScAddress& rPos, const ScCondFormatEntry* pFormatEntry = NULL );
     virtual ~ScFormulaFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::FORMULA; }
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::FORMULA; }
 };
 
 class ScColorScale2FrmtEntry : public ScCondFrmtEntry
@@ -173,18 +173,18 @@ class ScColorScale2FrmtEntry : public ScCondFrmtEntry
 
     ScFormatEntry* createColorscaleEntry() const;
 
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
     void Init();
 
-    DECL_LINK( EntryTypeHdl, ListBox* );
+    DECL_LINK_TYPED( EntryTypeHdl, ListBox&, void );
 public:
     ScColorScale2FrmtEntry( vcl::Window* pParent, ScDocument* pDoc, const ScAddress& rPos, const ScColorScaleFormat* pFormat = NULL );
     virtual ~ScColorScale2FrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::COLORSCALE2; }
+    virtual void dispose() override;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::COLORSCALE2; }
 };
 
 class ScColorScale3FrmtEntry : public ScCondFrmtEntry
@@ -208,18 +208,18 @@ class ScColorScale3FrmtEntry : public ScCondFrmtEntry
 
     ScFormatEntry* createColorscaleEntry() const;
 
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
     void Init();
 
-    DECL_LINK( EntryTypeHdl, ListBox* );
+    DECL_LINK_TYPED( EntryTypeHdl, ListBox&, void );
 public:
     ScColorScale3FrmtEntry( vcl::Window* pParent, ScDocument* pDoc, const ScAddress& rPos, const ScColorScaleFormat* pFormat = NULL );
     virtual ~ScColorScale3FrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::COLORSCALE3; }
+    virtual void dispose() override;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::COLORSCALE3; }
 };
 
 class ScDataBarFrmtEntry : public ScCondFrmtEntry
@@ -239,20 +239,20 @@ class ScDataBarFrmtEntry : public ScCondFrmtEntry
 
     ScFormatEntry* createDatabarEntry() const;
 
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
     void Init();
 
     DECL_LINK_TYPED( OptionBtnHdl, Button*, void );
-    DECL_LINK( DataBarTypeSelectHdl, void* );
+    DECL_LINK_TYPED( DataBarTypeSelectHdl, ListBox&, void );
 public:
     ScDataBarFrmtEntry( vcl::Window* pParemt, ScDocument* pDoc, const ScAddress& rPos, const ScDataBarFormat* pFormat = NULL );
     virtual ~ScDataBarFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
+    virtual void dispose() override;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
 
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::DATABAR; }
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::DATABAR; }
 };
 
 class ScDateFrmtEntry : public ScCondFrmtEntry, public SfxListener
@@ -260,21 +260,21 @@ class ScDateFrmtEntry : public ScCondFrmtEntry, public SfxListener
 public:
     ScDateFrmtEntry( vcl::Window* pParent, ScDocument* pDoc, const ScCondDateFormatEntry* pFormat = NULL );
     virtual ~ScDateFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::DATE; }
+    virtual void dispose() override;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::DATE; }
 
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
     using ScCondFrmtEntry::Notify;
 protected:
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
 
 private:
     void Init();
 
-    DECL_LINK( StyleSelectHdl, void* );
+    DECL_LINK_TYPED( StyleSelectHdl, ListBox&, void );
 
     VclPtr<ListBox> maLbDateEntry;
     VclPtr<FixedText> maFtStyle;
@@ -295,20 +295,20 @@ class ScIconSetFrmtEntry : public ScCondFrmtEntry
     typedef std::vector<VclPtr<ScIconSetFrmtDataEntry>> ScIconSetFrmtDataEntriesType;
     ScIconSetFrmtDataEntriesType maEntries;
 
-    virtual OUString GetExpressionString() SAL_OVERRIDE;
+    virtual OUString GetExpressionString() override;
 
     void Init();
 
-    DECL_LINK( IconSetTypeHdl, void* );
+    DECL_LINK_TYPED( IconSetTypeHdl, ListBox&, void );
 
 public:
     ScIconSetFrmtEntry( vcl::Window* pParent, ScDocument* pDoc, const ScAddress& rPos, const ScIconSetFormat* pFormat = NULL );
     virtual ~ScIconSetFrmtEntry();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual ScFormatEntry* GetEntry() const SAL_OVERRIDE;
-    virtual void SetActive() SAL_OVERRIDE;
-    virtual void SetInactive() SAL_OVERRIDE;
-    virtual condformat::entry::ScCondFrmtEntryType GetType() SAL_OVERRIDE { return condformat::entry::ICONSET; }
+    virtual void dispose() override;
+    virtual ScFormatEntry* GetEntry() const override;
+    virtual void SetActive() override;
+    virtual void SetInactive() override;
+    virtual condformat::entry::ScCondFrmtEntryType GetType() override { return condformat::entry::ICONSET; }
 };
 
 #endif

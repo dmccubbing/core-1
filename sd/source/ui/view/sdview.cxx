@@ -182,7 +182,7 @@ public:
     // different, override the method and at least do what the method does.
     virtual drawinglayer::primitive2d::Primitive2DSequence createRedirectedPrimitive2DSequence(
         const sdr::contact::ViewObjectContact& rOriginal,
-        const sdr::contact::DisplayInfo& rDisplayInfo) SAL_OVERRIDE;
+        const sdr::contact::DisplayInfo& rDisplayInfo) override;
 };
 
 ViewRedirector::ViewRedirector()
@@ -478,7 +478,7 @@ void View::CompleteRedraw(OutputDevice* pOutDev, const vcl::Region& rReg, sdr::c
             SdPage* pPage = static_cast<SdPage*>( pPgView->GetPage() );
             if( pPage )
             {
-                SdrOutliner& rOutl = mrDoc.GetDrawOutliner(NULL);
+                SdrOutliner& rOutl = mrDoc.GetDrawOutliner();
                 bool bScreenDisplay(true);
 
                 if(bScreenDisplay && pOutDev && OUTDEV_PRINTER == pOutDev->GetOutDevType())

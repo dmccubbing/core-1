@@ -128,10 +128,10 @@ protected:
 public:
     explicit SwDrawModellListener_Impl( SdrModel *pDrawModel );
 
-    virtual void SAL_CALL addEventListener( const uno::Reference< document::XEventListener >& xListener ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL removeEventListener( const uno::Reference< document::XEventListener >& xListener ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL addEventListener( const uno::Reference< document::XEventListener >& xListener ) throw (uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL removeEventListener( const uno::Reference< document::XEventListener >& xListener ) throw (uno::RuntimeException, std::exception) override;
 
-    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
     void Dispose();
 };
 
@@ -1158,7 +1158,6 @@ void SwAccessibleMap::InvalidateShapeInParaSelection()
         {
             while( aIter != aEndIter )
             {
-                bool bMarked = false;
                 SwAccessibleChild pFrm( (*aIter).first );
 
                 const SwFrameFormat *pFrameFormat = (*aIter).first ? ::FindFrameFormat( (*aIter).first ) : nullptr;
@@ -1188,6 +1187,7 @@ void SwAccessibleMap::InvalidateShapeInParaSelection()
                 if( pPos->nNode.GetNode().GetTextNode() )
                 {
                     int pIndex = pPos->nContent.GetIndex();
+                    bool bMarked = false;
                     if( pCrsr != NULL )
                     {
                         const SwTextNode* pNode = pPos->nNode.GetNode().GetTextNode();

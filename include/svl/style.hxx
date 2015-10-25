@@ -272,11 +272,11 @@ public:
                         SfxStyleSheet( const OUString&, const SfxStyleSheetBasePool&, SfxStyleFamily, sal_uInt16 );
                         SfxStyleSheet( const SfxStyleSheet& );
 
-    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
-    virtual bool        isUsedByModel() const SAL_OVERRIDE;
+    virtual bool        isUsedByModel() const override;
 
-    virtual bool        SetParent( const OUString& ) SAL_OVERRIDE;
+    virtual bool        SetParent( const OUString& ) override;
 
 protected:
     SfxStyleSheet() // do not use! needed by MSVC at compile time to satisfy ImplInheritanceHelper2
@@ -292,7 +292,7 @@ class SVL_DLLPUBLIC SfxStyleSheetPool: public SfxStyleSheetBasePool
 {
 protected:
     using SfxStyleSheetBasePool::Create;
-    virtual SfxStyleSheetBase* Create(const OUString&, SfxStyleFamily, sal_uInt16 mask) SAL_OVERRIDE;
+    virtual SfxStyleSheetBase* Create(const OUString&, SfxStyleFamily, sal_uInt16 mask) override;
 
 public:
     SfxStyleSheetPool( SfxItemPool const& );
@@ -340,20 +340,20 @@ public:
     const OUString&     GetOldName() const { return aName; }
 };
 
-class SVL_DLLPUBLIC SfxUnoStyleSheet : public ::cppu::ImplInheritanceHelper2< SfxStyleSheet, ::com::sun::star::style::XStyle, ::com::sun::star::lang::XUnoTunnel >
+class SVL_DLLPUBLIC SfxUnoStyleSheet : public ::cppu::ImplInheritanceHelper2< SfxStyleSheet, css::style::XStyle, css::lang::XUnoTunnel >
 {
 public:
     SfxUnoStyleSheet( const OUString& _rName, const SfxStyleSheetBasePool& _rPool, SfxStyleFamily _eFamily, sal_uInt16 _nMaske );
 
-    static SfxUnoStyleSheet* getUnoStyleSheet( const ::com::sun::star::uno::Reference< ::com::sun::star::style::XStyle >& xStyle );
+    static SfxUnoStyleSheet* getUnoStyleSheet( const css::uno::Reference< css::style::XStyle >& xStyle );
 
     // XUnoTunnel
-    virtual ::sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< ::sal_Int8 >& aIdentifier ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual ::sal_Int64 SAL_CALL getSomething( const css::uno::Sequence< ::sal_Int8 >& aIdentifier ) throw (css::uno::RuntimeException, std::exception) override;
 
 private:
     SfxUnoStyleSheet(); // not implemented
 
-    static const ::com::sun::star::uno::Sequence< ::sal_Int8 >& getIdentifier();
+    static const css::uno::Sequence< ::sal_Int8 >& getIdentifier();
 };
 
 #endif

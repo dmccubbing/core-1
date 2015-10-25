@@ -164,15 +164,15 @@ public:
 
 protected:
     /** Must be called from createFastChildContext() in derived classes. */
-    ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastContextHandler >
+    css::uno::Reference< css::xml::sax::XFastContextHandler >
                         implCreateChildContext(
                             sal_Int32 nElement,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& rxAttribs );
+                            const css::uno::Reference< css::xml::sax::XFastAttributeList >& rxAttribs );
 
     /** Must be called from startFastElement() in derived classes. */
     void                implStartElement(
                             sal_Int32 nElement,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& rxAttribs );
+                            const css::uno::Reference< css::xml::sax::XFastAttributeList >& rxAttribs );
 
     /** Must be called from characters() in derived classes. */
     void                implCharacters( const OUString& rChars );
@@ -190,7 +190,7 @@ protected:
     void                implEndRecord( sal_Int32 nRecId );
 
 private:
-    ContextHandler2Helper& operator=( const ContextHandler2Helper& ) SAL_DELETED_FUNCTION;
+    ContextHandler2Helper& operator=( const ContextHandler2Helper& ) = delete;
 
     ElementInfo&        pushElementInfo( sal_Int32 nElement );
     void                popElementInfo();
@@ -214,48 +214,48 @@ public:
     virtual             ~ContextHandler2();
 
     // resolve ambiguity from base classes
-    virtual void SAL_CALL acquire() throw() SAL_OVERRIDE { ContextHandler::acquire(); }
-    virtual void SAL_CALL release() throw() SAL_OVERRIDE { ContextHandler::release(); }
+    virtual void SAL_CALL acquire() throw() override { ContextHandler::acquire(); }
+    virtual void SAL_CALL release() throw() override { ContextHandler::release(); }
 
     // com.sun.star.xml.sax.XFastContextHandler interface ---------------------
 
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastContextHandler > SAL_CALL
+    virtual css::uno::Reference< css::xml::sax::XFastContextHandler > SAL_CALL
                         createFastChildContext(
                             sal_Int32 nElement,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& rxAttribs )
-                            throw(  ::com::sun::star::xml::sax::SAXException,
-                                    ::com::sun::star::uno::RuntimeException, std::exception ) SAL_FINAL SAL_OVERRIDE;
+                            const css::uno::Reference< css::xml::sax::XFastAttributeList >& rxAttribs )
+                            throw(  css::xml::sax::SAXException,
+                                    css::uno::RuntimeException, std::exception ) final override;
 
     virtual void SAL_CALL startFastElement(
                             sal_Int32 nElement,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& rxAttribs )
-                            throw(  ::com::sun::star::xml::sax::SAXException,
-                                    ::com::sun::star::uno::RuntimeException, std::exception ) SAL_FINAL SAL_OVERRIDE;
+                            const css::uno::Reference< css::xml::sax::XFastAttributeList >& rxAttribs )
+                            throw(  css::xml::sax::SAXException,
+                                    css::uno::RuntimeException, std::exception ) final override;
 
     virtual void SAL_CALL characters( const OUString& rChars )
-                            throw(  ::com::sun::star::xml::sax::SAXException,
-                                    ::com::sun::star::uno::RuntimeException, std::exception ) SAL_FINAL SAL_OVERRIDE;
+                            throw(  css::xml::sax::SAXException,
+                                    css::uno::RuntimeException, std::exception ) final override;
 
     virtual void SAL_CALL endFastElement( sal_Int32 nElement )
-                            throw(  ::com::sun::star::xml::sax::SAXException,
-                                    ::com::sun::star::uno::RuntimeException, std::exception ) SAL_FINAL SAL_OVERRIDE;
+                            throw(  css::xml::sax::SAXException,
+                                    css::uno::RuntimeException, std::exception ) final override;
 
     // oox.core.ContextHandler interface --------------------------------------
 
-    virtual ContextHandlerRef createRecordContext( sal_Int32 nRecId, SequenceInputStream& rStrm ) SAL_OVERRIDE;
-    virtual void        startRecord( sal_Int32 nRecId, SequenceInputStream& rStrm ) SAL_OVERRIDE;
-    virtual void        endRecord( sal_Int32 nRecId ) SAL_OVERRIDE;
+    virtual ContextHandlerRef createRecordContext( sal_Int32 nRecId, SequenceInputStream& rStrm ) override;
+    virtual void        startRecord( sal_Int32 nRecId, SequenceInputStream& rStrm ) override;
+    virtual void        endRecord( sal_Int32 nRecId ) override;
 
     // oox.core.ContextHandler2Helper interface -------------------------------
 
-    virtual ContextHandlerRef onCreateContext( sal_Int32 nElement, const AttributeList& rAttribs ) SAL_OVERRIDE;
-    virtual void        onStartElement( const AttributeList& rAttribs ) SAL_OVERRIDE;
-    virtual void        onCharacters( const OUString& rChars ) SAL_OVERRIDE;
-    virtual void        onEndElement() SAL_OVERRIDE;
+    virtual ContextHandlerRef onCreateContext( sal_Int32 nElement, const AttributeList& rAttribs ) override;
+    virtual void        onStartElement( const AttributeList& rAttribs ) override;
+    virtual void        onCharacters( const OUString& rChars ) override;
+    virtual void        onEndElement() override;
 
-    virtual ContextHandlerRef onCreateRecordContext( sal_Int32 nRecId, SequenceInputStream& rStrm ) SAL_OVERRIDE;
-    virtual void        onStartRecord( SequenceInputStream& rStrm ) SAL_OVERRIDE;
-    virtual void        onEndRecord() SAL_OVERRIDE;
+    virtual ContextHandlerRef onCreateRecordContext( sal_Int32 nRecId, SequenceInputStream& rStrm ) override;
+    virtual void        onStartRecord( SequenceInputStream& rStrm ) override;
+    virtual void        onEndRecord() override;
 };
 
 } // namespace core

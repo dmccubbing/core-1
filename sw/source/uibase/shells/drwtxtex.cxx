@@ -135,7 +135,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
         case SID_THES:
         {
             OUString aReplaceText;
-            SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_THES, false );
+            const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_THES);
             if (pItem2)
                 aReplaceText = pItem2->GetValue();
             if (!aReplaceText.isEmpty())
@@ -318,7 +318,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
         case SID_CHAR_DLG_FOR_PARAGRAPH:
         {
             const SfxItemSet* pArgs = rReq.GetArgs();
-            SFX_REQUEST_ARG(rReq, pItem, SfxStringItem, FN_PARAM_1, false);
+            const SfxStringItem* pItem = rReq.GetArg<SfxStringItem>(FN_PARAM_1);
 
             if( !pArgs || pItem )
             {
@@ -500,7 +500,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
                         : text::WritingMode_TB_RL, SDRATTR_TEXTDIRECTION ) );
                 pTmpView->SetAttributes( aAttr );
 
-                rSh.GetView().BeginTextEdit( pTmpObj, pTmpPV, &rSh.GetView().GetEditWin(), false);
+                rSh.GetView().BeginTextEdit( pTmpObj, pTmpPV, &rSh.GetView().GetEditWin());
                 rSh.GetView().AttrChangedNotify( &rSh );
             }
             return;
@@ -543,7 +543,7 @@ void SwDrawTextShell::Execute( SfxRequest &rReq )
                     aAttr.Put( SvxAdjustItem( SVX_ADJUST_RIGHT, EE_PARA_JUST ) );
             }
             pTmpView->SetAttributes( aAttr );
-            rSh.GetView().BeginTextEdit( pTmpObj, pTmpPV, &rSh.GetView().GetEditWin(), false );
+            rSh.GetView().BeginTextEdit( pTmpObj, pTmpPV, &rSh.GetView().GetEditWin() );
             rSh.GetView().AttrChangedNotify( &rSh );
         }
         return;

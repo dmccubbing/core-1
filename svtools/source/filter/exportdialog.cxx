@@ -502,7 +502,7 @@ Bitmap ExportDialog::GetGraphicBitmap( SvStream& rInputStream )
     Bitmap aRet;
     Graphic aGraphic;
     GraphicFilter aFilter( false );
-    if ( aFilter.ImportGraphic( aGraphic, "", rInputStream, GRFILTER_FORMAT_NOTFOUND, NULL, GraphicFilterImportFlags::NONE, static_cast<com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >*>(NULL), NULL ) == GRFILTER_OK )
+    if ( aFilter.ImportGraphic( aGraphic, "", rInputStream, GRFILTER_FORMAT_NOTFOUND, NULL, GraphicFilterImportFlags::NONE, static_cast<com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >*>(NULL) ) == GRFILTER_OK )
     {
         aRet = aGraphic.GetBitmap();
     }
@@ -658,7 +658,7 @@ ExportDialog::ExportDialog(FltCallDialogParameter& rPara,
     setupControls();
 
     // Size
-    mpLbSizeX->SetSelectHdl( LINK( this, ExportDialog, SelectHdl ) );
+    mpLbSizeX->SetSelectHdl( LINK( this, ExportDialog, SelectListBoxHdl ) );
 
     if (mpSbCompression)
         mpSbCompression->SetScrollHdl(LINK(this, ExportDialog, SbCompressionUpdateHdl));
@@ -669,9 +669,9 @@ ExportDialog::ExportDialog(FltCallDialogParameter& rPara,
     mpMfSizeY->SetModifyHdl( LINK( this, ExportDialog, UpdateHdlMtfSizeY ) );
 
     mpNfResolution->SetModifyHdl( LINK( this, ExportDialog, UpdateHdlNfResolution ) );
-    mpLbResolution->SetSelectHdl( LINK( this, ExportDialog, SelectHdl ) );
+    mpLbResolution->SetSelectHdl( LINK( this, ExportDialog, SelectListBoxHdl ) );
 
-    mpLbColorDepth->SetSelectHdl( LINK( this, ExportDialog, SelectHdl ) );
+    mpLbColorDepth->SetSelectHdl( LINK( this, ExportDialog, SelectListBoxHdl ) );
 
     mpCbInterlaced->SetClickHdl( LINK( this, ExportDialog, UpdateHdl ) );
 
@@ -1028,17 +1028,20 @@ void ExportDialog::dispose()
 |* stores values set in the ini-file
 |*
 \************************************************************************/
-IMPL_LINK_NOARG(ExportDialog, SelectHdl)
+IMPL_LINK_NOARG_TYPED(ExportDialog, SelectHdl, Edit&, void)
 {
-    UpdateHdl(NULL);
-    return 0;
+    updateControls();
+}
+IMPL_LINK_NOARG_TYPED(ExportDialog, SelectListBoxHdl, ListBox&, void)
+{
+    updateControls();
 }
 IMPL_LINK_NOARG_TYPED(ExportDialog, UpdateHdl, Button*, void)
 {
     updateControls();
 }
 
-IMPL_LINK_NOARG(ExportDialog, UpdateHdlMtfSizeX)
+IMPL_LINK_NOARG_TYPED(ExportDialog, UpdateHdlMtfSizeX, Edit&, void)
 {
     double fRatio = static_cast< double >( maOriginalSize.Height ) / maOriginalSize.Width;
 
@@ -1069,10 +1072,9 @@ IMPL_LINK_NOARG(ExportDialog, UpdateHdlMtfSizeX)
             maSize.Height = aDest.Height();
     }
     updateControls();
-    return 0;
 }
 
-IMPL_LINK_NOARG(ExportDialog, UpdateHdlMtfSizeY)
+IMPL_LINK_NOARG_TYPED(ExportDialog, UpdateHdlMtfSizeY, Edit&, void)
 {
     double fRatio = static_cast< double >( maOriginalSize.Width ) / maOriginalSize.Height;
 
@@ -1103,10 +1105,9 @@ IMPL_LINK_NOARG(ExportDialog, UpdateHdlMtfSizeY)
             maSize.Width = aDest.Width();
     }
     updateControls();
-    return 0;
 }
 
-IMPL_LINK_NOARG(ExportDialog, UpdateHdlNfResolution)
+IMPL_LINK_NOARG_TYPED(ExportDialog, UpdateHdlNfResolution, Edit&, void)
 {
     sal_Int32 nResolution = mpNfResolution->GetValue();
     if ( mpLbResolution->GetSelectEntryPos() == 0 )      // pixels / cm
@@ -1117,7 +1118,6 @@ IMPL_LINK_NOARG(ExportDialog, UpdateHdlNfResolution)
     maResolution.Height= nResolution;
 
     updateControls();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(ExportDialog, SbCompressionUpdateHdl, ScrollBar*, void)

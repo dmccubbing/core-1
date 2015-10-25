@@ -53,7 +53,7 @@ const FuncDataBase pFuncDatas[] =
     FUNCDATA( Edate,            UNIQUE,     INTPAR,     2,          FDCat_DateTime ),
     FUNCDATAS( Weeknum,         DOUBLE,     INTPAR,     2,          FDCat_DateTime, "_EXCEL2003" ),
     FUNCDATA( Eomonth,          UNIQUE,     INTPAR,     2,          FDCat_DateTime ),
-    FUNCDATAS( Networkdays,     DOUBLE,     INTPAR,     3,          FDCat_DateTime, "_XCL" ),
+    FUNCDATAS( Networkdays,     DOUBLE,     INTPAR,     3,          FDCat_DateTime, "_EXCEL2003" ),
     FUNCDATA( Iseven,           DOUBLE,     STDPAR,     1,          FDCat_Inf ),
     FUNCDATA( Isodd,            DOUBLE,     STDPAR,     1,          FDCat_Inf ),
     FUNCDATA( Multinomial,      UNIQUE,     STDPAR,     1,          FDCat_Math ),
@@ -62,8 +62,8 @@ const FuncDataBase pFuncDatas[] =
     FUNCDATA( Mround,           UNIQUE,     STDPAR,     2,          FDCat_Math ),
     FUNCDATA( Sqrtpi,           UNIQUE,     STDPAR,     1,          FDCat_Math ),
     FUNCDATA( Randbetween,      UNIQUE,     STDPAR,     2,          FDCat_Math ),
-    FUNCDATA( Gcd,              DOUBLE,     INTPAR,     1,          FDCat_Math ),
-    FUNCDATA( Lcm,              DOUBLE,     INTPAR,     1,          FDCat_Math ),
+    FUNCDATAS( Gcd,             DOUBLE,     INTPAR,     1,          FDCat_Math, "_EXCEL2003" ),
+    FUNCDATAS( Lcm,             DOUBLE,     INTPAR,     1,          FDCat_Math, "_EXCEL2003" ),
     FUNCDATA( Besseli,          UNIQUE,     STDPAR,     2,          FDCat_Tech ),
     FUNCDATA( Besselj,          UNIQUE,     STDPAR,     2,          FDCat_Tech ),
     FUNCDATA( Besselk,          UNIQUE,     STDPAR,     2,          FDCat_Tech ),
@@ -1002,13 +1002,13 @@ double GetAmordegrc( sal_Int32 nNullDate, double fCost, sal_Int32 nDate, sal_Int
         fAmorCoeff = 2.5;
 
     fRate *= fAmorCoeff;
-    double      fNRate = ::rtl::math::round( GetYearFrac( nNullDate, nDate, nFirstPer, nBase ) * fRate * fCost, 0 );
+    double      fNRate = ::rtl::math::round( GetYearFrac( nNullDate, nDate, nFirstPer, nBase ) * fRate * fCost );
     fCost -= fNRate;
     double      fRest = fCost - fRestVal;   // aboriginal cost - residual value - sum of all write-downs
 
     for( sal_uInt32 n = 0 ; n < nPer ; n++ )
     {
-        fNRate = ::rtl::math::round( fRate * fCost, 0 );
+        fNRate = ::rtl::math::round( fRate * fCost );
         fRest -= fNRate;
 
         if( fRest < 0.0 )
@@ -1017,7 +1017,7 @@ double GetAmordegrc( sal_Int32 nNullDate, double fCost, sal_Int32 nDate, sal_Int
             {
                 case 0:
                 case 1:
-                    return ::rtl::math::round( fCost * 0.5, 0 );
+                    return ::rtl::math::round( fCost * 0.5 );
                 default:
                     return 0.0;
             }

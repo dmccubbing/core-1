@@ -139,10 +139,17 @@ IMPL_LINK_TYPED(SwMailMergeGreetingsPage, AssignHdl_Impl, Button*, pButton, void
     }
 }
 
-IMPL_LINK_NOARG(SwMailMergeGreetingsPage, GreetingSelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwMailMergeGreetingsPage, GreetingSelectHdl_Impl, Edit&, void)
 {
     UpdatePreview();
-    return 0;
+}
+IMPL_LINK_NOARG_TYPED(SwMailMergeGreetingsPage, GreetingSelectListBoxHdl_Impl, ListBox&, void)
+{
+    UpdatePreview();
+}
+IMPL_LINK_NOARG_TYPED(SwMailMergeGreetingsPage, GreetingSelectComboBoxHdl_Impl, ComboBox&, void)
+{
+    UpdatePreview();
 }
 
 void SwMailMergeGreetingsPage::UpdatePreview()
@@ -259,13 +266,14 @@ SwMailMergeGreetingsPage::SwMailMergeGreetingsPage(SwMailMergeWizard* _pParent)
     m_pFemalePB->SetClickHdl(aGreetingLink);
     m_pMalePB->SetClickHdl(aGreetingLink);
     m_pAssignPB->SetClickHdl(LINK(this, SwMailMergeGreetingsPage, AssignHdl_Impl));
-    Link<> aLBoxLink = LINK(this, SwMailMergeGreetingsPage, GreetingSelectHdl_Impl);
-    m_pFemaleLB->SetSelectHdl(aLBoxLink);
-    m_pMaleLB->SetSelectHdl(aLBoxLink);
-    m_pFemaleColumnLB->SetSelectHdl(aLBoxLink);
-    m_pFemaleFieldCB->SetSelectHdl(aLBoxLink);
+    Link<Edit&,void> aLBoxLink = LINK(this, SwMailMergeGreetingsPage, GreetingSelectHdl_Impl);
+    Link<ListBox&,void> aLBoxLink2 = LINK(this, SwMailMergeGreetingsPage, GreetingSelectListBoxHdl_Impl);
+    m_pFemaleLB->SetSelectHdl(aLBoxLink2);
+    m_pMaleLB->SetSelectHdl(aLBoxLink2);
+    m_pFemaleColumnLB->SetSelectHdl(aLBoxLink2);
+    m_pFemaleFieldCB->SetSelectHdl(LINK(this, SwMailMergeGreetingsPage, GreetingSelectComboBoxHdl_Impl));
     m_pFemaleFieldCB->SetModifyHdl(aLBoxLink);
-    m_pNeutralCB->SetSelectHdl(aLBoxLink);
+    m_pNeutralCB->SetSelectHdl(LINK(this, SwMailMergeGreetingsPage, GreetingSelectComboBoxHdl_Impl));
     m_pNeutralCB->SetModifyHdl(aLBoxLink);
 
     Link<Button*,void> aDataLink = LINK(this, SwMailMergeGreetingsPage, InsertDataHdl_Impl);

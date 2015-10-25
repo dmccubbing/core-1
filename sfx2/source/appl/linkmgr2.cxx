@@ -60,7 +60,7 @@ class SvxInternalLink : public sfx2::SvLinkSource
 public:
     SvxInternalLink() {}
 
-    virtual bool Connect( sfx2::SvBaseLink* ) SAL_OVERRIDE;
+    virtual bool Connect( sfx2::SvBaseLink* ) override;
 };
 
 
@@ -567,7 +567,7 @@ OUString lcl_DDE_RelToAbs( const OUString& rTopic, const OUString& rBaseURL )
     if( INetProtocol::NotValid == aURL.GetProtocol() )
         osl::FileBase::getFileURLFromSystemPath(rTopic, sRet);
     if( sRet.isEmpty() )
-        sRet = URIHelper::SmartRel2Abs( INetURLObject(rBaseURL), rTopic, URIHelper::GetMaybeFileHdl(), true );
+        sRet = URIHelper::SmartRel2Abs( INetURLObject(rBaseURL), rTopic, URIHelper::GetMaybeFileHdl() );
     return sRet;
 }
 
@@ -588,7 +588,7 @@ bool SvxInternalLink::Connect( sfx2::SvBaseLink* pLink )
         if( pShell && pShell->GetMedium() )
         {
             sReferer = pShell->GetMedium()->GetBaseURL();
-            SFX_ITEMSET_ARG( pShell->GetMedium()->GetItemSet(), pItem, SfxUInt16Item, SID_UPDATEDOCMODE, false );
+            const SfxUInt16Item* pItem = SfxItemSet::GetItem<SfxUInt16Item>(pShell->GetMedium()->GetItemSet(), SID_UPDATEDOCMODE, false);
             if ( pItem )
                 nUpdateMode = pItem->GetValue();
         }

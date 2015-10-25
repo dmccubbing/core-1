@@ -86,8 +86,8 @@ SfxStyleSheetHint::SfxStyleSheetHint
 class SfxStyleSheetBasePool_Impl
 {
 private:
-    SfxStyleSheetBasePool_Impl(const SfxStyleSheetBasePool_Impl&) SAL_DELETED_FUNCTION;
-    SfxStyleSheetBasePool_Impl& operator=(const SfxStyleSheetBasePool_Impl&) SAL_DELETED_FUNCTION;
+    SfxStyleSheetBasePool_Impl(const SfxStyleSheetBasePool_Impl&) = delete;
+    SfxStyleSheetBasePool_Impl& operator=(const SfxStyleSheetBasePool_Impl&) = delete;
 public:
     SfxStyleSheetIteratorPtr pIter;
 
@@ -380,13 +380,13 @@ inline bool SfxStyleSheetIterator::IsTrivialSearch()
 
 namespace {
 
-struct DoesStyleMatchStyleSheetPredicate SAL_FINAL : public svl::StyleSheetPredicate
+struct DoesStyleMatchStyleSheetPredicate final : public svl::StyleSheetPredicate
 {
     explicit DoesStyleMatchStyleSheetPredicate(SfxStyleSheetIterator *it)
             : mIterator(it) {;}
 
     bool
-    Check(const SfxStyleSheetBase& styleSheet) SAL_OVERRIDE
+    Check(const SfxStyleSheetBase& styleSheet) override
     {
         bool bMatchFamily = ((mIterator->GetSearchFamily() == SFX_STYLE_FAMILY_ALL) ||
                 ( styleSheet.GetFamily() == mIterator->GetSearchFamily() ));
@@ -707,7 +707,7 @@ struct AddStyleSheetCallback : svl::StyleSheetCallback
     explicit AddStyleSheetCallback(SfxStyleSheetBasePool *pool)
     : mPool(pool) {;}
 
-    void DoIt(const SfxStyleSheetBase& ssheet) SAL_OVERRIDE
+    void DoIt(const SfxStyleSheetBase& ssheet) override
     {
         mPool->Add(ssheet);
     }
@@ -805,13 +805,13 @@ void SfxStyleSheetBasePool::Insert( SfxStyleSheetBase* p )
 namespace
 {
 
-struct StyleSheetDisposerFunctor SAL_FINAL : public svl::StyleSheetDisposer
+struct StyleSheetDisposerFunctor final : public svl::StyleSheetDisposer
 {
     explicit StyleSheetDisposerFunctor(SfxStyleSheetBasePool* pool)
             : mPool(pool) {;}
 
     void
-    Dispose(rtl::Reference<SfxStyleSheetBase> styleSheet) SAL_OVERRIDE
+    Dispose(rtl::Reference<SfxStyleSheetBase> styleSheet) override
     {
         cppu::OWeakObject* weakObject = static_cast< ::cppu::OWeakObject* >(styleSheet.get());
         com::sun::star::uno::Reference< com::sun::star::lang::XComponent >

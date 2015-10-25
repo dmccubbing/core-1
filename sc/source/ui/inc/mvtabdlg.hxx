@@ -32,7 +32,7 @@ class ScMoveTableDlg : public ModalDialog
 public:
     ScMoveTableDlg(vcl::Window* pParent, const OUString& rDefault);
     virtual ~ScMoveTableDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     sal_uInt16  GetSelectedDocument     () const { return nDocument; }
     SCTAB   GetSelectedTable        () const { return nTable; }
@@ -76,9 +76,9 @@ private:
     void    Init            ();
     void    InitDocListBox  ();
     DECL_LINK_TYPED( OkHdl, Button*, void );
-    DECL_LINK( SelHdl, ListBox * );
+    DECL_LINK_TYPED( SelHdl, ListBox&, void );
     DECL_LINK_TYPED( CheckBtnHdl, RadioButton&, void );
-    DECL_LINK( CheckNameHdl, Edit * );
+    DECL_LINK_TYPED( CheckNameHdl, Edit&, void );
 };
 
 #endif // INCLUDED_SC_SOURCE_UI_INC_MVTABDLG_HXX

@@ -1083,6 +1083,8 @@ void SdPageObjsTLB::KeyInput( const KeyEvent& rKEvt )
     {
         // commented code from svtools/source/contnr/svimpbox.cxx
         SvTreeListEntry* pCursor = GetCurEntry();
+        if (!pCursor)
+            return;
         if( pCursor->HasChildren() || pCursor->HasChildrenOnDemand() )
         {
             if( IsExpanded( pCursor ) )
@@ -1159,7 +1161,7 @@ void SdPageObjsTLB::StartDrag( sal_Int8 nAction, const Point& rPosPixel)
             Select(pParent);
             //            for (SvTreeListEntry*pChild=FirstChild(pParent); pChild!=NULL; pChild=NextSibling(pChild))
             //                Select(pChild, sal_True);
-            EnableSelectionAsDropTarget(true);//sal_False);
+            EnableSelectionAsDropTarget();//sal_False);
         }
 
         // Set selection back to the entry under the mouse.

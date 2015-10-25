@@ -574,7 +574,7 @@ sal_uInt32 SfxFilterMatcher::DetectFilter( SfxMedium& rMedium, const SfxFilter**
             pOldFilter = 0;
         else
         {
-            SFX_ITEMSET_ARG( rMedium.GetItemSet(), pSalvageItem, SfxStringItem, SID_DOC_SALVAGE, false);
+            const SfxStringItem* pSalvageItem = SfxItemSet::GetItem<SfxStringItem>(rMedium.GetItemSet(), SID_DOC_SALVAGE, false);
             if ( ( pOldFilter->GetFilterFlags() & SfxFilterFlags::PACKED ) && pSalvageItem )
                 // Salvage is always done without packing
                 pOldFilter = 0;
@@ -584,7 +584,7 @@ sal_uInt32 SfxFilterMatcher::DetectFilter( SfxMedium& rMedium, const SfxFilter**
     const SfxFilter* pFilter = pOldFilter;
 
     bool bPreview = rMedium.IsPreview_Impl();
-    SFX_ITEMSET_ARG(rMedium.GetItemSet(), pReferer, SfxStringItem, SID_REFERER, false);
+    const SfxStringItem* pReferer = SfxItemSet::GetItem<SfxStringItem>(rMedium.GetItemSet(), SID_REFERER, false);
     if ( bPreview && rMedium.IsRemote() && ( !pReferer || !pReferer->GetValue().match("private:searchfolder:") ) )
         return ERRCODE_ABORT;
 
@@ -621,7 +621,7 @@ sal_uInt32 SfxFilterMatcher::DetectFilter( SfxMedium& rMedium, const SfxFilter**
     }
 
     bool bHidden = bPreview;
-    SFX_ITEMSET_ARG( rMedium.GetItemSet(), pFlags, SfxStringItem, SID_OPTIONS, false);
+    const SfxStringItem* pFlags = SfxItemSet::GetItem<SfxStringItem>(rMedium.GetItemSet(), SID_OPTIONS, false);
     if ( !bHidden && pFlags )
     {
         OUString aFlags( pFlags->GetValue() );
@@ -864,7 +864,7 @@ const SfxFilter* SfxFilterMatcher::GetFilter4FilterName( const OUString& rName, 
 
 IMPL_LINK_TYPED( SfxFilterMatcher, MaybeFileHdl_Impl, OUString*, pString, bool )
 {
-    const SfxFilter* pFilter = GetFilter4Extension( *pString, SfxFilterFlags::IMPORT );
+    const SfxFilter* pFilter = GetFilter4Extension( *pString );
     if (pFilter && !pFilter->GetWildcard().Matches( OUString() ) &&
         !pFilter->GetWildcard().Matches(OUString("*.*")) &&
         !pFilter->GetWildcard().Matches(OUString('*'))

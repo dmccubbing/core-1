@@ -68,22 +68,22 @@ SvxCharacterMap::SvxCharacterMap( vcl::Window* pParent, bool bOne_, const SfxIte
     m_pCharCodeText->set_width_request(m_pCharCodeText->get_preferred_size().Width());
     get(m_pSymbolText, "symboltext");
 
-    SFX_ITEMSET_ARG( pSet, pItem, SfxBoolItem, FN_PARAM_1, false );
+    const SfxBoolItem* pItem = SfxItemSet::GetItem<SfxBoolItem>(pSet, FN_PARAM_1, false);
     if ( pItem )
         bOne = pItem->GetValue();
 
     init();
 
-    SFX_ITEMSET_ARG( pSet, pCharItem, SfxInt32Item, SID_ATTR_CHAR, false );
+    const SfxInt32Item* pCharItem = SfxItemSet::GetItem<SfxInt32Item>(pSet, SID_ATTR_CHAR, false);
     if ( pCharItem )
         SetChar( pCharItem->GetValue() );
 
-    SFX_ITEMSET_ARG( pSet, pDisableItem, SfxBoolItem, FN_PARAM_2, false );
+    const SfxBoolItem* pDisableItem = SfxItemSet::GetItem<SfxBoolItem>(pSet, FN_PARAM_2, false);
     if ( pDisableItem && pDisableItem->GetValue() )
         DisableFontSelection();
 
-    SFX_ITEMSET_ARG( pSet, pFontItem, SvxFontItem, SID_ATTR_CHAR_FONT, false );
-    SFX_ITEMSET_ARG( pSet, pFontNameItem, SfxStringItem, SID_FONT_NAME, false );
+    const SvxFontItem* pFontItem = SfxItemSet::GetItem<SvxFontItem>(pSet, SID_ATTR_CHAR_FONT, false);
+    const SfxStringItem* pFontNameItem = SfxItemSet::GetItem<SfxStringItem>(pSet, SID_FONT_NAME, false);
     if ( pFontItem )
     {
         vcl::Font aTmpFont( pFontItem->GetFamilyName(), pFontItem->GetStyleName(), GetCharFont().GetSize() );
@@ -359,7 +359,7 @@ void SvxCharacterMap::init()
         m_pFontLB->SelectEntry( aDefStr );
     else if ( m_pFontLB->GetEntryCount() )
         m_pFontLB->SelectEntryPos(0);
-    FontSelectHdl(m_pFontLB);
+    FontSelectHdl(*m_pFontLB);
 
     m_pOKBtn->SetClickHdl( LINK( this, SvxCharacterMap, OKHdl ) );
     m_pFontLB->SetSelectHdl( LINK( this, SvxCharacterMap, FontSelectHdl ) );
@@ -388,7 +388,7 @@ void SvxCharacterMap::SetCharFont( const vcl::Font& rFont )
 
     m_pFontLB->SelectEntry( aTmp.GetName() );
     aFont = aTmp;
-    FontSelectHdl(m_pFontLB);
+    FontSelectHdl(*m_pFontLB);
 
     // for compatibility reasons
     ModalDialog::SetFont( aFont );
@@ -424,7 +424,7 @@ void SvxCharacterMap::fillAllSubsets(ListBox &rListBox)
 
 
 
-IMPL_LINK_NOARG(SvxCharacterMap, FontSelectHdl)
+IMPL_LINK_NOARG_TYPED(SvxCharacterMap, FontSelectHdl, ListBox&, void)
 {
     const sal_Int32 nPos = m_pFontLB->GetSelectEntryPos();
     const sal_uInt16 nFont = (sal_uInt16)reinterpret_cast<sal_uLong>(m_pFontLB->GetEntryData( nPos ));
@@ -473,13 +473,11 @@ IMPL_LINK_NOARG(SvxCharacterMap, FontSelectHdl)
 
     m_pSubsetText->Enable(bNeedSubset);
     m_pSubsetLB->Enable(bNeedSubset);
-
-    return 0;
 }
 
 
 
-IMPL_LINK_NOARG(SvxCharacterMap, SubsetSelectHdl)
+IMPL_LINK_NOARG_TYPED(SvxCharacterMap, SubsetSelectHdl, ListBox&, void)
 {
     const sal_Int32 nPos = m_pSubsetLB->GetSelectEntryPos();
     const Subset* pSubset = static_cast<const Subset*> (m_pSubsetLB->GetEntryData(nPos));
@@ -489,7 +487,6 @@ IMPL_LINK_NOARG(SvxCharacterMap, SubsetSelectHdl)
         m_pShowSet->SelectCharacter( cFirst );
     }
     m_pSubsetLB->SelectEntryPos( nPos );
-    return 0;
 }
 
 

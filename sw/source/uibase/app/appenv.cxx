@@ -160,7 +160,7 @@ void SwModule::InsertEnv( SfxRequest& rReq )
 
     // Create new document (don't show!)
     SfxObjectShellLock xDocSh( new SwDocShell( SfxObjectCreateMode::STANDARD ) );
-    xDocSh->DoInitNew( 0 );
+    xDocSh->DoInitNew();
     pFrame = SfxViewFrame::LoadHiddenDocument( *xDocSh, 0 );
     pNewView = static_cast<SwView*>( pFrame->GetViewShell());
     pNewView->AttrChangedNotify( &pNewView->GetWrtShell() ); // so that SelectShell is being called
@@ -211,7 +211,7 @@ void SwModule::InsertEnv( SfxRequest& rReq )
     std::unique_ptr<SfxAbstractTabDialog> pDlg;
     short nMode = ENV_INSERT;
 
-    SFX_REQUEST_ARG( rReq, pItem, SwEnvItem, FN_ENVELOP, false );
+    const SwEnvItem* pItem = rReq.GetArg<SwEnvItem>(FN_ENVELOP);
     if ( !pItem )
     {
         SwAbstractDialogFactory* pFact = SwAbstractDialogFactory::Create();
@@ -223,7 +223,7 @@ void SwModule::InsertEnv( SfxRequest& rReq )
     }
     else
     {
-        SFX_REQUEST_ARG( rReq, pBoolItem, SfxBoolItem, FN_PARAM_1, false );
+        const SfxBoolItem* pBoolItem = rReq.GetArg<SfxBoolItem>(FN_PARAM_1);
         if ( pBoolItem && pBoolItem->GetValue() )
             nMode = ENV_NEWDOC;
     }
@@ -268,7 +268,7 @@ void SwModule::InsertEnv( SfxRequest& rReq )
             //not be deleted on inserting envelopes
             pSh->EnterStdMode();
             // Here it goes (insert)
-            pSh->StartUndo(UNDO_UI_INSERT_ENVELOPE, NULL);
+            pSh->StartUndo(UNDO_UI_INSERT_ENVELOPE);
             pSh->StartAllAction();
             pSh->SttEndDoc(true);
 

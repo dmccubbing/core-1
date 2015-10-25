@@ -36,12 +36,12 @@ namespace rptxml
         sal_Int32       m_nCurrentCount;
         bool            m_bContainsShape;
 
-        OXMLSubDocument(const OXMLSubDocument&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLSubDocument&) SAL_DELETED_FUNCTION;
+        OXMLSubDocument(const OXMLSubDocument&) = delete;
+        void operator =(const OXMLSubDocument&) = delete;
 
         virtual SvXMLImportContext* _CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
     public:
 
         OXMLSubDocument( ORptFilter& rImport
@@ -52,8 +52,8 @@ namespace rptxml
                     ,OXMLCell* _pCellParent);
         virtual ~OXMLSubDocument();
 
-        virtual void EndElement() SAL_OVERRIDE;
-        virtual void addMasterDetailPair(const ::std::pair< OUString,OUString >& _aPair) SAL_OVERRIDE;
+        virtual void EndElement() override;
+        virtual void addMasterDetailPair(const ::std::pair< OUString,OUString >& _aPair) override;
     };
 
 } // namespace rptxml

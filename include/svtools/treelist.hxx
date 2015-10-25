@@ -127,8 +127,8 @@ class SVT_DLLPUBLIC SvTreeList
     SVT_DLLPRIVATE void ResortChildren( SvTreeListEntry* pParent );
     SVT_DLLPRIVATE void ReverseChildren( SvTreeListEntry* pParent );
 
-    SvTreeList(const SvTreeList&) SAL_DELETED_FUNCTION;
-    SvTreeList& operator= (const SvTreeList&) SAL_DELETED_FUNCTION;
+    SvTreeList(const SvTreeList&) = delete;
+    SvTreeList& operator= (const SvTreeList&) = delete;
 
 protected:
     SvTreeListEntry*        pRootItem;
@@ -210,8 +210,6 @@ public:
 
     // The Model calls the Clone Link to clone Entries.
     // Thus we do not need to derive from the Model if we derive from SvTreeListEntry.
-    // Declaration of the Clone Handler:
-    // DECL_LINK(CloneHdl,SvTreeListEntry*);
     // The Handler needs to return a SvTreeListEntry*
     SvTreeListEntry*    Clone( SvTreeListEntry* pEntry, sal_uLong& nCloneCount ) const;
     void                SetCloneLink( const Link<SvTreeListEntry*,SvTreeListEntry*>& rLink )

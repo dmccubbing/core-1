@@ -48,9 +48,9 @@ namespace offapp
     public:
         explicit DriverListControl(vcl::Window* _pParent);
 
-        virtual void Init() SAL_OVERRIDE;
+        virtual void Init() override;
                 void Update(const DriverPoolingSettings& _rSettings);
-        virtual OUString GetCellText( long nRow, sal_uInt16 nColId ) const SAL_OVERRIDE;
+        virtual OUString GetCellText( long nRow, sal_uInt16 nColId ) const override;
 
         // the handler will be called with a DriverPoolingSettings::const_iterator as parameter,
         // or NULL if no valid current row exists
@@ -65,22 +65,22 @@ namespace offapp
         bool    isModified() const;
 
     protected:
-        virtual void InitController( ::svt::CellControllerRef& rController, long nRow, sal_uInt16 nCol ) SAL_OVERRIDE;
-        virtual ::svt::CellController* GetController( long nRow, sal_uInt16 nCol ) SAL_OVERRIDE;
+        virtual void InitController( ::svt::CellControllerRef& rController, long nRow, sal_uInt16 nCol ) override;
+        virtual ::svt::CellController* GetController( long nRow, sal_uInt16 nCol ) override;
 
-        virtual void PaintCell( OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId ) const SAL_OVERRIDE;
+        virtual void PaintCell( OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId ) const override;
 
-        virtual bool SeekRow( long nRow ) SAL_OVERRIDE;
-        virtual bool SaveModified() SAL_OVERRIDE;
+        virtual bool SeekRow( long nRow ) override;
+        virtual bool SaveModified() override;
 
-        virtual bool IsTabAllowed(bool _bForward) const SAL_OVERRIDE;
+        virtual bool IsTabAllowed(bool _bForward) const override;
 
-        virtual void StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
+        virtual void StateChanged( StateChangedType nStateChange ) override;
 
-        virtual void CursorMoved() SAL_OVERRIDE;
+        virtual void CursorMoved() override;
 
     protected:
-        virtual sal_uInt32 GetTotalCellWidth(long nRow, sal_uInt16 nColId) SAL_OVERRIDE;
+        virtual sal_uInt32 GetTotalCellWidth(long nRow, sal_uInt16 nColId) override;
 
 
     private:
@@ -345,14 +345,14 @@ namespace offapp
     void ConnectionPoolOptionsPage::implInitControls(const SfxItemSet& _rSet, bool /*_bFromReset*/)
     {
         // the enabled flag
-        SFX_ITEMSET_GET( _rSet, pEnabled, SfxBoolItem, SID_SB_POOLING_ENABLED, true );
+        const SfxBoolItem* pEnabled = _rSet.GetItem<SfxBoolItem>(SID_SB_POOLING_ENABLED);
         OSL_ENSURE(pEnabled, "ConnectionPoolOptionsPage::implInitControls: missing the Enabled item!");
         m_pEnablePooling->Check(pEnabled == nullptr || pEnabled->GetValue());
 
         m_pEnablePooling->SaveValue();
 
         // the settings for the single drivers
-        SFX_ITEMSET_GET( _rSet, pDriverSettings, DriverPoolingSettingsItem, SID_SB_DRIVER_TIMEOUTS, true );
+        const DriverPoolingSettingsItem* pDriverSettings = _rSet.GetItem<DriverPoolingSettingsItem>(SID_SB_DRIVER_TIMEOUTS);
         if (pDriverSettings)
             m_pDriverList->Update(pDriverSettings->getSettings());
         else

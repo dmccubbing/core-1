@@ -58,14 +58,14 @@ namespace sdbtools
         );
 
         // XDataSourceMetaData
-        virtual sal_Bool SAL_CALL supportsQueriesInFrom() throw (css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual sal_Bool SAL_CALL supportsQueriesInFrom() throw (css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
 
     protected:
         virtual ~DataSourceMetaData();
 
     private:
-        DataSourceMetaData( const DataSourceMetaData& ) SAL_DELETED_FUNCTION;
-        DataSourceMetaData& operator=( const DataSourceMetaData& ) SAL_DELETED_FUNCTION;
+        DataSourceMetaData( const DataSourceMetaData& ) = delete;
+        DataSourceMetaData& operator=( const DataSourceMetaData& ) = delete;
     };
 
 } // namespace sdbtools

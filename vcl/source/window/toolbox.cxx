@@ -2972,7 +2972,7 @@ void ToolBox::ImplDrawButton(vcl::RenderContext& rRenderContext, const Rectangle
     }
 
     if (!bNativeOk)
-        vcl::RenderTools::DrawSelectionBackground(rRenderContext, *this, rRect, bIsWindow ? 3 : highlight, bChecked, true, bIsWindow, NULL, 2, NULL);
+        vcl::RenderTools::DrawSelectionBackground(rRenderContext, *this, rRect, bIsWindow ? 3 : highlight, bChecked, true, bIsWindow, NULL, 2);
 }
 
 void ToolBox::ImplDrawItem(vcl::RenderContext& rRenderContext, sal_uInt16 nPos, sal_uInt16 nHighlight, bool bPaint, bool bLayout)
@@ -4421,8 +4421,7 @@ bool ToolBox::Notify( NotifyEvent& rNEvt )
 
 void ToolBox::Command( const CommandEvent& rCEvt )
 {
-    if ( maCommandHandler.IsSet() )
-        maCommandHandler.Call( &rCEvt );
+    maCommandHandler.Call( &rCEvt );
 
     // depict StartDrag on MouseButton/Left/Alt
     if ( (rCEvt.GetCommand() == CommandEventId::StartDrag) && rCEvt.IsMouseEvent() &&
@@ -4515,8 +4514,7 @@ void ToolBox::StateChanged( StateChangedType nType )
         Invalidate();
     }
 
-    if ( maStateChangedHandler.IsSet() )
-        maStateChangedHandler.Call( &nType );
+    maStateChangedHandler.Call( &nType );
 }
 
 void ToolBox::DataChanged( const DataChangedEvent& rDCEvt )
@@ -4535,8 +4533,7 @@ void ToolBox::DataChanged( const DataChangedEvent& rDCEvt )
         Invalidate();
     }
 
-    if ( maDataChangedHandler.IsSet() )
-        maDataChangedHandler.Call( &rDCEvt );
+    maDataChangedHandler.Call( &rDCEvt );
 }
 
 bool ToolBox::PrepareToggleFloatingMode()

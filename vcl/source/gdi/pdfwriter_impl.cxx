@@ -1437,7 +1437,7 @@ void PDFWriterImpl::PDFPage::appendRect( const Rectangle& rRect, OStringBuffer& 
     rBuffer.append( ' ' );
     appendMappedLength( (sal_Int32)rRect.GetWidth(), rBuffer, false );
     rBuffer.append( ' ' );
-    appendMappedLength( (sal_Int32)rRect.GetHeight(), rBuffer, true );
+    appendMappedLength( (sal_Int32)rRect.GetHeight(), rBuffer );
     rBuffer.append( " re" );
 }
 
@@ -1701,31 +1701,31 @@ void PDFWriterImpl::PDFPage::appendWaveLine( sal_Int32 nWidth, sal_Int32 nY, sal
         nDelta = 1;
 
     rBuffer.append( "0 " );
-    appendMappedLength( nY, rBuffer, true );
+    appendMappedLength( nY, rBuffer );
     rBuffer.append( " m\n" );
     for( sal_Int32 n = 0; n < nWidth; )
     {
         n += nDelta;
         appendMappedLength( n, rBuffer, false );
         rBuffer.append( ' ' );
-        appendMappedLength( nDelta+nY, rBuffer, true );
+        appendMappedLength( nDelta+nY, rBuffer );
         rBuffer.append( ' ' );
         n += nDelta;
         appendMappedLength( n, rBuffer, false );
         rBuffer.append( ' ' );
-        appendMappedLength( nY, rBuffer, true );
+        appendMappedLength( nY, rBuffer );
         rBuffer.append( " v " );
         if( n < nWidth )
         {
             n += nDelta;
             appendMappedLength( n, rBuffer, false );
             rBuffer.append( ' ' );
-            appendMappedLength( nY-nDelta, rBuffer, true );
+            appendMappedLength( nY-nDelta, rBuffer );
             rBuffer.append( ' ' );
             n += nDelta;
             appendMappedLength( n, rBuffer, false );
             rBuffer.append( ' ' );
-            appendMappedLength( nY, rBuffer, true );
+            appendMappedLength( nY, rBuffer );
             rBuffer.append( " v\n" );
         }
     }
@@ -2249,9 +2249,9 @@ public:
     explicit                            ImplPdfBuiltinFontData( const PDFWriterImpl::BuiltinFont& );
     const PDFWriterImpl::BuiltinFont&   GetBuiltinFont() const  { return mrBuiltin; }
 
-    virtual PhysicalFontFace*           Clone() const SAL_OVERRIDE { return new ImplPdfBuiltinFontData(*this); }
-    virtual ImplFontEntry*              CreateFontInstance( FontSelectPattern& ) const SAL_OVERRIDE;
-    virtual sal_IntPtr                  GetFontId() const SAL_OVERRIDE { return reinterpret_cast<sal_IntPtr>(&mrBuiltin); }
+    virtual PhysicalFontFace*           Clone() const override { return new ImplPdfBuiltinFontData(*this); }
+    virtual ImplFontEntry*              CreateFontInstance( FontSelectPattern& ) const override;
+    virtual sal_IntPtr                  GetFontId() const override { return reinterpret_cast<sal_IntPtr>(&mrBuiltin); }
 };
 
 inline const ImplPdfBuiltinFontData* GetPdfFontData( const PhysicalFontFace* pFontData )
@@ -4497,7 +4497,7 @@ we check in the following sequence:
 // extract target file type
             INetURLObject aDocumentURL( m_aContext.BaseURL );
             INetURLObject aTargetURL( rLink.m_aURL );
-            sal_Int32   nSetGoToRMode = 0;
+            bool bSetGoToRMode = false;
             bool    bTargetHasPDFExtension = false;
             INetProtocol eTargetProtocol = aTargetURL.GetProtocol();
             bool    bIsUNCPath = false;
@@ -4554,7 +4554,7 @@ we check in the following sequence:
                 //check if extension is pdf, see if GoToR should be forced
                 bTargetHasPDFExtension = aTargetURL.GetFileExtension().equalsIgnoreAsciiCase( "pdf" );
                 if( m_aContext.ForcePDFAction && bTargetHasPDFExtension )
-                    nSetGoToRMode++;
+                    bSetGoToRMode = true;
             }
             //prepare the URL, if relative or not
             INetProtocol eBaseProtocol = aDocumentURL.GetProtocol();
@@ -4576,7 +4576,7 @@ we check in the following sequence:
                     bSetRelative = true;
 
                 OUString aFragment = aTargetURL.GetMark( INetURLObject::NO_DECODE /*DECODE_WITH_CHARSET*/ ); //fragment as is,
-                if( nSetGoToRMode == 0 )
+                if( !bSetGoToRMode )
                 {
                     switch( m_aContext.DefaultLinkAction )
                     {
@@ -4608,7 +4608,7 @@ we check in the following sequence:
                 }
 
                 //fragment are encoded in the same way as in the named destination processing
-                if( nSetGoToRMode )
+                if( bSetGoToRMode )
                 {
                     //add the fragment
                     OUString aURLNoMark = aTargetURL.GetURLNoMark( INetURLObject::DECODE_WITH_CHARSET );
@@ -5927,7 +5927,7 @@ bool PDFWriterImpl::emitCatalog()
         aLine.append( "/DR " );
         aLine.append( getResourceDictObj() );
         aLine.append( " 0 R" );
-        // /NeedAppearances must not be used if PDF is signed
+        // NeedAppearances must not be used if PDF is signed
         if( m_bIsPDF_A1
 #if !defined(ANDROID) && !defined(IOS)
             || ( m_nSignatureObject != -1 )
@@ -6570,8 +6570,7 @@ my_NSS_CMSAttributeArray_FindAttrByOidTag(NSSCMSAttribute **attrs, SECOidTag oid
 SECStatus
 my_NSS_CMSArray_Add(PLArenaPool *poolp, void ***array, void *obj)
 {
-    void **p;
-    int n;
+    int n = 0;
     void **dest;
 
     PORT_Assert(array != NULL);
@@ -6579,16 +6578,15 @@ my_NSS_CMSArray_Add(PLArenaPool *poolp, void ***array, void *obj)
         return SECFailure;
 
     if (*array == NULL) {
-    dest = static_cast<void **>(PORT_ArenaAlloc(poolp, 2 * sizeof(void *)));
-    n = 0;
+        dest = static_cast<void **>(PORT_ArenaAlloc(poolp, 2 * sizeof(void *)));
     } else {
-    n = 0; p = *array;
-    while (*p++)
-        n++;
-    dest = static_cast<void **>(PORT_ArenaGrow (poolp,
-                  *array,
-                  (n + 1) * sizeof(void *),
-                  (n + 2) * sizeof(void *)));
+        void **p = *array;
+        while (*p++)
+            n++;
+        dest = static_cast<void **>(PORT_ArenaGrow (poolp,
+                      *array,
+                      (n + 1) * sizeof(void *),
+                      (n + 2) * sizeof(void *)));
     }
 
     if (dest == NULL)
@@ -8246,9 +8244,9 @@ class PDFStreamIf :
     explicit PDFStreamIf( PDFWriterImpl* pWriter ) : m_pWriter( pWriter ), m_bWrite( true ) {}
     virtual ~PDFStreamIf();
 
-    virtual void SAL_CALL writeBytes( const com::sun::star::uno::Sequence< sal_Int8 >& aData ) throw(std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL flush() throw(std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL closeOutput() throw(std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL writeBytes( const com::sun::star::uno::Sequence< sal_Int8 >& aData ) throw(std::exception) override;
+    virtual void SAL_CALL flush() throw(std::exception) override;
+    virtual void SAL_CALL closeOutput() throw(std::exception) override;
 };
 }
 
@@ -8727,7 +8725,7 @@ void PDFWriterImpl::drawVerticalGlyphs(
             rLine.append( " /F" );
             rLine.append( rGlyphs[i].m_nMappedFontId );
             rLine.append( ' ' );
-            m_aPages.back().appendMappedLength( nFontHeight, rLine, true );
+            m_aPages.back().appendMappedLength( nFontHeight, rLine );
             rLine.append( " Tf" );
         }
         rLine.append( "<" );
@@ -8781,7 +8779,7 @@ void PDFWriterImpl::drawHorizontalGlyphs(
         Matrix3 aMat;
         if( nRun == 0 && fAngle == 0.0 && fXScale == 1.0 && fSkew == 0.0 )
         {
-            m_aPages.back().appendPoint( aCurPos, rLine, false );
+            m_aPages.back().appendPoint( aCurPos, rLine );
             rLine.append( " Td " );
         }
         else
@@ -8798,7 +8796,7 @@ void PDFWriterImpl::drawHorizontalGlyphs(
         rLine.append( "/F" );
         rLine.append( rGlyphs[nBeginRun].m_nMappedFontId );
         rLine.append( ' ' );
-        m_aPages.back().appendMappedLength( nFontHeight, rLine, true );
+        m_aPages.back().appendMappedLength( nFontHeight, rLine );
         rLine.append( " Tf" );
 
         // output glyphs using Tj or TJ
@@ -9659,7 +9657,7 @@ void PDFWriterImpl::drawStraightTextLine( OStringBuffer& aLine, long nWidth, Fon
 
     if ( nLineHeight )
     {
-        m_aPages.back().appendMappedLength( (sal_Int32)nLineHeight, aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)nLineHeight, aLine );
         aLine.append( " w " );
         appendStrokingColor( aColor, aLine );
         aLine.append( "\n" );
@@ -9730,20 +9728,20 @@ void PDFWriterImpl::drawStraightTextLine( OStringBuffer& aLine, long nWidth, Fon
         }
 
         aLine.append( "0 " );
-        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine );
         aLine.append( " m " );
         m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine, false );
         aLine.append( ' ' );
-        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine );
         aLine.append( " l S\n" );
         if ( eTextLine == UNDERLINE_DOUBLE )
         {
             aLine.append( "0 " );
-            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine, true );
+            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine );
             aLine.append( " m " );
             m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine, false );
             aLine.append( ' ' );
-            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine, true );
+            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine );
             aLine.append( " l S\n" );
         }
     }
@@ -9787,27 +9785,27 @@ void PDFWriterImpl::drawStrikeoutLine( OStringBuffer& aLine, long nWidth, FontSt
 
     if ( nLineHeight )
     {
-        m_aPages.back().appendMappedLength( (sal_Int32)nLineHeight, aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)nLineHeight, aLine );
         aLine.append( " w " );
         appendStrokingColor( aColor, aLine );
         aLine.append( "\n" );
 
         aLine.append( "0 " );
-        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine );
         aLine.append( " m " );
-        m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine );
         aLine.append( ' ' );
-        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos), aLine );
         aLine.append( " l S\n" );
 
         if ( eStrikeout == STRIKEOUT_DOUBLE )
         {
             aLine.append( "0 " );
-            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine, true );
+            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine );
             aLine.append( " m " );
-            m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine, true );
+            m_aPages.back().appendMappedLength( (sal_Int32)nWidth, aLine );
             aLine.append( ' ' );
-            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine, true );
+            m_aPages.back().appendMappedLength( (sal_Int32)(-nLinePos2-nLineHeight), aLine );
             aLine.append( " l S\n" );
         }
     }
@@ -11740,7 +11738,7 @@ void PDFWriterImpl::drawGradient( const Rectangle& rRect, const Gradient& rGradi
     aLine.append( "0 0 " );
     m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetWidth(), aLine, false );
     aLine.append( ' ' );
-    m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetHeight(), aLine, true );
+    m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetHeight(), aLine );
     aLine.append( " re W n\n" );
 
     aLine.append( "/P" );
@@ -11751,7 +11749,7 @@ void PDFWriterImpl::drawGradient( const Rectangle& rRect, const Gradient& rGradi
         aLine.append( "Q 0 0 " );
         m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetWidth(), aLine, false );
         aLine.append( ' ' );
-        m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetHeight(), aLine, true );
+        m_aPages.back().appendMappedLength( (sal_Int32)rRect.GetHeight(), aLine );
         aLine.append( " re S " );
     }
     aLine.append( "Q\n" );

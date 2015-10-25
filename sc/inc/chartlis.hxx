@@ -46,13 +46,13 @@ public:
     public:
         ExternalRefListener(ScChartListener& rParent, ScDocument* pDoc);
         virtual ~ExternalRefListener();
-        virtual void notify(sal_uInt16 nFileId, ScExternalRefManager::LinkUpdateType eType) SAL_OVERRIDE;
+        virtual void notify(sal_uInt16 nFileId, ScExternalRefManager::LinkUpdateType eType) override;
         void addFileId(sal_uInt16 nFileId);
         void removeFileId(sal_uInt16 nFileId);
         std::unordered_set<sal_uInt16>& getAllFileIds() { return maFileIds;}
 
     private:
-        ExternalRefListener(const ExternalRefListener& r) SAL_DELETED_FUNCTION;
+        ExternalRefListener(const ExternalRefListener& r) = delete;
 
         ScChartListener& mrParent;
         std::unordered_set<sal_uInt16> maFileIds;
@@ -71,7 +71,7 @@ private:
     bool            bDirty:1;
     bool            bSeriesRangesScheduled:1;
 
-    ScChartListener& operator=( const ScChartListener& ) SAL_DELETED_FUNCTION;
+    ScChartListener& operator=( const ScChartListener& ) = delete;
 
 public:
     ScChartListener( const OUString& rName, ScDocument* pDoc,
@@ -90,7 +90,7 @@ public:
 
     bool            IsUno() const   { return (pUnoData != NULL); }
 
-    virtual void Notify( const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( const SfxHint& rHint ) override;
     void            StartListeningTo();
     void            EndListeningTo();
     void            ChangeListening( const ScRangeListRef& rRangeListRef,
@@ -147,7 +147,7 @@ private:
 
                     DECL_LINK_TYPED(TimerHdl, Idle *, void);
 
-    ScChartListenerCollection& operator=( const ScChartListenerCollection& ) SAL_DELETED_FUNCTION;
+    ScChartListenerCollection& operator=( const ScChartListenerCollection& ) = delete;
 
 public:
     ScChartListenerCollection( ScDocument* pDoc );

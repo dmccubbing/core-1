@@ -130,7 +130,7 @@ namespace dbaui
 
     void OParameterDialog::Construct()
     {
-        m_pAllParams->SetSelectHdl(LINK(this, OParameterDialog, OnEntrySelected));
+        m_pAllParams->SetSelectHdl(LINK(this, OParameterDialog, OnEntryListBoxSelected));
         m_pParam->SetLoseFocusHdl(LINK(this, OParameterDialog, OnValueLoseFocusHdl));
         m_pParam->SetModifyHdl(LINK(this, OParameterDialog, OnValueModified));
         m_pTravelNext->SetClickHdl(LINK(this, OParameterDialog, OnButtonClicked));
@@ -140,7 +140,7 @@ namespace dbaui
         if (m_pAllParams->GetEntryCount())
         {
             m_pAllParams->SelectEntryPos(0);
-            LINK(this, OParameterDialog, OnEntrySelected).Call(m_pAllParams);
+            OnEntrySelected();
 
             if (m_pAllParams->GetEntryCount() == 1)
             {
@@ -226,7 +226,7 @@ namespace dbaui
         else if (m_pOKBtn == pButton)
         {
             // transfer the current values into the Any
-            if (LINK(this, OParameterDialog, OnEntrySelected).Call(m_pAllParams) != 0L)
+            if (OnEntrySelected())
             {   // there was an error interpreting the current text
                 m_bNeedErrorOnCurrent = true;
                     // we're are out of the complex web :) of direct and indirect calls to OnValueLoseFocus now,
@@ -263,29 +263,36 @@ namespace dbaui
         }
         else if (m_pTravelNext == pButton)
         {
-            sal_Int32 nCurrent = m_pAllParams->GetSelectEntryPos();
-            sal_Int32 nCount = m_pAllParams->GetEntryCount();
-            OSL_ENSURE(static_cast<size_t>(nCount) == m_aVisitedParams.size(), "OParameterDialog::OnButtonClicked : inconsistent lists !");
+            if (sal_Int32 nCount = m_pAllParams->GetEntryCount())
+            {
+                sal_Int32 nCurrent = m_pAllParams->GetSelectEntryPos();
+                OSL_ENSURE(static_cast<size_t>(nCount) == m_aVisitedParams.size(), "OParameterDialog::OnButtonClicked : inconsistent lists !");
 
-            // search the next entry in list we haven't visited yet
-            sal_Int32 nNext = (nCurrent + 1) % nCount;
-            while ((nNext != nCurrent) && ( m_aVisitedParams[nNext] & EF_VISITED ))
-                nNext = (nNext + 1) % nCount;
+                // search the next entry in list we haven't visited yet
+                sal_Int32 nNext = (nCurrent + 1) % nCount;
+                while ((nNext != nCurrent) && ( m_aVisitedParams[nNext] & EF_VISITED ))
+                    nNext = (nNext + 1) % nCount;
 
-            if ( m_aVisitedParams[nNext] & EF_VISITED )
-                // there is no such "not visited yet" entry -> simply take the next one
-                nNext = (nCurrent + 1) % nCount;
+                if ( m_aVisitedParams[nNext] & EF_VISITED )
+                    // there is no such "not visited yet" entry -> simply take the next one
+                    nNext = (nCurrent + 1) % nCount;
 
-            m_pAllParams->SelectEntryPos(nNext);
-            LINK(this, OParameterDialog, OnEntrySelected).Call(m_pAllParams);
-            m_bNeedErrorOnCurrent = true;
-                // we're are out of the complex web :) of direct and indirect calls to OnValueLoseFocus now,
-                // so the next time it is called we need an error message, again ....
-                // (TODO : there surely are better solutions for this ...)
+                m_pAllParams->SelectEntryPos(nNext);
+                OnEntrySelected();
+                m_bNeedErrorOnCurrent = true;
+                    // we're are out of the complex web :) of direct and indirect calls to OnValueLoseFocus now,
+                    // so the next time it is called we need an error message, again ....
+                    // (TODO : there surely are better solutions for this ...)
+            }
         }
     }
 
-    IMPL_LINK(OParameterDialog, OnEntrySelected, ListBox*, /*pList*/)
+    IMPL_LINK_NOARG_TYPED(OParameterDialog, OnEntryListBoxSelected, ListBox&, void)
+    {
+        OnEntrySelected();
+    }
+
+    bool OParameterDialog::OnEntrySelected()
     {
         if (m_aResetVisitFlag.IsActive())
         {
@@ -299,7 +306,7 @@ namespace dbaui
             if (OnValueLoseFocus())
             {   // there was an error interpreting the text
                 m_pAllParams->SelectEntryPos(m_nCurrentlySelected);
-                return 1L;
+                return true;
             }
 
             m_aFinalValues[m_nCurrentlySelected].Value <<= OUString(m_pParam->GetText());
@@ -319,7 +326,7 @@ namespace dbaui
         m_aResetVisitFlag.SetTimeout(1000);
         m_aResetVisitFlag.Start();
 
-        return 0L;
+        return false;
     }
 
     IMPL_LINK_NOARG_TYPED(OParameterDialog, OnVisitedTimeout, Timer*, void)
@@ -368,15 +375,13 @@ namespace dbaui
         }
     }
 
-    IMPL_LINK(OParameterDialog, OnValueModified, Control*, /*pBox*/)
+    IMPL_LINK_NOARG_TYPED(OParameterDialog, OnValueModified, Edit&, void)
     {
         // mark the currently selected entry as dirty
         OSL_ENSURE(static_cast<size_t>(m_nCurrentlySelected) < m_aVisitedParams.size(), "OParameterDialog::OnValueModified : invalid entry !");
         m_aVisitedParams[m_nCurrentlySelected] |= EF_DIRTY;
 
         m_bNeedErrorOnCurrent = true;
-
-        return 0L;
     }
 
 }   // namespace dbaui

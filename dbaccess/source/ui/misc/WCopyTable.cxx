@@ -408,18 +408,18 @@ public:
     static const DummyCopySource& Instance();
 
     // ICopyTableSourceObject overridables
-    virtual OUString            getQualifiedObjectName() const SAL_OVERRIDE;
-    virtual bool                isView() const SAL_OVERRIDE;
-    virtual void                copyUISettingsTo( const css::uno::Reference< css::beans::XPropertySet >& _rxObject ) const SAL_OVERRIDE;
-    virtual void                copyFilterAndSortingTo(const css::uno::Reference< css::sdbc::XConnection >& _xConnection, const css::uno::Reference< css::beans::XPropertySet >& _rxObject ) const SAL_OVERRIDE;
+    virtual OUString            getQualifiedObjectName() const override;
+    virtual bool                isView() const override;
+    virtual void                copyUISettingsTo( const css::uno::Reference< css::beans::XPropertySet >& _rxObject ) const override;
+    virtual void                copyFilterAndSortingTo(const css::uno::Reference< css::sdbc::XConnection >& _xConnection, const css::uno::Reference< css::beans::XPropertySet >& _rxObject ) const override;
     virtual css::uno::Sequence< OUString >
-                                getColumnNames() const SAL_OVERRIDE;
+                                getColumnNames() const override;
     virtual css::uno::Sequence< OUString >
-                                getPrimaryKeyColumnNames() const SAL_OVERRIDE;
-    virtual OFieldDescription*  createFieldDescription( const OUString& _rColumnName ) const SAL_OVERRIDE;
-    virtual OUString            getSelectStatement() const SAL_OVERRIDE;
+                                getPrimaryKeyColumnNames() const override;
+    virtual OFieldDescription*  createFieldDescription( const OUString& _rColumnName ) const override;
+    virtual OUString            getSelectStatement() const override;
     virtual ::utl::SharedUNOComponent< XPreparedStatement >
-                                getPreparedSelectStatement() const SAL_OVERRIDE;
+                                getPreparedSelectStatement() const override;
 };
 
 const DummyCopySource& DummyCopySource::Instance()
@@ -959,7 +959,7 @@ void OCopyTableWizard::CheckButtons()
     if(GetCurLevel() == 0) // the first page has no back button
     {
         if(m_nPageCount > 1)
-            m_pbNext->Enable(true);
+            m_pbNext->Enable();
         else
             m_pbNext->Enable(false);
 
@@ -968,11 +968,11 @@ void OCopyTableWizard::CheckButtons()
     else if(GetCurLevel() == m_nPageCount-1) // the last page has no next button
     {
         m_pbNext->Enable(false);
-        m_pbPrev->Enable(true);
+        m_pbPrev->Enable();
     }
     else
     {
-        m_pbPrev->Enable(true);
+        m_pbPrev->Enable();
         // next already has its state
     }
 }

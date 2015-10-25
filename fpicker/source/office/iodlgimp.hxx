@@ -81,7 +81,7 @@ class SvtFileDialogURLSelector : public MenuButton
 {
 public:
     virtual ~SvtFileDialogURLSelector();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 private:
     VclPtr<SvtFileDialog>      m_pDlg;
     PopupMenu*          m_pMenu;
@@ -93,7 +93,7 @@ protected:
 
     SvtFileDialogURLSelector( vcl::Window* _pParent, SvtFileDialog* _pDlg, WinBits nBits, sal_uInt16 _nButtonId );
 
-    virtual void        Activate() SAL_OVERRIDE;
+    virtual void        Activate() override;
 };
 
 class SvtUpButton_Impl : public SvtFileDialogURLSelector
@@ -106,10 +106,10 @@ public:
     virtual ~SvtUpButton_Impl();
 
 protected:
-    virtual void        FillURLMenu( PopupMenu* _pMenu ) SAL_OVERRIDE;
-    virtual void        Select() SAL_OVERRIDE;
-    virtual void        Click() SAL_OVERRIDE;
-    virtual Size        GetOptimalSize() const SAL_OVERRIDE;
+    virtual void        FillURLMenu( PopupMenu* _pMenu ) override;
+    virtual void        Select() override;
+    virtual void        Click() override;
+    virtual Size        GetOptimalSize() const override;
 };
 
 typedef sal_uInt8 SvtFileDlgState;
@@ -124,7 +124,7 @@ private:
     const SvtFileDialogFilter_Impl* _pCurFilter;
     OUString                        m_sCurrentFilterDisplayName;    // may differ from _pCurFilter->GetName in case it is a cached entry
 
-    ::com::sun::star::uno::Sequence< OUString > _aBlackList;
+    css::uno::Sequence< OUString > _aBlackList;
 
 public:
     SvtFileDialogFilterList_Impl    m_aFilter;
@@ -187,8 +187,8 @@ public:
                             ~SvtExpFileDlg_Impl();
 
 
-    inline void             SetBlackList( const ::com::sun::star::uno::Sequence< OUString >& rBlackList ) { _aBlackList = rBlackList; }
-    inline const ::com::sun::star::uno::Sequence< OUString >& GetBlackList() const { return _aBlackList; }
+    inline void             SetBlackList( const css::uno::Sequence< OUString >& rBlackList ) { _aBlackList = rBlackList; }
+    inline const css::uno::Sequence< OUString >& GetBlackList() const { return _aBlackList; }
     void                    SetStandardDir( const OUString& _rDir );
     inline const OUString&  GetStandardDir() const          { return _aStdDir; }
     inline void             DisableFilterBoxAutoWidth()     { _pLbFilter->EnableDDAutoWidth( false ); }
@@ -197,7 +197,7 @@ public:
     // access to the filter listbox only as Control* - we want to maintain the entries/userdata ourself
             Control*        GetFilterListControl()          { return _pLbFilter; }
             const Control*  GetFilterListControl() const    { return _pLbFilter; }
-    inline  void            SetFilterListSelectHdl( const Link<>& _rHandler );
+    inline  void            SetFilterListSelectHdl( const Link<ListBox&,void>& _rHandler );
 
     // inits the listbox for the filters from the filter list (_pFilter)
             void            ClearFilterList( );
@@ -217,7 +217,7 @@ public:
                 void                                SetCurFilter( SvtFileDialogFilter_Impl* _pFilter, const OUString& _rDisplayName );
 };
 
-inline void SvtExpFileDlg_Impl::SetFilterListSelectHdl( const Link<>& _rHandler )
+inline void SvtExpFileDlg_Impl::SetFilterListSelectHdl( const Link<ListBox&,void>& _rHandler )
 {
     _pLbFilter->SetSelectHdl( _rHandler );
 }

@@ -105,20 +105,18 @@ uno::Sequence< beans::NamedValue > ScfApiHelper::QueryEncryptionDataForMedium( S
         ::comphelper::IDocPasswordVerifier& rVerifier, const ::std::vector< OUString >* pDefaultPasswords )
 {
     uno::Sequence< beans::NamedValue > aEncryptionData;
-    SFX_ITEMSET_ARG( rMedium.GetItemSet(), pEncryptionDataItem, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false);
+    const SfxUnoAnyItem* pEncryptionDataItem = SfxItemSet::GetItem<SfxUnoAnyItem>(rMedium.GetItemSet(), SID_ENCRYPTIONDATA, false);
     if ( pEncryptionDataItem )
         pEncryptionDataItem->GetValue() >>= aEncryptionData;
 
     OUString aPassword;
-    SFX_ITEMSET_ARG( rMedium.GetItemSet(), pPasswordItem, SfxStringItem, SID_PASSWORD, false);
+    const SfxStringItem* pPasswordItem = SfxItemSet::GetItem<SfxStringItem>(rMedium.GetItemSet(), SID_PASSWORD, false);
     if ( pPasswordItem )
         aPassword = pPasswordItem->GetValue();
 
-    OUString aDocName = INetURLObject( rMedium.GetOrigURL() ).GetName( INetURLObject::DECODE_WITH_CHARSET );
-
     bool bIsDefaultPassword = false;
     aEncryptionData = ::comphelper::DocPasswordHelper::requestAndVerifyDocPassword(
-        rVerifier, aEncryptionData, aPassword, rMedium.GetInteractionHandler(), aDocName,
+        rVerifier, aEncryptionData, aPassword, rMedium.GetInteractionHandler(), rMedium.GetOrigURL(),
         ::comphelper::DocPasswordRequestType_MS, pDefaultPasswords, &bIsDefaultPassword );
 
     rMedium.GetItemSet()->ClearItem( SID_PASSWORD );

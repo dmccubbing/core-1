@@ -41,7 +41,7 @@ protected:
 
 public:
     virtual ~ScTpSubTotalGroup();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     bool            DoReset         ( sal_uInt16            nGroupNo,
                                       const SfxItemSet& rArgSet  );
@@ -70,9 +70,10 @@ private:
     sal_uInt16          GetFieldSelPos  ( SCCOL nField );
 
     // Handler ------------------------
-    DECL_LINK( SelectHdl, void* );
+    DECL_LINK_TYPED( SelectListBoxHdl, ListBox&, void );
     DECL_LINK_TYPED( SelectTreeListBoxHdl, SvTreeListBox*, void );
     DECL_LINK_TYPED( CheckHdl, SvTreeListBox*, void );
+    void SelectHdl(void *);
 };
 
 class ScTpSubTotalGroup1 : public ScTpSubTotalGroup
@@ -87,8 +88,8 @@ public:
 
     static  VclPtr<SfxTabPage> Create      ( vcl::Window*               pParent,
             const SfxItemSet*     rArgSet );
-    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) SAL_OVERRIDE;
-    virtual void        Reset       ( const SfxItemSet* rArgSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) override;
+    virtual void        Reset       ( const SfxItemSet* rArgSet ) override;
 };
 
 class ScTpSubTotalGroup2 : public ScTpSubTotalGroup
@@ -103,8 +104,8 @@ public:
 
     static  VclPtr<SfxTabPage> Create      ( vcl::Window*               pParent,
             const SfxItemSet*     rArgSet );
-    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) SAL_OVERRIDE;
-    virtual void        Reset       ( const SfxItemSet* rArgSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) override;
+    virtual void        Reset       ( const SfxItemSet* rArgSet ) override;
 };
 
 class ScTpSubTotalGroup3 : public ScTpSubTotalGroup
@@ -119,8 +120,8 @@ public:
 
     static  VclPtr<SfxTabPage> Create      ( vcl::Window*               pParent,
             const SfxItemSet*     rArgSet );
-    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) SAL_OVERRIDE;
-    virtual void        Reset       ( const SfxItemSet* rArgSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) override;
+    virtual void        Reset       ( const SfxItemSet* rArgSet ) override;
 };
 
 class ScTpSubTotalOptions : public SfxTabPage
@@ -132,11 +133,11 @@ protected:
 
 public:
     virtual ~ScTpSubTotalOptions();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
     static VclPtr<SfxTabPage>  Create      ( vcl::Window*               pParent,
             const SfxItemSet*     rArgSet );
-    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) SAL_OVERRIDE;
-    virtual void        Reset       ( const SfxItemSet* rArgSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet ( SfxItemSet* rArgSet ) override;
+    virtual void        Reset       ( const SfxItemSet* rArgSet ) override;
 
 private:
     VclPtr<CheckBox>    pBtnPagebreak;

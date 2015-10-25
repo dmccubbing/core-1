@@ -42,7 +42,7 @@ public:
     CopyDlg( vcl::Window* pWindow, const SfxItemSet& rInAttrs,
         const XColorListRef &pColList, ::sd::View* pView );
     virtual ~CopyDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    GetAttr( SfxItemSet& rOutAttrs );
     void Reset();
@@ -69,7 +69,7 @@ private:
     Fraction            maUIScale;
     ::sd::View*         mpView;
 
-    DECL_LINK( SelectColorHdl, void * );
+    DECL_LINK_TYPED( SelectColorHdl, ListBox&, void );
     DECL_LINK_TYPED( SetViewData, Button*, void );
     DECL_LINK_TYPED( SetDefault, Button*, void );
 };

@@ -272,7 +272,6 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
 
     const SfxItemSet* pArgs = rReq.GetArgs();
     const SfxPoolItem* pItem;
-    SwWrtShell* pActShell = 0;
     switch (nSlot)
     {
     case SID_STYLE_NEW:
@@ -310,8 +309,8 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
             else
             {
                 // convert internal StyleName to DisplayName (slot implementation uses the latter)
-                SFX_REQUEST_ARG( rReq, pNameItem, SfxStringItem, SID_APPLY_STYLE, false );
-                SFX_REQUEST_ARG( rReq, pFamilyItem, SfxStringItem, SID_STYLE_FAMILYNAME, false );
+                const SfxStringItem* pNameItem = rReq.GetArg<SfxStringItem>(SID_APPLY_STYLE);
+                const SfxStringItem* pFamilyItem = rReq.GetArg<SfxStringItem>(SID_STYLE_FAMILYNAME);
                 if ( pFamilyItem && pNameItem )
                 {
                     uno::Reference< style::XStyleFamiliesSupplier > xModel(GetModel(), uno::UNO_QUERY);
@@ -347,6 +346,7 @@ void SwDocShell::ExecStyleSheet( SfxRequest& rReq )
             OUString aParam;
             sal_uInt16 nFamily = SFX_STYLE_FAMILY_PARA;
             sal_uInt16 nMask = 0;
+            SwWrtShell* pActShell = 0;
 
             if( !pArgs )
             {
@@ -515,7 +515,7 @@ public:
         , m_bModified(bModified)
     {
     }
-    DECL_LINK( ApplyHdl, void* );
+    DECL_LINK_TYPED( ApplyHdl, LinkParamNone*, void );
     void apply()
     {
         ApplyHdl(NULL);
@@ -533,7 +533,7 @@ private:
     bool m_bModified;
 };
 
-IMPL_LINK_NOARG(ApplyStyle, ApplyHdl)
+IMPL_LINK_NOARG_TYPED(ApplyStyle, ApplyHdl, LinkParamNone*, void)
 {
     SwWrtShell* pWrtShell = m_rDocSh.GetWrtShell();
     SwDoc* pDoc = m_rDocSh.GetDoc();
@@ -611,8 +611,6 @@ IMPL_LINK_NOARG(ApplyStyle, ApplyHdl)
     }
 
     pWrtShell->EndAllAction();
-
-    return m_nRet;
 }
 
 sal_uInt16 SwDocShell::Edit(

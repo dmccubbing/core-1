@@ -54,10 +54,10 @@ class SwParagraphNumTabPage : public SfxTabPage
     bool                    bCurNumrule : 1;
 
     DECL_LINK_TYPED(NewStartHdl_Impl, Button*, void);
-    DECL_LINK( StyleHdl_Impl, ListBox* );
+    DECL_LINK_TYPED( StyleHdl_Impl, ListBox&,void );
     DECL_LINK_TYPED(LineCountHdl_Impl, Button*, void);
     DECL_LINK_TYPED(EditNumStyleHdl_Impl, Button*, void);
-    DECL_LINK(EditNumStyleSelectHdl_Impl, void *);
+    DECL_LINK_TYPED(EditNumStyleSelectHdl_Impl, ListBox&, void);
 
     static const sal_uInt16 aPageRg[];
 
@@ -69,15 +69,15 @@ protected:
 public:
     SwParagraphNumTabPage(vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~SwParagraphNumTabPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window* pParent,
                                       const SfxItemSet* rSet );
     static const sal_uInt16* GetRanges() { return aPageRg; }
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        ChangesApplied() SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
+    virtual void        ChangesApplied() override;
 
     void                EnableNewStart();
     void                DisableOutline();

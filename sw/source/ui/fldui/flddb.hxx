@@ -52,33 +52,34 @@ class SwFieldDBPage : public SwFieldPage
     OUString            m_sOldColumnName;
     sal_uLong           m_nOldFormat;
     sal_uInt16          m_nOldSubType;
-    Link<>              m_aOldNumSelectHdl;
+    Link<ListBox&,void> m_aOldNumSelectHdl;
 
-    DECL_LINK( TypeHdl, ListBox* );
-    DECL_LINK( NumSelectHdl, NumFormatListBox* );
+    DECL_LINK_TYPED( TypeListBoxHdl, ListBox&, void );
+    DECL_LINK_TYPED( NumSelectHdl, ListBox&, void );
     DECL_LINK_TYPED( TreeSelectHdl, SvTreeListBox*, void );
-    DECL_LINK(ModifyHdl, void *);
-    DECL_LINK_TYPED(AddDBHdl, Button*, void);
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
+    DECL_LINK_TYPED( AddDBHdl, Button*, void );
+    void TypeHdl(ListBox*);
 
     void                CheckInsert();
 
     using SwFieldPage::SetWrtShell;
 
 protected:
-    virtual sal_uInt16      GetGroup() SAL_OVERRIDE;
+    virtual sal_uInt16      GetGroup() override;
 
 public:
                         SwFieldDBPage(vcl::Window* pParent, const SfxItemSet& rSet);
 
                         virtual ~SwFieldDBPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage>  Create(vcl::Window* pParent, const SfxItemSet* rAttrSet);
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual void        FillUserData() override;
     void                ActivateMailMergeAddress();
 
     void                SetWrtShell(SwWrtShell& rSh);

@@ -122,16 +122,16 @@ void ViewShell::Implementation::ProcessModifyPageSlot (
             // First make sure that the sidebar is visible
             mrViewShell.GetViewFrame()->ShowChildWindow(SID_SIDEBAR);
             sfx2::sidebar::Sidebar::ShowPanel(
-                OUString("ImpressLayoutsPanel"),
+                OUString("SdLayoutsPanel"),
                 mrViewShell.GetViewFrame()->GetFrame().GetFrameInterface());
             break;
         }
         else if (pArgs->Count() == 4)
         {
-            SFX_REQUEST_ARG (rRequest, pNewName, SfxStringItem, ID_VAL_PAGENAME, false);
-            SFX_REQUEST_ARG (rRequest, pNewAutoLayout, SfxUInt32Item, ID_VAL_WHATLAYOUT, false);
-            SFX_REQUEST_ARG (rRequest, pBVisible, SfxBoolItem, ID_VAL_ISPAGEBACK, false);
-            SFX_REQUEST_ARG (rRequest, pBObjsVisible, SfxBoolItem, ID_VAL_ISPAGEOBJ, false);
+            const SfxStringItem* pNewName = rRequest.GetArg<SfxStringItem>(ID_VAL_PAGENAME);
+            const SfxUInt32Item* pNewAutoLayout = rRequest.GetArg<SfxUInt32Item>(ID_VAL_WHATLAYOUT);
+            const SfxBoolItem* pBVisible = rRequest.GetArg<SfxBoolItem>(ID_VAL_ISPAGEBACK);
+            const SfxBoolItem* pBObjsVisible = rRequest.GetArg<SfxBoolItem>(ID_VAL_ISPAGEOBJ);
             AutoLayout aLayout ((AutoLayout)pNewAutoLayout->GetValue ());
             if (aLayout >= AUTOLAYOUT__START
                 && aLayout < AUTOLAYOUT__END)
@@ -234,8 +234,8 @@ void ViewShell::Implementation::ProcessModifyPageSlot (
 
 void ViewShell::Implementation::AssignLayout ( SfxRequest& rRequest, PageKind ePageKind )
 {
-    const SfxUInt32Item* pWhatPage = static_cast< const SfxUInt32Item*  > ( rRequest.GetArg( ID_VAL_WHATPAGE, false, checkSfxPoolItem< SfxUInt32Item > ) );
-    const SfxUInt32Item* pWhatLayout = static_cast< const SfxUInt32Item*  > ( rRequest.GetArg( ID_VAL_WHATLAYOUT, false, checkSfxPoolItem< SfxUInt32Item > ) );
+    const SfxUInt32Item* pWhatPage = rRequest.GetArg<SfxUInt32Item>(ID_VAL_WHATPAGE);
+    const SfxUInt32Item* pWhatLayout = rRequest.GetArg<SfxUInt32Item>(ID_VAL_WHATLAYOUT);
 
     SdDrawDocument* pDocument = mrViewShell.GetDoc();
     if( !pDocument )

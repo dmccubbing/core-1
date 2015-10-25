@@ -23,7 +23,7 @@ package lib;
  * described in two ways: state and runtime state. The state describes if the
  * activity was successful (OK state) or not (FAILED state). The runtime state
  * describes what happened during the activity: the test can be:
- *   - PASSED - the activity completed normally (although it can complete with
+ *   - COMPLETED - the activity completed normally (although it can complete with
  *     FAILED state)
  *   - SKIPPED - the activity was not performed because of a reason (it also can
  *     has OK or FAILED state)
@@ -38,17 +38,17 @@ public class Status extends SimpleStatus {
 
     /**
      * Construct a status: use runState and state
-     * @param runState either PASSED, SKIPPED, etc.
-     * @param state OK or FAILED.
+     * @param runState either COMPLETED, SKIPPED, etc.
+     * @param bSuccessful OK or FAILED.
      */
-    public Status(int runState, boolean state ) {
-        super(runState, state);
+    public Status(RunState runState, boolean bSuccessful ) {
+        super(runState, bSuccessful);
     }
 
     /**
      * Construct a status: use own message and state.
      * @param message An own message for the status.
-     * @param state OK or FAILED.
+     * @param bSuccessful OK or FAILED.
      */
     public Status(String message, boolean state) {
         super( message, state );
@@ -58,11 +58,11 @@ public class Status extends SimpleStatus {
      * This is a factory method for creating a Status representing normal
      * activity termination.
      *
-     * @param state describes a test state (OK if state == true, FAILED
+     * @param bSuccessful describes a test state (OK if state == true, FAILED
      * otherwise).
      */
-    public static Status passed( boolean state ) {
-        return new Status(PASSED, state );
+    public static Status passed( boolean bSuccessful ) {
+        return new Status(RunState.COMPLETED, bSuccessful );
     }
 
     /**
@@ -82,8 +82,8 @@ public class Status extends SimpleStatus {
      * @param state describes a test state (OK if state == true, FAILED
      * otherwise).
      */
-    public static Status skipped( boolean state ) {
-        return new Status( SKIPPED, state );
+    public static Status skipped( boolean bSuccessful ) {
+        return new Status( RunState.SKIPPED, bSuccessful );
     }
 
 
@@ -95,14 +95,14 @@ public class Status extends SimpleStatus {
      * @param reason describes why the activity failed
      */
     public static Status failed(final String reason) {
-        return new Status(reason, FAILED);
+        return new Status(reason, false/*bSuccessful*/);
     }
 
     /**
      * The method returns a human-readable description of the status.
      * The Status implementation of the method returns the status state
      * description and appends to it the reason, for example:
-     * "FAILED.The getLabel works wrong", "PASSED.OK".
+     * "FAILED.The getLabel works wrong", "COMPLETED.OK".
      */
     @Override
     public String toString() {
@@ -112,17 +112,17 @@ public class Status extends SimpleStatus {
     }
 
     /**
-     * Checks whether the status runstate is passed.
+     * Checks whether the status runstate is completed.
      */
-    public boolean isPassed() {
-        return getRunState() == PASSED;
+    public boolean isCompleted() {
+        return getRunState() == RunState.COMPLETED;
     }
 
     /**
      * Checks whether the status state is failed.
      */
     public boolean isFailed() {
-        return !getState();
+        return !isSuccessful();
     }
 
 }

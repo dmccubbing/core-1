@@ -47,20 +47,20 @@ class SW_DLLPUBLIC SwFormatFootnote
 
     css::uno::WeakReference<css::text::XFootnote> m_wXFootnote;
 
-    SwFormatFootnote& operator=(const SwFormatFootnote& rFootnote) SAL_DELETED_FUNCTION;
-    SwFormatFootnote( const SwFormatFootnote& ) SAL_DELETED_FUNCTION;
+    SwFormatFootnote& operator=(const SwFormatFootnote& rFootnote) = delete;
+    SwFormatFootnote( const SwFormatFootnote& ) = delete;
 
 public:
     SwFormatFootnote( bool bEndNote = false );
     virtual ~SwFormatFootnote();
 
     /// "Pure virtual methods" of SfxPoolItem.
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = 0 ) const override;
 
     // SwClient
     virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew)
-        SAL_OVERRIDE;
+        override;
 
     void InvalidateFootnote();
 

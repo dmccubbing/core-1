@@ -71,30 +71,30 @@ friend class SfxStyleDialog;
 
     DECL_LINK_TYPED( GetFocusHdl, Control&, void );
     DECL_LINK_TYPED( LoseFocusHdl, Control&, void );
-    DECL_LINK( EditStyleSelectHdl_Impl, void * );
+    DECL_LINK_TYPED( EditStyleSelectHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( EditStyleHdl_Impl, Button*, void );
-    DECL_LINK( EditLinkStyleSelectHdl_Impl, void * );
+    DECL_LINK_TYPED( EditLinkStyleSelectHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( EditLinkStyleHdl_Impl, Button*, void );
 
     void    UpdateName_Impl(ListBox *, const OUString &rNew);
     void    SetDescriptionText_Impl();
 
     virtual ~SfxManageStyleSheetPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window* pParent, const SfxItemSet* );
 
 protected:
-    virtual bool        FillItemSet(SfxItemSet *) SAL_OVERRIDE;
-    virtual void        Reset(const SfxItemSet *) SAL_OVERRIDE;
+    virtual bool        FillItemSet(SfxItemSet *) override;
+    virtual void        Reset(const SfxItemSet *) override;
 
     static bool    Execute_Impl( sal_uInt16 nId, const OUString& rStr, const OUString& rRefStr,
                           sal_uInt16 nFamily, sal_uInt16 nMask = 0,
                           const sal_uInt16* pModifier = NULL );
     using TabPage::ActivatePage;
-        virtual void        ActivatePage(const SfxItemSet &) SAL_OVERRIDE;
+        virtual void        ActivatePage(const SfxItemSet &) override;
         using TabPage::DeactivatePage;
-    virtual sfxpg DeactivatePage(SfxItemSet * = 0) SAL_OVERRIDE;
+    virtual sfxpg DeactivatePage(SfxItemSet * = 0) override;
 
 public:
     SfxManageStyleSheetPage(vcl::Window *pParent, const SfxItemSet &rAttrSet );

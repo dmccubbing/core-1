@@ -133,24 +133,24 @@ public:
             of this wrapper or when close() is called.
      */
     explicit            BinaryXOutputStream(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream >& rxOutStrm,
+                            const css::uno::Reference< css::io::XOutputStream >& rxOutStrm,
                             bool bAutoClose );
 
     virtual             ~BinaryXOutputStream();
 
     /** Flushes and closes the output stream. Does also close the wrapped UNO
         output stream if bAutoClose has been set to true in the constructor. */
-    void                close() SAL_OVERRIDE;
+    void                close() override;
 
     /** Writes the passed data sequence. */
-    virtual void        writeData( const StreamDataSequence& rData, size_t nAtomSize = 1 ) SAL_OVERRIDE;
+    virtual void        writeData( const StreamDataSequence& rData, size_t nAtomSize = 1 ) override;
 
     /** Write nBytes bytes from the (preallocated!) buffer pMem. */
-    virtual void        writeMemory( const void* pMem, sal_Int32 nBytes, size_t nAtomSize = 1 ) SAL_OVERRIDE;
+    virtual void        writeMemory( const void* pMem, sal_Int32 nBytes, size_t nAtomSize = 1 ) override;
 
 private:
     StreamDataSequence  maBuffer;       ///< Data buffer used in writeMemory() function.
-    ::com::sun::star::uno::Reference< ::com::sun::star::io::XOutputStream >
+    css::uno::Reference< css::io::XOutputStream >
                         mxOutStrm;      ///< Reference to the output stream.
     bool                mbAutoClose;    ///< True = automatically close stream on destruction.
 };
@@ -176,10 +176,10 @@ public:
     explicit            SequenceOutputStream( StreamDataSequence& rData );
 
     /** Writes the passed data sequence. */
-    virtual void        writeData( const StreamDataSequence& rData, size_t nAtomSize = 1 ) SAL_OVERRIDE;
+    virtual void        writeData( const StreamDataSequence& rData, size_t nAtomSize = 1 ) override;
 
     /** Write nBytes bytes from the (preallocated!) buffer pMem. */
-    virtual void        writeMemory( const void* pMem, sal_Int32 nBytes, size_t nAtomSize = 1 ) SAL_OVERRIDE;
+    virtual void        writeMemory( const void* pMem, sal_Int32 nBytes, size_t nAtomSize = 1 ) override;
 };
 
 

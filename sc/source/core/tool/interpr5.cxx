@@ -26,7 +26,6 @@
 #endif
 
 #include <unotools/bootstrap.hxx>
-#include <officecfg/Office/Common.hxx>
 #include <svl/zforlist.hxx>
 
 #include "interpre.hxx"
@@ -712,11 +711,12 @@ static int lcl_LUP_decompose( ScMatrix* mA, const SCSIZE n,
         // Compute Schur complement.
         for (SCSIZE i = k+1; i < n; ++i)
         {
-            double fTmp = mA->GetDouble( k, i) / mA->GetDouble( k, k);
-            mA->PutDouble( fTmp, k, i);
+            double fNum = mA->GetDouble( k, i);
+            double fDen = mA->GetDouble( k, k);
+            mA->PutDouble( fNum/fDen, k, i);
             for (SCSIZE j = k+1; j < n; ++j)
-                mA->PutDouble( mA->GetDouble( j, i) - fTmp * mA->GetDouble( j,
-                            k), j, i);
+                mA->PutDouble( ( mA->GetDouble( j, i) * fDen  -
+                            fNum * mA->GetDouble( j, k) ) / fDen, j, i);
         }
     }
 #if OSL_DEBUG_LEVEL > 1
@@ -912,7 +912,7 @@ void ScInterpreter::ScMatInv()
         SCSIZE nC, nR;
         pMat->GetDimensions(nC, nR);
 
-        if (officecfg::Office::Common::Misc::UseOpenCL::get())
+        if (ScInterpreter::GetGlobalConfig().mbOpenCLEnabled.get())
         {
             sc::FormulaGroupInterpreter *pInterpreter = sc::FormulaGroupInterpreter::getStatic();
             if (pInterpreter != NULL)

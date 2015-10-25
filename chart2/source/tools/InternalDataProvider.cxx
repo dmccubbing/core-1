@@ -392,7 +392,9 @@ InternalDataProvider::InternalDataProvider(
 
             // data series
             ::std::vector< Reference< chart2::XDataSeries > > aSeriesVector( ChartModelHelper::getDataSeries( xChartDoc ));
-            ::std::for_each( aSeriesVector.begin(), aSeriesVector.end(), lcl_internalizeSeries( m_aInternalData, *this, bConnectToModel, m_bDataInColumns ) );
+            lcl_internalizeSeries ftor( m_aInternalData, *this, bConnectToModel, m_bDataInColumns );
+            for( const auto& rxScreen : aSeriesVector )
+                ftor( rxScreen );
         }
     }
     catch( const uno::Exception & ex )
@@ -1356,8 +1358,8 @@ public:
     virtual ~SplitCategoriesProvider_ForComplexDescriptions()
     {}
 
-    virtual sal_Int32 getLevelCount() const SAL_OVERRIDE;
-    virtual uno::Sequence< OUString > getStringsForLevel( sal_Int32 nIndex ) const SAL_OVERRIDE;
+    virtual sal_Int32 getLevelCount() const override;
+    virtual uno::Sequence< OUString > getStringsForLevel( sal_Int32 nIndex ) const override;
 
 private:
     const ::std::vector< ::std::vector< uno::Any > >& m_rComplexDescriptions;

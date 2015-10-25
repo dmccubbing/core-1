@@ -564,7 +564,7 @@ SvxSwPosSizeTabPage::SvxSwPosSizeTabPage(vcl::Window* pParent, const SfxItemSet&
     m_pVertByMF->SetLoseFocusHdl( aLk3 );
     m_pFollowCB->SetClickHdl( LINK(this, SvxSwPosSizeTabPage, RangeModifyClickHdl) );
 
-    Link<> aLk = LINK(this, SvxSwPosSizeTabPage, ModifyHdl);
+    Link<Edit&,void> aLk = LINK(this, SvxSwPosSizeTabPage, ModifyHdl);
     m_pWidthMF->SetModifyHdl( aLk );
     m_pHeightMF->SetModifyHdl( aLk );
     m_pHoriByMF->SetModifyHdl( aLk );
@@ -1192,8 +1192,7 @@ IMPL_LINK_NOARG_TYPED(SvxSwPosSizeTabPage, RangeModifyHdl, Control&, void)
     aVal.nWidth  = nWidth;
     aVal.nHeight = nHeight;
 
-    if(m_aValidateLink.IsSet())
-        m_aValidateLink.Call(aVal);
+    m_aValidateLink.Call(aVal);
 
     nWidth = aVal.nWidth;
     nHeight = aVal.nHeight;
@@ -1237,8 +1236,8 @@ IMPL_LINK_NOARG_TYPED(SvxSwPosSizeTabPage, AnchorTypeHdl, Button*, void)
 
     if(m_bHtmlMode)
     {
-        PosHdl(m_pHoriLB);
-        PosHdl(m_pVertLB);
+        PosHdl(*m_pHoriLB);
+        PosHdl(*m_pVertLB);
     }
 }
 
@@ -1248,9 +1247,9 @@ IMPL_LINK_NOARG_TYPED(SvxSwPosSizeTabPage, MirrorHdl, Button*, void)
     InitPos( nId, USHRT_MAX, 0, USHRT_MAX, 0, LONG_MAX, LONG_MAX);
 }
 
-IMPL_LINK( SvxSwPosSizeTabPage, RelHdl, ListBox *, pLB )
+IMPL_LINK_TYPED( SvxSwPosSizeTabPage, RelHdl, ListBox&, rLB, void )
 {
-    bool bHori = pLB == m_pHoriToLB;
+    bool bHori = &rLB == m_pHoriToLB;
 
     UpdateExample();
 
@@ -1274,23 +1273,19 @@ IMPL_LINK( SvxSwPosSizeTabPage, RelHdl, ListBox *, pLB )
             }
         }
     }
-    if (pLB)    // only if the handler has been called by a change of the controller
-        RangeModifyHdl(*m_pWidthMF);
-
-    return 0;
-
+    RangeModifyHdl(*m_pWidthMF);
 }
 
-IMPL_LINK( SvxSwPosSizeTabPage, PosHdl, ListBox *, pLB )
+IMPL_LINK_TYPED( SvxSwPosSizeTabPage, PosHdl, ListBox&, rLB, void )
 {
-    bool bHori = pLB == m_pHoriLB;
+    bool bHori = &rLB == m_pHoriLB;
     ListBox *pRelLB = bHori ? m_pHoriToLB : m_pVertToLB;
     FixedText *pRelFT = bHori ? m_pHoriToFT : m_pVertToFT;
     FrmMap *pMap = bHori ? m_pHMap : m_pVMap;
 
 
-    sal_uInt16 nMapPos = GetMapPos(pMap, *pLB);
-    sal_uInt16 nAlign = GetAlignment(pMap, nMapPos, *pLB, *pRelLB);
+    sal_uInt16 nMapPos = GetMapPos(pMap, rLB);
+    sal_uInt16 nAlign = GetAlignment(pMap, nMapPos, rLB, *pRelLB);
 
     if (bHori)
     {
@@ -1308,7 +1303,7 @@ IMPL_LINK( SvxSwPosSizeTabPage, PosHdl, ListBox *, pLB )
     RangeModifyHdl( *m_pWidthMF );
 
     short nRel = 0;
-    if (pLB->GetSelectEntryCount())
+    if (rLB.GetSelectEntryCount())
     {
 
         if (pRelLB->GetSelectEntryPos() != LISTBOX_ENTRY_NOTFOUND)
@@ -1354,7 +1349,7 @@ IMPL_LINK( SvxSwPosSizeTabPage, PosHdl, ListBox *, pLB )
                 bSet = true;
             }
             if(bSet)
-                PosHdl(m_pVertLB);
+                PosHdl(*m_pVertLB);
         }
         else
         {
@@ -1377,25 +1372,24 @@ IMPL_LINK( SvxSwPosSizeTabPage, PosHdl, ListBox *, pLB )
                 m_pHoriToLB->SelectEntryPos(0) ;
             }
             if(bSet)
-                PosHdl(m_pHoriLB);
+                PosHdl(*m_pHoriLB);
         }
 
     }
-    return 0;
 }
 
-IMPL_LINK( SvxSwPosSizeTabPage, ModifyHdl, Edit *, pEdit )
+IMPL_LINK_TYPED( SvxSwPosSizeTabPage, ModifyHdl, Edit&, rEdit, void )
 {
     sal_Int64 nWidth = m_pWidthMF->Denormalize(m_pWidthMF->GetValue(FUNIT_TWIP));
     sal_Int64 nHeight = m_pHeightMF->Denormalize(m_pHeightMF->GetValue(FUNIT_TWIP));
     if ( m_pKeepRatioCB->IsChecked() )
     {
-        if ( pEdit == m_pWidthMF )
+        if ( &rEdit == m_pWidthMF )
         {
             nHeight = sal_Int64((double)nWidth / m_fWidthHeightRatio);
             m_pHeightMF->SetValue(m_pHeightMF->Normalize(nHeight), FUNIT_TWIP);
         }
-        else if(pEdit == m_pHeightMF)
+        else if(&rEdit == m_pHeightMF)
         {
             nWidth = sal_Int64((double)nHeight * m_fWidthHeightRatio);
             m_pWidthMF->SetValue(m_pWidthMF->Normalize(nWidth), FUNIT_TWIP);
@@ -1403,7 +1397,6 @@ IMPL_LINK( SvxSwPosSizeTabPage, ModifyHdl, Edit *, pEdit )
     }
     m_fWidthHeightRatio = nHeight ? double(nWidth) / double(nHeight) : 1.0;
     UpdateExample();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SvxSwPosSizeTabPage, ProtectHdl, Button*, void)
@@ -1816,7 +1809,7 @@ sal_uLong SvxSwPosSizeTabPage::FillRelLB(FrmMap *pMap, sal_uInt16 nMapPos, sal_u
     rLB.Enable(rLB.GetEntryCount() != 0);
     rFT.Enable(rLB.GetEntryCount() != 0);
 
-    RelHdl(&rLB);
+    RelHdl(rLB);
 
     return nLBRelations;
 }
@@ -1869,7 +1862,7 @@ sal_uInt16 SvxSwPosSizeTabPage::FillPosLB(FrmMap *_pMap,
     if (!_rLB.GetSelectEntryCount())
         _rLB.SelectEntryPos(0);
 
-    PosHdl(&_rLB);
+    PosHdl(_rLB);
 
     return GetMapPos(_pMap, _rLB);
 }

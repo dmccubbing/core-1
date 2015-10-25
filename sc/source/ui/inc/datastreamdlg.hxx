@@ -21,6 +21,7 @@
 class ScDocShell;
 class SvtURLBox;
 class ScRange;
+class ComboBox;
 
 namespace sc {
 
@@ -47,7 +48,8 @@ class DataStreamDlg : public ModalDialog
     VclPtr<VclFrame>       m_pVclFrameMove;
 
     DECL_LINK_TYPED(UpdateClickHdl, Button*, void);
-    DECL_LINK(UpdateHdl, void *);
+    DECL_LINK_TYPED(UpdateHdl, Edit&, void);
+    DECL_LINK_TYPED(UpdateComboBoxHdl, ComboBox&, void);
     DECL_LINK_TYPED(BrowseHdl, Button*, void);
 
     void UpdateEnable();
@@ -56,7 +58,7 @@ class DataStreamDlg : public ModalDialog
 public:
     DataStreamDlg(ScDocShell *pDocShell, vcl::Window* pParent);
     virtual ~DataStreamDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void Init( const DataStream& rStrm );
 

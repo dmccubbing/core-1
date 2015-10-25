@@ -210,7 +210,7 @@ void ScEditShell::Execute( SfxRequest& rReq )
         case SID_THES:
             {
                 OUString aReplaceText;
-                SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_THES , false );
+                const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_THES);
                 if (pItem2)
                     aReplaceText = pItem2->GetValue();
                 if (!aReplaceText.isEmpty())
@@ -1130,7 +1130,7 @@ void ScEditShell::GetAttrState(SfxItemSet &rSet)
 
     // underline
 
-    SfxItemState eState = aAttribs.GetItemState( EE_CHAR_UNDERLINE, true );
+    SfxItemState eState = aAttribs.GetItemState( EE_CHAR_UNDERLINE );
     if ( eState == SfxItemState::DONTCARE )
     {
         rSet.InvalidateItem( SID_ULINE_VAL_NONE );
@@ -1172,7 +1172,7 @@ void ScEditShell::GetAttrState(SfxItemSet &rSet)
     pViewData->GetBindings().Invalidate( SID_SET_SUPER_SCRIPT );
     pViewData->GetBindings().Invalidate( SID_SET_SUB_SCRIPT );
 
-    eState = aAttribs.GetItemState( EE_CHAR_KERNING, true );
+    eState = aAttribs.GetItemState( EE_CHAR_KERNING );
     pViewData->GetBindings().Invalidate( SID_ATTR_CHAR_KERNING );
     if ( eState == SfxItemState::DONTCARE )
     {

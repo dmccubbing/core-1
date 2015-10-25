@@ -115,7 +115,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
     }
     else if (nSlotId == SID_FM_CREATE_CONTROL)
     {
-        SFX_REQUEST_ARG( rReq, pIdentifierItem, SfxUInt16Item, SID_FM_CONTROL_IDENTIFIER, false );
+        const SfxUInt16Item* pIdentifierItem = rReq.GetArg<SfxUInt16Item>(SID_FM_CONTROL_IDENTIFIER);
         if( pIdentifierItem )
         {
             sal_uInt16 nNewId = pIdentifierItem->GetValue();
@@ -131,7 +131,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
         FmFormView* pFormView = dynamic_cast<FmFormView*>( pSdrView  );
         if ( pFormView )
         {
-            SFX_REQUEST_ARG( rReq, pDescriptorItem, SfxUnoAnyItem, SID_FM_DATACCESS_DESCRIPTOR, false );
+            const SfxUnoAnyItem* pDescriptorItem = rReq.GetArg<SfxUnoAnyItem>(SID_FM_DATACCESS_DESCRIPTOR);
             OSL_ENSURE( pDescriptorItem, "SwView::ExecDraw(SID_FM_CREATE_FIELDCONTROL): invalid request args!" );
             if( pDescriptorItem )
             {
@@ -241,7 +241,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
         }
 
         if (m_pWrtShell->IsObjSelected() && !m_pWrtShell->IsSelFrmMode())
-            m_pWrtShell->EnterSelFrmMode(NULL);
+            m_pWrtShell->EnterSelFrmMode();
         LeaveDrawCreate();
 
         GetViewFrame()->GetBindings().Invalidate(SID_INSERT_DRAW);
@@ -297,7 +297,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
 
         case SID_FM_CREATE_CONTROL:
         {
-            SFX_REQUEST_ARG( rReq, pIdentifierItem, SfxUInt16Item, SID_FM_CONTROL_IDENTIFIER, false );
+            const SfxUInt16Item* pIdentifierItem = rReq.GetArg<SfxUInt16Item>(SID_FM_CONTROL_IDENTIFIER);
             if( pIdentifierItem )
                 nSlotId = pIdentifierItem->GetValue();
             pFuncPtr = new ConstFormControl(m_pWrtShell, m_pEditWin, this);
@@ -384,7 +384,7 @@ void SwView::ExecDraw(SfxRequest& rReq)
     else
     {
         if (m_pWrtShell->IsObjSelected() && !m_pWrtShell->IsSelFrmMode())
-            m_pWrtShell->EnterSelFrmMode(NULL);
+            m_pWrtShell->EnterSelFrmMode();
     }
 
     if(bEndTextEdit && pSdrView && pSdrView->IsTextEdit())
@@ -495,7 +495,7 @@ bool SwView::EnterDrawTextMode(const Point& aDocPos)
     {
         // Refuse to edit editeng text of the shape if it has textbox attached.
         if (!lcl_isTextBox(pObj))
-            bReturn = BeginTextEdit( pObj, pPV, m_pEditWin, false );
+            bReturn = BeginTextEdit( pObj, pPV, m_pEditWin );
     }
 
     pSdrView->SetHitTolerancePixel( nOld );

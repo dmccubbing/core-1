@@ -72,15 +72,15 @@ public:
 
     virtual ~LwpCharacterBorderOverride();
 
-    virtual LwpCharacterBorderOverride* clone() const SAL_OVERRIDE;
+    virtual LwpCharacterBorderOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
 protected:
     LwpCharacterBorderOverride(LwpCharacterBorderOverride const& rOther);
 
 private:
-    LwpCharacterBorderOverride& operator=(LwpCharacterBorderOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpCharacterBorderOverride& operator=(LwpCharacterBorderOverride const& rOther) = delete;
 
 private:
     LwpBorderStuff* m_pBorderStuff;

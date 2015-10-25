@@ -48,19 +48,19 @@ class SvxAsianLayoutPage : public SfxTabPage
 
     SvxAsianLayoutPage_Impl* pImpl;
 
-    DECL_LINK(LanguageHdl, void *);
+    DECL_LINK_TYPED(LanguageHdl, ListBox&, void);
     DECL_LINK_TYPED(ChangeStandardHdl, Button*, void);
-    DECL_LINK(ModifyHdl, Edit*);
+    DECL_LINK_TYPED(ModifyHdl, Edit&, void);
 
 public:
     SvxAsianLayoutPage( vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~SvxAsianLayoutPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rAttrSet );
     static const sal_uInt16*  GetRanges();
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 #endif

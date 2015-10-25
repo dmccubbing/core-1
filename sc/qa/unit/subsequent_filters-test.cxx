@@ -92,10 +92,10 @@ public:
 
     virtual bool load( const OUString &rFilter, const OUString &rURL,
         const OUString &rUserData, SfxFilterFlags nFilterFlags,
-        SotClipboardFormatId nClipboardID, unsigned int nFilterVersion) SAL_OVERRIDE;
+        SotClipboardFormatId nClipboardID, unsigned int nFilterVersion) override;
 
-    virtual void setUp() SAL_OVERRIDE;
-    virtual void tearDown() SAL_OVERRIDE;
+    virtual void setUp() override;
+    virtual void tearDown() override;
 
     //ods, xls, xlsx filter tests
     void testBooleanFormatXLSX();
@@ -1435,7 +1435,7 @@ void ScFiltersTest::testBrokenQuotesCSV()
     SfxFilterFlags nFormatType = getFileFormats()[CSV].nFormatType;
     SotClipboardFormatId nClipboardId = bool(nFormatType) ? SotClipboardFormatId::STARCALC_8 : SotClipboardFormatId::NONE;
     ScDocShellRef xDocSh = ScBootstrapFixture::load(aFileName, aFilterName, OUString(), aFilterType,
-        nFormatType, nClipboardId, SOFFICE_FILEFORMAT_CURRENT);
+        nFormatType, nClipboardId);
 
     CPPUNIT_ASSERT_MESSAGE("Failed to load fdo48621_broken_quotes.csv", xDocSh.Is());
     ScDocument& rDoc = xDocSh->GetDocument();
@@ -1462,7 +1462,7 @@ void ScFiltersTest::testCellValueXLSX()
     SfxFilterFlags nFormatType = getFileFormats()[XLSX].nFormatType;
     SotClipboardFormatId nClipboardId = bool(nFormatType) ? SotClipboardFormatId::STARCALC_8 : SotClipboardFormatId::NONE;
     ScDocShellRef xDocSh = ScBootstrapFixture::load( aFileName, aFilterName, OUString(), aFilterType,
-        nFormatType, nClipboardId, SOFFICE_FILEFORMAT_CURRENT);
+        nFormatType, nClipboardId);
 
     CPPUNIT_ASSERT_MESSAGE("Failed to load cell-value.xlsx", xDocSh.Is());
     ScDocument& rDoc = xDocSh->GetDocument();

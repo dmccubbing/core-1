@@ -214,13 +214,13 @@ public:
                                 --m_refCount;
                             }
 
-    virtual void SAL_CALL   start(const OUString& aText, sal_Int32 nRange) throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL   end() throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL   setText(const OUString& aText) throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL   setValue(sal_Int32 nValue) throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL   reset() throw(RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL   start(const OUString& aText, sal_Int32 nRange) throw(RuntimeException, std::exception) override;
+    virtual void SAL_CALL   end() throw(RuntimeException, std::exception) override;
+    virtual void SAL_CALL   setText(const OUString& aText) throw(RuntimeException, std::exception) override;
+    virtual void SAL_CALL   setValue(sal_Int32 nValue) throw(RuntimeException, std::exception) override;
+    virtual void SAL_CALL   reset() throw(RuntimeException, std::exception) override;
 
-    virtual void SAL_CALL   disposing( const lang::EventObject& Source ) throw(RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL   disposing( const lang::EventObject& Source ) throw(RuntimeException, std::exception) override;
 };
 
 void SAL_CALL SfxStatusIndicator::start(const OUString& aText, sal_Int32 nRange) throw(RuntimeException, std::exception)
@@ -322,8 +322,8 @@ class IMPL_SfxBaseController_ListenerHelper : public ::cppu::WeakImplHelper< fra
 public:
     explicit IMPL_SfxBaseController_ListenerHelper(  SfxBaseController*  pController ) ;
     virtual ~IMPL_SfxBaseController_ListenerHelper() ;
-    virtual void SAL_CALL frameAction( const frame::FrameActionEvent& aEvent ) throw (RuntimeException, std::exception) SAL_OVERRIDE ;
-    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) SAL_OVERRIDE ;
+    virtual void SAL_CALL frameAction( const frame::FrameActionEvent& aEvent ) throw (RuntimeException, std::exception) override ;
+    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) override ;
 
 private:
 
@@ -337,9 +337,9 @@ public:
     explicit IMPL_SfxBaseController_CloseListenerHelper( SfxBaseController*  pController ) ;
     virtual ~IMPL_SfxBaseController_CloseListenerHelper() ;
     virtual void SAL_CALL queryClosing( const lang::EventObject& aEvent, sal_Bool bDeliverOwnership )
-        throw (RuntimeException, util::CloseVetoException, std::exception) SAL_OVERRIDE ;
-    virtual void SAL_CALL notifyClosing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) SAL_OVERRIDE ;
-    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) SAL_OVERRIDE ;
+        throw (RuntimeException, util::CloseVetoException, std::exception) override ;
+    virtual void SAL_CALL notifyClosing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) override ;
+    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw (RuntimeException, std::exception) override ;
 
 private:
 
@@ -1350,8 +1350,13 @@ void SfxBaseController::ConnectSfxFrame_Impl( const ConnectSfxFrame i_eConnect )
             if ( !rFrame.IsInPlace() )
                 pViewFrame->Resize( true );
 
+            ::comphelper::NamedValueCollection aViewArgs(getCreationArguments());
+
+            // sometimes we want to avoid adding to the recent documents
+            bool bAllowPickListEntry = aViewArgs.getOrDefault("PickListEntry", true);
+            m_pData->m_pViewShell->GetObjectShell()->AvoidRecentDocs(!bAllowPickListEntry);
+
             // if there's a JumpMark given, then, well, jump to it
-            ::comphelper::NamedValueCollection aViewArgs( getCreationArguments() );
             const OUString sJumpMark = aViewArgs.getOrDefault( "JumpMark", OUString() );
             const bool bHasJumpMark = !sJumpMark.isEmpty();
             OSL_ENSURE( ( !m_pData->m_pViewShell->GetObjectShell()->IsLoading() )

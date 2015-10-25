@@ -25,8 +25,8 @@
 
 class XMLOFF_DLLPUBLIC XMLCharContext : public SvXMLImportContext
 {
-    XMLCharContext(const XMLCharContext&) SAL_DELETED_FUNCTION;
-    void operator =(const XMLCharContext&) SAL_DELETED_FUNCTION;
+    XMLCharContext(const XMLCharContext&) = delete;
+    void operator =(const XMLCharContext&) = delete;
 protected:
     sal_Int16   m_nControl;
     sal_uInt16  m_nCount;
@@ -39,14 +39,14 @@ public:
             SvXMLImport& rImport,
             sal_uInt16 nPrfx,
             const OUString& rLName,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList,
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList,
             sal_Unicode c,
             bool bCount );
     XMLCharContext(
             SvXMLImport& rImport,
             sal_uInt16 nPrfx,
             const OUString& rLName,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList,
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList,
             sal_Int16 nControl );
 
     virtual ~XMLCharContext();
@@ -54,7 +54,7 @@ public:
     // EndElement is called before a context will be destructed, but
     // after a elements context has been parsed. It may be used for actions
     // that require virtual methods. The default is to do nothing.
-    virtual void EndElement() SAL_OVERRIDE;
+    virtual void EndElement() override;
 
     virtual void InsertControlCharacter(sal_Int16   _nControl);
     virtual void InsertString(const OUString& _sString);

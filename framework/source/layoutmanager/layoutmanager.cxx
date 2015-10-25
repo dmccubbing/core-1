@@ -782,7 +782,14 @@ void LayoutManager::implts_updateUIElementsVisibleState( bool bSetVisible )
         if ( pSysWindow )
         {
             if ( bSetVisible )
+            {
                 pSysWindow->SetMenuBar(pMenuBar);
+                if (getenv("LO_USE_NOTEBOOKBAR"))
+                {
+                    pSysWindow->CreateNotebookBar("vcl/ui/notebookbar.ui", m_xFrame);
+                    pSysWindow->SetMenuBarMode(MenuBarMode::Hide);
+                }
+            }
             else
                 pSysWindow->SetMenuBar( 0 );
         }
@@ -2661,8 +2668,7 @@ throw( uno::RuntimeException, std::exception )
         if ( !m_aAsyncLayoutTimer.IsActive() )
         {
             const Link<Timer *, void>& aLink = m_aAsyncLayoutTimer.GetTimeoutHdl();
-            if ( aLink.IsSet() )
-                aLink.Call( &m_aAsyncLayoutTimer );
+            aLink.Call( &m_aAsyncLayoutTimer );
         }
         if ( m_nLockCount == 0 )
             m_aAsyncLayoutTimer.Start();

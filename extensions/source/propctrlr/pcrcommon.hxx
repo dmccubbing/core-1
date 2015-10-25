@@ -82,9 +82,9 @@ namespace pcr
 
     public:
         inline StlSyntaxSequence() : UnoBase() { }
-        inline StlSyntaxSequence( const UnoBase& rSeq ) : UnoBase( rSeq ) { }
+        explicit inline StlSyntaxSequence( const UnoBase& rSeq ) : UnoBase( rSeq ) { }
         inline StlSyntaxSequence( const ELEMENT* pElements, sal_Int32 len ) : UnoBase( pElements, len ) { }
-        inline StlSyntaxSequence( sal_Int32 len ) : UnoBase( len ) { }
+        explicit inline StlSyntaxSequence( sal_Int32 len ) : UnoBase( len ) { }
 
         operator const UnoBase&() const { return *this; }
         operator       UnoBase&()       { return *this; }
@@ -106,9 +106,9 @@ namespace pcr
     //= UNO helpers
 
 #define DECLARE_XCOMPONENT() \
-    virtual void SAL_CALL dispose(  ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE; \
-    virtual void SAL_CALL addEventListener( const css::uno::Reference< css::lang::XEventListener >& xListener ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE; \
-    virtual void SAL_CALL removeEventListener( const css::uno::Reference< css::lang::XEventListener >& aListener ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL dispose(  ) throw (css::uno::RuntimeException, std::exception) override; \
+    virtual void SAL_CALL addEventListener( const css::uno::Reference< css::lang::XEventListener >& xListener ) throw (css::uno::RuntimeException, std::exception) override; \
+    virtual void SAL_CALL removeEventListener( const css::uno::Reference< css::lang::XEventListener >& aListener ) throw (css::uno::RuntimeException, std::exception) override;
 
 #define IMPLEMENT_FORWARD_XCOMPONENT( classname, baseclass ) \
     void SAL_CALL classname::dispose(  ) throw (css::uno::RuntimeException, std::exception) \

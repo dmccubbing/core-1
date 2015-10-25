@@ -54,21 +54,21 @@ private:
     SVT_DLLPRIVATE void         ImplSetInfo();
 
                     DECL_DLLPRIVATE_LINK_TYPED( ImplPropertiesHdl, Button*, void );
-                    DECL_DLLPRIVATE_LINK( ImplChangePrinterHdl, void* );
+                    DECL_DLLPRIVATE_LINK_TYPED( ImplChangePrinterHdl, ListBox&, void );
                     DECL_DLLPRIVATE_LINK_TYPED( ImplStatusHdl, Timer*, void );
 
 public:
                     PrinterSetupDialog( vcl::Window* pWindow );
     virtual         ~PrinterSetupDialog();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     void            SetPrinter( Printer* pNewPrinter ) { mpPrinter = pNewPrinter; }
     Printer*        GetPrinter() const { return mpPrinter; }
 
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual bool    Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual bool    Notify( NotifyEvent& rNEvt ) override;
 
-    virtual short   Execute() SAL_OVERRIDE;
+    virtual short   Execute() override;
 
     void            SetOptionsHdl( const Link<Button*,void>& rLink );
 };

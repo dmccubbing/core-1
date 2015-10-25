@@ -79,7 +79,7 @@ namespace dbaui
             m_pOptionsLabel->Show();
             m_pOptions = get<Edit>("options");
             m_pOptions->Show();
-            m_pOptions->SetModifyHdl(getControlModifiedLink());
+            m_pOptions->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
         }
 
         if ((m_nControlFlags & CBTP_USE_CHARSET) == CBTP_USE_CHARSET)
@@ -90,8 +90,13 @@ namespace dbaui
             m_pCharsetLabel->Show();
             m_pCharset = get<CharSetListBox>("charset");
             m_pCharset->Show();
-            m_pCharset->SetSelectHdl(getControlModifiedLink());
+            m_pCharset->SetSelectHdl(LINK(this, OCommonBehaviourTabPage, CharsetSelectHdl));
         }
+    }
+
+    IMPL_LINK_NOARG_TYPED(OCommonBehaviourTabPage, CharsetSelectHdl, ListBox&, void)
+    {
+        callModifiedHdl();
     }
 
     OCommonBehaviourTabPage::~OCommonBehaviourTabPage()
@@ -141,8 +146,8 @@ namespace dbaui
         getFlags(_rSet, bValid, bReadonly);
 
         // collect the items
-        SFX_ITEMSET_GET(_rSet, pOptionsItem, SfxStringItem, DSID_ADDITIONALOPTIONS, true);
-        SFX_ITEMSET_GET(_rSet, pCharsetItem, SfxStringItem, DSID_CHARSET, true);
+        const SfxStringItem* pOptionsItem = _rSet.GetItem<SfxStringItem>(DSID_ADDITIONALOPTIONS);
+        const SfxStringItem* pCharsetItem = _rSet.GetItem<SfxStringItem>(DSID_CHARSET);
 
         // forward the values to the controls
         if (bValid)
@@ -217,14 +222,14 @@ namespace dbaui
         getFlags(_rSet, bValid, bReadonly);
 
         // get the DSN string (needed for the index dialog)
-        SFX_ITEMSET_GET(_rSet, pUrlItem, SfxStringItem, DSID_CONNECTURL, true);
-        SFX_ITEMSET_GET(_rSet, pTypesItem, DbuTypeCollectionItem, DSID_TYPECOLLECTION, true);
+        const SfxStringItem* pUrlItem = _rSet.GetItem<SfxStringItem>(DSID_CONNECTURL);
+        const DbuTypeCollectionItem* pTypesItem = _rSet.GetItem<DbuTypeCollectionItem>(DSID_TYPECOLLECTION);
         ::dbaccess::ODsnTypeCollection* pTypeCollection = pTypesItem ? pTypesItem->getCollection() : NULL;
         if (pTypeCollection && pUrlItem && pUrlItem->GetValue().getLength())
             m_sDsn = pTypeCollection->cutPrefix(pUrlItem->GetValue());
 
         // get the other relevant items
-        SFX_ITEMSET_GET(_rSet, pDeletedItem, SfxBoolItem, DSID_SHOWDELETEDROWS, true);
+        const SfxBoolItem* pDeletedItem = _rSet.GetItem<SfxBoolItem>(DSID_SHOWDELETEDROWS);
 
         if ( bValid )
         {
@@ -306,7 +311,7 @@ namespace dbaui
         bool bValid, bReadonly;
         getFlags(_rSet, bValid, bReadonly);
 
-        SFX_ITEMSET_GET(_rSet, pUseCatalogItem, SfxBoolItem, DSID_USECATALOG, true);
+        const SfxBoolItem* pUseCatalogItem = _rSet.GetItem<SfxBoolItem>(DSID_USECATALOG);
 
         if ( bValid )
             m_pUseCatalog->Check(pUseCatalogItem->GetValue());
@@ -376,9 +381,9 @@ namespace dbaui
         bool bValid, bReadonly;
         getFlags(_rSet, bValid, bReadonly);
 
-        SFX_ITEMSET_GET(_rSet, pUseCatalogItem, SfxBoolItem, DSID_USECATALOG, true);
-        SFX_ITEMSET_GET(_rSet, pHostName, SfxStringItem, DSID_CONN_HOSTNAME, true);
-        SFX_ITEMSET_GET(_rSet, pPortNumber, SfxInt32Item, DSID_CONN_PORTNUMBER, true);
+        const SfxBoolItem* pUseCatalogItem = _rSet.GetItem<SfxBoolItem>(DSID_USECATALOG);
+        const SfxStringItem* pHostName = _rSet.GetItem<SfxStringItem>(DSID_CONN_HOSTNAME);
+        const SfxInt32Item* pPortNumber = _rSet.GetItem<SfxInt32Item>(DSID_CONN_PORTNUMBER);
 
         if ( bValid )
         {
@@ -419,8 +424,8 @@ namespace dbaui
         get(m_pEDDriverClass, "jdbcDriverClassEntry");
         get(m_pTestJavaDriver, "testDriverClassButton");
 
-        SFX_ITEMSET_GET(_rCoreAttrs, pUrlItem, SfxStringItem, DSID_CONNECTURL, true);
-        SFX_ITEMSET_GET(_rCoreAttrs, pTypesItem, DbuTypeCollectionItem, DSID_TYPECOLLECTION, true);
+        const SfxStringItem* pUrlItem = _rCoreAttrs.GetItem<SfxStringItem>(DSID_CONNECTURL);
+        const DbuTypeCollectionItem* pTypesItem = _rCoreAttrs.GetItem<DbuTypeCollectionItem>(DSID_TYPECOLLECTION);
         ::dbaccess::ODsnTypeCollection* pTypeCollection = pTypesItem ? pTypesItem->getCollection() : NULL;
         if (pTypeCollection && pUrlItem && pUrlItem->GetValue().getLength() )
         {
@@ -428,8 +433,8 @@ namespace dbaui
         }
         if ( m_sDefaultJdbcDriverName.getLength() )
         {
-            m_pEDDriverClass->SetModifyHdl(getControlModifiedLink());
-            m_pEDDriverClass->SetModifyHdl(LINK(this, OGeneralSpecialJDBCDetailsPage, OnEditModified));
+            m_pEDDriverClass->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
+            m_pEDDriverClass->SetModifyHdl(LINK(this, OGeneralSpecialJDBCDetailsPage, OnControlEditModifyHdl));
             m_pTestJavaDriver->SetClickHdl(LINK(this,OGeneralSpecialJDBCDetailsPage,OnTestJavaClickHdl));
         }
         else
@@ -443,9 +448,9 @@ namespace dbaui
         m_pFTSocket->Show(bShowSocket && !m_bUseClass);
         m_pEDSocket->Show(bShowSocket && !m_bUseClass);
 
-        m_pEDHostname->SetModifyHdl(getControlModifiedLink());
-        m_pNFPortNumber->SetModifyHdl(getControlModifiedLink());
-        m_pEDSocket->SetModifyHdl(getControlModifiedLink());
+        m_pEDHostname->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
+        m_pNFPortNumber->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
+        m_pEDSocket->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
     }
 
     OGeneralSpecialJDBCDetailsPage::~OGeneralSpecialJDBCDetailsPage()
@@ -482,10 +487,10 @@ namespace dbaui
         bool bValid, bReadonly;
         getFlags(_rSet, bValid, bReadonly);
 
-        SFX_ITEMSET_GET(_rSet, pDrvItem, SfxStringItem, DSID_JDBCDRIVERCLASS, true);
-        SFX_ITEMSET_GET(_rSet, pHostName, SfxStringItem, DSID_CONN_HOSTNAME, true);
-        SFX_ITEMSET_GET(_rSet, pPortNumber, SfxInt32Item, m_nPortId, true);
-        SFX_ITEMSET_GET(_rSet, pSocket, SfxStringItem, DSID_CONN_SOCKET, true);
+        const SfxStringItem* pDrvItem = _rSet.GetItem<SfxStringItem>(DSID_JDBCDRIVERCLASS);
+        const SfxStringItem* pHostName = _rSet.GetItem<SfxStringItem>(DSID_CONN_HOSTNAME);
+        const SfxInt32Item* pPortNumber = _rSet.GetItem<SfxInt32Item>(m_nPortId);
+        const SfxStringItem* pSocket = _rSet.GetItem<SfxStringItem>(DSID_CONN_SOCKET);
 
         if ( bValid )
         {
@@ -540,20 +545,19 @@ namespace dbaui
         ScopedVclPtrInstance< OSQLMessageBox > aMsg( this, OUString( ModuleRes( nMessage ) ), OUString(), WB_OK | WB_DEF_OK, mt );
         aMsg->Execute();
     }
-    IMPL_LINK(OGeneralSpecialJDBCDetailsPage, OnEditModified, Edit*, _pEdit)
+    void OGeneralSpecialJDBCDetailsPage::callModifiedHdl(void* pControl)
     {
-        if ( m_bUseClass && _pEdit == m_pEDDriverClass )
+        if ( m_bUseClass && pControl == m_pEDDriverClass )
             m_pTestJavaDriver->Enable( !m_pEDDriverClass->GetText().trim().isEmpty() );
 
         // tell the listener we were modified
-        callModifiedHdl();
-        return 0L;
+        OGenericAdministrationPage::callModifiedHdl();
     }
 
     // MySQLNativePage
     MySQLNativePage::MySQLNativePage( vcl::Window* pParent, const SfxItemSet& _rCoreAttrs )
         :OCommonBehaviourTabPage(pParent, "MysqlNativePage", "dbaccess/ui/mysqlnativepage.ui", _rCoreAttrs, CBTP_USE_CHARSET )
-        ,m_aMySQLSettings       ( VclPtr<MySQLNativeSettings>::Create(*get<VclVBox>("MySQLSettingsContainer"), getControlModifiedLink()) )
+        ,m_aMySQLSettings       ( VclPtr<MySQLNativeSettings>::Create(*get<VclVBox>("MySQLSettingsContainer"), LINK(this,OGenericAdministrationPage,OnControlModified)) )
     {
         get(m_pSeparator1, "connectionheader");
         get(m_pSeparator2, "userheader");
@@ -561,7 +565,7 @@ namespace dbaui
         get(m_pUserName, "username");
         get(m_pPasswordRequired, "passwordrequired");
 
-        m_pUserName->SetModifyHdl(getControlModifiedLink());
+        m_pUserName->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
 
         m_aMySQLSettings->Show();
     }
@@ -624,8 +628,8 @@ namespace dbaui
 
         m_aMySQLSettings->implInitControls( _rSet );
 
-        SFX_ITEMSET_GET(_rSet, pUidItem, SfxStringItem, DSID_USER, true);
-        SFX_ITEMSET_GET(_rSet, pAllowEmptyPwd, SfxBoolItem, DSID_PASSWORDREQUIRED, true);
+        const SfxStringItem* pUidItem = _rSet.GetItem<SfxStringItem>(DSID_USER);
+        const SfxBoolItem* pAllowEmptyPwd = _rSet.GetItem<SfxBoolItem>(DSID_PASSWORDREQUIRED);
 
         if ( bValid )
         {
@@ -661,10 +665,10 @@ namespace dbaui
         m_pNFPortNumber->SetUseThousandSep(false);
         get(m_pNFRowCount, "LDAPRowCountspinbutton");
 
-        m_pETBaseDN->SetModifyHdl(getControlModifiedLink());
+        m_pETBaseDN->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
         m_pCBUseSSL->SetToggleHdl( LINK(this, OGenericAdministrationPage, ControlModifiedCheckBoxHdl) );
-        m_pNFPortNumber->SetModifyHdl(getControlModifiedLink());
-        m_pNFRowCount->SetModifyHdl(getControlModifiedLink());
+        m_pNFPortNumber->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
+        m_pNFRowCount->SetModifyHdl(LINK(this,OGenericAdministrationPage,OnControlEditModifyHdl));
 
         m_pNFRowCount->SetUseThousandSep(false);
         m_iNormalPort = 389;
@@ -725,10 +729,10 @@ namespace dbaui
         bool bValid, bReadonly;
         getFlags(_rSet, bValid, bReadonly);
 
-        SFX_ITEMSET_GET(_rSet, pBaseDN, SfxStringItem, DSID_CONN_LDAP_BASEDN, true);
-        SFX_ITEMSET_GET(_rSet, pUseSSL, SfxBoolItem, DSID_CONN_LDAP_USESSL, true);
-        SFX_ITEMSET_GET(_rSet, pPortNumber, SfxInt32Item, DSID_CONN_LDAP_PORTNUMBER, true);
-        SFX_ITEMSET_GET(_rSet, pRowCount, SfxInt32Item, DSID_CONN_LDAP_ROWCOUNT, true);
+        const SfxStringItem* pBaseDN = _rSet.GetItem<SfxStringItem>(DSID_CONN_LDAP_BASEDN);
+        const SfxBoolItem* pUseSSL = _rSet.GetItem<SfxBoolItem>(DSID_CONN_LDAP_USESSL);
+        const SfxInt32Item* pPortNumber = _rSet.GetItem<SfxInt32Item>(DSID_CONN_LDAP_PORTNUMBER);
+        const SfxInt32Item* pRowCount = _rSet.GetItem<SfxInt32Item>(DSID_CONN_LDAP_ROWCOUNT);
 
         if ( bValid )
         {

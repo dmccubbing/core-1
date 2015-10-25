@@ -218,8 +218,8 @@ void SwSpellPopup::fillLangPopupMenu(
     if ( SvtLanguageTable::GetLanguageString( LANGUAGE_NONE ) == aCurLang )
         pPopupMenu->CheckItem( nLangItemIdStart + MN_NONE_OFFSET );
 
-    pPopupMenu->InsertItem( nLangItemIdStart + MN_RESET_OFFSET, OUString(SW_RES( STR_RESET_TO_DEFAULT_LANGUAGE )), MenuItemBits::NONE );
-    pPopupMenu->InsertItem( nLangItemIdStart + MN_MORE_OFFSET,  OUString(SW_RES( STR_LANGSTATUS_MORE )), MenuItemBits::NONE );
+    pPopupMenu->InsertItem( nLangItemIdStart + MN_RESET_OFFSET, OUString(SW_RES( STR_RESET_TO_DEFAULT_LANGUAGE )) );
+    pPopupMenu->InsertItem( nLangItemIdStart + MN_MORE_OFFSET,  OUString(SW_RES( STR_LANGSTATUS_MORE )) );
 }
 
 OUString RetrieveLabelFromCommand( const OUString& aCmdURL )
@@ -244,7 +244,7 @@ OUString RetrieveLabelFromCommand( const OUString& aCmdURL )
             {
                 for ( sal_Int32 i = 0; i < aPropSeq.getLength(); i++ )
                 {
-                    if ( aPropSeq[i].Name == "Name" )
+                    if ( aPropSeq[i].Name == "Label" )
                     {
                         aPropSeq[i].Value >>= aStr;
                         break;
@@ -536,6 +536,7 @@ m_aInfo16( SW_RES(IMG_INFO_16) )
     SetHelpId( MN_IGNORE_SELECTION, HID_LINGU_IGNORE_SELECTION);
 
     EnableItem( MN_AUTOCORR, false );
+    EnableItem( MN_AUTO_CORRECT_DLG, false );
 
     uno::Reference< linguistic2::XLanguageGuessing > xLG = SW_MOD()->GetLanguageGuesser();
     m_nGuessLangWord = LANGUAGE_NONE;

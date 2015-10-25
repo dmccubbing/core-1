@@ -65,7 +65,7 @@ private:
     FieldUnit           eFUnit;
     SfxMapUnit          eUnit;
 
-    DECL_LINK( SelectEffectHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectEffectHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( ClickEndlessHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickAutoHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickPixelHdl_Impl, Button*, void );
@@ -77,13 +77,13 @@ private:
 public:
     SvxTextAnimationPage( vcl::Window* pWindow, const SfxItemSet& rInAttrs );
     virtual ~SvxTextAnimationPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() { return pRanges; }
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet * ) override;
 };
 
 /*************************************************************************
@@ -98,7 +98,7 @@ class SvxTextTabDialog : public SfxTabDialog
 private:
     const SdrView*      pView;
 
-    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 
 public:
 

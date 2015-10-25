@@ -56,12 +56,12 @@ namespace pcr
             {
                 SetText( "" );
                 if ( m_pHelper )
-                    m_pHelper->ModifiedHdl( this );
+                    m_pHelper->setModified();
                 return true;
             }
         }
 
-        return BaseClass::PreNotify( rNEvt );
+        return FormattedField::PreNotify( rNEvt );
     }
 
 
@@ -90,6 +90,7 @@ namespace pcr
     OFormatSampleControl::OFormatSampleControl( vcl::Window* pParent, WinBits nWinStyle )
         :OFormatSampleControl_Base( PropertyControlType::Unknown, pParent, nWinStyle )
     {
+        getTypedControlWindow()->setControlHelper(*this);
     }
 
 

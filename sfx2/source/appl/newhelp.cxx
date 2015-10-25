@@ -520,7 +520,7 @@ bool IndexBox_Impl::Notify( NotifyEvent& rNEvt )
     if ( rNEvt.GetType() == MouseNotifyEvent::KEYINPUT &&
          KEY_RETURN == rNEvt.GetKeyEvent()->GetKeyCode().GetCode() )
     {
-        GetDoubleClickHdl().Call( NULL );
+        GetDoubleClickHdl().Call( *this );
         bHandled = true;
     }
 
@@ -737,7 +737,7 @@ void IndexTabPage_Impl::ClearIndex()
 
 IMPL_LINK_NOARG_TYPED(IndexTabPage_Impl, OpenHdl, Button*, void)
 {
-    m_pIndexCB->GetDoubleClickHdl().Call(m_pIndexCB);
+    m_pIndexCB->GetDoubleClickHdl().Call(*m_pIndexCB);
 }
 
 IMPL_LINK_TYPED( IndexTabPage_Impl, IdleHdl, Idle*, pIdle, void )
@@ -769,7 +769,7 @@ Control* IndexTabPage_Impl::GetLastFocusControl()
     return m_pOpenBtn;
 }
 
-void IndexTabPage_Impl::SetDoubleClickHdl( const Link<>& rLink )
+void IndexTabPage_Impl::SetDoubleClickHdl( const Link<ComboBox&,void>& rLink )
 {
     m_pIndexCB->SetDoubleClickHdl( rLink );
 }
@@ -863,7 +863,7 @@ void IndexTabPage_Impl::OpenKeyword()
     if ( !sKeyword.isEmpty() )
     {
         m_pIndexCB->SetText( sKeyword );
-        m_pIndexCB->GetDoubleClickHdl().Call( NULL );
+        m_pIndexCB->GetDoubleClickHdl().Call( *m_pIndexCB );
         sKeyword.clear();
     }
 }
@@ -970,7 +970,7 @@ SearchTabPage_Impl::SearchTabPage_Impl(vcl::Window* pParent, SfxHelpIndexWindow_
         }
     }
 
-    ModifyHdl(m_pSearchED);
+    ModifyHdl(*m_pSearchED);
 }
 
 SearchTabPage_Impl::~SearchTabPage_Impl()
@@ -1088,11 +1088,10 @@ IMPL_LINK_NOARG_TYPED(SearchTabPage_Impl, OpenHdl, Button*, void)
     m_pResultsLB->GetDoubleClickHdl().Call(*m_pResultsLB);
 }
 
-IMPL_LINK_NOARG(SearchTabPage_Impl, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(SearchTabPage_Impl, ModifyHdl, Edit&, void)
 {
     OUString aSearchText = comphelper::string::strip(m_pSearchED->GetText(), ' ');
     m_pSearchBtn->Enable(!aSearchText.isEmpty());
-    return 0;
 }
 
 void SearchTabPage_Impl::ActivatePage()
@@ -1588,11 +1587,9 @@ IMPL_LINK_TYPED( SfxHelpIndexWindow_Impl, ActivatePageHdl, TabControl *, pTabCtr
     pTabCtrl->SetTabPage( nId, pPage );
 }
 
-IMPL_LINK_NOARG(SfxHelpIndexWindow_Impl, SelectHdl)
+IMPL_LINK_NOARG_TYPED(SfxHelpIndexWindow_Impl, SelectHdl, ListBox&, void)
 {
     aIdle.Start();
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SfxHelpIndexWindow_Impl, InitHdl, Idle *, void)
@@ -1635,6 +1632,11 @@ IMPL_LINK_NOARG_TYPED(SfxHelpIndexWindow_Impl, KeywordHdl, IndexTabPage_Impl&, v
         pIPage->OpenKeyword();
     else if ( !pSPage->OpenKeyword( sKeyword ) )
         pParentWin->ShowStartPage();
+}
+
+IMPL_LINK_TYPED(SfxHelpIndexWindow_Impl, IndexTabPageDoubleClickHdl, ComboBox&, rBox, void)
+{
+    aPageDoubleClickLink.Call(&rBox);
 }
 
 void SfxHelpIndexWindow_Impl::Resize()
@@ -1720,11 +1722,9 @@ void SfxHelpIndexWindow_Impl::DataChanged( const DataChangedEvent& rDCEvt )
 
 
 
-void SfxHelpIndexWindow_Impl::SetDoubleClickHdl( const Link<>& rLink )
+void SfxHelpIndexWindow_Impl::SetDoubleClickHdl( const Link<Control*,bool>& rLink )
 {
     aPageDoubleClickLink = rLink;
-    if ( pIPage )
-        pIPage->SetDoubleClickHdl( aPageDoubleClickLink );
 }
 
 IMPL_LINK_TYPED(SfxHelpIndexWindow_Impl, ContentTabPageDoubleClickHdl, SvTreeListBox*, p, bool)
@@ -2889,13 +2889,13 @@ IMPL_LINK_TYPED( SfxHelpWindow_Impl, SelectHdl, ToolBox* , pToolBox, void )
 
 
 
-IMPL_LINK_NOARG(SfxHelpWindow_Impl, OpenHdl)
+IMPL_LINK_NOARG_TYPED(SfxHelpWindow_Impl, OpenHdl, Control*, bool)
 {
     pIndexWin->SelectExecutableEntry();
     OUString aEntry = pIndexWin->GetSelectEntry();
 
     if ( aEntry.isEmpty() )
-        return 0;
+        return false;
 
     OUString sHelpURL;
 
@@ -2926,7 +2926,7 @@ IMPL_LINK_NOARG(SfxHelpWindow_Impl, OpenHdl)
 
     loadHelpContent(sHelpURL);
 
-    return 0;
+    return false;
 }
 
 

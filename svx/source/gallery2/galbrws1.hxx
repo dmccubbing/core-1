@@ -36,7 +36,7 @@ class GalleryButton : public PushButton
 {
 private:
 
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
 
 public:
 
@@ -51,8 +51,8 @@ protected:
 
     void            InitSettings();
 
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
 public:
 
@@ -100,21 +100,21 @@ private:
     void                    ImplGetExecuteVector(::std::vector< sal_uInt16 >& o_aExec);
     void                    ImplExecute( sal_uInt16 nId );
     void                    ImplGalleryThemeProperties( const OUString & rThemeName, bool bCreateNew );
-    void                    ImplEndGalleryThemeProperties( VclAbstractDialog2* pDialog, bool bCreateNew );
+    void                    ImplEndGalleryThemeProperties(Dialog* pDialog, bool bCreateNew);
 
     // Control
-    virtual void            Resize() SAL_OVERRIDE;
-    virtual void            GetFocus() SAL_OVERRIDE;
+    virtual void            Resize() override;
+    virtual void            GetFocus() override;
 
     // SfxListener
-    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
                             DECL_LINK_TYPED( ClickNewThemeHdl, Button*, void );
-                            DECL_LINK( SelectThemeHdl, void* );
+                            DECL_LINK_TYPED( SelectThemeHdl, ListBox&, void );
                             DECL_LINK_TYPED( ShowContextMenuHdl, void*, void );
                             DECL_LINK_TYPED( PopupMenuHdl, Menu*, bool );
-                            DECL_LINK( EndNewThemePropertiesDlgHdl, VclAbstractDialog2* );
-                            DECL_LINK( EndThemePropertiesDlgHdl, VclAbstractDialog2* );
+                            DECL_LINK_TYPED( EndNewThemePropertiesDlgHdl, Dialog&, void );
+                            DECL_LINK_TYPED( EndThemePropertiesDlgHdl, Dialog&, void );
                             DECL_LINK_TYPED( DestroyThemePropertiesDlgHdl, void*, void );
 
 public:
@@ -125,9 +125,9 @@ public:
                                 const ::std::function<sal_Bool (const KeyEvent&,Window*)>& rKeyInputHandler,
                                 const ::std::function<void ()>& rThemeSlectionHandler);
                             virtual ~GalleryBrowser1();
-    virtual void            dispose() SAL_OVERRIDE;
+    virtual void            dispose() override;
 
-    void                    SelectTheme( sal_uIntPtr nThemePos ) { mpThemes->SelectEntryPos( (sal_uInt16) nThemePos ); SelectThemeHdl( NULL ); }
+    void                    SelectTheme( sal_uInt16 nThemePos ) { mpThemes->SelectEntryPos( nThemePos ); SelectThemeHdl( *mpThemes ); }
     OUString                GetSelectedTheme() { return mpThemes->GetEntryCount() ? mpThemes->GetSelectEntry() : OUString(); }
 
     void                    ShowContextMenu();

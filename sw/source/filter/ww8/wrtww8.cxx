@@ -2716,8 +2716,7 @@ void WW8Export::WriteFkpPlcUsw()
          some magic.
         */
         // avoid memory leak #i120098#, the unnamed obj will be released in destructor.
-        xEscherStg = GetWriter().GetStorage().OpenSotStorage(OUString(SL::aObjectPool),
-            STREAM_READWRITE | StreamMode::SHARE_DENYALL);
+        xEscherStg = GetWriter().GetStorage().OpenSotStorage(OUString(SL::aObjectPool));
     }
 
     // dggInfo - escher stream
@@ -2987,7 +2986,7 @@ bool SwWW8Writer::InitStd97CodecUpdateMedium( ::msfilter::MSCodec_Std97& rCodec 
 
     if ( mpMedium )
     {
-        SFX_ITEMSET_ARG( mpMedium->GetItemSet(), pEncryptionDataItem, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false );
+        const SfxUnoAnyItem* pEncryptionDataItem = SfxItemSet::GetItem<SfxUnoAnyItem>(mpMedium->GetItemSet(), SID_ENCRYPTIONDATA, false);
         if ( pEncryptionDataItem && ( pEncryptionDataItem->GetValue() >>= aEncryptionData ) && !rCodec.InitCodec( aEncryptionData ) )
         {
             OSL_ENSURE( false, "Unexpected EncryptionData!" );
@@ -2997,7 +2996,7 @@ bool SwWW8Writer::InitStd97CodecUpdateMedium( ::msfilter::MSCodec_Std97& rCodec 
         if ( !aEncryptionData.getLength() )
         {
             // try to generate the encryption data based on password
-            SFX_ITEMSET_ARG( mpMedium->GetItemSet(), pPasswordItem, SfxStringItem, SID_PASSWORD, false );
+            const SfxStringItem* pPasswordItem = SfxItemSet::GetItem<SfxStringItem>(mpMedium->GetItemSet(), SID_PASSWORD, false);
             if ( pPasswordItem && !pPasswordItem->GetValue().isEmpty() && pPasswordItem->GetValue().getLength() <= 15 )
             {
                 // Generate random number with a seed of time as salt.
@@ -3395,7 +3394,6 @@ MSWordExportBase::MSWordExportBase( SwDoc *pDocument, SwPaM *pCurrentPam, SwPaM 
     , m_bTabInTOC(false)
     , m_bHideTabLeaderAndPageNumbers(false)
     , m_bExportModeRTF(false)
-    , m_bOutOutlineOnly(false)
     , m_bFontSizeWritten(false)
     , m_pDoc(pDocument)
     , m_nCurStart(pCurrentPam->GetPoint()->nNode.GetIndex())

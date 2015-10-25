@@ -1068,7 +1068,7 @@ void SdrDragMovHdl::MoveSdrDrag(const Point& rNoSnapPnt)
 
             if (getSdrDragView().IsMirrorAllowed(true,true))
             { // limited
-                if (!getSdrDragView().IsMirrorAllowed(false)) nSA=4500;
+                if (!getSdrDragView().IsMirrorAllowed()) nSA=4500;
                 if (!getSdrDragView().IsMirrorAllowed(true)) nSA=9000;
             }
 
@@ -2581,7 +2581,7 @@ bool SdrDragMirror::BeginSdrDrag()
         bool b45=b90 || (std::abs(aDif.X()) == std::abs(aDif.Y()));
         nAngle=NormAngle360(GetAngle(aDif));
 
-        if (!getSdrDragView().IsMirrorAllowed(false) && !b45)
+        if (!getSdrDragView().IsMirrorAllowed() && !b45)
             return false; // free choice of axis angle not allowed
 
         if (!getSdrDragView().IsMirrorAllowed() && !b90)
@@ -4020,21 +4020,6 @@ bool SdrDragCrop::EndSdrDrag(bool /*bCopy*/)
 
     double fScaleX = ( aGraphicSize.Width() - rOldCrop.GetLeft() - rOldCrop.GetRight() ) / (double)aOldRect.GetWidth();
     double fScaleY = ( aGraphicSize.Height() - rOldCrop.GetTop() - rOldCrop.GetBottom() ) / (double)aOldRect.GetHeight();
-
-    // not needed since the modification is done in unit coordinates, free from shear/rotate and mirror
-    // // TTTT may be removed or exchanged by other stuff in aw080
-    // // to correct the never working combination of cropped images and mirroring
-    // // I have to correct the rectangles the calculation is based on here. In the current
-    // // core geometry stuff a vertical mirror is expressed as 180 degree rotation. All
-    // // this can be removed again when aw080 will have cleaned up the old
-    // // (non-)transformation mess in the core.
-    // if(18000 == pObj->GetGeoStat().nRotationAngle)
-    // {
-    //     // old notation of vertical mirror, need to correct diffs since both rects
-    //     // are rotated by 180 degrees
-    //     aOldRect = Rectangle(aOldRect.TopLeft() - (aOldRect.BottomRight() - aOldRect.TopLeft()), aOldRect.TopLeft());
-    //     aNewRect = Rectangle(aNewRect.TopLeft() - (aNewRect.BottomRight() - aNewRect.TopLeft()), aNewRect.TopLeft());
-    // }
 
     sal_Int32 nDiffLeft = aNewRect.Left() - aOldRect.Left();
     sal_Int32 nDiffTop = aNewRect.Top() - aOldRect.Top();

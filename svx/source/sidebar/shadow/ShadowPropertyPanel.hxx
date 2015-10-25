@@ -1,3 +1,11 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/*
+ * This file is part of the LibreOffice project.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 #ifndef INCLUDED_SVX_SOURCE_SIDEBAR_AREA_SHADOWPROPERTYPANEL_HXX
 #define INCLUDED_SVX_SOURCE_SIDEBAR_AREA_SHADOWPROPERTYPANEL_HXX
 
@@ -27,7 +35,7 @@ class ShadowPropertyPanel
 {
 public:
     virtual ~ShadowPropertyPanel();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<vcl::Window> Create(
     vcl::Window* pParent,
@@ -35,13 +43,13 @@ public:
     SfxBindings* pBindings);
 
     virtual void DataChanged(
-    const DataChangedEvent& rEvent) SAL_OVERRIDE;
+    const DataChangedEvent& rEvent) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     SfxBindings* GetBindings() { return mpBindings;}
 
@@ -63,7 +71,6 @@ private:
     VclPtr<FixedText>     mpFTColor;
     VclPtr<Slider>        mpShadowTransSlider;
     VclPtr<MetricField>   mpShadowTransMetric;
-    XColorListRef         pColorList;
 
     ::sfx2::sidebar::ControllerItem maShadowController;
     ::sfx2::sidebar::ControllerItem maShadowTransController;
@@ -81,9 +88,9 @@ private:
     void SetTransparencyValue(long);
     void UpdateControls();
     DECL_LINK_TYPED(ClickShadowHdl, Button*, void);
-    DECL_LINK(ModifyShadowColorHdl, void*);
-    DECL_LINK(ModifyShadowTransMetricHdl, void*);
-    DECL_LINK(ModifyShadowDistanceHdl, void*);
+    DECL_LINK_TYPED(ModifyShadowColorHdl, ListBox&, void);
+    DECL_LINK_TYPED(ModifyShadowTransMetricHdl, Edit&, void);
+    DECL_LINK_TYPED(ModifyShadowDistanceHdl, Edit&, void);
     DECL_LINK_TYPED(ModifyShadowTransSliderHdl, Slider*, void);
 };
 }
@@ -91,3 +98,4 @@ private:
 
 #endif
 
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

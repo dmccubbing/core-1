@@ -80,10 +80,9 @@ void DetailsContainer::setActive( bool bActive )
     m_bIsActive = bActive;
 }
 
-IMPL_LINK_NOARG( DetailsContainer, ValueChangeHdl )
+IMPL_LINK_NOARG_TYPED( DetailsContainer, ValueChangeHdl, Edit&, void )
 {
     notifyChange( );
-    return 0;
 }
 
 HostDetailsContainer::HostDetailsContainer( VclBuilderContainer* pBuilder, sal_uInt16 nPort, const OUString& sScheme ) :
@@ -137,6 +136,7 @@ bool HostDetailsContainer::setUrl( const INetURLObject& rUrl )
 
     if ( bSuccess )
     {
+        m_sHost = rUrl.GetHost( );
         m_pEDHost->SetText( rUrl.GetHost( ) );
         m_pEDPort->SetValue( rUrl.GetPort( ) );
         m_pEDRoot->SetText( rUrl.GetURLPath() );
@@ -492,10 +492,9 @@ IMPL_LINK_NOARG_TYPED( CmisDetailsContainer, RefreshReposHdl, Button*, void  )
     {}
 }
 
-IMPL_LINK_NOARG( CmisDetailsContainer, SelectRepoHdl  )
+IMPL_LINK_NOARG_TYPED( CmisDetailsContainer, SelectRepoHdl, ListBox&, void )
 {
     selectRepository( );
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -50,8 +50,8 @@ namespace rptxml
         sal_Int32                                                                           m_nColumnIndex;
         ORptFilter& GetOwnImport();
 
-        OXMLTable(const OXMLTable&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLTable&) SAL_DELETED_FUNCTION;
+        OXMLTable(const OXMLTable&) = delete;
+        void operator =(const OXMLTable&) = delete;
     public:
 
         OXMLTable( ORptFilter& rImport
@@ -64,9 +64,9 @@ namespace rptxml
 
         virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
 
         inline void addHeight(sal_Int32 _nHeight)   { m_aHeight.push_back( _nHeight ); }
         inline void addWidth(sal_Int32 _nWidth)     { m_aWidth.push_back( _nWidth ); }

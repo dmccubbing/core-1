@@ -38,7 +38,7 @@ namespace dbaui
         }
 
         // IWindowEventFilter
-        virtual bool payAttentionTo( const VclWindowEvent& _rEvent ) const SAL_OVERRIDE
+        virtual bool payAttentionTo( const VclWindowEvent& _rEvent ) const override
         {
             return  ( _rEvent.GetId() == VCLEVENT_WINDOW_ENABLED )
                 ||  ( _rEvent.GetId() == VCLEVENT_WINDOW_DISABLED )
@@ -56,7 +56,7 @@ namespace dbaui
         }
 
         // IWindowOperator
-        virtual void operateOn( const VclWindowEvent& _rTrigger, vcl::Window& _rOperateOn ) const SAL_OVERRIDE;
+        virtual void operateOn( const VclWindowEvent& _rTrigger, vcl::Window& _rOperateOn ) const override;
 
     private:
         const OUString    m_sDisabledText;
@@ -125,7 +125,7 @@ namespace dbaui
     };
 
     // MySQLNativeSettings
-    MySQLNativeSettings::MySQLNativeSettings( vcl::Window& _rParent, const Link<>& _rControlModificationLink )
+    MySQLNativeSettings::MySQLNativeSettings( vcl::Window& _rParent, const Link<void*,void>& _rControlModificationLink )
         :TabPage( &_rParent, "MysqlNativeSettings", "dbaccess/ui/mysqlnativesettings.ui" ),
         m_aControlModificationLink(_rControlModificationLink)
     {
@@ -143,11 +143,11 @@ namespace dbaui
         get(m_pSocket, "socket");
         get(m_pNamedPipe, "namedpipe");
 
-        m_pDatabaseName->SetModifyHdl( _rControlModificationLink );
-        m_pHostName->SetModifyHdl( _rControlModificationLink );
-        m_pPort->SetModifyHdl( _rControlModificationLink );
-        m_pSocket->SetModifyHdl( _rControlModificationLink );
-        m_pNamedPipe->SetModifyHdl( _rControlModificationLink );
+        m_pDatabaseName->SetModifyHdl( LINK(this, MySQLNativeSettings, EditModifyHdl) );
+        m_pHostName->SetModifyHdl( LINK(this, MySQLNativeSettings, EditModifyHdl) );
+        m_pPort->SetModifyHdl( LINK(this, MySQLNativeSettings, EditModifyHdl) );
+        m_pSocket->SetModifyHdl( LINK(this, MySQLNativeSettings, EditModifyHdl) );
+        m_pNamedPipe->SetModifyHdl( LINK(this, MySQLNativeSettings, EditModifyHdl) );
         m_pSocketRadio->SetToggleHdl( LINK(this, MySQLNativeSettings, RadioToggleHdl) );
         m_pNamedPipeRadio->SetToggleHdl( LINK(this, MySQLNativeSettings, RadioToggleHdl) );
 
@@ -172,6 +172,11 @@ namespace dbaui
     IMPL_LINK_TYPED(MySQLNativeSettings, RadioToggleHdl, RadioButton&, rRadioButton, void)
     {
         m_aControlModificationLink.Call(&rRadioButton);
+    }
+
+    IMPL_LINK_TYPED(MySQLNativeSettings, EditModifyHdl, Edit&, rEdit, void)
+    {
+        m_aControlModificationLink.Call(&rEdit);
     }
 
     MySQLNativeSettings::~MySQLNativeSettings()
@@ -233,16 +238,16 @@ namespace dbaui
 
     void MySQLNativeSettings::implInitControls(const SfxItemSet& _rSet )
     {
-        SFX_ITEMSET_GET( _rSet, pInvalid, SfxBoolItem, DSID_INVALID_SELECTION, true );
+        const SfxBoolItem* pInvalid = _rSet.GetItem<SfxBoolItem>(DSID_INVALID_SELECTION);
         bool bValid = !pInvalid || !pInvalid->GetValue();
         if ( !bValid )
             return;
 
-        SFX_ITEMSET_GET( _rSet, pDatabaseName,  SfxStringItem,  DSID_DATABASENAME,      true );
-        SFX_ITEMSET_GET( _rSet, pHostName,      SfxStringItem,  DSID_CONN_HOSTNAME,     true );
-        SFX_ITEMSET_GET( _rSet, pPortNumber,    SfxInt32Item,   DSID_MYSQL_PORTNUMBER,  true );
-        SFX_ITEMSET_GET( _rSet, pSocket,        SfxStringItem,  DSID_CONN_SOCKET,       true );
-        SFX_ITEMSET_GET( _rSet, pNamedPipe,     SfxStringItem,  DSID_NAMED_PIPE,       true );
+        const SfxStringItem* pDatabaseName = _rSet.GetItem<SfxStringItem>(DSID_DATABASENAME);
+        const SfxStringItem* pHostName = _rSet.GetItem<SfxStringItem>(DSID_CONN_HOSTNAME);
+        const SfxInt32Item* pPortNumber = _rSet.GetItem<SfxInt32Item>(DSID_MYSQL_PORTNUMBER);
+        const SfxStringItem* pSocket = _rSet.GetItem<SfxStringItem>(DSID_CONN_SOCKET);
+        const SfxStringItem* pNamedPipe = _rSet.GetItem<SfxStringItem>(DSID_NAMED_PIPE);
 
         m_pDatabaseName->SetText( pDatabaseName->GetValue() );
         m_pDatabaseName->ClearModifyFlag();

@@ -37,10 +37,10 @@ class SvxEventConfigPage : public _SvxMacroTabPage
 
     bool            bAppConfig;
 
-    DECL_LINK(      SelectHdl_Impl, ListBox* );
+    DECL_LINK_TYPED(      SelectHdl_Impl, ListBox&, void );
 
-    SvxEventConfigPage (const SvxEventConfigPage &) SAL_DELETED_FUNCTION;
-    SvxEventConfigPage & operator= (const SvxEventConfigPage &) SAL_DELETED_FUNCTION;
+    SvxEventConfigPage (const SvxEventConfigPage &) = delete;
+    SvxEventConfigPage & operator= (const SvxEventConfigPage &) = delete;
 
 public:
 
@@ -48,12 +48,12 @@ public:
                     struct EarlyInit { };
                     SvxEventConfigPage( vcl::Window *pParent, const SfxItemSet& rSet, EarlyInit );
                     virtual ~SvxEventConfigPage();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     void            LateInit( const css::uno::Reference< css::frame::XFrame >& _rxFrame );
 
 protected:
-    virtual bool    FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool    FillItemSet( SfxItemSet* ) override;
 
 private:
     void    ImplInitDocument();

@@ -23,21 +23,21 @@ public:
 
     TemplateRemoteView (vcl::Window *pParent, WinBits nWinStyle, bool bDisableTransientChildren);
 
-    virtual void showRootRegion () SAL_OVERRIDE;
+    virtual void showRootRegion () override;
 
-    virtual void showRegion (ThumbnailViewItem *pItem) SAL_OVERRIDE;
+    virtual void showRegion (ThumbnailViewItem *pItem) override;
 
     bool loadRepository (TemplateRepository* pRepository, bool bRefresh);
 
-    virtual sal_uInt16 createRegion (const OUString &rName) SAL_OVERRIDE;
+    virtual sal_uInt16 createRegion (const OUString &rName) override;
 
-    virtual bool isNestedRegionAllowed () const SAL_OVERRIDE;
+    virtual bool isNestedRegionAllowed () const override;
 
-    virtual bool isImportAllowed () const SAL_OVERRIDE;
+    virtual bool isImportAllowed () const override;
 
 private:
 
-    com::sun::star::uno::Reference< com::sun::star::ucb::XCommandEnvironment > m_xCmdEnv;
+    css::uno::Reference< css::ucb::XCommandEnvironment > m_xCmdEnv;
 };
 
 #endif // INCLUDED_SFX2_TEMPLATEREMOTEVIEW_HXX

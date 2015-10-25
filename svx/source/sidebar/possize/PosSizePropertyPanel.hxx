@@ -36,6 +36,7 @@ class FixedText;
 class MetricField;
 class CheckBox;
 class MetricBox;
+class Edit;
 
 namespace svx {
 class DialControl;
@@ -52,7 +53,7 @@ class PosSizePropertyPanel
 {
 public:
     virtual ~PosSizePropertyPanel();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<vcl::Window> Create(
         vcl::Window* pParent,
@@ -61,16 +62,16 @@ public:
         const css::uno::Reference<css::ui::XSidebar>& rxSidebar);
 
     virtual void DataChanged(
-        const DataChangedEvent& rEvent) SAL_OVERRIDE;
+        const DataChangedEvent& rEvent) override;
 
     virtual void HandleContextChange(
-        const ::sfx2::sidebar::EnumContext& rContext) SAL_OVERRIDE;
+        const ::sfx2::sidebar::EnumContext& rContext) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     SfxBindings* GetBindings() { return mpBindings;}
 
@@ -150,12 +151,12 @@ private:
 
     css::uno::Reference<css::ui::XSidebar> mxSidebar;
 
-    DECL_LINK( ChangePosXHdl, void * );
-    DECL_LINK( ChangePosYHdl, void * );
-    DECL_LINK( ChangeWidthHdl, void * );
-    DECL_LINK( ChangeHeightHdl, void * );
+    DECL_LINK_TYPED( ChangePosXHdl, Edit&, void );
+    DECL_LINK_TYPED( ChangePosYHdl, Edit&, void );
+    DECL_LINK_TYPED( ChangeWidthHdl, Edit&, void );
+    DECL_LINK_TYPED( ChangeHeightHdl, Edit&, void );
     DECL_LINK_TYPED( ClickAutoHdl, Button*, void );
-    DECL_LINK( AngleModifiedHdl, void * );
+    DECL_LINK_TYPED( AngleModifiedHdl, Edit&, void );
     DECL_LINK_TYPED( RotationHdl, svx::DialControl*, void );
     DECL_LINK_TYPED( FlipHdl, ToolBox *, void );
 

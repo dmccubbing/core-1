@@ -594,7 +594,7 @@ namespace svxform
             // default-entry "Forms"
             Image aRootImage( m_aNavigatorImages.GetImage( RID_SVXIMG_FORMS ) );
             m_pRootEntry = InsertEntry( SVX_RESSTR(RID_STR_FORMS), aRootImage, aRootImage,
-                NULL, false, 0, NULL );
+                NULL, false, 0 );
         }
         else if (!m_bMarkingObjects && dynamic_cast<const FmNavRequestSelectHint*>(&rHint))
         {   // if m_bMarkingObjects is sal_True, I mark objects myself
@@ -1339,6 +1339,10 @@ namespace svxform
         if (!xNewForm.is())
             return;
 
+        Reference< XPropertySet >  xPropertySet(xNewForm, UNO_QUERY);
+        if (!xPropertySet.is())
+            return;
+
         FmFormData* pNewFormData = new FmFormData( xNewForm, m_aNavigatorImages, pParentFormData );
 
 
@@ -1346,9 +1350,6 @@ namespace svxform
         OUString aName = GenerateName(pNewFormData);
         pNewFormData->SetText(aName);
 
-        Reference< XPropertySet >  xPropertySet(xNewForm, UNO_QUERY);
-        if (!xPropertySet.is())
-            return;
         try
         {
             xPropertySet->setPropertyValue( FM_PROP_NAME, makeAny(aName) );

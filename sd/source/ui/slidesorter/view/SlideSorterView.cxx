@@ -39,7 +39,6 @@
 #include "cache/SlsPageCache.hxx"
 #include "cache/SlsPageCacheManager.hxx"
 #include "cache/SlsCacheContext.hxx"
-#include "taskpane/SlideSorterCacheDisplay.hxx"
 #include "DrawDocShell.hxx"
 #include "PaneDockingWindow.hxx"
 
@@ -89,15 +88,15 @@ namespace {
     class Painter : public ILayerPainter
     {
     public:
-        Painter (SlideSorterView& rView) : mrView(rView) {}
+        explicit Painter (SlideSorterView& rView) : mrView(rView) {}
         virtual ~Painter() {}
 
-        virtual void Paint (OutputDevice& rDevice, const Rectangle& rRepaintArea) SAL_OVERRIDE
+        virtual void Paint (OutputDevice& rDevice, const Rectangle& rRepaintArea) override
         {
             mrView.Paint(rDevice,rRepaintArea);
         }
 
-        virtual void SetLayerInvalidator (const SharedILayerInvalidator&) SAL_OVERRIDE {}
+        virtual void SetLayerInvalidator (const SharedILayerInvalidator&) override {}
 
     private:
         SlideSorterView& mrView;
@@ -109,17 +108,17 @@ class BackgroundPainter
       public ::boost::noncopyable
 {
 public:
-    BackgroundPainter (const Color& rBackgroundColor) : maBackgroundColor(rBackgroundColor) {}
+    explicit BackgroundPainter (const Color& rBackgroundColor) : maBackgroundColor(rBackgroundColor) {}
     virtual ~BackgroundPainter() {}
 
-    virtual void Paint (OutputDevice& rDevice, const Rectangle& rRepaintArea) SAL_OVERRIDE
+    virtual void Paint (OutputDevice& rDevice, const Rectangle& rRepaintArea) override
     {
         rDevice.SetFillColor(maBackgroundColor);
         rDevice.SetLineColor();
         rDevice.DrawRect(rRepaintArea);
     }
 
-    virtual void SetLayerInvalidator (const SharedILayerInvalidator&) SAL_OVERRIDE {}
+    virtual void SetLayerInvalidator (const SharedILayerInvalidator&) override {}
 
     void SetColor (const Color& rColor) { maBackgroundColor = rColor; }
 
@@ -519,8 +518,6 @@ void SlideSorterView::UpdatePreciousFlags()
             {
                 pCache->SetPreciousFlag(
                     pDescriptor->GetPage(),
-                    maVisiblePageRange.IsInside(nIndex));
-                SSCD_SET_VISIBILITY(mrModel.GetDocument(), nIndex,
                     maVisiblePageRange.IsInside(nIndex));
             }
             else

@@ -50,7 +50,17 @@ using namespace ::com::sun::star;
 #define LOCALE "Locale"
 
 template< typename... Ifc >
-ScVbaFormat< Ifc... >::ScVbaFormat( const uno::Reference< XHelperInterface >& xParent, const uno::Reference< uno::XComponentContext > & xContext, const uno::Reference< beans::XPropertySet >& _xPropertySet, const uno::Reference< frame::XModel >& xModel, bool bCheckAmbiguoity ) throw ( script::BasicErrorException ) : ScVbaFormat_BASE( xParent, xContext ), m_aDefaultLocale( OUString("en"), OUString( "US"), OUString() ), mxPropertySet( _xPropertySet ), mxModel( xModel ), mbCheckAmbiguoity( bCheckAmbiguoity ), mbAddIndent( false )
+ScVbaFormat< Ifc... >::ScVbaFormat( const uno::Reference< XHelperInterface >& xParent,
+                                    const uno::Reference< uno::XComponentContext > & xContext,
+                                    const uno::Reference< beans::XPropertySet >& _xPropertySet,
+                                    const uno::Reference< frame::XModel >& xModel,
+                                    bool bCheckAmbiguoity ) throw ( script::BasicErrorException )
+    : ScVbaFormat_BASE( xParent, xContext ),
+      m_aDefaultLocale( OUString("en"), OUString( "US"), OUString() ),
+      mxPropertySet( _xPropertySet ),
+      mxModel( xModel ),
+      mbCheckAmbiguoity( bCheckAmbiguoity ),
+      mbAddIndent( false )
 {
     try
     {
@@ -555,7 +565,7 @@ ScVbaFormat< Ifc... >::getLocked(  ) throw (script::BasicErrorException, uno::Ru
             if ( pDataSet )
             {
                 const ScProtectionAttr& rProtAttr = static_cast<const ScProtectionAttr &>( pDataSet->Get(ATTR_PROTECTION) );
-                SfxItemState eState = pDataSet->GetItemState(ATTR_PROTECTION, true, NULL);
+                SfxItemState eState = pDataSet->GetItemState(ATTR_PROTECTION);
                 if(eState != SfxItemState::DONTCARE)
                     aCellProtection =  uno::makeAny(rProtAttr.GetProtection());
             }
@@ -588,7 +598,7 @@ ScVbaFormat< Ifc... >::getFormulaHidden(  ) throw (script::BasicErrorException, 
             if ( pDataSet )
             {
                 const ScProtectionAttr& rProtAttr = static_cast<const ScProtectionAttr &>( pDataSet->Get(ATTR_PROTECTION) );
-                SfxItemState eState = pDataSet->GetItemState(ATTR_PROTECTION, true, NULL);
+                SfxItemState eState = pDataSet->GetItemState(ATTR_PROTECTION);
                 if(eState != SfxItemState::DONTCARE)
                     aBoolRet = uno::makeAny(rProtAttr.GetHideFormula());
             }

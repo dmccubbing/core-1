@@ -78,8 +78,8 @@ public:
     PresLayoutPreview(vcl::Window* pParent);
     virtual ~PresLayoutPreview();
 
-    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
-    virtual Size GetOptimalSize() const SAL_OVERRIDE;
+    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
+    virtual Size GetOptimalSize() const override;
 
     void init(SdPage* pMaster);
     void update(HeaderFooterSettings& rSettings);
@@ -146,8 +146,7 @@ private:
     bool            mbHandoutMode;
 
     DECL_LINK_TYPED( UpdateOnClickHdl, Button*, void );
-
-    DECL_LINK( LanguageChangeHdl, void * );
+    DECL_LINK_TYPED( LanguageChangeHdl, ListBox&, void );
 
     void FillFormatList(int eFormat);
     void GetOrSetDateTimeLanguage( LanguageType &rLanguage, bool bSet );
@@ -156,7 +155,7 @@ private:
 public:
     HeaderFooterTabPage( vcl::Window* pParent, SdDrawDocument* pDoc, SdPage* pActualPage, bool bHandoutMode );
     virtual ~HeaderFooterTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    init( const HeaderFooterSettings& rSettings, bool bNotOnTitle );
     void    getData( HeaderFooterSettings& rSettings, bool& rNotOnTitle );
@@ -477,11 +476,9 @@ void HeaderFooterTabPage::dispose()
     TabPage::dispose();
 }
 
-IMPL_LINK_NOARG(HeaderFooterTabPage, LanguageChangeHdl)
+IMPL_LINK_NOARG_TYPED(HeaderFooterTabPage, LanguageChangeHdl, ListBox&, void)
 {
     FillFormatList( (int)reinterpret_cast<sal_IntPtr>(mpCBDateTimeFormat->GetSelectEntryData()) );
-
-    return 0L;
 }
 
 void HeaderFooterTabPage::FillFormatList( int eFormat )

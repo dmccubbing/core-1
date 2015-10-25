@@ -81,8 +81,8 @@ private:
     bool            doScan;
 
     DECL_LINK_TYPED( ClickBtnHdl, Button*, void );
-    DECL_LINK( SelectHdl, ListBox* );
-    DECL_LINK( ModifyHdl, Edit* );
+    DECL_LINK_TYPED( SelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
     DECL_LINK_TYPED( ReloadSaneOptionsHdl, Sane&, void );
     DECL_LINK_TYPED( OptionsBoxSelectHdl, SvTreeListBox*, void );
 
@@ -105,9 +105,9 @@ private:
 public:
     SaneDlg( vcl::Window*, Sane&, bool );
     virtual ~SaneDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
     void UpdateScanArea( bool );
     bool getDoScan() { return doScan;}
 };

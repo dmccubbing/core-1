@@ -186,14 +186,14 @@ public:
 private:
     virtual ~ChangesListener() {}
 
-    virtual void SAL_CALL disposing(lang::EventObject const &) throw (RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL disposing(lang::EventObject const &) throw (RuntimeException, std::exception) override
     {
         osl::MutexGuard g(editor_.mutex_);
         editor_.notifier_.clear();
     }
 
     virtual void SAL_CALL propertiesChange(
-        Sequence< beans::PropertyChangeEvent > const &) throw (RuntimeException, std::exception) SAL_OVERRIDE
+        Sequence< beans::PropertyChangeEvent > const &) throw (RuntimeException, std::exception) override
     {
         SolarMutexGuard g;
         editor_.ImplSetFont();
@@ -1006,7 +1006,7 @@ void EditorWindow::CreateEditEngine()
     pEditEngine->SetUpdateMode(true);
     rModulWindow.Update();   // has only been invalidated at UpdateMode = true
 
-    pEditView->ShowCursor(true);
+    pEditView->ShowCursor();
 
     StartListening(*pEditEngine);
 
@@ -1753,7 +1753,7 @@ void WatchWindow::AddWatch( const OUString& rVName )
 
     OUString aWatchStr_( aVar );
     aWatchStr_ += "\t\t";
-    SvTreeListEntry* pNewEntry = aTreeListBox->InsertEntry( aWatchStr_, 0, true, TREELIST_APPEND );
+    SvTreeListEntry* pNewEntry = aTreeListBox->InsertEntry( aWatchStr_, 0, true );
     pNewEntry->SetUserData( pWatchItem );
 
     aTreeListBox->Select(pNewEntry);
@@ -1870,7 +1870,7 @@ StackWindow::StackWindow (Layout* pParent) :
     aTreeListBox->SetPosPixel( Point( DWBORDER, nVirtToolBoxHeight ) );
     aTreeListBox->SetHighlightRange();
     aTreeListBox->SetSelectionMode( NO_SELECTION );
-    aTreeListBox->InsertEntry( OUString(), 0, false, TREELIST_APPEND );
+    aTreeListBox->InsertEntry( OUString() );
     aTreeListBox->Show();
 
     SetText(IDEResId(RID_STR_STACKNAME).toString());
@@ -1974,7 +1974,7 @@ void StackWindow::UpdateCalls()
                 }
                 aEntry += ")";
             }
-            aTreeListBox->InsertEntry( aEntry, 0, false, TREELIST_APPEND );
+            aTreeListBox->InsertEntry( aEntry );
             nScope++;
             pMethod = StarBASIC::GetActiveMethod( nScope );
         }
@@ -1986,7 +1986,7 @@ void StackWindow::UpdateCalls()
     else
     {
         aTreeListBox->SetSelectionMode( NO_SELECTION );
-        aTreeListBox->InsertEntry( OUString(), 0, false, TREELIST_APPEND );
+        aTreeListBox->InsertEntry( OUString() );
     }
 
     aTreeListBox->SetUpdateMode(true);
@@ -2647,10 +2647,9 @@ IMPL_LINK_NOARG_TYPED(CodeCompleteListBox, ImplDoubleClickHdl, ListBox&, void)
     InsertSelectedEntry();
 }
 
-IMPL_LINK_NOARG(CodeCompleteListBox, ImplSelectHdl)
+IMPL_LINK_NOARG_TYPED(CodeCompleteListBox, ImplSelectHdl, ListBox&, void)
 {//give back the focus to the parent
     pCodeCompleteWindow->pParent->GrabFocus();
-    return 0;
 }
 
 ExtTextView* CodeCompleteListBox::GetParentEditView()

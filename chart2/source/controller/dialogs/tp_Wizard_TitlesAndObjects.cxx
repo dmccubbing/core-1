@@ -49,7 +49,7 @@ TitlesAndObjectsTabPage::TitlesAndObjectsTabPage( svt::OWizardMachine* pParent
     get(m_pCB_Grid_Y, "y");
     get(m_pCB_Grid_Z, "z");
 
-    m_xTitleResources->SetUpdateDataHdl( LINK( this, TitlesAndObjectsTabPage, ChangeHdl ));
+    m_xTitleResources->SetUpdateDataHdl( LINK( this, TitlesAndObjectsTabPage, ChangeEditHdl ));
     m_xLegendPositionResources->SetChangeHdl( LINK( this, TitlesAndObjectsTabPage, ChangeHdl ));
 
     m_pCB_Grid_X->SetToggleHdl( LINK( this, TitlesAndObjectsTabPage, ChangeCheckBoxHdl ));
@@ -150,11 +150,14 @@ IMPL_LINK_NOARG_TYPED(TitlesAndObjectsTabPage, ChangeCheckBoxHdl, CheckBox&, voi
 {
     ChangeHdl(NULL);
 }
-IMPL_LINK_NOARG(TitlesAndObjectsTabPage, ChangeHdl)
+IMPL_LINK_NOARG_TYPED(TitlesAndObjectsTabPage, ChangeEditHdl, Edit&, void)
+{
+    ChangeHdl(NULL);
+}
+IMPL_LINK_NOARG_TYPED(TitlesAndObjectsTabPage, ChangeHdl, LinkParamNone*, void)
 {
     if( m_bCommitToModel )
         commitToModel();
-    return 0;
 }
 
 bool TitlesAndObjectsTabPage::canAdvance() const

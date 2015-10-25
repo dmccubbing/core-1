@@ -29,8 +29,8 @@ namespace rptui
 {
     class OColorListener : public vcl::Window, public SfxListener
     {
-        OColorListener(const OColorListener&) SAL_DELETED_FUNCTION;
-        void operator =(const OColorListener&) SAL_DELETED_FUNCTION;
+        OColorListener(const OColorListener&) = delete;
+        void operator =(const OColorListener&) = delete;
     protected:
         OModuleClient                       m_aModuleClient;
         Link<OColorListener&,void>          m_aCollapsedLink;
@@ -44,15 +44,15 @@ namespace rptui
 
         virtual void ImplInitSettings() = 0;
     protected:
-        virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+        virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
     public:
         OColorListener(vcl::Window* _pParent,const OUString& _sColorEntry);
         virtual ~OColorListener();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         using Window::Notify;
         // SfxListener
-        virtual void Notify(SfxBroadcaster & rBc, SfxHint const & rHint) SAL_OVERRIDE;
+        virtual void Notify(SfxBroadcaster & rBc, SfxHint const & rHint) override;
 
         /** set the marker as marked or not marked
             @param  _bMark  set the new state of the marker

@@ -56,14 +56,14 @@ private:
     double getViewWidthInch();
     double getViewHeightInch();
 
-    DECL_LINK( widthModifiedHandle,         void* );
-    DECL_LINK( heightModifiedHandle,        void* );
-    DECL_LINK( resolutionModifiedHandle,    void* );
+    DECL_LINK_TYPED( widthModifiedHandle,       Edit&, void );
+    DECL_LINK_TYPED( heightModifiedHandle,      Edit&, void );
+    DECL_LINK_TYPED( resolutionModifiedHandle,  Edit&, void );
 
 public:
     GraphicExportOptionsDialog( vcl::Window* pWindow, const css::uno::Reference<css::lang::XComponent>& rxSourceDocument );
     virtual ~GraphicExportOptionsDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     css::uno::Sequence<css::beans::PropertyValue> getFilterData();
 };
 

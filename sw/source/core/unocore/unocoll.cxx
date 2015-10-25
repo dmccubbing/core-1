@@ -100,13 +100,13 @@ public:
     explicit SwVbaCodeNameProvider( SwDocShell* pDocShell ) : mpDocShell( pDocShell ) {}
         // XCodeNameQuery
 
-    OUString SAL_CALL getCodeNameForContainer( const uno::Reference< uno::XInterface >& /*xIf*/ ) throw( uno::RuntimeException, std::exception ) SAL_OVERRIDE
+    OUString SAL_CALL getCodeNameForContainer( const uno::Reference< uno::XInterface >& /*xIf*/ ) throw( uno::RuntimeException, std::exception ) override
     {
         // #FIXME not implemented...
         return OUString();
     }
 
-    OUString SAL_CALL getCodeNameForObject( const uno::Reference< uno::XInterface >& xIf ) throw( uno::RuntimeException, std::exception ) SAL_OVERRIDE
+    OUString SAL_CALL getCodeNameForObject( const uno::Reference< uno::XInterface >& xIf ) throw( uno::RuntimeException, std::exception ) override
     {
         // Initialise the code name
         if ( msThisDocumentCodeName.isEmpty() )
@@ -182,17 +182,17 @@ public:
     SwVbaProjectNameProvider()
     {
     }
-    virtual sal_Bool SAL_CALL hasByName( const OUString& aName ) throw (::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL hasByName( const OUString& aName ) throw (::com::sun::star::uno::RuntimeException, std::exception ) override
     {
         return ( mTemplateToProject.find( aName ) != mTemplateToProject.end() );
     }
-    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const OUString& aName ) throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual ::com::sun::star::uno::Any SAL_CALL getByName( const OUString& aName ) throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) override
     {
         if ( !hasByName( aName ) )
             throw container::NoSuchElementException();
         return uno::makeAny( mTemplateToProject.find( aName )->second );
     }
-    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getElementNames(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getElementNames(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) override
     {
         uno::Sequence< OUString > aElements( mTemplateToProject.size() );
         StringHashMap::iterator it_end = mTemplateToProject.end();
@@ -202,7 +202,7 @@ public:
         return aElements;
     }
 
-    virtual void SAL_CALL insertByName( const OUString& aName, const uno::Any& aElement ) throw ( com::sun::star::lang::IllegalArgumentException, com::sun::star::container::ElementExistException, com::sun::star::lang::WrappedTargetException, std::exception ) SAL_OVERRIDE
+    virtual void SAL_CALL insertByName( const OUString& aName, const uno::Any& aElement ) throw ( com::sun::star::lang::IllegalArgumentException, com::sun::star::container::ElementExistException, com::sun::star::lang::WrappedTargetException, std::exception ) override
     {
 
         OUString sProjectName;
@@ -212,24 +212,24 @@ public:
         mTemplateToProject[ aName ] = sProjectName;
     }
 
-    virtual void SAL_CALL removeByName( const OUString& Name ) throw ( com::sun::star::container::NoSuchElementException, com::sun::star::lang::WrappedTargetException, std::exception ) SAL_OVERRIDE
+    virtual void SAL_CALL removeByName( const OUString& Name ) throw ( com::sun::star::container::NoSuchElementException, com::sun::star::lang::WrappedTargetException, std::exception ) override
     {
         if ( !hasByName( Name ) )
             throw container::NoSuchElementException();
         mTemplateToProject.erase( Name );
     }
-    virtual void SAL_CALL replaceByName( const OUString& aName, const uno::Any& aElement ) throw ( com::sun::star::lang::IllegalArgumentException, com::sun::star::container::NoSuchElementException, com::sun::star::lang::WrappedTargetException, std::exception ) SAL_OVERRIDE
+    virtual void SAL_CALL replaceByName( const OUString& aName, const uno::Any& aElement ) throw ( com::sun::star::lang::IllegalArgumentException, com::sun::star::container::NoSuchElementException, com::sun::star::lang::WrappedTargetException, std::exception ) override
     {
         if ( !hasByName( aName ) )
             throw container::NoSuchElementException();
         insertByName( aName, aElement ); // insert will overwrite
     }
     // XElemenAccess
-    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) override
     {
         return ::cppu::UnoType<OUString>::get();
     }
-    virtual sal_Bool SAL_CALL hasElements(  ) throw (::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL hasElements(  ) throw (::com::sun::star::uno::RuntimeException, std::exception ) override
     {
 
         return ( !mTemplateToProject.empty() );
@@ -246,7 +246,7 @@ public:
         // #FIXME #TODO is the code name for ThisDocument read anywhere?
     }
 
-    virtual sal_Bool SAL_CALL hasByName( const OUString& aName ) throw (::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL hasByName( const OUString& aName ) throw (::com::sun::star::uno::RuntimeException, std::exception ) override
     {
         // #FIXME #TODO we really need to be checking against the codename for
         // ThisDocument
@@ -255,7 +255,7 @@ public:
         return sal_False;
     }
 
-    ::com::sun::star::uno::Any SAL_CALL getByName( const OUString& aName ) throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    ::com::sun::star::uno::Any SAL_CALL getByName( const OUString& aName ) throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) override
     {
         if ( !hasByName( aName ) )
              throw container::NoSuchElementException();
@@ -267,14 +267,14 @@ public:
             "Creating Object ( ooo.vba.word.Document ) 0x" << xDocObj.get());
         return  uno::makeAny( xDocObj );
     }
-    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getElementNames(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getElementNames(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) override
     {
         uno::Sequence< OUString > aNames;
         return aNames;
     }
     // XElemenAccess
-    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE { return uno::Type(); }
-    virtual sal_Bool SAL_CALL hasElements(  ) throw (::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE { return sal_True; }
+    virtual ::com::sun::star::uno::Type SAL_CALL getElementType(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) override { return uno::Type(); }
+    virtual sal_Bool SAL_CALL hasElements(  ) throw (::com::sun::star::uno::RuntimeException, std::exception ) override { return sal_True; }
 
 };
 
@@ -1067,13 +1067,13 @@ namespace
             SwXFrameEnumeration(const SwDoc* const pDoc);
 
             //XEnumeration
-            virtual sal_Bool SAL_CALL hasMoreElements() throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-            virtual Any SAL_CALL nextElement() throw( NoSuchElementException, WrappedTargetException, RuntimeException, std::exception ) SAL_OVERRIDE;
+            virtual sal_Bool SAL_CALL hasMoreElements() throw( RuntimeException, std::exception ) override;
+            virtual Any SAL_CALL nextElement() throw( NoSuchElementException, WrappedTargetException, RuntimeException, std::exception ) override;
 
             //XServiceInfo
-            virtual OUString SAL_CALL getImplementationName() throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-            virtual sal_Bool SAL_CALL supportsService(const OUString& ServiceName) throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-            virtual Sequence< OUString > SAL_CALL getSupportedServiceNames() throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+            virtual OUString SAL_CALL getImplementationName() throw( RuntimeException, std::exception ) override;
+            virtual sal_Bool SAL_CALL supportsService(const OUString& ServiceName) throw( RuntimeException, std::exception ) override;
+            virtual Sequence< OUString > SAL_CALL getSupportedServiceNames() throw( RuntimeException, std::exception ) override;
     };
 }
 
@@ -1161,7 +1161,7 @@ Sequence<OUString> SwXFrames::getSupportedServiceNames() throw( RuntimeException
 
 SwXFrames::SwXFrames(SwDoc* _pDoc, FlyCntType eSet) :
     SwUnoCollection(_pDoc),
-    eType(eSet)
+    m_eType(eSet)
 {}
 
 SwXFrames::~SwXFrames()
@@ -1172,7 +1172,7 @@ uno::Reference<container::XEnumeration> SwXFrames::createEnumeration() throw(uno
     SolarMutexGuard aGuard;
     if(!IsValid())
         throw uno::RuntimeException();
-    switch(eType)
+    switch(m_eType)
     {
         case FLYCNTTYPE_FRM:
             return uno::Reference< container::XEnumeration >(
@@ -1194,7 +1194,7 @@ sal_Int32 SwXFrames::getCount() throw(uno::RuntimeException, std::exception)
     if(!IsValid())
         throw uno::RuntimeException();
     // Ignore TextBoxes for TextFrames.
-    return static_cast<sal_Int32>(GetDoc()->GetFlyCount(eType, /*bIgnoreTextBoxes=*/eType == FLYCNTTYPE_FRM));
+    return static_cast<sal_Int32>(GetDoc()->GetFlyCount(m_eType, /*bIgnoreTextBoxes=*/m_eType == FLYCNTTYPE_FRM));
 }
 
 uno::Any SwXFrames::getByIndex(sal_Int32 nIndex)
@@ -1206,10 +1206,10 @@ uno::Any SwXFrames::getByIndex(sal_Int32 nIndex)
     if(nIndex < 0)
         throw IndexOutOfBoundsException();
     // Ignore TextBoxes for TextFrames.
-    SwFrameFormat* pFormat = GetDoc()->GetFlyNum(static_cast<size_t>(nIndex), eType, /*bIgnoreTextBoxes=*/eType == FLYCNTTYPE_FRM);
+    SwFrameFormat* pFormat = GetDoc()->GetFlyNum(static_cast<size_t>(nIndex), m_eType, /*bIgnoreTextBoxes=*/m_eType == FLYCNTTYPE_FRM);
     if(!pFormat)
         throw IndexOutOfBoundsException();
-    return lcl_UnoWrapFrame(pFormat, eType);
+    return lcl_UnoWrapFrame(pFormat, m_eType);
 }
 
 uno::Any SwXFrames::getByName(const OUString& rName)
@@ -1219,7 +1219,7 @@ uno::Any SwXFrames::getByName(const OUString& rName)
     if(!IsValid())
         throw uno::RuntimeException();
     const SwFrameFormat* pFormat;
-    switch(eType)
+    switch(m_eType)
     {
         case FLYCNTTYPE_GRF:
             pFormat = GetDoc()->FindFlyByName(rName, ND_GRFNODE);
@@ -1233,7 +1233,7 @@ uno::Any SwXFrames::getByName(const OUString& rName)
     }
     if(!pFormat)
         throw NoSuchElementException();
-    return lcl_UnoWrapFrame(const_cast<SwFrameFormat*>(pFormat), eType);
+    return lcl_UnoWrapFrame(const_cast<SwFrameFormat*>(pFormat), m_eType);
 }
 
 uno::Sequence<OUString> SwXFrames::getElementNames() throw( uno::RuntimeException, std::exception )
@@ -1258,7 +1258,7 @@ sal_Bool SwXFrames::hasByName(const OUString& rName) throw( uno::RuntimeExceptio
     SolarMutexGuard aGuard;
     if(!IsValid())
         throw uno::RuntimeException();
-    switch(eType)
+    switch(m_eType)
     {
         case FLYCNTTYPE_GRF:
             return GetDoc()->FindFlyByName(rName, ND_GRFNODE) != NULL;
@@ -1272,7 +1272,7 @@ sal_Bool SwXFrames::hasByName(const OUString& rName) throw( uno::RuntimeExceptio
 uno::Type SAL_CALL SwXFrames::getElementType() throw(uno::RuntimeException, std::exception)
 {
     SolarMutexGuard aGuard;
-    switch(eType)
+    switch(m_eType)
     {
         case FLYCNTTYPE_FRM:
             return cppu::UnoType<XTextFrame>::get();
@@ -1290,7 +1290,7 @@ sal_Bool SwXFrames::hasElements() throw(uno::RuntimeException, std::exception)
     SolarMutexGuard aGuard;
     if(!IsValid())
         throw uno::RuntimeException();
-    return GetDoc()->GetFlyCount(eType) > 0;
+    return GetDoc()->GetFlyCount(m_eType) > 0;
 }
 
 

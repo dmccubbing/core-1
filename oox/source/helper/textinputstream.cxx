@@ -44,15 +44,15 @@ public:
     explicit            UnoBinaryInputStream( BinaryInputStream& rInStrm );
 
     virtual sal_Int32 SAL_CALL readBytes( Sequence< sal_Int8 >& rData, sal_Int32 nBytesToRead )
-                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) SAL_OVERRIDE;
+                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) override;
     virtual sal_Int32 SAL_CALL readSomeBytes( Sequence< sal_Int8 >& rData, sal_Int32 nMaxBytesToRead )
-                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) SAL_OVERRIDE;
+                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) override;
     virtual void SAL_CALL skipBytes( sal_Int32 nBytesToSkip )
-                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) SAL_OVERRIDE;
+                        throw (NotConnectedException, BufferSizeExceededException, IOException, RuntimeException, std::exception) override;
     virtual sal_Int32 SAL_CALL available()
-                        throw (NotConnectedException, IOException, RuntimeException, std::exception) SAL_OVERRIDE;
+                        throw (NotConnectedException, IOException, RuntimeException, std::exception) override;
     virtual void SAL_CALL closeInput()
-                        throw (NotConnectedException, IOException, RuntimeException, std::exception) SAL_OVERRIDE;
+                        throw (NotConnectedException, IOException, RuntimeException, std::exception) override;
 
 private:
     void                ensureConnected() const throw (NotConnectedException);
@@ -185,7 +185,7 @@ Reference< XTextInputStream2 > TextInputStream::createXTextInputStream(
     OSL_ENSURE( pcCharset, "TextInputStream::createXTextInputStream - unsupported text encoding" );
     if( rxContext.is() && rxInStrm.is() && pcCharset ) try
     {
-        xTextStrm = com::sun::star::io::TextInputStream::create( rxContext );
+        xTextStrm = css::io::TextInputStream::create( rxContext );
         xTextStrm->setInputStream( rxInStrm );
         xTextStrm->setEncoding( OUString::createFromAscii( pcCharset ) );
     }

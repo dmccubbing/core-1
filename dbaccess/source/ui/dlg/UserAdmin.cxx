@@ -58,12 +58,12 @@ class OPasswordDialog : public ModalDialog
     VclPtr<OKButton> m_pOKBtn;
 
     DECL_LINK_TYPED( OKHdl_Impl, Button*, void );
-    DECL_LINK( ModifiedHdl, Edit * );
+    DECL_LINK_TYPED( ModifiedHdl, Edit&, void );
 
 public:
     OPasswordDialog( vcl::Window* pParent,const OUString& _sUserName);
     virtual ~OPasswordDialog() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         m_pUser.clear();
         m_pEDOldPassword.clear();
@@ -110,10 +110,9 @@ IMPL_LINK_NOARG_TYPED(OPasswordDialog, OKHdl_Impl, Button*, void)
     }
 }
 
-IMPL_LINK( OPasswordDialog, ModifiedHdl, Edit *, pEdit )
+IMPL_LINK_TYPED( OPasswordDialog, ModifiedHdl, Edit&, rEdit, void )
 {
-    m_pOKBtn->Enable(!pEdit->GetText().isEmpty());
-    return 0;
+    m_pOKBtn->Enable(!rEdit.GetText().isEmpty());
 }
 
 // OUserAdmin
@@ -275,13 +274,12 @@ IMPL_LINK_TYPED( OUserAdmin, UserHdl, Button *, pButton, void )
     }
 }
 
-IMPL_LINK( OUserAdmin, ListDblClickHdl, ListBox *, /*pListBox*/ )
+IMPL_LINK_NOARG_TYPED( OUserAdmin, ListDblClickHdl, ListBox&, void )
 {
     m_TableCtrl->setUserName(GetUser());
     m_TableCtrl->UpdateTables();
     m_TableCtrl->DeactivateCell();
     m_TableCtrl->ActivateCell(m_TableCtrl->GetCurRow(),m_TableCtrl->GetCurColumnId());
-    return 0;
 }
 
 OUString OUserAdmin::GetUser()

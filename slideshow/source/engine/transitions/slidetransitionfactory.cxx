@@ -45,6 +45,8 @@
 #include "combtransition.hxx"
 #include "tools.hxx"
 
+
+
 /***************************************************
  ***                                             ***
  ***          Slide Transition Effects           ***
@@ -139,16 +141,13 @@ public:
         mxFactory( xFactory )
     {
         // create one transition per view
-        UnoViewVector::const_iterator aCurrView (rViewContainer.begin());
-        const UnoViewVector::const_iterator aEnd(rViewContainer.end());
-        while( aCurrView != aEnd )
+        for( const auto& rView : rViewContainer )
         {
-            if(! addTransition( *aCurrView ) )
+            if( !addTransition( rView ) )
                 return;
 
             ENSURE_OR_THROW(maTransitions.back() && maTransitions.back()->mxTransition.is(),
                             "Failed to create plugin transition");
-            ++aCurrView;
         }
         mbSuccess = true;
     }
@@ -157,13 +156,11 @@ public:
     {
         mxFactory.clear();
 
-        ::std::vector< TransitionViewPair* >::const_iterator aCurrView (maTransitions.begin());
-        ::std::vector< TransitionViewPair* >::const_iterator aEnd(maTransitions.end());
-        while( aCurrView != aEnd )
+        for( const auto& pCurrView : maTransitions )
         {
-            delete (*aCurrView);
-            ++aCurrView;
+            delete pCurrView;
         }
+
         maTransitions.clear();
     }
 
@@ -184,7 +181,7 @@ public:
         return true;
     }
 
-    virtual bool operator()( double t ) SAL_OVERRIDE
+    virtual bool operator()( double t ) override
     {
         for( const auto& pTransition : maTransitions )
             pTransition->update( t );
@@ -197,88 +194,72 @@ public:
     }
 
     // ViewEventHandler
-    virtual void viewAdded( const UnoViewSharedPtr& rView ) SAL_OVERRIDE
+    virtual void viewAdded( const UnoViewSharedPtr& rView ) override
     {
         OSL_TRACE("PluginSlideChange viewAdded");
         SlideChangeBase::viewAdded( rView );
 
-        ::std::vector< TransitionViewPair* >::const_iterator aCurrView (maTransitions.begin());
-        ::std::vector< TransitionViewPair* >::const_iterator aEnd(maTransitions.end());
-        bool bKnown = false;
-        while( aCurrView != aEnd )
+        for( const auto& pCurrView : maTransitions )
         {
-            if( (*aCurrView)->mpView == rView )
-            {
-                bKnown = true;
-                break;
-            }
-            ++aCurrView;
+            if( pCurrView->mpView == rView )
+                return;
         }
 
-        if( !bKnown )
-        {
-            OSL_TRACE("need to be added");
-            addTransition( rView );
-        }
+        OSL_TRACE( "need to be added" );
+        addTransition( rView );
     }
 
-    virtual void viewRemoved( const UnoViewSharedPtr& rView ) SAL_OVERRIDE
+    virtual void viewRemoved( const UnoViewSharedPtr& rView ) override
     {
         OSL_TRACE("PluginSlideChange viewRemoved");
         SlideChangeBase::viewRemoved( rView );
 
-        ::std::vector< TransitionViewPair* >::iterator aCurrView (maTransitions.begin());
         ::std::vector< TransitionViewPair* >::const_iterator aEnd(maTransitions.end());
-        while( aCurrView != aEnd )
+        for( ::std::vector< TransitionViewPair* >::iterator aIter =maTransitions.begin();
+             aIter != aEnd;
+             ++aIter )
         {
-            if( (*aCurrView)->mpView == rView )
+            if( ( *aIter )->mpView == rView )
             {
                 OSL_TRACE( "view removed" );
-                delete (*aCurrView);
-                maTransitions.erase( aCurrView );
+                delete ( *aIter );
+                maTransitions.erase( aIter );
                 break;
             }
-            ++aCurrView;
         }
     }
 
-    virtual void viewChanged( const UnoViewSharedPtr& rView ) SAL_OVERRIDE
+    virtual void viewChanged( const UnoViewSharedPtr& rView ) override
     {
         OSL_TRACE("PluginSlideChange viewChanged");
         SlideChangeBase::viewChanged( rView );
 
-        ::std::vector< TransitionViewPair* >::const_iterator aCurrView (maTransitions.begin());
-        ::std::vector< TransitionViewPair* >::const_iterator aEnd(maTransitions.end());
-        while( aCurrView != aEnd )
+        for( const auto& pCurrView : maTransitions )
         {
-            if( (*aCurrView)->mpView == rView )
+            if( pCurrView->mpView == rView )
             {
                 OSL_TRACE( "view changed" );
-                (*aCurrView)->mxTransition->viewChanged( rView->getUnoView(),
-                                                         getLeavingBitmap(ViewEntry(rView))->getXBitmap(),
-                                                         getEnteringBitmap(ViewEntry(rView))->getXBitmap() );
+                pCurrView->mxTransition->viewChanged( rView->getUnoView(),
+                                                      getLeavingBitmap(ViewEntry(rView))->getXBitmap(),
+                                                      getEnteringBitmap(ViewEntry(rView))->getXBitmap() );
             }
             else
                 OSL_TRACE( "view did not changed" );
-
-            ++aCurrView;
         }
     }
 
-    virtual void viewsChanged() SAL_OVERRIDE
+    virtual void viewsChanged() override
     {
         OSL_TRACE("PluginSlideChange viewsChanged");
         SlideChangeBase::viewsChanged();
 
-        ::std::vector< TransitionViewPair* >::const_iterator aCurrView (maTransitions.begin());
-        ::std::vector< TransitionViewPair* >::const_iterator aEnd(maTransitions.end());
-        while( aCurrView != aEnd )
+        for( const auto& pCurrView : maTransitions )
         {
             OSL_TRACE( "view changed" );
-            (*aCurrView)->mxTransition->viewChanged( (*aCurrView)->mpView->getUnoView(),
-                                                     getLeavingBitmap(ViewEntry((*aCurrView)->mpView))->getXBitmap(),
-                                                     getEnteringBitmap(ViewEntry((*aCurrView)->mpView))->getXBitmap() );
-            ++aCurrView;
+            UnoViewSharedPtr pView = pCurrView->mpView;
+            pCurrView->mxTransition->viewChanged( pView->getUnoView(),
+                                                  getLeavingBitmap(ViewEntry(pView))->getXBitmap(),
+                                                  getEnteringBitmap(ViewEntry(pView))->getXBitmap() );
         }
     }
 
@@ -330,13 +311,13 @@ public:
         const ::cppcanvas::CustomSpriteSharedPtr&   rSprite,
         const ViewEntry&                            rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&         rDestinationCanvas,
-        double                                      t ) SAL_OVERRIDE;
+        double                                      t ) override;
 
     virtual void performOut(
         const ::cppcanvas::CustomSpriteSharedPtr&  rSprite,
         const ViewEntry&                           rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&        rDestinationCanvas,
-        double                                     t ) SAL_OVERRIDE;
+        double                                     t ) override;
 
 private:
     ClippingFunctor             maClippingFunctor;
@@ -393,19 +374,19 @@ public:
 
     virtual void prepareForRun(
         const ViewEntry& rViewEntry,
-        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) SAL_OVERRIDE;
+        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) override;
 
     virtual void performIn(
         const ::cppcanvas::CustomSpriteSharedPtr&   rSprite,
         const ViewEntry&                            rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&         rDestinationCanvas,
-        double                                      t ) SAL_OVERRIDE;
+        double                                      t ) override;
 
     virtual void performOut(
         const ::cppcanvas::CustomSpriteSharedPtr&  rSprite,
         const ViewEntry&                           rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&        rDestinationCanvas,
-        double                                     t ) SAL_OVERRIDE;
+        double                                     t ) override;
 
 private:
     const boost::optional< RGBColor >               maFadeColor;
@@ -491,19 +472,19 @@ public:
 
     virtual void prepareForRun(
         const ViewEntry& rViewEntry,
-        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) SAL_OVERRIDE;
+        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) override;
 
     virtual void performIn(
         const ::cppcanvas::CustomSpriteSharedPtr&   rSprite,
         const ViewEntry&                            rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&         rDestinationCanvas,
-        double                                      t ) SAL_OVERRIDE;
+        double                                      t ) override;
 
     virtual void performOut(
         const ::cppcanvas::CustomSpriteSharedPtr&  rSprite,
         const ViewEntry&                           rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&        rDestinationCanvas,
-        double                                     t ) SAL_OVERRIDE;
+        double                                     t ) override;
 
 private:
     RGBColor maFadeColor;
@@ -605,19 +586,19 @@ public:
 
     virtual void prepareForRun(
         const ViewEntry& rViewEntry,
-        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) SAL_OVERRIDE;
+        const cppcanvas::CanvasSharedPtr& rDestinationCanvas ) override;
 
     virtual void performIn(
         const ::cppcanvas::CustomSpriteSharedPtr&   rSprite,
         const ViewEntry&                            rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&         rDestinationCanvas,
-        double                                      t ) SAL_OVERRIDE;
+        double                                      t ) override;
 
     virtual void performOut(
         const ::cppcanvas::CustomSpriteSharedPtr&  rSprite,
         const ViewEntry&                           rViewEntry,
         const ::cppcanvas::CanvasSharedPtr&        rDestinationCanvas,
-        double                                     t ) SAL_OVERRIDE;
+        double                                     t ) override;
 };
 
 void MovingSlideChange::prepareForRun(

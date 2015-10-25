@@ -968,7 +968,7 @@ OUString SmTextForwarder::GetText( const ESelection& rSel ) const
     EditEngine *pEditEngine = rEditAcc.GetEditEngine();
     OUString aRet;
     if (pEditEngine)
-        aRet = pEditEngine->GetText( rSel, LINEEND_LF );
+        aRet = pEditEngine->GetText( rSel );
     return convertLineEnd(aRet, GetSystemLineEnd());
 }
 
@@ -1012,7 +1012,7 @@ SfxItemSet SmTextForwarder::GetParaAttribs( sal_Int32 nPara ) const
     sal_uInt16 nWhich = EE_PARA_START;
     while( nWhich <= EE_PARA_END )
     {
-        if( aSet.GetItemState( nWhich, true ) != SfxItemState::SET )
+        if( aSet.GetItemState( nWhich ) != SfxItemState::SET )
         {
             if( pEditEngine->HasParaAttrib( nPara, nWhich ) )
                 aSet.Put( pEditEngine->GetParaAttrib( nPara, nWhich ) );

@@ -56,7 +56,7 @@ class LicenseView : public MultiLineEdit, public SfxListener
 public:
     LicenseView( vcl::Window* pParent, WinBits nStyle );
     virtual ~LicenseView();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void ScrollDown( ScrollType eScroll );
 
@@ -67,7 +67,7 @@ public:
 
     void SetScrolledHdl( const Link<LicenseView&,void>& rHdl ) { maScrolledHdl = rHdl; }
 
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
 protected:
     using MultiLineEdit::Notify;
@@ -99,9 +99,9 @@ struct LicenseDialogImpl : public ModalDialog
         const OUString & sExtensionName,
         const OUString & sLicenseText);
     virtual ~LicenseDialogImpl() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void Activate() SAL_OVERRIDE;
+    virtual void Activate() override;
 
 };
 
@@ -217,7 +217,7 @@ LicenseDialogImpl::LicenseDialogImpl(
     get(m_pDown, "down");
     get(m_pAcceptButton, "accept");
     get(m_pDeclineButton, "decline");
-    m_pArrow1->Show(true);
+    m_pArrow1->Show();
     m_pArrow2->Show(false);
     get(m_pLicense, "textview");
 
@@ -289,7 +289,7 @@ IMPL_LINK_NOARG_TYPED(LicenseDialogImpl, EndReachedHdl, LicenseView&, void)
     m_pAcceptButton->Enable();
     m_pAcceptButton->GrabFocus();
     m_pArrow1->Show(false);
-    m_pArrow2->Show(true);
+    m_pArrow2->Show();
     m_bLicenseRead = true;
 }
 

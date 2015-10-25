@@ -33,25 +33,25 @@
 class HHConvDic :
     public ConvDic
 {
-    HHConvDic(const HHConvDic &) SAL_DELETED_FUNCTION;
-    HHConvDic & operator = (const HHConvDic &) SAL_DELETED_FUNCTION;
+    HHConvDic(const HHConvDic &) = delete;
+    HHConvDic & operator = (const HHConvDic &) = delete;
 
 public:
     HHConvDic( const OUString &rName, const OUString &rMainURL );
     virtual ~HHConvDic();
 
     // XConversionDictionary
-    virtual void SAL_CALL addEntry( const OUString& aLeftText, const OUString& aRightText ) throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::container::ElementExistException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL addEntry( const OUString& aLeftText, const OUString& aRightText ) throw (css::lang::IllegalArgumentException, css::container::ElementExistException, css::uno::RuntimeException, std::exception) override;
 
     // XServiceInfo
-    virtual OUString SAL_CALL getImplementationName(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual OUString SAL_CALL getImplementationName(  ) throw (css::uno::RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw (css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames(  ) throw (css::uno::RuntimeException, std::exception) override;
 
 
     static inline OUString
         getImplementationName_Static() throw();
-    static com::sun::star::uno::Sequence< OUString >
+    static css::uno::Sequence< OUString >
         getSupportedServiceNames_Static() throw();
 };
 

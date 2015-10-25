@@ -58,14 +58,14 @@ import java.util.StringTokenizer;
  */
 public class ParcelContainer implements XNameAccess {
 
+    protected static XSimpleFileAccess m_xSFA;
+
     protected String language;
     protected String containerUrl;
     private Collection<Parcel> parcels = new ArrayList<Parcel>(10);
-    protected static XSimpleFileAccess m_xSFA;
     protected XComponentContext m_xCtx;
     private ParcelContainer parent = null;
-    private final Collection<ParcelContainer> childContainers = new
-    ArrayList<ParcelContainer>(10);
+    private final Collection<ParcelContainer> childContainers = new ArrayList<ParcelContainer>(10);
     private boolean isPkgContainer = false;
 
     /**
@@ -136,6 +136,12 @@ public class ParcelContainer implements XNameAccess {
         ParcelContainer result = null;
 
         for (ParcelContainer c : childContainers) {
+
+            String name = c.getName();
+            if (name == null)
+            {
+                continue;
+            }
 
             String location =
                 ScriptMetaData.getLocationPlaceHolder(c.containerUrl, c.getName());
@@ -276,22 +282,24 @@ public class ParcelContainer implements XNameAccess {
         return this.containerUrl;
     }
 
-    private synchronized void initSimpleFileAccess() {
-        if (m_xSFA != null) {
-            return;
-        }
+    private void initSimpleFileAccess() {
+        synchronized (ParcelContainer.class) {
+            if (m_xSFA != null) {
+                return;
+            }
 
-        try {
+            try {
 
-            m_xSFA = UnoRuntime.queryInterface(
-                         XSimpleFileAccess.class,
-                         m_xCtx.getServiceManager().createInstanceWithContext(
-                             "com.sun.star.ucb.SimpleFileAccess", m_xCtx));
+                m_xSFA = UnoRuntime.queryInterface(
+                             XSimpleFileAccess.class,
+                             m_xCtx.getServiceManager().createInstanceWithContext(
+                                 "com.sun.star.ucb.SimpleFileAccess", m_xCtx));
 
-        } catch (Exception e) {
-            // TODO should throw
-            LogUtils.DEBUG("Error instantiating simplefile access ");
-            LogUtils.DEBUG(LogUtils.getTrace(e));
+            } catch (Exception e) {
+                // TODO should throw
+                LogUtils.DEBUG("Error instantiating simplefile access ");
+                LogUtils.DEBUG(LogUtils.getTrace(e));
+            }
         }
     }
 
@@ -692,7 +700,7 @@ public class ParcelContainer implements XNameAccess {
             LogUtils.DEBUG("** parcelName = " + parsedUri.parcel);
         }
 
-        if (parsedUri.function != null && (parsedUri.function.length() > 0)) {
+        if (parsedUri.function.length() > 0) {
 
             // strip out parcel name
             parsedUri.function =

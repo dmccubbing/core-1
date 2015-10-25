@@ -57,10 +57,10 @@ public:
         SdDrawDocument* pDoc,
         const css::uno::Reference<css::frame::XFrame>& rxFrame );
     virtual ~SlideTransitionPane();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     // Window
-    virtual void DataChanged (const DataChangedEvent& rEvent) SAL_OVERRIDE;
+    virtual void DataChanged (const DataChangedEvent& rEvent) override;
 
     void onSelectionChanged();
     void onChangeCurrentPage();
@@ -89,11 +89,11 @@ private:
     DECL_LINK_TYPED( PlayButtonClicked, Button*, void );
     DECL_LINK_TYPED( AutoPreviewClicked, Button*, void );
 
-    DECL_LINK( TransitionSelected, void * );
+    DECL_LINK_TYPED( TransitionSelected, ListBox&, void );
     DECL_LINK_TYPED( AdvanceSlideRadioButtonToggled, RadioButton&, void );
-    DECL_LINK( AdvanceTimeModified, void * );
-    DECL_LINK( SpeedListBoxSelected, void * );
-    DECL_LINK( SoundListBoxSelected, void * );
+    DECL_LINK_TYPED( AdvanceTimeModified, Edit&, void );
+    DECL_LINK_TYPED( SpeedListBoxSelected, ListBox&, void );
+    DECL_LINK_TYPED( SoundListBoxSelected, ListBox&, void );
     DECL_LINK_TYPED( LoopSoundBoxChecked, Button*, void );
     DECL_LINK_TYPED(EventMultiplexerListener, tools::EventMultiplexerEvent&, void);
     DECL_LINK_TYPED(LateInitCallback, Timer *, void);

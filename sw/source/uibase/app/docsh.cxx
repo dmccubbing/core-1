@@ -198,7 +198,7 @@ Reader* SwDocShell::StartConvertFrom(SfxMedium& rMedium, SwReader** ppRdr,
         return 0;
 
     // #i30171# set the UpdateDocMode at the SwDocShell
-    SFX_ITEMSET_ARG( rMedium.GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, false);
+    const SfxUInt16Item* pUpdateDocItem = SfxItemSet::GetItem<SfxUInt16Item>(rMedium.GetItemSet(), SID_UPDATEDOCMODE, false);
     m_nUpdateDocMode = pUpdateDocItem ? pUpdateDocItem->GetValue() : document::UpdateDocMode::NO_UPDATE;
 
     if (!pFlt->GetDefaultTemplate().isEmpty())
@@ -875,8 +875,17 @@ Rectangle SwDocShell::GetVisArea( sal_uInt16 nAspect ) const
         SwNodeIndex aIdx( m_pDoc->GetNodes().GetEndOfExtras(), 1 );
         SwContentNode* pNd = m_pDoc->GetNodes().GoNext( &aIdx );
 
-        const SwRect aPageRect = pNd->FindPageFrmRect( false, 0 );
-        return aPageRect.SVRect();
+        const SwRect aPageRect = pNd->FindPageFrmRect();
+        Rectangle aRect(aPageRect.SVRect());
+
+        // tdf#81219 sanitize - nobody is interested in a thumbnail where's
+        // nothing visible
+        if (aRect.GetHeight() > 2*aRect.GetWidth())
+            aRect.SetSize(Size(aRect.GetWidth(), 2*aRect.GetWidth()));
+        else if (aRect.GetWidth() > 2*aRect.GetHeight())
+            aRect.SetSize(Size(2*aRect.GetHeight(), aRect.GetHeight()));
+
+        return aRect;
     }
     return SfxObjectShell::GetVisArea( nAspect );
 }
@@ -1115,7 +1124,7 @@ void SwDocShell::LoadingFinished()
     // before <FinishedLoading(..)> is called.
     const bool bHasDocToStayModified( m_pDoc->getIDocumentState().IsModified() && m_pDoc->getIDocumentLinksAdministration().LinksUpdated() );
 
-    FinishedLoading( SfxLoadedFlags::ALL );
+    FinishedLoading();
     SfxViewFrame* pVFrame = SfxViewFrame::GetFirst(this);
     if(pVFrame)
     {

@@ -112,47 +112,47 @@ public:
     virtual ~SessionListener();
 
     virtual OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return OUString("com.sun.star.comp.frame.SessionListener");
     }
 
     virtual sal_Bool SAL_CALL supportsService(OUString const & ServiceName)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return cppu::supportsService(this, ServiceName);
     }
 
     virtual css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         css::uno::Sequence< OUString > aSeq(1);
         aSeq[0] = "com.sun.star.frame.SessionListener";
         return aSeq;
     }
 
-    virtual void SAL_CALL disposing(const com::sun::star::lang::EventObject&) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing(const css::lang::EventObject&) throw (css::uno::RuntimeException, std::exception) override;
 
     // XInitialization
-    virtual void SAL_CALL initialize(const css::uno::Sequence< css::uno::Any  >& args) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL initialize(const css::uno::Sequence< css::uno::Any  >& args) throw (css::uno::RuntimeException, std::exception) override;
 
     // XSessionManagerListener
     virtual void SAL_CALL doSave( sal_Bool bShutdown, sal_Bool bCancelable )
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
     virtual void SAL_CALL approveInteraction( sal_Bool bInteractionGranted )
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
    virtual void SAL_CALL shutdownCanceled()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
    virtual sal_Bool SAL_CALL doRestore()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     // XSessionManagerListener2
     virtual void SAL_CALL doQuit()
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     // XStatusListener
-    virtual void SAL_CALL statusChanged(const com::sun::star::frame::FeatureStateEvent& event)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL statusChanged(const css::frame::FeatureStateEvent& event)
+        throw (css::uno::RuntimeException, std::exception) override;
 };
 
 SessionListener::SessionListener(const css::uno::Reference< css::uno::XComponentContext >& rxContext )
@@ -199,7 +199,7 @@ void SessionListener::StoreSession( bool bAsync )
         Sequence< PropertyValue > args(1);
         args[0] = PropertyValue(OUString("DispatchAsynchron"),-1,makeAny(bAsync),PropertyState_DIRECT_VALUE);
         xDispatch->dispatch(aURL, args);
-    } catch (const com::sun::star::uno::Exception& e) {
+    } catch (const css::uno::Exception& e) {
         SAL_WARN("fwk.session",e.Message);
         // save failed, but tell manager to go on if we havent yet dispatched the request
         // in case of synchronous saving the notification is done by the caller
@@ -227,12 +227,12 @@ void SessionListener::QuitSessionQuietly()
         Sequence< PropertyValue > args(1);
         args[0] = PropertyValue(OUString("DispatchAsynchron"),-1,makeAny(sal_False),PropertyState_DIRECT_VALUE);
         xDispatch->dispatch(aURL, args);
-    } catch (const com::sun::star::uno::Exception& e) {
+    } catch (const css::uno::Exception& e) {
         SAL_WARN("fwk.session",e.Message);
     }
 }
 
-void SAL_CALL SessionListener::disposing(const com::sun::star::lang::EventObject&) throw (RuntimeException, std::exception)
+void SAL_CALL SessionListener::disposing(const css::lang::EventObject&) throw (RuntimeException, std::exception)
 {
     SAL_INFO("fwk.session", "SessionListener::disposing");
 }
@@ -309,7 +309,7 @@ sal_Bool SAL_CALL SessionListener::doRestore()
         xDispatch->dispatch(aURL, args);
         m_bRestored = true;
 
-    } catch (const com::sun::star::uno::Exception& e) {
+    } catch (const css::uno::Exception& e) {
         SAL_WARN("fwk.session",e.Message);
     }
 

@@ -60,12 +60,13 @@ public:
      */
     void enableOpenCL();
 
-    virtual void setUp() SAL_OVERRIDE;
-    virtual void tearDown() SAL_OVERRIDE;
+    virtual void setUp() override;
+    virtual void tearDown() override;
 
     virtual bool load( const OUString &rFilter, const OUString &rURL,
             const OUString &rUserData, SfxFilterFlags nFilterFlags,
-            SotClipboardFormatId nClipboardID, unsigned int nFilterVersion) SAL_OVERRIDE;
+            SotClipboardFormatId nClipboardID, unsigned int nFilterVersion) override;
+    void testSystematic();
     void testSharedFormulaXLS();
 #if 0
     void testSharedFormulaXLSGroundWater();
@@ -299,6 +300,7 @@ public:
     void testFinancialMDurationFormula1();
 
     CPPUNIT_TEST_SUITE(ScOpenCLTest);
+    CPPUNIT_TEST(testSystematic);
     CPPUNIT_TEST(testSharedFormulaXLS);
     CPPUNIT_TEST(testFinacialFormula);
     CPPUNIT_TEST(testStatisticalFormulaFisher);
@@ -701,6 +703,98 @@ void ScOpenCLTest::testSharedFormulaXLSGroundWater()
 
 }
 #endif
+
+void ScOpenCLTest::testSystematic()
+{
+    if(!initTestEnv("systematic.", XLS, false))
+        return;
+
+    ScDocument& rDoc = xDocSh->GetDocument();
+    rDoc.CalcAll();
+
+    int nAVertBegin(0), nAVertEnd(0), nBVertBegin(0), nBVertEnd(0);
+    int nAHorEnd(0), nBHorEnd(0);
+
+    int nRow, nCol;
+    for (nRow = 0; nRow < 1000; ++nRow)
+    {
+        if (rDoc.GetString(ScAddress(0, nRow, 0)) == "a")
+        {
+            nAVertBegin = nRow + 1;
+
+            for (nCol = 0; nCol < 1000; ++nCol)
+            {
+                if (rDoc.GetString(ScAddress(nCol, nRow, 0)) != "a")
+                {
+                    nAHorEnd = nCol;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    for (; nRow < 1000; ++nRow)
+    {
+        if (rDoc.GetString(ScAddress(0, nRow, 0)) != "a")
+        {
+            nAVertEnd = nRow;
+            break;
+        }
+    }
+
+    for (; nRow < 1000; ++nRow)
+    {
+        if (rDoc.GetString(ScAddress(0, nRow, 0)) == "b")
+        {
+            nBVertBegin = nRow + 1;
+
+            for (nCol = 0; nCol < 1000; ++nCol)
+            {
+                if (rDoc.GetString(ScAddress(nCol, nRow, 0)) != "b")
+                {
+                    nBHorEnd = nCol;
+                    break;
+                }
+            }
+            break;
+        }
+    }
+    for (; nRow < 1000; ++nRow)
+    {
+        if (rDoc.GetString(ScAddress(0, nRow, 0)) != "b")
+        {
+            nBVertEnd = nRow;
+            break;
+        }
+    }
+
+    CPPUNIT_ASSERT(nAVertBegin != 0);
+    CPPUNIT_ASSERT(nBVertBegin != 0);
+    CPPUNIT_ASSERT(nAVertEnd > nAVertBegin + 100);
+    CPPUNIT_ASSERT(nBVertEnd > nBVertBegin + 100);
+    CPPUNIT_ASSERT((nAVertEnd-nAVertBegin) == (nBVertEnd-nBVertBegin));
+    CPPUNIT_ASSERT(nAHorEnd > 10);
+    CPPUNIT_ASSERT(nBHorEnd > 10);
+    CPPUNIT_ASSERT(nAHorEnd == nBHorEnd);
+
+    for (SCROW i = nAVertBegin; i < nAVertEnd; ++i)
+    {
+        for (int j = 1; j < nAHorEnd; ++j)
+        {
+            double fLibre = rDoc.GetValue(ScAddress(j, i, 0));
+            double fExcel = rDoc.GetValue(ScAddress(j, nBVertBegin + (i - nAVertBegin), 0));
+
+            const OString sFailedMessage =
+                OString(static_cast<sal_Char>('A'+j)) +
+                OString::number(i+1) +
+                "!=" +
+                OString(static_cast<sal_Char>('A'+j)) +
+                OString::number(nBVertBegin+(i-nAVertBegin)+1);
+            CPPUNIT_ASSERT_DOUBLES_EQUAL_MESSAGE(sFailedMessage.getStr(), fExcel, fLibre, 1e-10);
+        }
+    }
+}
+
 
 void ScOpenCLTest::testSharedFormulaXLS()
 {

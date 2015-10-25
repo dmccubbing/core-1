@@ -40,7 +40,7 @@ namespace connectivity
     {
         class OCollection;
         class OIndex;
-        typedef ::cppu::ImplHelper1< ::com::sun::star::sdbcx::XDataDescriptorFactory > OIndex_BASE;
+        typedef ::cppu::ImplHelper1< css::sdbcx::XDataDescriptorFactory > OIndex_BASE;
         typedef ::comphelper::OIdPropertyArrayUsageHelper<OIndex> OIndex_PROP;
 
         class OOO_DLLPUBLIC_DBTOOLS OIndex :
@@ -60,10 +60,10 @@ namespace connectivity
             OCollection*    m_pColumns;
 
             using ODescriptor_BASE::rBHelper;
-            virtual void refreshColumns() SAL_OVERRIDE;
+            virtual void refreshColumns() override;
             // OPropertyArrayUsageHelper
-            virtual ::cppu::IPropertyArrayHelper* createArrayHelper( sal_Int32 _nId) const SAL_OVERRIDE;
-            virtual ::cppu::IPropertyArrayHelper& SAL_CALL getInfoHelper() SAL_OVERRIDE;
+            virtual ::cppu::IPropertyArrayHelper* createArrayHelper( sal_Int32 _nId) const override;
+            virtual ::cppu::IPropertyArrayHelper& SAL_CALL getInfoHelper() override;
         public:
             OIndex(bool _bCase);
             OIndex( const OUString& _Name,
@@ -78,25 +78,25 @@ namespace connectivity
             DECLARE_SERVICE_INFO();
 
             //XInterface
-            virtual ::com::sun::star::uno::Any SAL_CALL queryInterface( const ::com::sun::star::uno::Type & rType ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-            virtual void SAL_CALL acquire() throw() SAL_OVERRIDE;
-            virtual void SAL_CALL release() throw() SAL_OVERRIDE;
+            virtual css::uno::Any SAL_CALL queryInterface( const css::uno::Type & rType ) throw(css::uno::RuntimeException, std::exception) override;
+            virtual void SAL_CALL acquire() throw() override;
+            virtual void SAL_CALL release() throw() override;
             //XTypeProvider
-            virtual ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Type > SAL_CALL getTypes(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            virtual css::uno::Sequence< css::uno::Type > SAL_CALL getTypes(  ) throw(css::uno::RuntimeException, std::exception) override;
             // ODescriptor
-            virtual void construct() SAL_OVERRIDE;
+            virtual void construct() override;
             // ::cppu::OComponentHelper
-            virtual void SAL_CALL disposing() SAL_OVERRIDE;
+            virtual void SAL_CALL disposing() override;
             // XPropertySet
-            virtual ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            virtual css::uno::Reference< css::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo(  ) throw(css::uno::RuntimeException, std::exception) override;
             // XColumnsSupplier
-            virtual ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess > SAL_CALL getColumns(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            virtual css::uno::Reference< css::container::XNameAccess > SAL_CALL getColumns(  ) throw(css::uno::RuntimeException, std::exception) override;
 
             // XNamed
-            virtual OUString SAL_CALL getName(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-            virtual void SAL_CALL setName( const OUString& aName ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            virtual OUString SAL_CALL getName(  ) throw(css::uno::RuntimeException, std::exception) override;
+            virtual void SAL_CALL setName( const OUString& aName ) throw(css::uno::RuntimeException, std::exception) override;
             // XDataDescriptorFactory
-            virtual ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet > SAL_CALL createDataDescriptor(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            virtual css::uno::Reference< css::beans::XPropertySet > SAL_CALL createDataDescriptor(  ) throw(css::uno::RuntimeException, std::exception) override;
         };
     }
 }

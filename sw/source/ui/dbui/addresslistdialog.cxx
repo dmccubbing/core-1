@@ -139,7 +139,7 @@ public:
         : SvSimpleTable(rParent, nBits)
     {
     }
-    virtual void Resize() SAL_OVERRIDE;
+    virtual void Resize() override;
     void setColSizes();
 };
 
@@ -518,7 +518,7 @@ IMPL_LINK_TYPED(SwAddressListDialog, StaticListBoxSelectHdl_Impl, void*, p, void
             m_aDBData.sDataSource = SvTabListBox::GetEntryText(pSelect, ITEMID_NAME - 1);
             m_aDBData.sCommand = SvTabListBox::GetEntryText(pSelect, ITEMID_TABLE - 1);
             m_aDBData.nCommandType = pUserData->nCommandType;
-            m_pOK->Enable(true);
+            m_pOK->Enable();
         }
         if(SvTabListBox::GetEntryText(pSelect, ITEMID_TABLE - 1) == m_sConnecting)
            m_pListLB->SetEntryText(OUString(), pSelect, ITEMID_TABLE - 1);

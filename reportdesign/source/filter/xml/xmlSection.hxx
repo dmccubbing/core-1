@@ -32,8 +32,8 @@ namespace rptxml
         ::com::sun::star::uno::Reference< ::com::sun::star::report::XSection >              m_xSection;
         ORptFilter& GetOwnImport();
 
-        OXMLSection(const OXMLSection&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLSection&) SAL_DELETED_FUNCTION;
+        OXMLSection(const OXMLSection&) = delete;
+        void operator =(const OXMLSection&) = delete;
     public:
 
         OXMLSection( ORptFilter& rImport
@@ -46,7 +46,7 @@ namespace rptxml
 
         virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
     };
 
 } // namespace rptxml

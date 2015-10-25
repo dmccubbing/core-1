@@ -734,15 +734,15 @@ void SwPageFrm::MakeAll(vcl::RenderContext* pRenderContext)
                             nBot += nTmp;
                             // Here we check whether paragraph anchored objects
                             // protrude outside the Body/FootnoteCont.
-                            if( pSortedObjs && !pFrm->IsHeaderFrm() &&
+                            if( m_pSortedObjs && !pFrm->IsHeaderFrm() &&
                                 !pFrm->IsFooterFrm() )
-                                lcl_CheckObjects( pSortedObjs, pFrm, nBot );
+                                lcl_CheckObjects( m_pSortedObjs, pFrm, nBot );
                             pFrm = pFrm->GetNext();
                         }
                         nBot += nBottom;
                         // And the page anchored ones
-                        if ( pSortedObjs )
-                            lcl_CheckObjects( pSortedObjs, this, nBot );
+                        if ( m_pSortedObjs )
+                            lcl_CheckObjects( m_pSortedObjs, this, nBot );
                         nBot -= Frm().Top();
                         // #i35143# - If second page frame
                         // exists, the first page doesn't have to fulfill the
@@ -988,7 +988,7 @@ bool SwContentFrm::MakePrtArea( const SwBorderAttrs &rAttrs )
             // 4. The spacing for TextFrms corresponds to the interline lead,
             //    at a minimum.
 
-            nUpper = CalcUpperSpace( &rAttrs, NULL );
+            nUpper = CalcUpperSpace( &rAttrs );
 
             SwTwips nLower = CalcLowerSpace( &rAttrs );
             if (IsCollapse()) {
@@ -1093,7 +1093,6 @@ void SwContentFrm::MakeAll(vcl::RenderContext* /*pRenderContext*/)
                                             // this flag is set. If it turns out that it
                                             // didn't keep it's promise, we can act in a
                                             // controlled fashion.
-    bool bMoveable;
     const bool bFly = IsInFly();
     const bool bTab = IsInTab();
     const bool bFootnote = IsInFootnote();
@@ -1196,6 +1195,8 @@ void SwContentFrm::MakeAll(vcl::RenderContext* /*pRenderContext*/)
     }
 
     SWRECTFN( this )
+
+    bool bMoveable;
 
     while ( !mbValidPos || !mbValidSize || !mbValidPrtArea )
     {

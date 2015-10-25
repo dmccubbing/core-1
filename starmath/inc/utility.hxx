@@ -149,17 +149,17 @@ public:
 class SmFontPickListBox : public SmFontPickList, public ListBox
 {
 protected:
-    DECL_LINK(SelectHdl, ListBox *);
+    DECL_LINK_TYPED(SelectHdl, ListBox&, void);
 
 public:
     SmFontPickListBox(vcl::Window* pParent, WinBits nBits);
 
     SmFontPickListBox& operator = (const SmFontPickList& rList);
 
-    virtual void    Insert(const vcl::Font &rFont) SAL_OVERRIDE;
+    virtual void    Insert(const vcl::Font &rFont) override;
     using   Window::Update;
-    virtual void    Update(const vcl::Font &rFont, const vcl::Font &rNewFont) SAL_OVERRIDE;
-    virtual void    Remove(const vcl::Font &rFont) SAL_OVERRIDE;
+    virtual void    Update(const vcl::Font &rFont, const vcl::Font &rNewFont) override;
+    virtual void    Remove(const vcl::Font &rFont) override;
 };
 
 #endif

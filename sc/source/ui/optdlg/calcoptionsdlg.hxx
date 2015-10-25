@@ -34,21 +34,23 @@
 class ScCalcOptionsDialog : public ModalDialog
 {
 public:
-    ScCalcOptionsDialog(vcl::Window* pParent, const ScCalcConfig& rConfig);
+    ScCalcOptionsDialog(vcl::Window* pParent, const ScCalcConfig& rConfig, bool bWriteConfig);
     virtual ~ScCalcOptionsDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     DECL_LINK_TYPED( BtnAutomaticSelectHdl, RadioButton&, void );
     DECL_LINK_TYPED( DeviceSelHdl, SvTreeListBox*, void );
-    DECL_LINK( EditModifiedHdl, Edit * );
+    DECL_LINK_TYPED( EditModifiedHdl, Edit&, void );
     DECL_STATIC_LINK_TYPED( ScCalcOptionsDialog, TestClickHdl, Button*, void );
     DECL_LINK_TYPED( AsZeroModifiedHdl, Button*, void);
-    DECL_LINK( ConversionModifiedHdl, ListBox*);
-    DECL_LINK( SyntaxModifiedHdl, ListBox*);
+    DECL_LINK_TYPED( ConversionModifiedHdl, ListBox&, void);
+    DECL_LINK_TYPED( SyntaxModifiedHdl, ListBox&, void);
+    DECL_LINK_TYPED( CurrentDocOnlyHdl, Button*, void);
     DECL_LINK_TYPED( CBUseOpenCLHdl, Button*, void);
-    DECL_LINK( SpinOpenCLMinSizeHdl, NumericField*);
+    DECL_LINK_TYPED( SpinOpenCLMinSizeHdl, Edit&, void);
 
     const ScCalcConfig& GetConfig() const { return maConfig;}
+    bool GetWriteCalcConfig() const { return mbWriteConfig;}
 
 private:
     void OpenCLAutomaticSelectionChanged();
@@ -59,6 +61,7 @@ private:
     VclPtr<CheckBox> mpEmptyAsZero;
     VclPtr<ListBox> mpConversion;
     VclPtr<ListBox> mpSyntax;
+    VclPtr<CheckBox> mpCurrentDocOnly;
 
     VclPtr<CheckBox> mpUseOpenCL;
     VclPtr<NumericField> mpSpinButton;
@@ -81,6 +84,7 @@ private:
 #endif
 
     bool mbSelectedEmptyStringAsZero;
+    bool mbWriteConfig;
 };
 
 #endif

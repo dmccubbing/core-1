@@ -150,7 +150,7 @@ DbRegistrationOptionsPage::DbRegistrationOptionsPage( vcl::Window* pParent, cons
     m_pPathBox->SetSelectionMode( SINGLE_SELECTION );
     m_pPathBox->SetPosSizePixel( Point( 0, aHeadSize.Height() ),
                                Size( aBoxSize.Width(), aBoxSize.Height() - aHeadSize.Height() ) );
-    m_pPathBox->SvSimpleTable::SetTabs( aTabs, MAP_APPFONT );
+    m_pPathBox->SvSimpleTable::SetTabs( aTabs );
     m_pPathBox->SetHighlightRange();
 
     m_pPathBox->SetHelpId( HID_DBPATH_CTL_PATH );
@@ -219,7 +219,7 @@ bool DbRegistrationOptionsPage::FillItemSet( SfxItemSet* rCoreSet )
 void DbRegistrationOptionsPage::Reset( const SfxItemSet* rSet )
 {
     // the settings for the single drivers
-    SFX_ITEMSET_GET( *rSet, pRegistrations, DatabaseMapItem, SID_SB_DB_REGISTER, true );
+    const DatabaseMapItem* pRegistrations = rSet->GetItem<DatabaseMapItem>(SID_SB_DB_REGISTER);
     if ( !pRegistrations )
         return;
 
@@ -370,7 +370,7 @@ IMPL_LINK_TYPED( DbRegistrationOptionsPage, HeaderEndDrag_Impl, HeaderBar*, pBar
             long _nWidth = pBar->GetItemSize(i);
             aSz.Width() =  _nWidth + nTmpSz;
             nTmpSz += _nWidth;
-            m_pPathBox->SetTab( i, PixelToLogic( aSz, MapMode(MAP_APPFONT) ).Width(), MAP_APPFONT );
+            m_pPathBox->SetTab( i, PixelToLogic( aSz, MapMode(MAP_APPFONT) ).Width() );
         }
     }
 }

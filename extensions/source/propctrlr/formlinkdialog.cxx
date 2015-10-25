@@ -69,14 +69,14 @@ namespace pcr
         VclPtr<ComboBox>   m_pDetailColumn;
         VclPtr<ComboBox>   m_pMasterColumn;
 
-        Link<>      m_aLinkChangeHandler;
+        Link<FieldLinkRow&,void> m_aLinkChangeHandler;
 
     public:
-        FieldLinkRow( vcl::Window* _pParent );
+        explicit FieldLinkRow( vcl::Window* _pParent );
         virtual ~FieldLinkRow();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        inline void         SetLinkChangeHandler( const Link<>& _rHdl ) { m_aLinkChangeHandler = _rHdl; }
+        inline void         SetLinkChangeHandler( const Link<FieldLinkRow&,void>& _rHdl ) { m_aLinkChangeHandler = _rHdl; }
 
         enum LinkParticipant
         {
@@ -92,7 +92,7 @@ namespace pcr
         void    fillList( LinkParticipant _eWhich, const Sequence< OUString >& _rFieldNames );
 
     private:
-        DECL_LINK( OnFieldNameChanged, ComboBox* );
+        DECL_LINK_TYPED( OnFieldNameChanged, Edit&, void );
     };
 
 
@@ -147,12 +147,9 @@ namespace pcr
     }
 
 
-    IMPL_LINK( FieldLinkRow, OnFieldNameChanged, ComboBox*, /*_pBox*/ )
+    IMPL_LINK_NOARG_TYPED( FieldLinkRow, OnFieldNameChanged, Edit&, void )
     {
-        if ( m_aLinkChangeHandler.IsSet() )
-            return m_aLinkChangeHandler.Call( this );
-
-        return 0L;
+        m_aLinkChangeHandler.Call( *this );
     }
 
     VCL_BUILDER_FACTORY(FieldLinkRow)
@@ -666,10 +663,9 @@ namespace pcr
     }
 
 
-    IMPL_LINK( FormLinkDialog, OnFieldChanged, FieldLinkRow*, /*_pRow*/ )
+    IMPL_LINK_NOARG_TYPED( FormLinkDialog, OnFieldChanged, FieldLinkRow&, void )
     {
         updateOkButton();
-        return 0L;
     }
 
 

@@ -236,51 +236,51 @@ private:
 
 private:
     SAL_DLLPRIVATE bool         EndJob();
-                                Printer( const Printer& rPrinter ) SAL_DELETED_FUNCTION;
-                   Printer&     operator =( const Printer& rPrinter ) SAL_DELETED_FUNCTION;
+                                Printer( const Printer& rPrinter ) = delete;
+                   Printer&     operator =( const Printer& rPrinter ) = delete;
 
 public:
     SAL_DLLPRIVATE void         ImplStartPage();
     SAL_DLLPRIVATE void         ImplEndPage();
 
 protected:
-    virtual bool                AcquireGraphics() const SAL_OVERRIDE;
-    virtual void                ReleaseGraphics( bool bRelease = true ) SAL_OVERRIDE;
-    virtual void                ImplReleaseFonts() SAL_OVERRIDE;
+    virtual bool                AcquireGraphics() const override;
+    virtual void                ReleaseGraphics( bool bRelease = true ) override;
+    virtual void                ImplReleaseFonts() override;
 
-    virtual long                GetGradientStepCount( long nMinRect ) SAL_OVERRIDE;
-    virtual bool                UsePolyPolygonForComplexGradient() SAL_OVERRIDE;
-    virtual void                ClipAndDrawGradientMetafile ( const Gradient &rGradient, const tools::PolyPolygon &rPolyPoly ) SAL_OVERRIDE;
+    virtual long                GetGradientStepCount( long nMinRect ) override;
+    virtual bool                UsePolyPolygonForComplexGradient() override;
+    virtual void                ClipAndDrawGradientMetafile ( const Gradient &rGradient, const tools::PolyPolygon &rPolyPoly ) override;
 
-    void                        ScaleBitmap ( Bitmap&, SalTwoRect& ) SAL_OVERRIDE { };
+    void                        ScaleBitmap ( Bitmap&, SalTwoRect& ) override { };
 
 public:
     void                        DrawGradientEx( OutputDevice* pOut, const Rectangle& rRect, const Gradient& rGradient );
-    virtual Bitmap              GetBitmap( const Point& rSrcPt, const Size& rSize ) const SAL_OVERRIDE;
+    virtual Bitmap              GetBitmap( const Point& rSrcPt, const Size& rSize ) const override;
 
 protected:
     virtual void                DrawDeviceMask ( const Bitmap& rMask, const Color& rMaskColor,
                                             const Point& rDestPt, const Size& rDestSize,
-                                            const Point& rSrcPtPixel, const Size& rSrcSizePixel ) SAL_OVERRIDE;
+                                            const Point& rSrcPtPixel, const Size& rSrcSizePixel ) override;
 
     bool                        DrawTransformBitmapExDirect(
                                     const basegfx::B2DHomMatrix& aFullTransform,
-                                    const BitmapEx& rBitmapEx) SAL_OVERRIDE;
+                                    const BitmapEx& rBitmapEx) override;
 
     bool                        TransformAndReduceBitmapExToTargetRange(
                                     const basegfx::B2DHomMatrix& aFullTransform,
                                     basegfx::B2DRange &aVisibleRange,
-                                    double &fMaximumArea) SAL_OVERRIDE;
+                                    double &fMaximumArea) override;
 
     void                        DrawDeviceBitmap(
                                     const Point& rDestPt, const Size& rDestSize,
                                     const Point& rSrcPtPixel, const Size& rSrcSizePixel,
-                                    BitmapEx& rBitmapEx ) SAL_OVERRIDE;
+                                    BitmapEx& rBitmapEx ) override;
 
-    virtual void                EmulateDrawTransparent( const tools::PolyPolygon& rPolyPoly, sal_uInt16 nTransparencePercent ) SAL_OVERRIDE;
+    virtual void                EmulateDrawTransparent( const tools::PolyPolygon& rPolyPoly, sal_uInt16 nTransparencePercent ) override;
 
-    virtual void                InitFont() const SAL_OVERRIDE;
-    virtual void                SetFontOrientation( ImplFontEntry* const pFontEntry ) const SAL_OVERRIDE;
+    virtual void                InitFont() const override;
+    virtual void                SetFontOrientation( ImplFontEntry* const pFontEntry ) const override;
 
 public:
                                 Printer();
@@ -288,7 +288,7 @@ public:
                                 Printer( const QueueInfo& rQueueInfo );
                                 Printer( const OUString& rPrinterName );
     virtual                     ~Printer();
-    virtual void                dispose() SAL_OVERRIDE;
+    virtual void                dispose() override;
 
     static const std::vector< OUString >& GetPrinterQueues();
     static const QueueInfo*     GetQueueInfo( const OUString& rPrinterName, bool bStatusUpdate );
@@ -369,20 +369,20 @@ public:
     static void                 PrintJob( const std::shared_ptr<vcl::PrinterController>& i_pController,
                                           const JobSetup& i_rInitSetup );
 
-    virtual bool                HasMirroredGraphics() const SAL_OVERRIDE;
+    virtual bool                HasMirroredGraphics() const override;
 
     virtual void                DrawOutDev( const Point& rDestPt, const Size& rDestSize,
-                                            const Point& rSrcPt,  const Size& rSrcSize ) SAL_OVERRIDE;
+                                            const Point& rSrcPt,  const Size& rSrcSize ) override;
     virtual void                DrawOutDev( const Point& rDestPt, const Size& rDestSize,
                                             const Point& rSrcPt,  const Size& rSrcSize,
-                                            const OutputDevice& rOutDev ) SAL_OVERRIDE;
+                                            const OutputDevice& rOutDev ) override;
     virtual void                CopyArea( const Point& rDestPt,
                                           const Point& rSrcPt,  const Size& rSrcSize,
-                                          bool bWindowInvalidate = false ) SAL_OVERRIDE;
+                                          bool bWindowInvalidate = false ) override;
 
-    virtual void                DrawImage( const Point&, const Image&, DrawImageFlags ) SAL_OVERRIDE;
+    virtual void                DrawImage( const Point&, const Image&, DrawImageFlags ) override;
     virtual void                DrawImage( const Point&, const Size&,
-                                           const Image&, DrawImageFlags ) SAL_OVERRIDE;
+                                           const Image&, DrawImageFlags ) override;
 
 
     // These 3 together are more modular PrintJob(), allowing printing more documents as one print job
@@ -513,9 +513,9 @@ public:
     virtual css::uno::Sequence< css::beans::PropertyValue > getPageParameters( int i_nPage ) const = 0;
     virtual void printPage(int i_nPage) const = 0; /// App must override this
     virtual void jobStarted(); // will be called after a possible dialog has been shown and the real printjob starts
-    virtual void jobFinished( com::sun::star::view::PrintableState );
+    virtual void jobFinished( css::view::PrintableState );
 
-    com::sun::star::view::PrintableState getJobState() const;
+    css::view::PrintableState getJobState() const;
 
     void abortJob();
 
@@ -544,7 +544,7 @@ public:
     VCL_PLUGIN_PUBLIC bool getPrinterModified() const;
     SAL_DLLPRIVATE void pushPropertiesToPrinter();
     SAL_DLLPRIVATE void resetPaperToLastConfigured();
-    VCL_PLUGIN_PUBLIC void setJobState( com::sun::star::view::PrintableState );
+    VCL_PLUGIN_PUBLIC void setJobState( css::view::PrintableState );
     SAL_DLLPRIVATE bool setupPrinter( vcl::Window* i_pDlgParent );
 
     SAL_DLLPRIVATE int getPageCountProtected() const;

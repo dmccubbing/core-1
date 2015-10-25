@@ -29,7 +29,7 @@ namespace ucbhelper
 
 
 /**
-  * This class implements the interface com::sun::star::io::XActiveDataStreamer.
+  * This class implements the interface css::io::XActiveDataStreamer.
   * Instances of this class can be passed with the parameters of an
   * "open" command.
   */
@@ -43,10 +43,10 @@ public:
     // XActiveDataStreamer methods.
     virtual void SAL_CALL setStream( const css::uno::Reference< css::io::XStream >& xStream )
         throw( css::uno::RuntimeException,
-               std::exception ) SAL_OVERRIDE;
+               std::exception ) override;
     virtual css::uno::Reference< css::io::XStream > SAL_CALL getStream()
         throw( css::uno::RuntimeException,
-               std::exception ) SAL_OVERRIDE;
+               std::exception ) override;
 };
 
 } /* namespace ucbhelper */

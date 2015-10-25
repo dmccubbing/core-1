@@ -60,7 +60,7 @@ namespace svt
         const OUString& _rFilter,
         sal_Int32 _nMinTimeout,
         sal_Int32 _nMaxTimeout,
-        const OUStringList& rBlackList )
+        const css::uno::Sequence< OUString >& rBlackList )
     {
         DBG_TESTSOLARMUTEX();
             // if this asserts, we'd need to have an own mutex per instance
@@ -147,7 +147,7 @@ namespace svt
 
         if ( eTimeout == eResult )
         {
-            SvtFileDialog::displayIOException( m_sURL, ::com::sun::star::ucb::IOErrorCode_CANT_READ );
+            SvtFileDialog::displayIOException( m_sURL, css::ucb::IOErrorCode_CANT_READ );
             return;
         }
 

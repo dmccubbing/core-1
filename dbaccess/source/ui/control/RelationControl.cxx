@@ -101,23 +101,23 @@ namespace dbaui
 
     protected:
         virtual ~ORelationControl() { disposeOnce(); }
-        virtual void dispose() SAL_OVERRIDE { m_pListCell.disposeAndClear(); ORelationControl_Base::dispose(); }
-        virtual void Resize() SAL_OVERRIDE;
-        virtual Size GetOptimalSize() const SAL_OVERRIDE;
-        virtual bool PreNotify(NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void dispose() override { m_pListCell.disposeAndClear(); ORelationControl_Base::dispose(); }
+        virtual void Resize() override;
+        virtual Size GetOptimalSize() const override;
+        virtual bool PreNotify(NotifyEvent& rNEvt ) override;
 
-        virtual bool IsTabAllowed(bool bForward) const SAL_OVERRIDE;
+        virtual bool IsTabAllowed(bool bForward) const override;
 
         void Init(const TTableConnectionData::value_type& _pConnData);
-        virtual void Init() SAL_OVERRIDE { ORelationControl_Base::Init(); }
-        virtual void InitController( ::svt::CellControllerRef& rController, long nRow, sal_uInt16 nCol ) SAL_OVERRIDE;
-        virtual ::svt::CellController* GetController( long nRow, sal_uInt16 nCol ) SAL_OVERRIDE;
-        virtual void PaintCell( OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId ) const SAL_OVERRIDE;
-        virtual bool SeekRow( long nRow ) SAL_OVERRIDE;
-        virtual bool SaveModified() SAL_OVERRIDE;
-        virtual OUString GetCellText( long nRow, sal_uInt16 nColId ) const SAL_OVERRIDE;
+        virtual void Init() override { ORelationControl_Base::Init(); }
+        virtual void InitController( ::svt::CellControllerRef& rController, long nRow, sal_uInt16 nCol ) override;
+        virtual ::svt::CellController* GetController( long nRow, sal_uInt16 nCol ) override;
+        virtual void PaintCell( OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId ) const override;
+        virtual bool SeekRow( long nRow ) override;
+        virtual bool SaveModified() override;
+        virtual OUString GetCellText( long nRow, sal_uInt16 nColId ) const override;
 
-        virtual void CellModified() SAL_OVERRIDE;
+        virtual void CellModified() override;
 
         DECL_LINK_TYPED( AsynchDeactivate, void*, void );
     private:
@@ -178,7 +178,7 @@ namespace dbaui
             // not the first call
             RowRemoved(0, GetRowCount());
 
-        RowInserted(0, m_pConnData->GetConnLineDataList().size() + 1, true); // add one extra row
+        RowInserted(0, m_pConnData->GetConnLineDataList().size() + 1); // add one extra row
     }
 
     void ORelationControl::Resize()
@@ -454,7 +454,7 @@ namespace dbaui
 
         lateUIInit();
 
-        Link<> aLink(LINK(this, OTableListBoxControl, OnTableChanged));
+        Link<ListBox&,void> aLink(LINK(this, OTableListBoxControl, OnTableChanged));
         m_pLeftTable->SetSelectHdl(aLink);
         m_pRightTable->SetSelectHdl(aLink);
     }
@@ -514,9 +514,9 @@ namespace dbaui
         m_pLeftTable->GrabFocus();
     }
 
-    IMPL_LINK( OTableListBoxControl, OnTableChanged, ListBox*, pListBox )
+    IMPL_LINK_TYPED( OTableListBoxControl, OnTableChanged, ListBox&, rListBox, void )
     {
-        OUString strSelected(pListBox->GetSelectEntry());
+        OUString strSelected(rListBox.GetSelectEntry());
         OTableWindow* pLeft     = NULL;
         OTableWindow* pRight    = NULL;
 
@@ -524,7 +524,7 @@ namespace dbaui
         if ( m_pTableMap->size() == 2 )
         {
             ListBox* pOther;
-            if (pListBox == m_pLeftTable)
+            if (&rListBox == m_pLeftTable)
                 pOther = m_pRightTable;
             else
                 pOther = m_pLeftTable;
@@ -555,7 +555,7 @@ namespace dbaui
                 pLoop = aFind->second;
             OSL_ENSURE(pLoop != NULL, "ORelationDialog::OnTableChanged: invalid ListBox entry!");
                 // We need to find strSelect, because we filled the ListBoxes with the table names with which we compare now
-            if (pListBox == m_pLeftTable)
+            if (&rListBox == m_pLeftTable)
             {
                 // Insert the previously selected Entry on the left side on the right side
                 m_pRightTable->InsertEntry(m_strCurrentLeft);
@@ -588,12 +588,11 @@ namespace dbaui
             }
         }
 
-        pListBox->GrabFocus();
+        rListBox.GrabFocus();
 
         m_pRC_Tables->setWindowTables(pLeft,pRight);
 
         NotifyCellChange();
-        return 0;
     }
 
     void OTableListBoxControl::NotifyCellChange()

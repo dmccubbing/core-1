@@ -64,23 +64,22 @@ struct FileViewAsyncAction
 class SVT_DLLPUBLIC SvtFileView : public Control
 {
 private:
-    SvtFileView_Impl*       mpImp;
-    bool                    bSortColumn;
-
-    ::com::sun::star::uno::Sequence< OUString > mpBlackList;
+    SvtFileView_Impl*              mpImp;
+    bool                           bSortColumn;
+    css::uno::Sequence< OUString > mpBlackList;
 
     DECL_DLLPRIVATE_LINK_TYPED( HeaderSelect_Impl, HeaderBar*, void );
     DECL_DLLPRIVATE_LINK_TYPED( HeaderEndDrag_Impl, HeaderBar*, void );
 
 protected:
-    virtual void GetFocus() SAL_OVERRIDE;
+    virtual void GetFocus() override;
 
 public:
     SvtFileView( vcl::Window* pParent, WinBits nBits, bool bOnlyFolder, bool bMultiSelection, bool bShowType = true );
     virtual ~SvtFileView();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual Size GetOptimalSize() const SAL_OVERRIDE;
+    virtual Size GetOptimalSize() const override;
 
     const OUString&         GetViewURL() const;
     static OUString         GetURL( SvTreeListEntry* pEntry );
@@ -91,8 +90,8 @@ public:
 
     void                    SetHelpId( const OString& rHelpId );
     const OString&          GetHelpId( ) const;
-    void                    SetSizePixel( const Size& rNewSize ) SAL_OVERRIDE;
-    virtual void            SetPosSizePixel( const Point& rNewPos, const Size& rNewSize ) SAL_OVERRIDE;
+    void                    SetSizePixel( const Size& rNewSize ) override;
+    virtual void            SetPosSizePixel( const Point& rNewPos, const Size& rNewSize ) override;
     void                    SetSortColumn( bool bValue ) { bSortColumn = bValue; }
 
     /** initialize the view with the content of a folder given by URL, and apply an immediate filter
@@ -109,12 +108,12 @@ public:
                                 const OUString& rFolderURL,
                                 const OUString& rFilter,
                                 const FileViewAsyncAction* pAsyncDescriptor,
-                                const ::com::sun::star::uno::Sequence< OUString >& rBlackList
+                                const css::uno::Sequence< OUString >& rBlackList
                             );
 
     /** initializes the view with the content of a folder given by an UCB content
     */
-    bool                    Initialize( const ::com::sun::star::uno::Reference< ::com::sun::star::ucb::XContent>& _xContent,
+    bool                    Initialize( const css::uno::Reference< css::ucb::XContent>& _xContent,
                                         const OUString& rFilter );
 
     /** reads the current content of the current folder again, and applies the given filter to it
@@ -178,7 +177,7 @@ public:
     ::std::vector< SvtContentEntry > GetContent();
 
 protected:
-    virtual void            StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
+    virtual void            StateChanged( StateChangedType nStateChange ) override;
 };
 
 // struct SvtContentEntry ------------------------------------------------
@@ -214,9 +213,9 @@ public:
 
     QueryDeleteDlg_Impl(vcl::Window* pParent, const OUString& rName);
     virtual ~QueryDeleteDlg_Impl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    void EnableAllButton() { m_pAllButton->Enable(true); }
+    void EnableAllButton() { m_pAllButton->Enable(); }
 };
 
 }

@@ -48,7 +48,7 @@ private:
     sal_uInt16          nZoom;
     sal_uInt16          nCurId;
 
-    virtual void    Select() SAL_OVERRIDE;
+    virtual void    Select() override;
 };
 
 
@@ -128,7 +128,7 @@ void SvxZoomStatusBarControl::StateChanged( sal_uInt16, SfxItemState eState,
         }
         else
         {
-            DBG_WARNING( "use SfxZoomItem for SID_ATTR_ZOOM" );
+            SAL_INFO( "svx", "use SfxZoomItem for SID_ATTR_ZOOM" );
             nValueSet = SvxZoomEnableFlags::ALL;
         }
     }

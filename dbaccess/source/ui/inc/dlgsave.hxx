@@ -66,14 +66,14 @@ namespace dbaui
                     const IObjectNameCheck& _rObjectNameCheck,
                     sal_Int32 _nFlags = SAD_DEFAULT | SAD_TITLE_STORE_AS);
         virtual ~OSaveAsDlg();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         OUString getName() const;
         OUString getCatalog() const;
         OUString getSchema() const;
     private:
         DECL_LINK_TYPED(ButtonClickHdl, Button *, void);
-        DECL_LINK(EditModifyHdl,  Edit * );
+        DECL_LINK_TYPED(EditModifyHdl,  Edit&, void);
 
         void implInitOnlyTitle(const OUString& _rLabel);
         void implInit();

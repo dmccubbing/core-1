@@ -383,22 +383,22 @@ void SpinField::dispose()
 
 void SpinField::Up()
 {
-    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_UP, [this] () { maUpHdlLink.Call(this); } );
+    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_UP, [this] () { maUpHdlLink.Call(*this); } );
 }
 
 void SpinField::Down()
 {
-    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_DOWN, [this] () { maDownHdlLink.Call(this); } );
+    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_DOWN, [this] () { maDownHdlLink.Call(*this); } );
 }
 
 void SpinField::First()
 {
-    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_FIRST, [this] () { maFirstHdlLink.Call(this); } );
+    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_FIRST, [this] () { maFirstHdlLink.Call(*this); } );
 }
 
 void SpinField::Last()
 {
-    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_LAST, [this] () { maLastHdlLink.Call(this); } );
+    ImplCallEventListenersAndHandler( VCLEVENT_SPINFIELD_LAST, [this] () { maLastHdlLink.Call(*this); } );
 }
 
 void SpinField::MouseButtonDown( const MouseEvent& rMEvt )
@@ -668,7 +668,6 @@ void SpinField::ImplCalcButtonAreas(OutputDevice* pDev, const Size& rOutSz, Rect
         long nBottom1 = aSize.Height()/2;
         long nBottom2 = aSize.Height()-1;
         long nTop2 = nBottom1;
-        long nTop1 = 0;
         if ( !(aSize.Height() & 0x01) )
             nBottom1--;
 
@@ -715,7 +714,7 @@ void SpinField::ImplCalcButtonAreas(OutputDevice* pDev, const Size& rOutSz, Rect
         {
             aSize.Width() -= CalcZoom( GetDrawPixel( pDev, rStyleSettings.GetSpinSize() ) );
 
-            rSpinUpArea = Rectangle( aSize.Width(), nTop1, rOutSz.Width()-aDropDownSize.Width()-1, nBottom1 );
+            rSpinUpArea = Rectangle( aSize.Width(), 0, rOutSz.Width()-aDropDownSize.Width()-1, nBottom1 );
             rSpinDownArea = Rectangle( rSpinUpArea.Left(), nTop2, rSpinUpArea.Right(), nBottom2 );
         }
     }
@@ -1045,7 +1044,7 @@ void SpinField::Draw(OutputDevice* pDev, const Point& rPos, const Size& rSize, D
 
         if (GetStyle() & WB_SPIN)
         {
-            ImplDrawSpinButton(*pDev, this, aUp, aDown, false, false, true, true);
+            ImplDrawSpinButton(*pDev, this, aUp, aDown, false, false);
         }
 
         pDev->Pop();

@@ -209,7 +209,6 @@ void SdStyleSheetPool::CreateLayoutStyleSheets(const OUString& rLayoutName, bool
     OUString aName(SD_RESSTR(STR_LAYOUT_OUTLINE));
     OUString aHelpFile;
 
-    SfxStyleSheetBase* pParent = NULL;
     SvxLRSpaceItem aSvxLRSpaceItem( EE_PARA_LRSPACE );
     SvxULSpaceItem aSvxULSpaceItem( EE_PARA_ULSPACE );
 
@@ -312,7 +311,7 @@ void SdStyleSheetPool::CreateLayoutStyleSheets(const OUString& rLayoutName, bool
     // if we created outline styles, we need to chain them
     if( bCreated )
     {
-        pParent = NULL;
+        SfxStyleSheetBase* pParent = NULL;
         for (sal_Int32 nLevel = 1; nLevel < 10; nLevel++)
         {
             OUString aLevelName( aPrefix + aName + " " + OUString::number( nLevel ) );
@@ -624,7 +623,7 @@ struct HasFamilyPredicate : svl::StyleSheetPredicate
     HasFamilyPredicate(SfxStyleFamily eFamily)
     : meFamily(eFamily) {;}
 
-    bool Check(const SfxStyleSheetBase& sheet) SAL_OVERRIDE
+    bool Check(const SfxStyleSheetBase& sheet) override
     {
         return sheet.GetFamily() == meFamily;
     }
@@ -934,7 +933,7 @@ struct StyleSheetIsUserDefinedPredicate : svl::StyleSheetPredicate
     StyleSheetIsUserDefinedPredicate()
     {;}
 
-    bool Check(const SfxStyleSheetBase& sheet) SAL_OVERRIDE
+    bool Check(const SfxStyleSheetBase& sheet) override
     {
         return sheet.IsUserDefined();
     }

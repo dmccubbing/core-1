@@ -259,7 +259,7 @@ DataSourceTabPage::DataSourceTabPage(
     m_pBTN_DOWN->SetText( OUString( cBlackDownPointingTriangle ));
 
     // init controls
-    m_pLB_ROLE->SetTabs( lcl_pRoleListBoxTabs, MAP_APPFONT );
+    m_pLB_ROLE->SetTabs( lcl_pRoleListBoxTabs );
     m_pLB_ROLE->Show();
 
     updateControlsFromDialogModel();
@@ -327,7 +327,7 @@ bool DataSourceTabPage::commitPage( ::svt::WizardTypes::CommitPageReason /*eReas
     //ranges may have been edited in the meanwhile (dirty is true in that case here)
     if( isValid() )
     {
-        updateModelFromControl( 0 /*update all*/ );
+        updateModelFromControl();
         return true; //return false if this page should not be left
     }
     else
@@ -505,7 +505,7 @@ void DataSourceTabPage::updateControlState()
         bHasValidRole = (pRoleEntry != 0);
     }
 
-    m_pBTN_ADD->Enable( true );
+    m_pBTN_ADD->Enable();
     m_pBTN_REMOVE->Enable( bHasSelectedSeries );
 
     m_pBTN_UP->Enable( bHasSelectedSeries && (pSeriesEntry != m_pLB_SERIES->First()));
@@ -733,14 +733,14 @@ IMPL_LINK_NOARG_TYPED(DataSourceTabPage, DownButtonClickedHdl, Button*, void)
     }
 }
 
-IMPL_LINK( DataSourceTabPage, RangeModifiedHdl, Edit*, pEdit )
+IMPL_LINK_TYPED( DataSourceTabPage, RangeModifiedHdl, Edit&, rEdit, void )
 {
     // note: isValid sets the color of the edit field
-    if( isRangeFieldContentValid( *pEdit ))
+    if( isRangeFieldContentValid( rEdit ))
     {
         setDirty();
-        updateModelFromControl( pEdit );
-        if( pEdit == m_pEDT_RANGE )
+        updateModelFromControl( &rEdit );
+        if( &rEdit == m_pEDT_RANGE )
         {
             if( ! lcl_UpdateCurrentSeriesName( *m_pLB_SERIES ))
                 fillSeriesListBox();
@@ -749,18 +749,16 @@ IMPL_LINK( DataSourceTabPage, RangeModifiedHdl, Edit*, pEdit )
 
     // enable/disable OK button
     isValid();
-
-    return 0;
 }
 
-IMPL_LINK( DataSourceTabPage, RangeUpdateDataHdl, Edit*, pEdit )
+IMPL_LINK_TYPED( DataSourceTabPage, RangeUpdateDataHdl, Edit&, rEdit, void )
 {
     // note: isValid sets the color of the edit field
-    if( isRangeFieldContentValid( *pEdit ))
+    if( isRangeFieldContentValid( rEdit ))
     {
         setDirty();
-        updateModelFromControl( pEdit );
-        if( pEdit == m_pEDT_RANGE )
+        updateModelFromControl( &rEdit );
+        if( &rEdit == m_pEDT_RANGE )
         {
             if( ! lcl_UpdateCurrentSeriesName( *m_pLB_SERIES ))
                 fillSeriesListBox();
@@ -768,8 +766,6 @@ IMPL_LINK( DataSourceTabPage, RangeUpdateDataHdl, Edit*, pEdit )
     }
     // enable/disable OK button
     isValid();
-
-    return 0;
 }
 
 void DataSourceTabPage::listeningFinished(

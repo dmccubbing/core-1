@@ -252,13 +252,13 @@ private:
     // variables
     bool bIsEmailSupported;
 
-    virtual void    ImplCommit() SAL_OVERRIDE;
+    virtual void    ImplCommit() override;
 
 public:
     MailMergeCfg_Impl();
     virtual ~MailMergeCfg_Impl();
 
-    virtual void Notify( const css::uno::Sequence< OUString >& _rPropertyNames) SAL_OVERRIDE;
+    virtual void Notify( const css::uno::Sequence< OUString >& _rPropertyNames) override;
 
     bool IsEmailSupported() const {return bIsEmailSupported;}
 
@@ -1493,7 +1493,7 @@ OUString getCurrentFactory_Impl( const Reference< XFrame >& _xFrame )
         }
         catch ( css::frame::UnknownModuleException& )
         {
-            DBG_WARNING( "getActiveModule_Impl(): unknown module" );
+            SAL_INFO( "cui.options", "unknown module" );
         }
         catch ( Exception& )
         {
@@ -1847,7 +1847,7 @@ OUString OfaTreeOptionsDialog::GetModuleIdentifier( const Reference< XFrame >& r
         }
         catch ( css::frame::UnknownModuleException& )
         {
-            DBG_WARNING( "OfaTreeOptionsDialog::GetModuleIdentifier(): unknown module" );
+            SAL_INFO( "cui.options", "unknown module" );
         }
         catch ( Exception& )
         {

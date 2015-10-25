@@ -27,11 +27,11 @@ public:
         vcl::Window* pParent, ScViewData* pViewData );
 
     virtual ~ScSamplingDialog();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
-    virtual void    SetActive() SAL_OVERRIDE;
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
+    virtual void    SetActive() override;
+    virtual bool    Close() override;
 
 private:
     // Widgets
@@ -75,9 +75,9 @@ private:
     DECL_LINK_TYPED( OkClicked, Button*, void );
     DECL_LINK_TYPED( GetFocusHandler, Control&, void );
     DECL_LINK_TYPED( LoseFocusHandler, Control&, void );
-    DECL_LINK( SamplingSizeValueModified, void* );
+    DECL_LINK_TYPED( SamplingSizeValueModified, Edit&, void );
     DECL_LINK_TYPED( ToggleSamplingMethod, RadioButton&, void );
-    DECL_LINK( RefInputModifyHandler, void* );
+    DECL_LINK_TYPED( RefInputModifyHandler, Edit&, void );
     void ToggleSamplingMethod();
 };
 

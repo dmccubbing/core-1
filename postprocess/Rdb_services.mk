@@ -110,7 +110,7 @@ $(eval $(call gb_Rdb_add_components,services,\
 	xmlscript/util/xmlscript \
 	xmlsecurity/util/xmlsecurity \
 	xmlsecurity/util/xsec_fw \
-	$(if $(filter-out ANDROID,$(OS)), \
+	$(if $(filter-out ANDROID IOS,$(OS)), \
 		xmlsecurity/util/xsec_xmlsec$(if $(filter WNT,$(OS)),.windows)) \
 	$(if $(ENABLE_COINMP), \
 		sccomp/source/solver/coinmpsolver \
@@ -191,9 +191,6 @@ $(eval $(call gb_Rdb_add_components,services,\
 	) \
 	$(if $(ENABLE_OPENGL_CANVAS), \
         canvas/source/opengl/oglcanvas \
-	) \
-	$(if $(ENABLE_GCONF), \
-		shell/source/backends/gconfbe/gconfbe1 \
 	) \
 	$(if $(ENABLE_GIO), \
 		shell/source/sessioninstall/losessioninstall \

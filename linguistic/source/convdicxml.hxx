@@ -45,9 +45,9 @@ class ConvDicXMLExport : public SvXMLExport
 public:
     ConvDicXMLExport( ConvDic &rConvDic,
         const OUString &rFileName,
-        com::sun::star::uno::Reference< com::sun::star::xml::sax::XDocumentHandler > &rHandler) :
+        css::uno::Reference< css::xml::sax::XDocumentHandler > &rHandler) :
         SvXMLExport ( comphelper::getProcessComponentContext(), "com.sun.star.lingu2.ConvDicXMLExport", rFileName,
-                      ::com::sun::star::util::MeasureUnit::CM, rHandler ),
+                      css::util::MeasureUnit::CM, rHandler ),
         rDic        ( rConvDic ),
         bSuccess    ( false )
     {
@@ -57,10 +57,10 @@ public:
     }
 
     // SvXMLExport
-    void _ExportAutoStyles() SAL_OVERRIDE    {}
-    void _ExportMasterStyles() SAL_OVERRIDE  {}
-    void _ExportContent() SAL_OVERRIDE;
-    sal_uInt32 exportDoc( enum ::xmloff::token::XMLTokenEnum eClass ) SAL_OVERRIDE;
+    void _ExportAutoStyles() override    {}
+    void _ExportMasterStyles() override  {}
+    void _ExportContent() override;
+    sal_uInt32 exportDoc( enum ::xmloff::token::XMLTokenEnum eClass ) override;
 
     bool    Export();
 };
@@ -95,12 +95,12 @@ public:
     {
     }
 
-    virtual void SAL_CALL startDocument() throw( ::com::sun::star::xml::sax::SAXException, ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL endDocument() throw( ::com::sun::star::xml::sax::SAXException, ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL startDocument() throw( css::xml::sax::SAXException, css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL endDocument() throw( css::xml::sax::SAXException, css::uno::RuntimeException, std::exception ) override;
 
     virtual SvXMLImportContext * CreateContext(
         sal_uInt16 nPrefix, const OUString &rLocalName,
-        const com::sun::star::uno::Reference < com::sun::star::xml::sax::XAttributeList > &rxAttrList ) SAL_OVERRIDE;
+        const css::uno::Reference < css::xml::sax::XAttributeList > &rxAttrList ) override;
 
     ConvDic *   GetDic()                    { return pDic; }
     sal_Int16   GetLanguage() const         { return nLanguage; }

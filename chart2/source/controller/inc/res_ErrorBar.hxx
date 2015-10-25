@@ -62,8 +62,8 @@ public:
     void FillValueSets();
 
     // ____ RangeSelectionListenerParent ____
-    virtual void listeningFinished( const OUString & rNewRange ) SAL_OVERRIDE;
-    virtual void disposingRangeSelection() SAL_OVERRIDE;
+    virtual void listeningFinished( const OUString & rNewRange ) override;
+    virtual void disposingRangeSelection() override;
 
 private:
     // category
@@ -123,12 +123,12 @@ private:
     bool                 m_bEnableDataTableDialog;
 
     DECL_LINK_TYPED( CategoryChosen, Button*, void );
-    DECL_LINK( CategoryChosen2, void* );
+    DECL_LINK_TYPED( CategoryChosen2, ListBox&, void );
     DECL_LINK_TYPED( SynchronizePosAndNeg, CheckBox&, void );
-    DECL_LINK( PosValueChanged, void * );
+    DECL_LINK_TYPED( PosValueChanged, Edit&, void );
     DECL_LINK_TYPED( IndicatorChanged, Button *, void );
     DECL_LINK_TYPED( ChooseRange, Button *, void );
-    DECL_LINK( RangeChanged, Edit * );
+    DECL_LINK_TYPED( RangeChanged, Edit&, void );
 
     void UpdateControlStates();
     bool isRangeFieldContentValid( Edit & rEdit );

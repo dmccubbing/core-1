@@ -27,32 +27,32 @@
 
 
 
-//  class ::com::sun::star::awt::UnoControlContainerModel
+//  class css::awt::UnoControlContainerModel
 
 class UnoControlContainerModel : public UnoControlModel
 {
 protected:
-    ::com::sun::star::uno::Any                                                      ImplGetDefaultValue( sal_uInt16 nPropId ) const SAL_OVERRIDE;
-    ::cppu::IPropertyArrayHelper&                                                   SAL_CALL getInfoHelper() SAL_OVERRIDE;
+    css::uno::Any                                                      ImplGetDefaultValue( sal_uInt16 nPropId ) const override;
+    ::cppu::IPropertyArrayHelper&                                                   SAL_CALL getInfoHelper() override;
 
 public:
-                        UnoControlContainerModel( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& i_factory );
+                        UnoControlContainerModel( const css::uno::Reference< css::uno::XComponentContext >& i_factory );
                         UnoControlContainerModel( const UnoControlContainerModel& rModel ) : UnoControlModel( rModel ) {}
 
-    UnoControlModel*    Clone() const SAL_OVERRIDE { return new UnoControlContainerModel( *this ); }
+    UnoControlModel*    Clone() const override { return new UnoControlContainerModel( *this ); }
 
-    // ::com::sun::star::beans::XMultiPropertySet
-    ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    // css::beans::XMultiPropertySet
+    css::uno::Reference< css::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo(  ) throw(css::uno::RuntimeException, std::exception) override;
 
-    // ::com::sun::star::io::XPersistObject
-    OUString SAL_CALL getServiceName() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    // css::io::XPersistObject
+    OUString SAL_CALL getServiceName() throw(css::uno::RuntimeException, std::exception) override;
 
-    // ::com::sun::star::lang::XServiceInfo
+    // css::lang::XServiceInfo
     OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 };
 
 

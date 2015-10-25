@@ -35,25 +35,25 @@ class StgHeader
 {
     static const sal_uInt8 cFATPagesInHeader = 109;
 
-    sal_uInt8   cSignature[ 8 ];            // 00 signature (see below)
-    ClsId       aClsId;                     // 08 Class ID
-    sal_Int32   nVersion;                   // 18 version number
-    sal_uInt16  nByteOrder;                 // 1C Unicode byte order indicator
-    sal_Int16   nPageSize;                  // 1E 1 << nPageSize = block size
-    sal_Int16   nDataPageSize;              // 20 1 << this size == data block size
-    sal_uInt8   bDirty;                     // 22 internal dirty flag (should be
+    sal_uInt8   m_cSignature[ 8 ];            // 00 signature (see below)
+    ClsId       m_aClsId;                     // 08 Class ID
+    sal_Int32   m_nVersion;                   // 18 version number
+    sal_uInt16  m_nByteOrder;                 // 1C Unicode byte order indicator
+    sal_Int16   m_nPageSize;                  // 1E 1 << nPageSize = block size
+    sal_Int16   m_nDataPageSize;              // 20 1 << this size == data block size
+    sal_uInt8   m_bDirty;                     // 22 internal dirty flag (should be
                                             //    bool, but probably required to
                                             //    be exactly one byte)
-    sal_uInt8   cReserved[ 9 ];             // 23
-    sal_Int32   nFATSize;                   // 2C total number of FAT pages
-    sal_Int32   nTOCstrm;                   // 30 starting page for the TOC stream
-    sal_Int32   nReserved;                  // 34
-    sal_Int32   nThreshold;                 // 38 minimum file size for big data
-    sal_Int32   nDataFAT;                   // 3C page # of 1st data FAT block
-    sal_Int32   nDataFATSize;               // 40 # of data fat blocks
-    sal_Int32   nMasterChain;               // 44 chain to the next master block
-    sal_Int32   nMaster;                    // 48 # of additional master blocks
-    sal_Int32   nMasterFAT[ cFATPagesInHeader ];            // 4C first [cFATPagesInHeader] master FAT pages
+    sal_uInt8   m_cReserved[ 9 ];             // 23
+    sal_Int32   m_nFATSize;                   // 2C total number of FAT pages
+    sal_Int32   m_nTOCstrm;                   // 30 starting page for the TOC stream
+    sal_Int32   m_nReserved;                  // 34
+    sal_Int32   m_nThreshold;                 // 38 minimum file size for big data
+    sal_Int32   m_nDataFAT;                   // 3C page # of 1st data FAT block
+    sal_Int32   m_nDataFATSize;               // 40 # of data fat blocks
+    sal_Int32   m_nMasterChain;               // 44 chain to the next master block
+    sal_Int32   m_nMaster;                    // 48 # of additional master blocks
+    sal_Int32   m_nMasterFAT[ cFATPagesInHeader ];            // 4C first [cFATPagesInHeader] master FAT pages
 public:
     StgHeader();
 
@@ -62,20 +62,20 @@ public:
     bool      Load( SvStream& );
     bool      Store( StgIo& );
     bool      Check();                      // check the signature and version
-    sal_Int32 GetTOCStart() const           { return nTOCstrm; }
+    sal_Int32 GetTOCStart() const           { return m_nTOCstrm; }
     void      SetTOCStart( sal_Int32 n );
-    sal_Int32 GetDataFATStart() const       { return nDataFAT; }
+    sal_Int32 GetDataFATStart() const       { return m_nDataFAT; }
     void      SetDataFATStart( sal_Int32 n );
-    sal_Int32 GetDataFATSize() const        { return nDataFATSize; }
+    sal_Int32 GetDataFATSize() const        { return m_nDataFATSize; }
     void      SetDataFATSize( sal_Int32 n );
-    sal_Int32 GetThreshold() const          { return nThreshold; }
-    short     GetPageSize() const           { return nPageSize; }
-    short     GetDataPageSize() const       { return nDataPageSize; }
-    sal_Int32 GetFATSize() const            { return nFATSize; }
+    sal_Int32 GetThreshold() const          { return m_nThreshold; }
+    short     GetPageSize() const           { return m_nPageSize; }
+    short     GetDataPageSize() const       { return m_nDataPageSize; }
+    sal_Int32 GetFATSize() const            { return m_nFATSize; }
     void      SetFATSize( sal_Int32 n );
-    sal_Int32 GetFATChain() const           { return nMasterChain; }
+    sal_Int32 GetFATChain() const           { return m_nMasterChain; }
     void      SetFATChain( sal_Int32 n );
-    sal_Int32 GetMasters() const            { return nMaster; }
+    sal_Int32 GetMasters() const            { return m_nMaster; }
     void      SetMasters( sal_Int32 n );
     static short GetFAT1Size()              { return cFATPagesInHeader; }
     sal_Int32 GetFATPage( short ) const;
@@ -108,21 +108,21 @@ enum StgEntryTime {                     // time codes:
 //StructuredStorageDirectoryEntry
 class StgEntry
 {                        // directory entry
-    sal_uInt16  nName[ 32 ];                // 00 name as WCHAR
-    sal_uInt16  nNameLen;                   // 40 size of name in bytes including 00H
-    sal_uInt8   cType;                      // 42 entry type
-    sal_uInt8   cFlags;                     // 43 0 or 1 (tree balance?)
-    sal_Int32   nLeft;                      // 44 left node entry
-    sal_Int32   nRight;                     // 48 right node entry
-    sal_Int32   nChild;                     // 4C 1st child entry if storage
-    ClsId       aClsId;                     // 50 class ID (optional)
-    sal_Int32   nFlags;                     // 60 state flags(?)
-    sal_Int32   nMtime[ 2 ];                // 64 modification time
-    sal_Int32   nAtime[ 2 ];                // 6C creation and access time
-    sal_Int32   nPage1;                     // 74 starting block (either direct or translated)
-    sal_Int32   nSize;                      // 78 file size
-    sal_Int32   nUnknown;                   // 7C unknown
-    OUString    aName;                      // Name as Compare String (ascii, upper)
+    sal_uInt16  m_nName[ 32 ];                // 00 name as WCHAR
+    sal_uInt16  m_nNameLen;                   // 40 size of name in bytes including 00H
+    sal_uInt8   m_cType;                      // 42 entry type
+    sal_uInt8   m_cFlags;                     // 43 0 or 1 (tree balance?)
+    sal_Int32   m_nLeft;                      // 44 left node entry
+    sal_Int32   m_nRight;                     // 48 right node entry
+    sal_Int32   m_nChild;                     // 4C 1st child entry if storage
+    ClsId       m_aClsId;                     // 50 class ID (optional)
+    sal_Int32   m_nFlags;                     // 60 state flags(?)
+    sal_Int32   m_nMtime[ 2 ];                // 64 modification time
+    sal_Int32   m_nAtime[ 2 ];                // 6C creation and access time
+    sal_Int32   m_nPage1;                     // 74 starting block (either direct or translated)
+    sal_Int32   m_nSize;                      // 78 file size
+    sal_Int32   m_nUnknown;                   // 7C unknown
+    OUString    m_aName;                      // Name as Compare String (ascii, upper)
 public:
     bool        Init();                     // initialize the data
     bool        SetName( const OUString& );   // store a name (ASCII, up to 32 chars)
@@ -131,12 +131,12 @@ public:
     sal_Int32   Compare( const StgEntry& ) const;   // compare two entries
     bool        Load( const void* pBuffer, sal_uInt32 nBufSize, sal_uInt64 nUnderlyingStreamSize );
     void        Store( void* );
-    StgEntryType GetType() const            { return (StgEntryType) cType;  }
-    sal_Int32   GetStartPage() const        { return nPage1; }
-    void        SetType( StgEntryType t )   { cType = (sal_uInt8) t; }
-    sal_Int32   GetSize() const             { return nSize; }
-    void        SetSize( sal_Int32 n )      { nSize = n; }
-    const ClsId& GetClassId() const         { return aClsId; }
+    StgEntryType GetType() const            { return (StgEntryType) m_cType;  }
+    sal_Int32   GetStartPage() const        { return m_nPage1; }
+    void        SetType( StgEntryType t )   { m_cType = (sal_uInt8) t; }
+    sal_Int32   GetSize() const             { return m_nSize; }
+    void        SetSize( sal_Int32 n )      { m_nSize = n; }
+    const ClsId& GetClassId() const         { return m_aClsId; }
     void        SetClassId( const ClsId& );
     sal_Int32   GetLeaf( StgEntryRef ) const;
     void        SetLeaf( StgEntryRef, sal_Int32 );

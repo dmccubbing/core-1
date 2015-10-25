@@ -85,8 +85,8 @@ public:
     sal_Int32       GetFunctionPos(sal_Int32 nPos);
     void            ClearAllParas();
 
-    void            MakeTree(IStructHelper* _pTree,SvTreeListEntry* pParent,FormulaToken* _pToken,long Count);
-    void            fillTree(IStructHelper* _pTree);
+    void            MakeTree(StructPage* _pTree,SvTreeListEntry* pParent,FormulaToken* _pToken,long Count);
+    void            fillTree(StructPage* _pTree);
     void            UpdateTokenArray( const OUString& rStrExp);
     OUString        RepairFormula(const OUString& aFormula);
     void            FillDialog(bool bFlag=true);
@@ -125,7 +125,7 @@ public:
     DECL_LINK_TYPED( FxHdl, ParaWin&, void );
 
     DECL_LINK_TYPED( MatrixHdl, Button*, void );
-    DECL_LINK(FormulaHdl, void *);
+    DECL_LINK_TYPED( FormulaHdl, Edit&, void);
     DECL_LINK_TYPED( FormulaCursorHdl, EditBox&, void );
     DECL_LINK_TYPED( BtnHdl, Button*, void );
     DECL_LINK_TYPED( DblClkHdl, FuncPage&, void );
@@ -654,7 +654,7 @@ bool FormulaDlg_Impl::CalcStruct( const OUString& rStrExp)
 }
 
 
-void FormulaDlg_Impl::MakeTree(IStructHelper* _pTree,SvTreeListEntry* pParent,FormulaToken* _pToken,long Count)
+void FormulaDlg_Impl::MakeTree(StructPage* _pTree,SvTreeListEntry* pParent,FormulaToken* _pToken,long Count)
 {
     if( _pToken != NULL && Count > 0 )
     {
@@ -767,7 +767,7 @@ void FormulaDlg_Impl::MakeTree(IStructHelper* _pTree,SvTreeListEntry* pParent,Fo
     }
 }
 
-void FormulaDlg_Impl::fillTree(IStructHelper* _pTree)
+void FormulaDlg_Impl::fillTree(StructPage* _pTree)
 {
     GetFormulaOpCodeMapper();
     FormulaToken* pToken = m_pTokenArray->LastRPN();
@@ -979,7 +979,7 @@ void FormulaDlg_Impl::ClearAllParas()
         m_pFtEditName->Hide();
         m_pParaWinBox->Hide();
 
-        m_pBtnForward->Enable(true); //@new
+        m_pBtnForward->Enable(); //@new
         m_pFtHeadLine->Show();
         m_pFtFuncName->Show();
         m_pFtFuncDesc->Show();
@@ -1059,7 +1059,7 @@ IMPL_LINK_TYPED( FormulaDlg_Impl, BtnHdl, Button*, pBtn, void )
     else if ( pBtn == m_pBtnBackward )
     {
         bEditFlag=false;
-        m_pBtnForward->Enable(true);
+        m_pBtnForward->Enable();
         EditNextFunc( false );
         m_pMEFormula->Invalidate();
         m_pMEFormula->Update();
@@ -1092,7 +1092,7 @@ IMPL_LINK_NOARG_TYPED(FormulaDlg_Impl, DblClkHdl, FuncPage&, void)
     aSel.Max()=aSel.Max()-1;
     pMEdit->SetSelection(aSel);
 
-    FormulaHdl(pMEdit);
+    FormulaHdl(*pMEdit);
 
     aSel.Min()=aSel.Max();
     pMEdit->SetSelection(aSel);
@@ -1243,7 +1243,7 @@ IMPL_LINK_TYPED( FormulaDlg_Impl, FxHdl, ParaWin&, rPtr, void )
 {
     if(&rPtr==pParaWin)
     {
-        m_pBtnForward->Enable(true); //@ In order to be able to input another function.
+        m_pBtnForward->Enable(); //@ In order to be able to input another function.
         m_pTabCtrl->SetCurPageId(TP_FUNCTION);
 
         OUString aUndoStr = m_pHelper->getCurrentFormula();       // it will be added before a ";"
@@ -1285,11 +1285,11 @@ IMPL_LINK_TYPED( FormulaDlg_Impl, ModifyHdl, ParaWin&, rPtr, void )
     }
 }
 
-IMPL_LINK_NOARG(FormulaDlg_Impl, FormulaHdl)
+IMPL_LINK_NOARG_TYPED(FormulaDlg_Impl, FormulaHdl, Edit&, void)
 {
 
     FormEditData* pData = m_pHelper->getFormEditData();
-    if (!pData) return 0;
+    if (!pData) return;
 
     bEditFlag=true;
     OUString    aInputFormula=m_pHelper->getCurrentFormula();
@@ -1347,7 +1347,6 @@ IMPL_LINK_NOARG(FormulaDlg_Impl, FormulaHdl)
 
     m_pHelper->setSelection(aSel.Min(), aSel.Max());
     bEditFlag=false;
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(FormulaDlg_Impl, FormulaCursorHdl, EditBox&, void)
@@ -1598,7 +1597,7 @@ IMPL_LINK_NOARG_TYPED(FormulaDlg_Impl, FuncSelHdl, FuncPage&, void)
     {
         const IFunctionDescription* pDesc =pFuncPage->GetFuncDesc( pFuncPage->GetFunction() );
 
-        if(pDesc!=pFuncDesc) m_pBtnForward->Enable(true); //new
+        if(pDesc!=pFuncDesc) m_pBtnForward->Enable(); //new
 
         if (pDesc)
         {
@@ -1669,7 +1668,7 @@ void FormulaDlg_Impl::SetEdSelection()
         Selection theSel = m_pEdRef->GetSelection();
         //  Edit may have the focus -> call ModifyHdl in addition
         //  to what's happening in GetFocus
-        pEd->GetModifyHdl().Call(pEd);
+        pEd->GetModifyHdl().Call(*pEd);
         pEd->GrabFocus();
         pEd->SetSelection(theSel);
     } // if( pEd )

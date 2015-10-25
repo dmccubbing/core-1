@@ -112,9 +112,9 @@ void DrawViewShell::FuTable(SfxRequest& rReq)
         sal_Int32 nRows = 0;
         OUString sTableStyle;
 
-        SFX_REQUEST_ARG( rReq, pCols, SfxUInt16Item, SID_ATTR_TABLE_COLUMN, false );
-        SFX_REQUEST_ARG( rReq, pRows, SfxUInt16Item, SID_ATTR_TABLE_ROW, false );
-        SFX_REQUEST_ARG( rReq, pStyle, SfxStringItem, SID_TABLE_STYLE, false );
+        const SfxUInt16Item* pCols = rReq.GetArg<SfxUInt16Item>(SID_ATTR_TABLE_COLUMN);
+        const SfxUInt16Item* pRows = rReq.GetArg<SfxUInt16Item>(SID_ATTR_TABLE_ROW);
+        const SfxStringItem* pStyle = rReq.GetArg<SfxStringItem>(SID_TABLE_STYLE);
 
         if( pCols )
             nColumns = pCols->GetValue();
@@ -208,7 +208,7 @@ void DrawViewShell::FuTable(SfxRequest& rReq)
             // First make sure that the sidebar is visible
             GetViewFrame()->ShowChildWindow(SID_SIDEBAR);
             ::sfx2::sidebar::Sidebar::ShowPanel(
-                OUString("ImpressTableDesignPanel"),
+                OUString("SdTableDesignPanel"),
                 GetViewFrame()->GetFrame().GetFrameInterface());
         }
 

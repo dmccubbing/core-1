@@ -282,9 +282,9 @@ public:
     GdkX11Pixmap( int nWidth, int nHeight, int nDepth );
     virtual ~GdkX11Pixmap();
 
-    virtual int          GetDepth() const SAL_OVERRIDE;
-    virtual SalX11Screen GetScreen() const SAL_OVERRIDE;
-    virtual Pixmap       GetPixmap() const SAL_OVERRIDE;
+    virtual int          GetDepth() const override;
+    virtual SalX11Screen GetScreen() const override;
+    virtual Pixmap       GetPixmap() const override;
     GdkPixmap*           GetGdkPixmap() const;
     GdkDrawable*         GetGdkDrawable() const;
 
@@ -2018,10 +2018,6 @@ bool GtkSalGraphics::NWPaintGTKScrollbar( ControlType, ControlPart nPart,
                                       "has-backward-stepper", &has_backward,
                                          "has-secondary-backward-stepper", &has_backward2, nullptr );
     gint magic = trough_border ? 1 : 0;
-    gint nFirst = 0;
-
-    if ( has_backward )  nFirst  += 1;
-    if ( has_forward2 )  nFirst  += 1;
 
     if ( nPart == PART_DRAW_BACKGROUND_HORZ )
     {
@@ -3159,7 +3155,6 @@ bool GtkSalGraphics::NWPaintGTKToolbar(
             {
                 const double shim = 0.2;
 
-#if GTK_CHECK_VERSION(2,10,0)
                 gint separator_height, separator_width, wide_separators = 0;
 
                 gtk_widget_style_get (gWidgetData[m_nXScreen].gSeparator,
@@ -3184,7 +3179,6 @@ bool GtkSalGraphics::NWPaintGTKToolbar(
                                        w * (1 - 2*shim), separator_width);
                 }
                 else
-#endif
                 {
                     if (nPart == PART_SEPARATOR_VERT)
                         gtk_paint_vline (gWidgetData[m_nXScreen].gSeparator->style, gdkDrawable,
@@ -4013,23 +4007,20 @@ void GtkSalGraphics::updateSettings( AllSettings& rSettings )
     aStyleSet.SetHighlightColor( aHighlightColor );
     aStyleSet.SetHighlightTextColor( aHighlightTextColor );
 
-    if( ! gtk_check_version( 2, 10, 0 ) ) // link colors came in with 2.10, avoid an assertion
+    // hyperlink colors
+    GdkColor *link_color = NULL;
+    gtk_widget_style_get (m_pWindow, "link-color", &link_color, NULL);
+    if (link_color)
     {
-        // hyperlink colors
-        GdkColor *link_color = NULL;
-        gtk_widget_style_get (m_pWindow, "link-color", &link_color, NULL);
-        if (link_color)
-        {
-            aStyleSet.SetLinkColor(getColor(*link_color));
-            gdk_color_free (link_color);
-            link_color = NULL;
-        }
-        gtk_widget_style_get (m_pWindow, "visited-link-color", &link_color, NULL);
-        if (link_color)
-        {
-            aStyleSet.SetVisitedLinkColor(getColor(*link_color));
-            gdk_color_free (link_color);
-        }
+        aStyleSet.SetLinkColor(getColor(*link_color));
+        gdk_color_free (link_color);
+        link_color = NULL;
+    }
+    gtk_widget_style_get (m_pWindow, "visited-link-color", &link_color, NULL);
+    if (link_color)
+    {
+        aStyleSet.SetVisitedLinkColor(getColor(*link_color));
+        gdk_color_free (link_color);
     }
 
     // Tab colors

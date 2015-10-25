@@ -35,7 +35,7 @@ protected:
 
     virtual void SetAttribute( sal_uInt16 nPrefixKey,
                                const OUString& rLocalName,
-                               const OUString& rValue ) SAL_OVERRIDE;
+                               const OUString& rValue ) override;
 
 public:
 
@@ -43,8 +43,7 @@ public:
 
     XMLTextShapeStyleContext( SvXMLImport& rImport, sal_uInt16 nPrfx,
             const OUString& rLName,
-            const ::com::sun::star::uno::Reference<
-                ::com::sun::star::xml::sax::XAttributeList > & xAttrList,
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList,
             SvXMLStylesContext& rStyles, sal_uInt16 nFamily,
             bool bDefaultStyle = false );
     virtual ~XMLTextShapeStyleContext();
@@ -52,11 +51,11 @@ public:
     virtual SvXMLImportContext *CreateChildContext(
             sal_uInt16 nPrefix,
             const OUString& rLocalName,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList ) override;
 
-    virtual void CreateAndInsert( bool bOverwrite ) SAL_OVERRIDE;
+    virtual void CreateAndInsert( bool bOverwrite ) override;
 
-    virtual void Finish( bool bOverwrite ) SAL_OVERRIDE;
+    virtual void Finish( bool bOverwrite ) override;
 };
 
 #endif

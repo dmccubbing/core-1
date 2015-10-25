@@ -59,7 +59,7 @@ class ToolBarRules;
 class LayouterLock
 {
 public:
-    LayouterLock (const Reference<frame::XLayoutManager>& rxLayouter);
+    explicit LayouterLock (const Reference<frame::XLayoutManager>& rxLayouter);
     ~LayouterLock();
 private:
     Reference<frame::XLayoutManager> mxLayouter;
@@ -282,7 +282,7 @@ public:
     class UpdateLockImplementation
     {
     public:
-        UpdateLockImplementation (Implementation& rImplementation)
+        explicit UpdateLockImplementation (Implementation& rImplementation)
             : mrImplementation(rImplementation) { mrImplementation.LockUpdate();  }
         ~UpdateLockImplementation() { mrImplementation.UnlockUpdate(); }
     private:
@@ -912,7 +912,7 @@ bool ToolBarManager::Implementation::CheckPlugInMode (const OUString& rsName) co
         if (pMedium == NULL)
             break;
 
-        SFX_ITEMSET_ARG(pMedium->GetItemSet(),pViewOnlyItem,SfxBoolItem,SID_VIEWONLY,false);
+        const SfxBoolItem* pViewOnlyItem = SfxItemSet::GetItem<SfxBoolItem>(pMedium->GetItemSet(), SID_VIEWONLY, false);
         if (pViewOnlyItem == NULL)
             break;
 

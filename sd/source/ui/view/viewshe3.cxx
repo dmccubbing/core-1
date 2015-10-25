@@ -141,7 +141,7 @@ void  ViewShell::GetMenuState( SfxItemSet &rSet )
             // Set the necessary string like in
             // sfx2/source/view/viewfrm.cxx ver 1.23 ln 1072 ff.
             OUString aTmp(SVT_RESSTR(STR_UNDO));
-            aTmp += pUndoManager->GetUndoActionComment(0);
+            aTmp += pUndoManager->GetUndoActionComment();
             rSet.Put(SfxStringItem(SID_UNDO, aTmp));
         }
         else
@@ -168,7 +168,7 @@ void  ViewShell::GetMenuState( SfxItemSet &rSet )
             // Set the necessary string like in
             // sfx2/source/view/viewfrm.cxx ver 1.23 ln 1081 ff.
             OUString aTmp(SVT_RESSTR(STR_REDO));
-            aTmp += pUndoManager->GetRedoActionComment(0);
+            aTmp += pUndoManager->GetRedoActionComment();
             rSet.Put(SfxStringItem(SID_REDO, aTmp));
         }
         else
@@ -235,7 +235,7 @@ SdPage* ViewShell::CreateOrDuplicatePage (
     else if (pArgs->Count() == 1)
     {
         pDocument->StopWorkStartupDelay();
-        SFX_REQUEST_ARG (rRequest, pLayout, SfxUInt32Item, ID_VAL_WHATLAYOUT, false);
+        const SfxUInt32Item* pLayout = rRequest.GetArg<SfxUInt32Item>(ID_VAL_WHATLAYOUT);
         if( pLayout )
         {
             if (ePageKind == PK_NOTES)
@@ -253,10 +253,10 @@ SdPage* ViewShell::CreateOrDuplicatePage (
         // AutoLayouts must be ready
         pDocument->StopWorkStartupDelay();
 
-        SFX_REQUEST_ARG (rRequest, pPageName, SfxStringItem, ID_VAL_PAGENAME, false);
-        SFX_REQUEST_ARG (rRequest, pLayout, SfxUInt32Item, ID_VAL_WHATLAYOUT, false);
-        SFX_REQUEST_ARG (rRequest, pIsPageBack, SfxBoolItem, ID_VAL_ISPAGEBACK, false);
-        SFX_REQUEST_ARG (rRequest, pIsPageObj, SfxBoolItem, ID_VAL_ISPAGEOBJ, false);
+        const SfxStringItem* pPageName = rRequest.GetArg<SfxStringItem>(ID_VAL_PAGENAME);
+        const SfxUInt32Item* pLayout = rRequest.GetArg<SfxUInt32Item>(ID_VAL_WHATLAYOUT);
+        const SfxBoolItem* pIsPageBack = rRequest.GetArg<SfxBoolItem>(ID_VAL_ISPAGEBACK);
+        const SfxBoolItem* pIsPageObj = rRequest.GetArg<SfxBoolItem>(ID_VAL_ISPAGEOBJ);
 
         if (CHECK_RANGE (AUTOLAYOUT__START, (AutoLayout) pLayout->GetValue (), AUTOLAYOUT__END))
         {
@@ -379,7 +379,7 @@ SdPage* ViewShell::CreateOrDuplicatePage (
             break;
 
         default:
-            DBG_WARNING("wrong slot id given to CreateOrDuplicatePage");
+            SAL_INFO("sd", "wrong slot id given to CreateOrDuplicatePage");
             // Try to handle another slot id gracefully.
     }
     SdPage* pNewPage = 0;

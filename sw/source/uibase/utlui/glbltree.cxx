@@ -133,7 +133,7 @@ public:
         StartListening(rFrame);
     }
 
-    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
     bool                IsValid() const {return bValid;}
 };
@@ -827,7 +827,7 @@ void    SwGlobalTree::ExcecuteContextMenuAction( sal_uInt16 nSelectedPopupEntry 
         case CTX_UPDATE_LINK:
         case CTX_UPDATE_ALL:
         {
-            pActiveShell->GetLinkManager().UpdateAllLinks(true);
+            pActiveShell->GetLinkManager().UpdateAllLinks();
             if(CTX_UPDATE_ALL == nSelectedPopupEntry)
                 nSlot = FN_UPDATE_TOX;
             pCont = 0;
@@ -989,7 +989,7 @@ void    SwGlobalTree::ExcecuteContextMenuAction( sal_uInt16 nSelectedPopupEntry 
             else
             {
                 pActiveShell->SplitNode(); // Empty document
-                pActiveShell->Up( false, 1 );
+                pActiveShell->Up( false );
             }
             pActiveShell->GetView().GetEditWin().GrabFocus();
         }

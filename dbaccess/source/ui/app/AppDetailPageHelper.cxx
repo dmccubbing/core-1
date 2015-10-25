@@ -62,8 +62,8 @@
 #include <vcl/settings.hxx>
 #include <tools/stream.hxx>
 #include <rtl/ustrbuf.hxx>
-#include "IApplicationController.hxx"
 #include "svtools/treelistentry.hxx"
+#include "AppController.hxx"
 
 #include <com/sun/star/document/XDocumentProperties.hpp>
 
@@ -130,10 +130,10 @@ namespace
         DECL_LINK_TYPED(OnDisableInput, void*, void);
         void ImplInitSettings( bool bFont, bool bForeground, bool bBackground );
     protected:
-        virtual void DataChanged(const DataChangedEvent& rDCEvt) SAL_OVERRIDE;
+        virtual void DataChanged(const DataChangedEvent& rDCEvt) override;
     public:
         OTablePreviewWindow( vcl::Window* pParent, WinBits nStyle = 0 );
-        virtual bool Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool Notify( NotifyEvent& rNEvt ) override;
     };
     OTablePreviewWindow::OTablePreviewWindow(vcl::Window* pParent, WinBits nStyle) : Window( pParent, nStyle)
     {
@@ -205,7 +205,7 @@ OAppDetailPageHelper::OAppDetailPageHelper(vcl::Window* _pParent,OAppBorderWindo
     m_aTBPreview->SetHelpId(HID_APP_VIEW_PREVIEW_CB);
     m_aTBPreview->SetDropdownClickHdl( LINK( this, OAppDetailPageHelper, OnDropdownClickHdl ) );
     m_aTBPreview->EnableMenuStrings();
-    m_aTBPreview->Enable(true);
+    m_aTBPreview->Enable();
 
     m_aBorder->SetUniqueId(UID_APP_VIEW_PREVIEW_1);
 
@@ -727,7 +727,7 @@ void OAppDetailPageHelper::fillNames( const Reference< XNameAccess >& _xContaine
             {
                 pEntry = pList->InsertEntry( *pIter, _pParent );
 
-                Image aImage = Image( ModuleRes( _nImageId ) );
+                Image aImage{ ModuleRes( _nImageId ) };
                 pList->SetExpandedEntryBmp(  pEntry, aImage );
                 pList->SetCollapsedEntryBmp( pEntry, aImage );
             }
@@ -759,7 +759,6 @@ DBTreeListBox* OAppDetailPageHelper::createTree( DBTreeListBox* _pTreeView, cons
     _pTreeView->SetEnterKeyHdl(LINK(this, OAppDetailPageHelper, OnEntryEnterKey));
     _pTreeView->SetSelChangeHdl(LINK(this, OAppDetailPageHelper, OnEntrySelChange));
 
-    _pTreeView->setCutHandler(LINK(this, OAppDetailPageHelper, OnCutEntry));
     _pTreeView->setCopyHandler(LINK(this, OAppDetailPageHelper, OnCopyEntry));
     _pTreeView->setPasteHandler(LINK(this, OAppDetailPageHelper, OnPasteEntry));
     _pTreeView->setDeleteHandler(LINK(this, OAppDetailPageHelper, OnDeleteEntry));
@@ -858,7 +857,7 @@ SvTreeListEntry* OAppDetailPageHelper::elementAdded(ElementType _eType,const OUS
         {
             pRet = pTreeView->InsertEntry( _rName, pEntry );
 
-            Image aImage = Image( ModuleRes( nImageId ) );
+            Image aImage{ ModuleRes( nImageId ) };
             pTreeView->SetExpandedEntryBmp(  pRet, aImage );
             pTreeView->SetCollapsedEntryBmp( pRet, aImage );
         }
@@ -918,11 +917,6 @@ IMPL_LINK_TYPED(OAppDetailPageHelper, OnEntryDoubleClick, SvTreeListBox*, _pTree
 IMPL_LINK_NOARG_TYPED(OAppDetailPageHelper, OnEntrySelChange, LinkParamNone*, void)
 {
     getBorderWin().getView()->getAppController().onSelectionChanged();
-}
-
-IMPL_LINK_NOARG_TYPED( OAppDetailPageHelper, OnCutEntry, LinkParamNone*, void )
-{
-    getBorderWin().getView()->getAppController().onCutEntry();
 }
 
 IMPL_LINK_NOARG_TYPED( OAppDetailPageHelper, OnCopyEntry, LinkParamNone*, void )

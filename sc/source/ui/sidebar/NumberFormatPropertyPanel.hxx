@@ -26,6 +26,7 @@
 class FixedText;
 class ListBox;
 class NumericField;
+class Edit;
 
 namespace sc { namespace sidebar {
 
@@ -42,16 +43,16 @@ public:
         SfxBindings* pBindings);
 
     virtual void DataChanged(
-        const DataChangedEvent& rEvent) SAL_OVERRIDE;
+        const DataChangedEvent& rEvent) override;
 
     virtual void HandleContextChange(
-        const ::sfx2::sidebar::EnumContext& rContext) SAL_OVERRIDE;
+        const ::sfx2::sidebar::EnumContext& rContext) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     SfxBindings* GetBindings() { return mpBindings;}
 
@@ -61,7 +62,7 @@ public:
         const css::uno::Reference<css::frame::XFrame>& rxFrame,
         SfxBindings* pBindings);
     virtual ~NumberFormatPropertyPanel();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 private:
     //ui controls
     VclPtr<ListBox>                                mpLbCategory;
@@ -83,8 +84,8 @@ private:
     ::sfx2::sidebar::EnumContext            maContext;
     SfxBindings*                            mpBindings;
 
-    DECL_LINK(NumFormatSelectHdl, ListBox*);
-    DECL_LINK(NumFormatValueHdl, void*);
+    DECL_LINK_TYPED(NumFormatSelectHdl, ListBox&, void);
+    DECL_LINK_TYPED(NumFormatValueHdl, Edit&, void);
     DECL_LINK_TYPED(NumFormatValueClickHdl, Button*, void);
 
     void Initialize();

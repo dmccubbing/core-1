@@ -46,8 +46,8 @@ protected:
     { SetAuto(false); }
 
 private:
-    SwFormatColl(const SwFormatColl & ) SAL_DELETED_FUNCTION;
-    const SwFormatColl &operator=(const SwFormatColl &) SAL_DELETED_FUNCTION;
+    SwFormatColl(const SwFormatColl & ) = delete;
+    const SwFormatColl &operator=(const SwFormatColl &) = delete;
 };
 
 /// Represents the style of a paragraph.
@@ -56,7 +56,7 @@ class SW_DLLPUBLIC SwTextFormatColl: public SwFormatColl
     friend class SwDoc;
     friend class ::sw::DocumentStylePoolManager;
 
-    SwTextFormatColl(const SwTextFormatColl & rRef) SAL_DELETED_FUNCTION;
+    SwTextFormatColl(const SwTextFormatColl & rRef) = delete;
 
     bool mbStayAssignedToListLevelOfOutlineStyle;
 
@@ -87,7 +87,7 @@ protected:
     }
 
     /// To get UL- / LR- / FontHeight-changes.
-   virtual void Modify( const SfxPoolItem*, const SfxPoolItem* ) SAL_OVERRIDE;
+   virtual void Modify( const SfxPoolItem*, const SfxPoolItem* ) override;
 
 public:
 
@@ -119,12 +119,12 @@ public:
 
     /** Override to recognize changes on the <SwNumRuleItem> and register/unregister
      the paragragh style at the corresponding <SwNumRule> instance. */
-    virtual bool SetFormatAttr( const SfxPoolItem& rAttr ) SAL_OVERRIDE;
-    virtual bool SetFormatAttr( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual bool ResetFormatAttr( sal_uInt16 nWhich1, sal_uInt16 nWhich2 = 0 ) SAL_OVERRIDE;
+    virtual bool SetFormatAttr( const SfxPoolItem& rAttr ) override;
+    virtual bool SetFormatAttr( const SfxItemSet& rSet ) override;
+    virtual bool ResetFormatAttr( sal_uInt16 nWhich1, sal_uInt16 nWhich2 = 0 ) override;
 
     /// Override <ResetAllFormatAttr()> to stay assigned to list level of outline style.
-    virtual sal_uInt16 ResetAllFormatAttr() SAL_OVERRIDE;
+    virtual sal_uInt16 ResetAllFormatAttr() override;
 
     inline bool StayAssignedToListLevelOfOutlineStyle() const
     {
@@ -196,7 +196,7 @@ public:
     SwCollCondition( const SwCollCondition& rCpy );
 private:
     /// @@@ public copy ctor, but no copy assignment?
-    SwCollCondition & operator= (const SwCollCondition &) SAL_DELETED_FUNCTION;
+    SwCollCondition & operator= (const SwCollCondition &) = delete;
 public:
 
     bool operator==( const SwCollCondition& rCmp ) const;

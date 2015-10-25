@@ -59,7 +59,7 @@ public:
 
     static OUString    GetName( sal_Int32 nWID );
 
-    const ::com::sun::star::uno::Sequence< OUString >
+    const css::uno::Sequence< OUString >
             GetActiveDics() const   { return pData->aActiveDics; }
 };
 
@@ -69,11 +69,11 @@ typedef cppu::OMultiTypeInterfaceContainerHelperVar<sal_Int32>
 class LinguProps :
     public cppu::WeakImplHelper
     <
-        com::sun::star::linguistic2::XLinguProperties,
-        com::sun::star::beans::XFastPropertySet,
-        com::sun::star::beans::XPropertyAccess,
-        com::sun::star::lang::XComponent,
-        com::sun::star::lang::XServiceInfo
+        css::linguistic2::XLinguProperties,
+        css::beans::XFastPropertySet,
+        css::beans::XPropertyAccess,
+        css::lang::XComponent,
+        css::lang::XServiceInfo
     >
 {
     ::cppu::OInterfaceContainerHelper           aEvtListeners;
@@ -84,10 +84,10 @@ class LinguProps :
 
     bool                                        bDisposing;
 
-    LinguProps(const LinguProps &) SAL_DELETED_FUNCTION;
-    LinguProps & operator = (const LinguProps &) SAL_DELETED_FUNCTION;
+    LinguProps(const LinguProps &) = delete;
+    LinguProps & operator = (const LinguProps &) = delete;
 
-    void    launchEvent( const ::com::sun::star::beans::PropertyChangeEvent &rEvt ) const;
+    void    launchEvent( const css::beans::PropertyChangeEvent &rEvt ) const;
 
     bool getPropertyBool(const OUString& aPropertyName) throw (css::uno::RuntimeException);
     sal_Int16 getPropertyInt16(const OUString& aPropertyName) throw (css::uno::RuntimeException);
@@ -102,101 +102,101 @@ class LinguProps :
 public:
     LinguProps();
 
-    virtual sal_Bool SAL_CALL getIsUseDictionaryList() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsUseDictionaryList() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_USE_DICTIONARY_LIST); }
-    virtual void SAL_CALL setIsUseDictionaryList(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsUseDictionaryList(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_USE_DICTIONARY_LIST, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsIgnoreControlCharacters() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsIgnoreControlCharacters() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_IGNORE_CONTROL_CHARACTERS); }
-    virtual void SAL_CALL setIsIgnoreControlCharacters(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsIgnoreControlCharacters(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_IGNORE_CONTROL_CHARACTERS, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsSpellUpperCase() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsSpellUpperCase() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_SPELL_UPPER_CASE); }
-    virtual void SAL_CALL setIsSpellUpperCase(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsSpellUpperCase(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_SPELL_UPPER_CASE, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsSpellWithDigits() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsSpellWithDigits() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_SPELL_WITH_DIGITS); }
-    virtual void SAL_CALL setIsSpellWithDigits(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsSpellWithDigits(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_SPELL_WITH_DIGITS, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsSpellCapitalization() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsSpellCapitalization() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_SPELL_CAPITALIZATION); }
-    virtual void SAL_CALL setIsSpellCapitalization(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsSpellCapitalization(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_SPELL_CAPITALIZATION, (bool) p1); }
-    virtual sal_Int16 SAL_CALL getHyphMinLeading() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Int16 SAL_CALL getHyphMinLeading() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyInt16(UPN_HYPH_MIN_LEADING); }
-    virtual void SAL_CALL setHyphMinLeading(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setHyphMinLeading(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_HYPH_MIN_LEADING, p1); }
-    virtual sal_Int16 SAL_CALL getHyphMinTrailing() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Int16 SAL_CALL getHyphMinTrailing() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyInt16(UPN_HYPH_MIN_TRAILING); }
-    virtual void SAL_CALL setHyphMinTrailing(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setHyphMinTrailing(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_HYPH_MIN_TRAILING, p1); }
-    virtual sal_Int16 SAL_CALL getHyphMinWordLength() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Int16 SAL_CALL getHyphMinWordLength() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyInt16(UPN_HYPH_MIN_WORD_LENGTH); }
-    virtual void SAL_CALL setHyphMinWordLength(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setHyphMinWordLength(sal_Int16 p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_HYPH_MIN_WORD_LENGTH, p1); }
-    virtual com::sun::star::lang::Locale SAL_CALL getDefaultLocale() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual css::lang::Locale SAL_CALL getDefaultLocale() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyLocale(UPN_DEFAULT_LOCALE); }
-    virtual void SAL_CALL setDefaultLocale(const com::sun::star::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setDefaultLocale(const css::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_DEFAULT_LOCALE, p1); }
-    virtual sal_Bool SAL_CALL getIsHyphAuto() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsHyphAuto() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_HYPH_AUTO); }
-    virtual void SAL_CALL setIsHyphAuto(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsHyphAuto(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_HYPH_AUTO, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsHyphSpecial() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsHyphSpecial() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_HYPH_SPECIAL); }
-    virtual void SAL_CALL setIsHyphSpecial(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsHyphSpecial(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_HYPH_SPECIAL, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsSpellAuto() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsSpellAuto() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_SPELL_AUTO); }
-    virtual void SAL_CALL setIsSpellAuto(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsSpellAuto(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_SPELL_AUTO, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsSpellSpecial() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsSpellSpecial() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_SPELL_SPECIAL); }
-    virtual void SAL_CALL setIsSpellSpecial(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsSpellSpecial(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_SPELL_SPECIAL, (bool) p1); }
-    virtual sal_Bool SAL_CALL getIsWrapReverse() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL getIsWrapReverse() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyBool(UPN_IS_WRAP_REVERSE); }
-    virtual void SAL_CALL setIsWrapReverse(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setIsWrapReverse(sal_Bool p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_IS_WRAP_REVERSE, (bool) p1); }
-    virtual com::sun::star::lang::Locale SAL_CALL getDefaultLocale_CJK() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual css::lang::Locale SAL_CALL getDefaultLocale_CJK() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyLocale(UPN_DEFAULT_LOCALE_CJK); }
-    virtual void SAL_CALL setDefaultLocale_CJK(const com::sun::star::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setDefaultLocale_CJK(const css::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_DEFAULT_LOCALE_CJK, p1); }
-    virtual css::lang::Locale SAL_CALL getDefaultLocale_CTL() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual css::lang::Locale SAL_CALL getDefaultLocale_CTL() throw (css::uno::RuntimeException, std::exception) override
         { return getPropertyLocale(UPN_DEFAULT_LOCALE_CTL); }
-    virtual void SAL_CALL setDefaultLocale_CTL(const com::sun::star::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual void SAL_CALL setDefaultLocale_CTL(const css::lang::Locale& p1) throw (css::uno::RuntimeException, std::exception) override
         { setProperty(UPN_DEFAULT_LOCALE_CTL, p1); }
 
     // XPropertySet
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL setPropertyValue( const OUString& aPropertyName, const ::com::sun::star::uno::Any& aValue ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Any SAL_CALL getPropertyValue( const OUString& PropertyName ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL addPropertyChangeListener( const OUString& aPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& rxListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL removePropertyChangeListener( const OUString& aPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& rxListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL addVetoableChangeListener( const OUString& PropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XVetoableChangeListener >& rxListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL removeVetoableChangeListener( const OUString& PropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XVetoableChangeListener >& rxListener ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::beans::XPropertySetInfo > SAL_CALL getPropertySetInfo() throw(css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL setPropertyValue( const OUString& aPropertyName, const css::uno::Any& aValue ) throw(css::beans::UnknownPropertyException, css::beans::PropertyVetoException, css::lang::IllegalArgumentException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Any SAL_CALL getPropertyValue( const OUString& PropertyName ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL addPropertyChangeListener( const OUString& aPropertyName, const css::uno::Reference< css::beans::XPropertyChangeListener >& rxListener ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL removePropertyChangeListener( const OUString& aPropertyName, const css::uno::Reference< css::beans::XPropertyChangeListener >& rxListener ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL addVetoableChangeListener( const OUString& PropertyName, const css::uno::Reference< css::beans::XVetoableChangeListener >& rxListener ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL removeVetoableChangeListener( const OUString& PropertyName, const css::uno::Reference< css::beans::XVetoableChangeListener >& rxListener ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
 
     // XFastPropertySet
-    virtual void SAL_CALL setFastPropertyValue( sal_Int32 nHandle, const ::com::sun::star::uno::Any& aValue ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Any SAL_CALL getFastPropertyValue( sal_Int32 nHandle ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL setFastPropertyValue( sal_Int32 nHandle, const css::uno::Any& aValue ) throw(css::beans::UnknownPropertyException, css::beans::PropertyVetoException, css::lang::IllegalArgumentException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Any SAL_CALL getFastPropertyValue( sal_Int32 nHandle ) throw(css::beans::UnknownPropertyException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
 
     // XPropertyAccess
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue > SAL_CALL getPropertyValues() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL setPropertyValues( const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& aProps ) throw(::com::sun::star::beans::UnknownPropertyException, ::com::sun::star::beans::PropertyVetoException, ::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::lang::WrappedTargetException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual css::uno::Sequence< css::beans::PropertyValue > SAL_CALL getPropertyValues() throw(css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL setPropertyValues( const css::uno::Sequence< css::beans::PropertyValue >& aProps ) throw(css::beans::UnknownPropertyException, css::beans::PropertyVetoException, css::lang::IllegalArgumentException, css::lang::WrappedTargetException, css::uno::RuntimeException, std::exception) override;
 
     // XComponent
-    virtual void SAL_CALL dispose() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL addEventListener( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XEventListener >& rxListener ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL removeEventListener( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XEventListener >& rxListener ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL dispose() throw(css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL addEventListener( const css::uno::Reference< css::lang::XEventListener >& rxListener ) throw(css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL removeEventListener( const css::uno::Reference< css::lang::XEventListener >& rxListener ) throw(css::uno::RuntimeException, std::exception) override;
 
     // XServiceInfo
-    virtual OUString SAL_CALL getImplementationName() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual OUString SAL_CALL getImplementationName() throw(css::uno::RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw(css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< OUString > SAL_CALL getSupportedServiceNames() throw(css::uno::RuntimeException, std::exception) override;
 
 
     static inline OUString getImplementationName_Static() throw();
-    static com::sun::star::uno::Sequence< OUString > getSupportedServiceNames_Static() throw();
+    static css::uno::Sequence< OUString > getSupportedServiceNames_Static() throw();
 };
 
 inline OUString LinguProps::getImplementationName_Static() throw()

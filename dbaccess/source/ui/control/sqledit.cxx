@@ -49,7 +49,7 @@ private:
     virtual ~ChangesListener() {}
 
     virtual void SAL_CALL disposing(css::lang::EventObject const &)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         osl::MutexGuard g(editor_.m_mutex);
         editor_.m_notifier.clear();
@@ -57,7 +57,7 @@ private:
 
     virtual void SAL_CALL propertiesChange(
         css::uno::Sequence< css::beans::PropertyChangeEvent > const &)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         SolarMutexGuard g;
         editor_.ImplSetFont();
@@ -178,7 +178,7 @@ IMPL_LINK_NOARG_TYPED(OSqlEdit, OnInvalidateTimer, Timer *, void)
         m_timerInvalidate.Start();
 }
 
-IMPL_LINK_NOARG(OSqlEdit, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(OSqlEdit, ModifyHdl, Edit&, void)
 {
     if (m_timerUndoActionCreation.IsActive())
         m_timerUndoActionCreation.Stop();
@@ -191,8 +191,6 @@ IMPL_LINK_NOARG(OSqlEdit, ModifyHdl)
     rController.InvalidateFeature(SID_SBA_QRY_EXECUTE);
     rController.InvalidateFeature(SID_CUT);
     rController.InvalidateFeature(SID_COPY);
-
-    return 0;
 }
 
 void OSqlEdit::SetText(const OUString& rNewText)

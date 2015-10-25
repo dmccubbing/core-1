@@ -44,7 +44,7 @@ private:
     bool            bActiveFlag;
 
 protected:
-                    virtual void MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
+                    virtual void MouseButtonDown( const MouseEvent& rMEvt ) override;
 
 public:
 
@@ -60,14 +60,13 @@ public:
 
     void            SetActiveFlag(bool bFlag=true);
     bool            GetActiveFlag() { return bActiveFlag;}
-    void            GetFocus() SAL_OVERRIDE;
-    void            LoseFocus() SAL_OVERRIDE;
+    void            GetFocus() override;
+    void            LoseFocus() override;
 };
 
 
 
 class StructPage : public TabPage
-                    , public IStructHelper
 {
 private:
     OModuleClient           m_aModuleClient;
@@ -91,13 +90,13 @@ public:
 
                     StructPage( vcl::Window* pParent);
     virtual         ~StructPage();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     void            ClearStruct();
-    virtual SvTreeListEntry*    InsertEntry(const OUString& rText, SvTreeListEntry* pParent,
-                                sal_uInt16 nFlag,sal_uLong nPos=0,IFormulaToken* pScToken=NULL) SAL_OVERRIDE;
+    SvTreeListEntry* InsertEntry(const OUString& rText, SvTreeListEntry* pParent,
+                                sal_uInt16 nFlag,sal_uLong nPos=0,IFormulaToken* pScToken=NULL);
 
-    virtual OUString            GetEntryText(SvTreeListEntry* pEntry) const SAL_OVERRIDE;
+    OUString        GetEntryText(SvTreeListEntry* pEntry) const;
 
     void            SetSelectionHdl( const Link<StructPage&,void>& rLink ) { aSelLink = rLink; }
 

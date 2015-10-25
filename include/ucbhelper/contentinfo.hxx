@@ -47,54 +47,53 @@ class ContentImplHelper;
   */
 class PropertySetInfo :
                 public cppu::OWeakObject,
-                public com::sun::star::lang::XTypeProvider,
-                public com::sun::star::beans::XPropertySetInfo
+                public css::lang::XTypeProvider,
+                public css::beans::XPropertySetInfo
 {
-    com::sun::star::uno::Reference< com::sun::star::ucb::XCommandEnvironment >
+    css::uno::Reference< css::ucb::XCommandEnvironment >
                                 m_xEnv;
-    com::sun::star::uno::Sequence< com::sun::star::beans::Property >*
+    css::uno::Sequence< css::beans::Property >*
                                 m_pProps;
     osl::Mutex                  m_aMutex;
     ContentImplHelper*          m_pContent;
 
 private:
     bool queryProperty( const OUString& rName,
-                            com::sun::star::beans::Property& rProp );
+                            css::beans::Property& rProp );
 
 public:
-    PropertySetInfo( const com::sun::star::uno::Reference<
-                        com::sun::star::ucb::XCommandEnvironment >& rxEnv,
+    PropertySetInfo( const css::uno::Reference< css::ucb::XCommandEnvironment >& rxEnv,
                      ContentImplHelper* pContent );
     virtual ~PropertySetInfo();
 
     // XInterface
     virtual css::uno::Any SAL_CALL queryInterface( const css::uno::Type & rType )
-        throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
     virtual void SAL_CALL acquire()
-        throw() SAL_OVERRIDE;
+        throw() override;
     virtual void SAL_CALL release()
-        throw() SAL_OVERRIDE;
+        throw() override;
 
     // XTypeProvider
-    virtual com::sun::star::uno::Sequence< sal_Int8 > SAL_CALL
+    virtual css::uno::Sequence< sal_Int8 > SAL_CALL
     getImplementationId()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual com::sun::star::uno::Sequence< com::sun::star::uno::Type > SAL_CALL
+        throw( css::uno::RuntimeException, std::exception ) override;
+    virtual css::uno::Sequence< css::uno::Type > SAL_CALL
     getTypes()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
 
     // XPropertySetInfo
-    virtual com::sun::star::uno::Sequence<
-                com::sun::star::beans::Property > SAL_CALL
+    virtual css::uno::Sequence<
+                css::beans::Property > SAL_CALL
     getProperties()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual com::sun::star::beans::Property SAL_CALL
+        throw( css::uno::RuntimeException, std::exception ) override;
+    virtual css::beans::Property SAL_CALL
     getPropertyByName( const OUString& aName )
-        throw( com::sun::star::beans::UnknownPropertyException,
-               com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::beans::UnknownPropertyException,
+               css::uno::RuntimeException, std::exception ) override;
     virtual sal_Bool SAL_CALL
     hasPropertyByName( const OUString& Name )
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
 
     // Non-Interface methods.
     void reset();
@@ -113,63 +112,62 @@ public:
   */
 class CommandProcessorInfo :
                 public cppu::OWeakObject,
-                public com::sun::star::lang::XTypeProvider,
-                public com::sun::star::ucb::XCommandInfo
+                public css::lang::XTypeProvider,
+                public css::ucb::XCommandInfo
 {
-    com::sun::star::uno::Reference< com::sun::star::ucb::XCommandEnvironment >
+    css::uno::Reference< css::ucb::XCommandEnvironment >
                                 m_xEnv;
-    com::sun::star::uno::Sequence< com::sun::star::ucb::CommandInfo >*
+    css::uno::Sequence< css::ucb::CommandInfo >*
                                 m_pCommands;
     osl::Mutex                  m_aMutex;
     ContentImplHelper*          m_pContent;
 
 private:
     bool queryCommand( const OUString& rName,
-                           com::sun::star::ucb::CommandInfo& rCommand );
+                           css::ucb::CommandInfo& rCommand );
     bool queryCommand( sal_Int32 nHandle,
-                           com::sun::star::ucb::CommandInfo& rCommand );
+                           css::ucb::CommandInfo& rCommand );
 
 public:
-    CommandProcessorInfo( const com::sun::star::uno::Reference<
-                            com::sun::star::ucb::XCommandEnvironment >& rxEnv,
+    CommandProcessorInfo( const css::uno::Reference< css::ucb::XCommandEnvironment >& rxEnv,
                          ContentImplHelper* pContent );
     virtual ~CommandProcessorInfo();
 
     // XInterface
     virtual css::uno::Any SAL_CALL queryInterface( const css::uno::Type & rType )
-        throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
     virtual void SAL_CALL acquire()
-        throw() SAL_OVERRIDE;
+        throw() override;
     virtual void SAL_CALL release()
-        throw() SAL_OVERRIDE;
+        throw() override;
 
     // XTypeProvider
-    virtual com::sun::star::uno::Sequence< sal_Int8 > SAL_CALL
+    virtual css::uno::Sequence< sal_Int8 > SAL_CALL
     getImplementationId()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual com::sun::star::uno::Sequence< com::sun::star::uno::Type > SAL_CALL
+        throw( css::uno::RuntimeException, std::exception ) override;
+    virtual css::uno::Sequence< css::uno::Type > SAL_CALL
     getTypes()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
 
     // XCommandInfo
-    virtual com::sun::star::uno::Sequence<
-                com::sun::star::ucb::CommandInfo > SAL_CALL
+    virtual css::uno::Sequence<
+                css::ucb::CommandInfo > SAL_CALL
     getCommands()
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual com::sun::star::ucb::CommandInfo SAL_CALL
+        throw( css::uno::RuntimeException, std::exception ) override;
+    virtual css::ucb::CommandInfo SAL_CALL
     getCommandInfoByName( const OUString& Name )
-        throw( com::sun::star::ucb::UnsupportedCommandException,
-        com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual com::sun::star::ucb::CommandInfo SAL_CALL
+        throw( css::ucb::UnsupportedCommandException,
+        css::uno::RuntimeException, std::exception ) override;
+    virtual css::ucb::CommandInfo SAL_CALL
     getCommandInfoByHandle( sal_Int32 Handle )
-        throw( com::sun::star::ucb::UnsupportedCommandException,
-        com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::ucb::UnsupportedCommandException,
+        css::uno::RuntimeException, std::exception ) override;
     virtual sal_Bool SAL_CALL
     hasCommandByName( const OUString& Name )
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
     virtual sal_Bool SAL_CALL
     hasCommandByHandle( sal_Int32 Handle )
-        throw( com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( css::uno::RuntimeException, std::exception ) override;
 
     // Non-Interface methods.
     void reset();

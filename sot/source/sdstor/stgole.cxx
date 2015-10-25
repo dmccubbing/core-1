@@ -36,7 +36,7 @@ StgInternalStream::StgInternalStream( BaseStorage& rStg, const OUString& rName, 
     StreamMode nMode = bWr
                  ? StreamMode::WRITE | StreamMode::SHARE_DENYALL
                  : StreamMode::READ | StreamMode::SHARE_DENYWRITE | StreamMode::NOCREATE;
-    pStrm = rStg.OpenStream( rName, nMode );
+    m_pStrm = rStg.OpenStream( rName, nMode );
 
     // set the error code right here in the stream
     SetError( rStg.GetError() );
@@ -45,15 +45,15 @@ StgInternalStream::StgInternalStream( BaseStorage& rStg, const OUString& rName, 
 
 StgInternalStream::~StgInternalStream()
 {
-    delete pStrm;
+    delete m_pStrm;
 }
 
 sal_uLong StgInternalStream::GetData( void* pData, sal_uLong nSize )
 {
-    if( pStrm )
+    if( m_pStrm )
     {
-        nSize = pStrm->Read( pData, nSize );
-        SetError( pStrm->GetError() );
+        nSize = m_pStrm->Read( pData, nSize );
+        SetError( m_pStrm->GetError() );
         return nSize;
     }
     else
@@ -62,10 +62,10 @@ sal_uLong StgInternalStream::GetData( void* pData, sal_uLong nSize )
 
 sal_uLong StgInternalStream::PutData( const void* pData, sal_uLong nSize )
 {
-    if( pStrm )
+    if( m_pStrm )
     {
-        nSize = pStrm->Write( pData, nSize );
-        SetError( pStrm->GetError() );
+        nSize = m_pStrm->Write( pData, nSize );
+        SetError( m_pStrm->GetError() );
         return nSize;
     }
     else
@@ -74,22 +74,22 @@ sal_uLong StgInternalStream::PutData( const void* pData, sal_uLong nSize )
 
 sal_uInt64 StgInternalStream::SeekPos(sal_uInt64 const nPos)
 {
-    return pStrm ? pStrm->Seek( nPos ) : 0;
+    return m_pStrm ? m_pStrm->Seek( nPos ) : 0;
 }
 
 void StgInternalStream::FlushData()
 {
-    if( pStrm )
+    if( m_pStrm )
     {
-        pStrm->Flush();
-        SetError( pStrm->GetError() );
+        m_pStrm->Flush();
+        SetError( m_pStrm->GetError() );
     }
 }
 
 void StgInternalStream::Commit()
 {
     Flush();
-    pStrm->Commit();
+    m_pStrm->Commit();
 }
 
 ///////////////////////// class StgCompObjStream
@@ -97,15 +97,15 @@ void StgInternalStream::Commit()
 StgCompObjStream::StgCompObjStream( BaseStorage& rStg, bool bWr )
     : StgInternalStream( rStg, OUString("\1CompObj"), bWr )
 {
-    memset( &aClsId, 0, sizeof( ClsId ) );
-    nCbFormat = SotClipboardFormatId::NONE;
+    memset( &m_aClsId, 0, sizeof( ClsId ) );
+    m_nCbFormat = SotClipboardFormatId::NONE;
 }
 
 bool StgCompObjStream::Load()
 {
-    memset( &aClsId, 0, sizeof( ClsId ) );
-    nCbFormat = SotClipboardFormatId::NONE;
-    aUserName.clear();
+    memset( &m_aClsId, 0, sizeof( ClsId ) );
+    m_nCbFormat = SotClipboardFormatId::NONE;
+    m_aUserName.clear();
     if( GetError() != SVSTREAM_OK )
         return false;
     Seek( 8L );     // skip the first part
@@ -113,7 +113,7 @@ bool StgCompObjStream::Load()
     ReadInt32( nMarker );
     if( nMarker == -1L )
     {
-        ReadClsId( *this, aClsId );
+        ReadClsId( *this, m_aClsId );
         sal_Int32 nLen1 = 0;
         ReadInt32( nLen1 );
         if ( nLen1 > 0 )
@@ -131,8 +131,8 @@ bool StgCompObjStream::Load()
                 //all platforms and envs
                 //https://bz.apache.org/ooo/attachment.cgi?id=68668
                 //for a good edge-case example
-                aUserName = nStrLen ? OUString( p.get(), nStrLen, RTL_TEXTENCODING_MS_1252 ) : OUString();
-                nCbFormat = ReadClipboardFormat( *this );
+                m_aUserName = nStrLen ? OUString( p.get(), nStrLen, RTL_TEXTENCODING_MS_1252 ) : OUString();
+                m_nCbFormat = ReadClipboardFormat( *this );
             }
             else
                 SetError( SVSTREAM_GENERALERROR );
@@ -146,16 +146,16 @@ bool StgCompObjStream::Store()
     if( GetError() != SVSTREAM_OK )
         return false;
     Seek( 0L );
-    OString aAsciiUserName(OUStringToOString(aUserName, RTL_TEXTENCODING_MS_1252));
+    OString aAsciiUserName(OUStringToOString(m_aUserName, RTL_TEXTENCODING_MS_1252));
     WriteInt16( 1 );          // Version?
     WriteInt16( -2 );                     // 0xFFFE = Byte Order Indicator
     WriteInt32( 0x0A03 );         // Windows 3.10
     WriteInt32( -1L );
-    WriteClsId( *this, aClsId );             // Class ID
+    WriteClsId( *this, m_aClsId );             // Class ID
     WriteInt32( aAsciiUserName.getLength() + 1 );
     WriteCharPtr( aAsciiUserName.getStr() );
     WriteUChar( 0 );             // string terminator
-    WriteClipboardFormat( *this, nCbFormat );
+    WriteClipboardFormat( *this, m_nCbFormat );
     WriteInt32( 0 );             // terminator
     Commit();
     return GetError() == SVSTREAM_OK;
@@ -166,7 +166,7 @@ bool StgCompObjStream::Store()
 StgOleStream::StgOleStream( BaseStorage& rStg, bool bWr )
     : StgInternalStream( rStg, OUString("\1Ole"), bWr )
 {
-    nFlags = 0;
+    m_nFlags = 0;
 }
 
 bool StgOleStream::Store()
@@ -176,7 +176,7 @@ bool StgOleStream::Store()
 
     Seek( 0L );
     WriteInt32( 0x02000001 );         // OLE version, format
-    WriteInt32( nFlags );             // Object flags
+    WriteInt32( m_nFlags );             // Object flags
     WriteInt32( 0 );                  // Update Options
     WriteInt32( 0 );                  // reserved
     WriteInt32( 0 );                 // Moniker 1

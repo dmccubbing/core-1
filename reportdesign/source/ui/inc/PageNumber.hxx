@@ -50,15 +50,15 @@ class OPageNumberDialog :   public ModalDialog
     ::com::sun::star::uno::Reference< ::com::sun::star::report::XReportDefinition>
                                             m_xHoldAlive;
 
-    OPageNumberDialog(const OPageNumberDialog&) SAL_DELETED_FUNCTION;
-    void operator =(const OPageNumberDialog&) SAL_DELETED_FUNCTION;
+    OPageNumberDialog(const OPageNumberDialog&) = delete;
+    void operator =(const OPageNumberDialog&) = delete;
 public:
     OPageNumberDialog( vcl::Window* pParent
                         ,const ::com::sun::star::uno::Reference< ::com::sun::star::report::XReportDefinition>& _xHoldAlive
                         ,::rptui::OReportController* _pController);
     virtual ~OPageNumberDialog();
-    virtual void    dispose() SAL_OVERRIDE;
-    virtual short   Execute() SAL_OVERRIDE;
+    virtual void    dispose() override;
+    virtual short   Execute() override;
 };
 
 } // namespace rptui

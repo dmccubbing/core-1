@@ -88,18 +88,18 @@ public:
     using ImeStatusWindow_Impl::operator delete;
 
 private:
-    ImeStatusWindow(ImeStatusWindow &) SAL_DELETED_FUNCTION;
-    void operator =(const ImeStatusWindow&) SAL_DELETED_FUNCTION;
+    ImeStatusWindow(ImeStatusWindow &) = delete;
+    void operator =(const ImeStatusWindow&) = delete;
 
     virtual ~ImeStatusWindow();
 
     virtual void SAL_CALL
     disposing(com::sun::star::lang::EventObject const & rSource)
-        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (com::sun::star::uno::RuntimeException, std::exception) override;
 
     virtual void SAL_CALL
     propertyChange(com::sun::star::beans::PropertyChangeEvent const & rEvent)
-        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (com::sun::star::uno::RuntimeException, std::exception) override;
 
     com::sun::star::uno::Reference< com::sun::star::beans::XPropertySet >
     getConfig();

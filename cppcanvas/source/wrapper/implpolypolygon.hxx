@@ -48,21 +48,21 @@ namespace cppcanvas
 
             virtual ~ImplPolyPolygon();
 
-            virtual void            setRGBAFillColor( Color::IntSRGBA ) SAL_OVERRIDE;
-            virtual void            setRGBALineColor( Color::IntSRGBA ) SAL_OVERRIDE;
-            virtual Color::IntSRGBA getRGBALineColor() const SAL_OVERRIDE;
+            virtual void            setRGBAFillColor( Color::IntSRGBA ) override;
+            virtual void            setRGBALineColor( Color::IntSRGBA ) override;
+            virtual Color::IntSRGBA getRGBALineColor() const override;
 
-            virtual void            setStrokeWidth( const double& rStrokeWidth ) SAL_OVERRIDE;
-            virtual double          getStrokeWidth() const SAL_OVERRIDE;
+            virtual void            setStrokeWidth( const double& rStrokeWidth ) override;
+            virtual double          getStrokeWidth() const override;
 
-            virtual bool            draw() const SAL_OVERRIDE;
+            virtual bool            draw() const override;
 
             virtual css::uno::Reference<
-                css::rendering::XPolyPolygon2D > getUNOPolyPolygon() const SAL_OVERRIDE;
+                css::rendering::XPolyPolygon2D > getUNOPolyPolygon() const override;
 
         private:
-            ImplPolyPolygon(const ImplPolyPolygon&) SAL_DELETED_FUNCTION;
-            ImplPolyPolygon& operator= ( const ImplPolyPolygon& ) SAL_DELETED_FUNCTION;
+            ImplPolyPolygon(const ImplPolyPolygon&) = delete;
+            ImplPolyPolygon& operator= ( const ImplPolyPolygon& ) = delete;
 
             const css::uno::Reference< css::rendering::XPolyPolygon2D > mxPolyPoly;
 

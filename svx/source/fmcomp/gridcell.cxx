@@ -260,17 +260,15 @@ void DbGridColumn::impl_toggleScriptManager_nothrow( bool _bAttach )
     }
 }
 
-
 void DbGridColumn::UpdateFromField(const DbGridRow* pRow, const Reference< XNumberFormatter >& xFormatter)
 {
-    if (m_pCell && dynamic_cast<const FmXFilterCell*>( m_pCell) !=  nullptr)
-        dynamic_cast<FmXFilterCell*>( m_pCell)->Update( );
+    if (FmXFilterCell* pCell = dynamic_cast<FmXFilterCell*>(m_pCell))
+        pCell->Update();
     else if (pRow && pRow->IsValid() && m_nFieldPos >= 0 && m_pCell && pRow->HasField(m_nFieldPos))
     {
-        dynamic_cast<FmXDataCell*>( m_pCell)->UpdateFromField( pRow->GetField( m_nFieldPos ).getColumn(), xFormatter  );
+        dynamic_cast<FmXDataCell&>(*m_pCell).UpdateFromField( pRow->GetField( m_nFieldPos ).getColumn(), xFormatter  );
     }
 }
-
 
 bool DbGridColumn::Commit()
 {
@@ -567,12 +565,14 @@ DbCellControl::DbCellControl( DbGridColumn& _rColumn, bool /*_bText*/ )
         implDoPropertyListening( FM_PROP_READONLY, false );
         implDoPropertyListening( FM_PROP_ENABLED, false );
 
-        // add as listener for all know "value" properties
+        // add as listener for all known "value" properties
         implDoPropertyListening( FM_PROP_VALUE, false );
         implDoPropertyListening( FM_PROP_STATE, false );
         implDoPropertyListening( FM_PROP_TEXT, false );
         implDoPropertyListening( FM_PROP_EFFECTIVE_VALUE, false );
         implDoPropertyListening( FM_PROP_SELECT_SEQ, false );
+        implDoPropertyListening( FM_PROP_DATE, false );
+        implDoPropertyListening( FM_PROP_TIME, false );
 
         // be listener at the bound field as well
         try
@@ -678,6 +678,8 @@ void DbCellControl::_propertyChanged(const PropertyChangeEvent& _rEvent) throw(R
         ||  _rEvent.PropertyName == FM_PROP_TEXT
         ||  _rEvent.PropertyName == FM_PROP_EFFECTIVE_VALUE
         ||  _rEvent.PropertyName == FM_PROP_SELECT_SEQ
+        ||  _rEvent.PropertyName == FM_PROP_DATE
+        ||  _rEvent.PropertyName == FM_PROP_TIME
         )
     {   // it was one of the known "value" properties
         if ( !isValuePropertyLocked() )
@@ -1164,7 +1166,7 @@ CellControllerRef DbTextField::CreateController() const
 void DbTextField::PaintFieldToCell( OutputDevice& _rDev, const Rectangle& _rRect, const Reference< XColumn >& _rxField, const Reference< XNumberFormatter >& _rxFormatter )
 {
     if ( m_pPainterImplementation )
-        m_pPainterImplementation->SetText( GetFormatText( _rxField, _rxFormatter, NULL ) );
+        m_pPainterImplementation->SetText( GetFormatText( _rxField, _rxFormatter ) );
 
     DbLimitedLengthField::PaintFieldToCell( _rDev, _rRect, _rxField, _rxFormatter );
 }
@@ -1308,7 +1310,7 @@ void DbFormattedField::Init( vcl::Window& rParent, const Reference< XRowSet >& x
             }
             else
             {
-                DBG_WARNING("DbFormattedField::Init : my uno-model has no format-key, but a formats supplier !");
+                SAL_INFO("svx", "DbFormattedField::Init : my uno-model has no format-key, but a formats supplier !");
                 // the OFormattedModel which we usually are working with ensures that the model has a format key
                 // as soon as the form is loaded. Unfortunally this method here is called from within loaded, too.
                 // So if our LoadListener is called before the LoadListener of the model, this "else case" is
@@ -1326,7 +1328,7 @@ void DbFormattedField::Init( vcl::Window& rParent, const Reference< XRowSet >& x
         Reference< XRowSet >  xCursorForm(xCursor, UNO_QUERY);
         if (xCursorForm.is())
         {   // wenn wir vom Cursor den Formatter nehmen, dann auch den Key vom Feld, an das wir gebunden sind
-            m_xSupplier = getNumberFormats(getConnection(xCursorForm), false);
+            m_xSupplier = getNumberFormats(getConnection(xCursorForm));
 
             if (m_rColumn.GetField().is())
                 nFormatKey = ::comphelper::getINT32(m_rColumn.GetField()->getPropertyValue(FM_PROP_FORMATKEY));
@@ -2085,7 +2087,7 @@ double DbCurrencyField::GetCurrency(const Reference< ::com::sun::star::sdb::XCol
     {
         // OSL_TRACE("double = %.64f ",fValue);
         fValue = ::rtl::math::pow10Exp(fValue, m_nScale);
-        fValue = ::rtl::math::round(fValue, 0);
+        fValue = ::rtl::math::round(fValue);
     }
     return fValue;
 }
@@ -2140,7 +2142,7 @@ void DbCurrencyField::updateFromModel( Reference< XPropertySet > _rxModel )
         if ( m_nScale )
         {
             dValue = ::rtl::math::pow10Exp( dValue, m_nScale );
-            dValue = ::rtl::math::round(dValue, 0);
+            dValue = ::rtl::math::round(dValue);
         }
 
         static_cast< LongCurrencyField* >( m_pWindow.get() )->SetValue( dValue );
@@ -3623,7 +3625,7 @@ void FmXEditCell::disposing()
     m_aTextListeners.disposeAndClear(aEvt);
     m_aChangeListeners.disposeAndClear(aEvt);
 
-    m_pEditImplementation->SetModifyHdl( Link<>() );
+    m_pEditImplementation->SetModifyHdl( Link<Edit&,void>() );
     if ( m_bOwnEditImplementation )
         delete m_pEditImplementation;
     m_pEditImplementation = NULL;
@@ -4045,7 +4047,7 @@ void FmXListBoxCell::disposing()
     m_aItemListeners.disposeAndClear(aEvt);
     m_aActionListeners.disposeAndClear(aEvt);
 
-    m_pBox->SetSelectHdl( Link<>() );
+    m_pBox->SetSelectHdl( Link<ListBox&,void>() );
     m_pBox->SetDoubleClickHdl( Link<ListBox&,void>() );
     m_pBox = NULL;
 

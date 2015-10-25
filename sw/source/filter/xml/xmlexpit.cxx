@@ -384,60 +384,59 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_LR_SPACE:
         {
-            const SvxLRSpaceItem* pLRSpace = dynamic_cast<const SvxLRSpaceItem*>( &rItem );
-            OSL_ENSURE( pLRSpace != NULL, "Wrong Which-ID!" );
+            const SvxLRSpaceItem& rLRSpace = dynamic_cast<const SvxLRSpaceItem&>(rItem);
 
             bOk = true;
             switch( nMemberId )
             {
                 case  MID_L_MARGIN:
-                    if(pLRSpace->GetPropLeft() != 100)
+                    if (rLRSpace.GetPropLeft() != 100)
                     {
                         ::sax::Converter::convertPercent(
-                                aOut, pLRSpace->GetPropLeft() );
+                                aOut, rLRSpace.GetPropLeft() );
                     }
                     else
                     {
                         rUnitConverter.convertMeasureToXML(
-                                aOut, pLRSpace->GetLeft() );
+                                aOut, rLRSpace.GetLeft() );
                     }
                     break;
 
                 case  MID_R_MARGIN:
-                    if(pLRSpace->GetPropRight() != 100)
+                    if (rLRSpace.GetPropRight() != 100)
                     {
                         ::sax::Converter::convertPercent(
-                                aOut, pLRSpace->GetPropRight() );
+                                aOut, rLRSpace.GetPropRight() );
                     }
                     else
                     {
                         rUnitConverter.convertMeasureToXML(
-                                aOut, pLRSpace->GetRight() );
+                                aOut, rLRSpace.GetRight() );
                     }
                     break;
 
                 case MID_FIRST_AUTO:
-                    if( pLRSpace->IsAutoFirst() )
+                    if (rLRSpace.IsAutoFirst())
                     {
                         ::sax::Converter::convertBool(
-                                aOut, pLRSpace->IsAutoFirst() );
+                                aOut, rLRSpace.IsAutoFirst() );
                     }
                     else
                         bOk = false;
                     break;
 
                 case  MID_FIRST_LINE_INDENT:
-                    if( !pLRSpace->IsAutoFirst() )
+                    if (!rLRSpace.IsAutoFirst())
                     {
-                        if(pLRSpace->GetPropTextFirstLineOfst() != 100)
+                        if (rLRSpace.GetPropTextFirstLineOfst() != 100)
                         {
                             ::sax::Converter::convertPercent(
-                                aOut, pLRSpace->GetPropTextFirstLineOfst() );
+                                aOut, rLRSpace.GetPropTextFirstLineOfst() );
                         }
                         else
                         {
                             rUnitConverter.convertMeasureToXML(
-                                    aOut, pLRSpace->GetTextFirstLineOfst() );
+                                    aOut, rLRSpace.GetTextFirstLineOfst() );
                         }
                     }
                     else
@@ -454,34 +453,33 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_UL_SPACE:
         {
-            const SvxULSpaceItem* pULSpace = dynamic_cast<const SvxULSpaceItem*>( &rItem );
-            OSL_ENSURE( pULSpace != NULL, "Wrong Which-ID!" );
+            const SvxULSpaceItem& rULSpace = dynamic_cast<const SvxULSpaceItem&>(rItem);
 
             switch( nMemberId )
             {
                 case MID_UP_MARGIN:
-                    if( pULSpace->GetPropUpper() != 100 )
+                    if (rULSpace.GetPropUpper() != 100)
                     {
                         ::sax::Converter::convertPercent(
-                                aOut, pULSpace->GetPropUpper() );
+                                aOut, rULSpace.GetPropUpper() );
                     }
                     else
                     {
                         rUnitConverter.convertMeasureToXML(
-                                aOut, pULSpace->GetUpper() );
+                                aOut, rULSpace.GetUpper() );
                     }
                     break;
 
                 case MID_LO_MARGIN:
-                    if( pULSpace->GetPropLower() != 100 )
+                    if (rULSpace.GetPropLower() != 100)
                     {
                         ::sax::Converter::convertPercent(
-                                aOut, pULSpace->GetPropLower() );
+                                aOut, rULSpace.GetPropLower() );
                     }
                     else
                     {
                         rUnitConverter.convertMeasureToXML(
-                                aOut, pULSpace->GetLower() );
+                                aOut, rULSpace.GetLower() );
                     }
                     break;
 
@@ -839,15 +837,14 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_BREAK:
         {
-            const SvxFormatBreakItem* pFormatBreak = dynamic_cast<const SvxFormatBreakItem*>( &rItem );
-            OSL_ENSURE( pFormatBreak != NULL, "Wrong Which-ID" );
+            const SvxFormatBreakItem& rFormatBreak = dynamic_cast<const SvxFormatBreakItem&>(rItem);
 
             unsigned int eEnum = 0;
 
             switch( nMemberId )
             {
             case MID_BREAK_BEFORE:
-                switch( pFormatBreak->GetValue() )
+                switch (rFormatBreak.GetValue())
                 {
                     case SVX_BREAK_COLUMN_BEFORE:
                         eEnum = 1;
@@ -863,7 +860,7 @@ bool SvXMLExportItemMapper::QueryXMLValue(
                 }
                 break;
             case MID_BREAK_AFTER:
-                switch( pFormatBreak->GetValue() )
+                switch (rFormatBreak.GetValue())
                 {
                     case SVX_BREAK_COLUMN_AFTER:
                         eEnum = 1;
@@ -900,8 +897,7 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_BACKGROUND:
         {
-            const SvxBrushItem* pBrush = dynamic_cast<const SvxBrushItem*>( &rItem );
-            OSL_ENSURE( pBrush != NULL, "Wrong Which-ID" );
+            const SvxBrushItem& rBrush = dynamic_cast<const SvxBrushItem&>(rItem);
 
             // note: the graphic is only exported if nMemberId equals
             //       MID_GRAPHIC..
@@ -910,21 +906,21 @@ bool SvXMLExportItemMapper::QueryXMLValue(
             switch( nMemberId )
             {
                 case MID_BACK_COLOR:
-                    if ( pBrush->GetColor().GetTransparency() )
+                    if ( rBrush.GetColor().GetTransparency() )
                         aOut.append( GetXMLToken(XML_TRANSPARENT) );
                     else
                     {
                         ::sax::Converter::convertColor(aOut,
-                                pBrush->GetColor().GetColor());
+                                rBrush.GetColor().GetColor());
                     }
                     bOk = true;
                     break;
 
                 case MID_GRAPHIC_LINK:
-                    if( pBrush->GetGraphicPos() != GPOS_NONE )
+                    if (rBrush.GetGraphicPos() != GPOS_NONE)
                     {
                         uno::Any aAny;
-                        pBrush->QueryValue( aAny, MID_GRAPHIC_URL );
+                        rBrush.QueryValue( aAny, MID_GRAPHIC_URL );
                         OUString sTmp;
                         aAny >>= sTmp;
                         aOut.append( sTmp );
@@ -933,7 +929,7 @@ bool SvXMLExportItemMapper::QueryXMLValue(
                     break;
 
                 case MID_GRAPHIC_POSITION:
-                    switch( pBrush->GetGraphicPos() )
+                    switch (rBrush.GetGraphicPos())
                     {
                     case GPOS_LT:
                     case GPOS_MT:
@@ -961,7 +957,7 @@ bool SvXMLExportItemMapper::QueryXMLValue(
                     {
                         aOut.append( ' ' );
 
-                        switch( pBrush->GetGraphicPos() )
+                        switch (rBrush.GetGraphicPos())
                         {
                         case GPOS_LT:
                         case GPOS_LB:
@@ -986,7 +982,7 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
                 case MID_GRAPHIC_REPEAT:
                 {
-                    SvxGraphicPosition eGraphicPos = pBrush->GetGraphicPos();
+                    SvxGraphicPosition eGraphicPos = rBrush.GetGraphicPos();
                     if( GPOS_AREA == eGraphicPos )
                     {
                         aOut.append( GetXMLToken(XML_BACKGROUND_STRETCH)  );
@@ -1001,10 +997,10 @@ bool SvXMLExportItemMapper::QueryXMLValue(
                 break;
 
                 case MID_GRAPHIC_FILTER:
-                    if( pBrush->GetGraphicPos() != GPOS_NONE &&
-                        !pBrush->GetGraphicFilter().isEmpty() )
+                    if (rBrush.GetGraphicPos() != GPOS_NONE &&
+                        !rBrush.GetGraphicFilter().isEmpty())
                     {
-                        aOut.append( pBrush->GetGraphicFilter() );
+                        aOut.append(rBrush.GetGraphicFilter());
                         bOk = true;
                     }
                     break;
@@ -1014,12 +1010,11 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_PAGEDESC:
         {
-            const SwFormatPageDesc* pPageDesc = dynamic_cast<const SwFormatPageDesc*>( &rItem );
-            OSL_ENSURE( pPageDesc != NULL, "Wrong Which-ID" );
+            const SwFormatPageDesc& rPageDesc = dynamic_cast<const SwFormatPageDesc&>(rItem);
 
             if( MID_PAGEDESC_PAGENUMOFFSET==nMemberId )
             {
-                ::boost::optional<sal_uInt16> oNumOffset = pPageDesc->GetNumOffset();
+                ::boost::optional<sal_uInt16> oNumOffset = rPageDesc.GetNumOffset();
                 if (oNumOffset && oNumOffset.get() > 0)
                 {
                     // #i114163# positiveInteger only!
@@ -1074,33 +1069,32 @@ bool SvXMLExportItemMapper::QueryXMLValue(
 
         case RES_FRM_SIZE:
         {
-            const SwFormatFrmSize* pFrmSize = dynamic_cast<const SwFormatFrmSize*>( &rItem );
-            OSL_ENSURE( pFrmSize != NULL, "Wrong Which-ID" );
+            const SwFormatFrmSize& rFrmSize = dynamic_cast<const SwFormatFrmSize&>(rItem);
 
             bool bOutHeight = false;
             switch( nMemberId )
             {
                 case MID_FRMSIZE_REL_WIDTH:
-                    if( pFrmSize->GetWidthPercent() )
+                    if (rFrmSize.GetWidthPercent())
                     {
                         ::sax::Converter::convertPercent(
-                                aOut, pFrmSize->GetWidthPercent() );
+                                aOut, rFrmSize.GetWidthPercent() );
                         bOk = true;
                     }
                     break;
                 case MID_FRMSIZE_MIN_HEIGHT:
-                    if( ATT_MIN_SIZE == pFrmSize->GetHeightSizeType() )
+                    if( ATT_MIN_SIZE == rFrmSize.GetHeightSizeType() )
                         bOutHeight = true;
                     break;
                 case MID_FRMSIZE_FIX_HEIGHT:
-                    if( ATT_FIX_SIZE == pFrmSize->GetHeightSizeType() )
+                    if( ATT_FIX_SIZE == rFrmSize.GetHeightSizeType() )
                         bOutHeight = true;
                     break;
             }
 
             if( bOutHeight )
             {
-                rUnitConverter.convertMeasureToXML(aOut, pFrmSize->GetHeight());
+                rUnitConverter.convertMeasureToXML(aOut, rFrmSize.GetHeight());
                 bOk = true;
             }
         }

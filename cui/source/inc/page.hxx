@@ -149,19 +149,19 @@ private:
     bool mbEnableDrawingLayerFillStyles : 1;
 
     void                Init_Impl();
-    DECL_LINK(          LayoutHdl_Impl, void *);
+    DECL_LINK_TYPED(    LayoutHdl_Impl, ListBox&, void);
     DECL_LINK_TYPED(    PaperBinHdl_Impl, Control&, void);
     DECL_LINK_TYPED(    SwapOrientation_Impl, Button*, void );
     void                SwapFirstValues_Impl( bool bSet );
-    DECL_LINK(          BorderModify_Impl, void *);
+    DECL_LINK_TYPED(    BorderModify_Impl, Edit&, void);
     void                InitHeadFoot_Impl( const SfxItemSet& rSet );
     DECL_LINK_TYPED(    CenterHdl_Impl, Button*, void);
     void                UpdateExample_Impl( bool bResetbackground = false );
 
-    DECL_LINK(          PaperSizeSelect_Impl, ListBox* );
-    DECL_LINK(          PaperSizeModify_Impl, void *);
+    DECL_LINK_TYPED(    PaperSizeSelect_Impl, ListBox&, void );
+    DECL_LINK_TYPED(    PaperSizeModify_Impl, Edit&, void);
 
-    DECL_LINK(          FrameDirectionModify_Impl, ListBox* );
+    DECL_LINK_TYPED(    FrameDirectionModify_Impl, ListBox&, void );
 
     void                ResetBackground_Impl( const SfxItemSet& rSet );
 
@@ -185,27 +185,27 @@ private:
     void EnableDrawingLayerFillStyles(bool bNew) { mbEnableDrawingLayerFillStyles = bNew; }
 
 protected:
-    virtual void        ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual void        ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
 public:
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rSet );
     // returns the range of the Which values
     static const sal_uInt16* GetRanges() { return pRanges; }
 
-    virtual bool        FillItemSet( SfxItemSet* rOutSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rOutSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
+    virtual void        FillUserData() override;
 
     virtual ~SvxPageDescPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     void                SetMode( SvxModeType eMType ) { eMode = eMType; }
     void                SetPaperFormatRanges( Paper eStart, Paper eEnd )
                             { ePaperStart = eStart, ePaperEnd = eEnd; }
 
     void                SetCollectionList(const std::vector<OUString> &aList);
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 #endif // INCLUDED_CUI_SOURCE_INC_PAGE_HXX

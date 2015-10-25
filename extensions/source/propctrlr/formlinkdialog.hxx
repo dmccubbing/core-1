@@ -80,14 +80,14 @@ namespace pcr
             const OUString& _sMasterLabel = OUString()
         );
         virtual ~FormLinkDialog( );
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         // Dialog overridables
-        virtual short   Execute() SAL_OVERRIDE;
+        virtual short   Execute() override;
 
     private:
         DECL_LINK_TYPED( OnSuggest,    Button*, void );
-        DECL_LINK( OnFieldChanged,     FieldLinkRow* );
+        DECL_LINK_TYPED( OnFieldChanged, FieldLinkRow&, void );
         DECL_LINK_TYPED( OnInitialize, void*, void);
 
         void        updateOkButton();

@@ -110,10 +110,10 @@ namespace pcr
 
     protected:
         // XPropertyChangeListener
-        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XEventListener
-        virtual void SAL_CALL disposing( const css::lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL disposing( const css::lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) override;
 
     protected:
         virtual ~SQLCommandDesigner();
@@ -171,8 +171,8 @@ namespace pcr
         bool impl_trySuspendDesigner_nothrow() const;
 
     private:
-        SQLCommandDesigner( const SQLCommandDesigner& ) SAL_DELETED_FUNCTION;
-        SQLCommandDesigner& operator=( const SQLCommandDesigner& ) SAL_DELETED_FUNCTION;
+        SQLCommandDesigner( const SQLCommandDesigner& ) = delete;
+        SQLCommandDesigner& operator=( const SQLCommandDesigner& ) = delete;
     };
 
 

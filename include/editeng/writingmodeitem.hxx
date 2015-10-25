@@ -30,26 +30,26 @@ class EDITENG_DLLPUBLIC SvxWritingModeItem : public SfxUInt16Item
 public:
     TYPEINFO_OVERRIDE();
 
-    SvxWritingModeItem( ::com::sun::star::text::WritingMode eValue /*= com::sun::star::text::WritingMode_LR_TB*/,
+    SvxWritingModeItem( css::text::WritingMode eValue /*= css::text::WritingMode_LR_TB*/,
                 sal_uInt16 nWhich /*= SDRATTR_TEXTDIRECTION*/ );
     virtual ~SvxWritingModeItem();
 
     SvxWritingModeItem& operator=( const SvxWritingModeItem& rItem );
 
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16) const SAL_OVERRIDE;
-    virtual SvStream&       Store(SvStream & rStrm, sal_uInt16 nIVer) const SAL_OVERRIDE;
-    virtual sal_uInt16          GetVersion( sal_uInt16 nFileVersion ) const SAL_OVERRIDE;
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
+    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16) const override;
+    virtual SvStream&       Store(SvStream & rStrm, sal_uInt16 nIVer) const override;
+    virtual sal_uInt16          GetVersion( sal_uInt16 nFileVersion ) const override;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
 
     virtual bool GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
                                     OUString &rText,
-                                    const IntlWrapper * = 0 ) const SAL_OVERRIDE;
+                                    const IntlWrapper * = 0 ) const override;
 
-    virtual bool            QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-    virtual bool            PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
+    virtual bool            QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+    virtual bool            PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
 };
 
 #endif // INCLUDED_EDITENG_WRITINGMODEITEM_HXX

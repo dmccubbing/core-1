@@ -34,12 +34,12 @@
 #include <vcl/toolbox.hxx>
 
 using namespace ::com::sun::star;
-using namespace ::com::sun::star::uno;
-using namespace ::com::sun::star::beans;
-using namespace ::com::sun::star::lang;
-using namespace ::com::sun::star::frame;
-using namespace ::com::sun::star::frame::status;
-using namespace ::com::sun::star::util;
+using namespace css::uno;
+using namespace css::beans;
+using namespace css::lang;
+using namespace css::frame;
+using namespace css::frame::status;
+using namespace css::util;
 
 namespace framework
 {
@@ -53,13 +53,13 @@ class EditControl : public Edit
     public:
         EditControl( vcl::Window* pParent, WinBits nStyle, EditToolbarController* pEditToolbarController );
         virtual ~EditControl();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void Modify() SAL_OVERRIDE;
-        virtual void KeyInput( const ::KeyEvent& rKEvt ) SAL_OVERRIDE;
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual void LoseFocus() SAL_OVERRIDE;
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void Modify() override;
+        virtual void KeyInput( const ::KeyEvent& rKEvt ) override;
+        virtual void GetFocus() override;
+        virtual void LoseFocus() override;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
 
     private:
         EditToolbarController* m_pEditToolbarController;
@@ -207,7 +207,7 @@ bool EditToolbarController::PreNotify( NotifyEvent& rNEvt )
     return false;
 }
 
-void EditToolbarController::executeControlCommand( const ::com::sun::star::frame::ControlCommand& rControlCommand )
+void EditToolbarController::executeControlCommand( const css::frame::ControlCommand& rControlCommand )
 {
     if ( rControlCommand.Command.startsWith( "SetText" ))
     {

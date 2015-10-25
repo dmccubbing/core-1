@@ -32,15 +32,15 @@ class PasswordToOpenModifyDialog : public SfxModalDialog
 {
     std::unique_ptr< PasswordToOpenModifyDialog_Impl >  m_pImpl;
 
-    PasswordToOpenModifyDialog( const PasswordToOpenModifyDialog & ) SAL_DELETED_FUNCTION;
-    PasswordToOpenModifyDialog & operator = ( const PasswordToOpenModifyDialog & ) SAL_DELETED_FUNCTION;
+    PasswordToOpenModifyDialog( const PasswordToOpenModifyDialog & ) = delete;
+    PasswordToOpenModifyDialog & operator = ( const PasswordToOpenModifyDialog & ) = delete;
 
 public:
     PasswordToOpenModifyDialog( vcl::Window * pParent, sal_uInt16 nMinPasswdLen,
             sal_uInt16 nMaxPasswdLen /* 0 -> no max len enforced */,
             bool bIsPasswordToModify );
     virtual ~PasswordToOpenModifyDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     // AbstractPasswordToOpenModifyDialog
     OUString  GetPasswordToOpen() const;

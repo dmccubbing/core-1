@@ -624,7 +624,7 @@ public:
 protected:
 
     /** This is intended to be used to clear any locally held references to other Window-subclass objects */
-    virtual void                        dispose() SAL_OVERRIDE;
+    virtual void                        dispose() override;
 
     SAL_DLLPRIVATE void                 ImplInit( vcl::Window* pParent, WinBits nStyle, SystemParentData* pSystemParentData );
 
@@ -785,11 +785,11 @@ private:
 
     SAL_DLLPRIVATE void                 ImplPaintToDevice( ::OutputDevice* pTargetOutDev, const Point& rPos );
 
-    SAL_DLLPRIVATE ::com::sun::star::uno::Reference< ::com::sun::star::rendering::XCanvas >
+    SAL_DLLPRIVATE css::uno::Reference< css::rendering::XCanvas >
                                         ImplGetCanvas( const Size& rFullscreenSize, bool bFullscreen, bool bSpriteCanvas ) const;
 
 public:
-    virtual vcl::Region                 GetActiveClipRegion() const SAL_OVERRIDE;
+    virtual vcl::Region                 GetActiveClipRegion() const override;
 
 protected:
     // Single argument ctors shall be explicit.
@@ -800,27 +800,27 @@ protected:
             void                        CallEventListeners( sal_uLong nEvent, void* pData = NULL );
     static  void                        FireVclEvent( VclSimpleEvent& rEvent );
 
-    virtual bool                        AcquireGraphics() const SAL_OVERRIDE;
-    virtual void                        ReleaseGraphics( bool bRelease = true ) SAL_OVERRIDE;
+    virtual bool                        AcquireGraphics() const override;
+    virtual void                        ReleaseGraphics( bool bRelease = true ) override;
 
-    virtual void                        InitClipRegion() SAL_OVERRIDE;
+    virtual void                        InitClipRegion() override;
 
     // FIXME: this is a hack to workaround missing layout functionality
     SAL_DLLPRIVATE void                 ImplAdjustNWFSizes();
 
-    virtual void                        CopyDeviceArea( SalTwoRect& aPosAry, bool bWindowInvalidate = false) SAL_OVERRIDE;
-    virtual void                        ClipToPaintRegion( Rectangle& rDstRect ) SAL_OVERRIDE;
-    virtual bool                        UsePolyPolygonForComplexGradient() SAL_OVERRIDE;
+    virtual void                        CopyDeviceArea( SalTwoRect& aPosAry, bool bWindowInvalidate = false) override;
+    virtual void                        ClipToPaintRegion( Rectangle& rDstRect ) override;
+    virtual bool                        UsePolyPolygonForComplexGradient() override;
 
     virtual void DrawGradientWallpaper(long nX, long nY, long nWidth, long nHeight,
-                                       const Wallpaper& rWallpaper) SAL_OVERRIDE
+                                       const Wallpaper& rWallpaper) override
     {
         OutputDevice::DrawGradientWallpaper(nX, nY, nWidth, nHeight, rWallpaper);
     }
 
     virtual void ApplySettings(vcl::RenderContext& rRenderContext);
 public:
-    bool                                HasMirroredGraphics() const SAL_OVERRIDE;
+    bool                                HasMirroredGraphics() const override;
 
 public:
     // Single argument ctors shall be explicit.
@@ -832,7 +832,7 @@ public:
     ::OutputDevice const*               GetOutDev() const;
     ::OutputDevice*                     GetOutDev();
 
-    virtual void                        EnableRTL ( bool bEnable = true ) SAL_OVERRIDE;
+    virtual void                        EnableRTL ( bool bEnable = true ) override;
     virtual void                        MouseMove( const MouseEvent& rMEvt );
     virtual void                        MouseButtonDown( const MouseEvent& rMEvt );
     virtual void                        MouseButtonUp( const MouseEvent& rMEvt );
@@ -843,12 +843,12 @@ public:
     virtual void                        PostPaint(vcl::RenderContext& rRenderContext);
     void                                Erase(vcl::RenderContext& rRenderContext);
 
-    virtual void Erase() SAL_OVERRIDE
+    virtual void Erase() override
     {
         OutputDevice::Erase();
     }
 
-    virtual void Erase(const Rectangle& rRect) SAL_OVERRIDE
+    virtual void Erase(const Rectangle& rRect) override
     {
         OutputDevice::Erase(rRect);
     }
@@ -956,7 +956,7 @@ public:
     void                                SetCompositionCharRect( const Rectangle* pRect, long nCompositionLength, bool bVertical = false );
 
     using                               ::OutputDevice::SetSettings;
-    virtual void                        SetSettings( const AllSettings& rSettings ) SAL_OVERRIDE;
+    virtual void                        SetSettings( const AllSettings& rSettings ) override;
     void                                SetSettings( const AllSettings& rSettings, bool bChild );
     void                                UpdateSettings( const AllSettings& rSettings, bool bChild = false );
     void                                NotifyAllChildren( DataChangedEvent& rDCEvt );
@@ -1256,26 +1256,26 @@ public:
                                                         const Point& rDestOff, VirtualDevice& rSaveDevice );
 
     const SystemEnvData*                GetSystemData() const;
-    ::com::sun::star::uno::Any          GetSystemDataAny() const;
+    css::uno::Any          GetSystemDataAny() const;
 
     // API to set/query the component interfaces
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::awt::XWindowPeer >
+    virtual css::uno::Reference< css::awt::XWindowPeer >
                                         GetComponentInterface( bool bCreate = true );
 
-    void                        SetComponentInterface( ::com::sun::star::uno::Reference< ::com::sun::star::awt::XWindowPeer > xIFace );
+    void                        SetComponentInterface( css::uno::Reference< css::awt::XWindowPeer > xIFace );
 
     /** @name Accessibility
      */
     ///@{
 public:
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible >
+    css::uno::Reference< css::accessibility::XAccessible >
                                         GetAccessible( bool bCreate = true );
 
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible >
+    virtual css::uno::Reference< css::accessibility::XAccessible >
                                         CreateAccessible();
 
-    void                                SetAccessible( ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > );
+    void                                SetAccessible( css::uno::Reference< css::accessibility::XAccessible > );
 
     vcl::Window*                        GetAccessibleParentWindow() const;
     sal_uInt16                          GetAccessibleChildWindowCount();
@@ -1361,10 +1361,10 @@ private:
     Size get_ungrouped_preferred_size() const;
 public:
     /// request XCanvas render interface for this window
-    ::com::sun::star::uno::Reference< ::com::sun::star::rendering::XCanvas >
+    css::uno::Reference< css::rendering::XCanvas >
                                         GetCanvas() const;
     /// request XSpriteCanvas render interface for this window
-    ::com::sun::star::uno::Reference< ::com::sun::star::rendering::XSpriteCanvas >
+    css::uno::Reference< css::rendering::XSpriteCanvas >
                                         GetSpriteCanvas() const;
 
     /*  records all DrawText operations within the passed rectangle;
@@ -1374,20 +1374,22 @@ public:
 
     // set and retrieve for Toolkit
     VCLXWindow*                         GetWindowPeer() const;
-    void                                SetWindowPeer( ::com::sun::star::uno::Reference< ::com::sun::star::awt::XWindowPeer > xPeer, VCLXWindow* pVCLXWindow );
+    void                                SetWindowPeer( css::uno::Reference< css::awt::XWindowPeer > xPeer, VCLXWindow* pVCLXWindow );
 
     // remember if it was generated by Toolkit
     bool                                IsCreatedWithToolkit() const;
     void                                SetCreatedWithToolkit( bool b );
 
     // Drag and Drop interfaces
-    ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::dnd::XDropTarget > GetDropTarget();
-    ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::dnd::XDragSource > GetDragSource();
-    ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::dnd::XDragGestureRecognizer > GetDragGestureRecognizer();
+    css::uno::Reference< css::datatransfer::dnd::XDropTarget > GetDropTarget();
+    css::uno::Reference< css::datatransfer::dnd::XDragSource > GetDragSource();
+    css::uno::Reference< css::datatransfer::dnd::XDragGestureRecognizer > GetDragGestureRecognizer();
 
     // Clipboard/Selection interfaces
-    ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::clipboard::XClipboard > GetClipboard();
-    ::com::sun::star::uno::Reference< ::com::sun::star::datatransfer::clipboard::XClipboard > GetPrimarySelection();
+    css::uno::Reference< css::datatransfer::clipboard::XClipboard > GetClipboard();
+    /// Sets a custom clipboard for the window's frame, instead of creating it on-demand using css::datatransfer::clipboard::SystemClipboard.
+    void SetClipboard(css::uno::Reference<css::datatransfer::clipboard::XClipboard> xClipboard);
+    css::uno::Reference< css::datatransfer::clipboard::XClipboard > GetPrimarySelection();
 
     /*
      * Widgets call this to inform their owner container that the widget wants

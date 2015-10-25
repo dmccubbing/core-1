@@ -44,7 +44,7 @@ class ParaPropertyPanel
 {
 public:
     virtual ~ParaPropertyPanel();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<vcl::Window> Create (
         vcl::Window* pParent,
@@ -52,17 +52,17 @@ public:
         SfxBindings* pBindings,
         const css::uno::Reference<css::ui::XSidebar>& rxSidebar);
 
-    virtual void DataChanged (const DataChangedEvent& rEvent) SAL_OVERRIDE;
+    virtual void DataChanged (const DataChangedEvent& rEvent) override;
     SfxBindings* GetBindings() { return mpBindings;}
 
     virtual void HandleContextChange (
-        const ::sfx2::sidebar::EnumContext& rContext) SAL_OVERRIDE;
+        const ::sfx2::sidebar::EnumContext& rContext) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     static FieldUnit GetCurrentUnit( SfxItemState eState, const SfxPoolItem* pState );
 
@@ -113,9 +113,9 @@ private:
     SfxBindings* mpBindings;
     css::uno::Reference<css::ui::XSidebar> mxSidebar;
 
-    DECL_LINK(ModifyIndentHdl_Impl, void*);
+    DECL_LINK_TYPED(ModifyIndentHdl_Impl, Edit&, void);
     DECL_LINK_TYPED(ClickIndent_IncDec_Hdl_Impl, ToolBox*, void);
-    DECL_LINK(ULSpaceHdl_Impl, void*);
+    DECL_LINK_TYPED(ULSpaceHdl_Impl, Edit&, void);
 
     void StateChangedIndentImpl( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState );
     void StateChangedULImpl( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState );

@@ -27,12 +27,9 @@ namespace linguistic
 {
 
 class Meaning :
-    public cppu::WeakImplHelper
-    <
-        ::com::sun::star::linguistic2::XMeaning
-    >
+    public cppu::WeakImplHelper< css::linguistic2::XMeaning >
 {
-    ::com::sun::star::uno::Sequence< OUString >  aSyn;   // list of synonyms, may be empty.
+    css::uno::Sequence< OUString >  aSyn;   // list of synonyms, may be empty.
     OUString         aTerm;
 
 #if 0
@@ -40,19 +37,19 @@ class Meaning :
         sal_Bool                bIsGermanPreReform;
 #endif
 
-    Meaning(const Meaning &) SAL_DELETED_FUNCTION;
-    Meaning & operator = (const Meaning &) SAL_DELETED_FUNCTION;
+    Meaning(const Meaning &) = delete;
+    Meaning & operator = (const Meaning &) = delete;
 
 public:
     Meaning(const OUString &rTerm);
     virtual ~Meaning();
 
     // XMeaning
-    virtual OUString SAL_CALL getMeaning() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< OUString > SAL_CALL querySynonyms() throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual OUString SAL_CALL getMeaning() throw(css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< OUString > SAL_CALL querySynonyms() throw(css::uno::RuntimeException, std::exception) override;
 
     // non-interface specific functions
-    void    SetSynonyms( const ::com::sun::star::uno::Sequence< OUString > &rSyn );
+    void    SetSynonyms( const css::uno::Sequence< OUString > &rSyn );
     void    SetMeaning( const OUString  &rTerm );
 };
 

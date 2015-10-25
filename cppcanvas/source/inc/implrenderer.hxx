@@ -170,11 +170,11 @@ static float GetSwapFloat( SvStream& rSt )
 
             virtual ~ImplRenderer();
 
-            virtual bool                draw() const SAL_OVERRIDE;
+            virtual bool                draw() const override;
             virtual bool                drawSubset( sal_Int32   nStartIndex,
-                                                    sal_Int32   nEndIndex ) const SAL_OVERRIDE;
+                                                    sal_Int32   nEndIndex ) const override;
             virtual ::basegfx::B2DRange getSubsetArea( sal_Int32    nStartIndex,
-                                                       sal_Int32    nEndIndex ) const SAL_OVERRIDE;
+                                                       sal_Int32    nEndIndex ) const override;
 
 
             // element of the Renderer's action vector. Need to be
@@ -206,8 +206,8 @@ static float GetSwapFloat( SvStream& rSt )
             void GraphicStatePop (GraphicStateMap& map, sal_Int32 index, OutDevState& rState);
 
         private:
-            ImplRenderer(const ImplRenderer&) SAL_DELETED_FUNCTION;
-            ImplRenderer& operator=( const ImplRenderer& ) SAL_DELETED_FUNCTION;
+            ImplRenderer(const ImplRenderer&) = delete;
+            ImplRenderer& operator=( const ImplRenderer& ) = delete;
 
             static void updateClipping( const ::basegfx::B2DPolyPolygon&   rClipPoly,
                                  const ActionFactoryParameters&     rParms,

@@ -49,8 +49,8 @@ private:
     uno::Reference<frame::XComponentLoader> xLoader;
     uno::Reference<lang::XComponent> xComponent;
 public:
-    virtual void Init() SAL_OVERRIDE;
-    virtual int Main() SAL_OVERRIDE;
+    virtual void Init() override;
+    virtual int Main() override;
     void Open(OUString & aFileUrl);
 };
 
@@ -95,7 +95,7 @@ public:
         disposeOnce();
     }
 
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         mpContextWidth.clear();
         mpContextHeight.clear();
@@ -107,11 +107,11 @@ public:
         ModalDialog::dispose();
     }
 
-    DECL_LINK ( RenderHdl, Button * );
-    DECL_LINK ( ChooseDocumentHdl, Button * );
+    DECL_LINK_TYPED( RenderHdl, Button *, void );
+    DECL_LINK_TYPED( ChooseDocumentHdl, Button *, void );
 };
 
-IMPL_LINK ( TiledRenderingDialog, RenderHdl, Button *, )
+IMPL_LINK_NOARG_TYPED( TiledRenderingDialog, RenderHdl, Button *, void)
 {
     int contextWidth = mpContextWidth->GetValue();
     int contextHeight = mpContextHeight->GetValue();
@@ -143,11 +143,9 @@ IMPL_LINK ( TiledRenderingDialog, RenderHdl, Button *, )
         // update the dialog size
         setOptimalLayoutSize();
     }
-
-    return 1;
 }
 
-IMPL_LINK ( TiledRenderingDialog,  ChooseDocumentHdl, Button *, )
+IMPL_LINK_NOARG_TYPED( TiledRenderingDialog,  ChooseDocumentHdl, Button *, void )
 {
     FileDialogHelper aDlgHelper( TemplateDescription::FILEOPEN_SIMPLE, 0 );
     uno::Reference < XFilePicker > xFP = aDlgHelper.GetFilePicker();
@@ -156,7 +154,6 @@ IMPL_LINK ( TiledRenderingDialog,  ChooseDocumentHdl, Button *, )
         OUString aFileUrl =xFP->getFiles().getConstArray()[0];
         mpApp->Open(aFileUrl);
     }
-    return 1;
 }
 
 void TiledRenderingApp::Open(OUString & aFileUrl)

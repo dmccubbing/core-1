@@ -73,15 +73,15 @@ public:
     static EmbedEventListener_Impl* Create( EmbeddedObjectRef* );
 
     virtual void SAL_CALL changingState( const lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState )
-                                    throw (embed::WrongStateException, uno::RuntimeException, std::exception) SAL_OVERRIDE;
+                                    throw (embed::WrongStateException, uno::RuntimeException, std::exception) override;
     virtual void SAL_CALL stateChanged( const lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState )
-                                    throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+                                    throw (uno::RuntimeException, std::exception) override;
     virtual void SAL_CALL queryClosing( const lang::EventObject& Source, sal_Bool GetsOwnership )
-                                    throw (util::CloseVetoException, uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL notifyClosing( const lang::EventObject& Source ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL notifyEvent( const document::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+                                    throw (util::CloseVetoException, uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL notifyClosing( const lang::EventObject& Source ) throw (uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL notifyEvent( const document::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL disposing( const lang::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 };
 
 EmbedEventListener_Impl* EmbedEventListener_Impl::Create( EmbeddedObjectRef* p )
@@ -439,7 +439,7 @@ void EmbeddedObjectRef::GetReplacement( bool bUpdate )
     {
         GraphicFilter& rGF = GraphicFilter::GetGraphicFilter();
         if( mpImpl->pGraphic )
-            rGF.ImportGraphic( *mpImpl->pGraphic, OUString(), *pGraphicStream, GRFILTER_FORMAT_DONTKNOW );
+            rGF.ImportGraphic( *mpImpl->pGraphic, OUString(), *pGraphicStream );
         mpImpl->mnGraphicVersion++;
     }
 }
@@ -537,7 +537,7 @@ void EmbeddedObjectRef::SetGraphicStream( const uno::Reference< io::XInputStream
     if ( pGraphicStream )
     {
         GraphicFilter& rGF = GraphicFilter::GetGraphicFilter();
-        rGF.ImportGraphic( *mpImpl->pGraphic, "", *pGraphicStream, GRFILTER_FORMAT_DONTKNOW );
+        rGF.ImportGraphic( *mpImpl->pGraphic, "", *pGraphicStream );
         mpImpl->mnGraphicVersion++;
 
         if ( mpImpl->pContainer )

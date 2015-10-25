@@ -38,12 +38,12 @@ private:
 
 
     DECL_LINK_TYPED(OKHdl_Impl, Button*, void);
-    DECL_LINK(EditHdl_Impl, void *);
+    DECL_LINK_TYPED(EditHdl_Impl, Edit&, void);
 
 public:
     MasterPasswordCreateDialog( vcl::Window* pParent, ResMgr * pResMgr );
     virtual ~MasterPasswordCreateDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     OUString GetMasterPassword() const { return m_pEDMasterPasswordCrt->GetText(); }
 

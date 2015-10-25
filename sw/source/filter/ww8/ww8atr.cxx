@@ -623,10 +623,7 @@ void WW8Export::PrepareNewPageDesc( const SfxItemSet*pSet,
 
 void MSWordExportBase::CorrectTabStopInSet( SfxItemSet& rSet, sal_uInt16 nAbsLeft )
 {
-    const SvxTabStopItem *pItem =
-        sw::util::HasItem<SvxTabStopItem>( rSet, RES_PARATR_TABSTOP );
-
-    if ( pItem )
+    if (const SvxTabStopItem *pItem = rSet.GetItem<SvxTabStopItem>(RES_PARATR_TABSTOP))
     {
         // dann muss das fuer die Ausgabe korrigiert werden
         SvxTabStopItem aTStop(*pItem);
@@ -2880,9 +2877,9 @@ void AttributeOutputBase::TextField( const SwFormatField& rField )
                 SwChapterField aCopy(*static_cast<const SwChapterField*>(pField));
                 aCopy.ChangeExpansion(*pTextNd, false);
                 const OUString sStr = FieldString(ww::eSTYLEREF)
-                    + " \"Heading "
+                    + " "
                     + OUString::number(aCopy.GetLevel() + 1)
-                    + "\"  \\* MERGEFORMAT ";
+                    + " \\* MERGEFORMAT ";
                 GetExport().OutputField(pField, ww::eSTYLEREF, sStr);
                 bWriteExpand = false;
             }
@@ -4751,8 +4748,7 @@ void WW8AttributeOutput::ParaTabStop( const SvxTabStopItem& rTabStops )
         SvxTabStopItem aParentTabs( 0, 0, SVX_TAB_ADJUST_DEFAULT, RES_PARATR_TABSTOP );
         const SwFormat *pParentStyle = m_rWW8Export.m_pCurrentStyle->DerivedFrom();
         {
-            const SvxTabStopItem* pParentTabs = HasItem<SvxTabStopItem>( pParentStyle->GetAttrSet(), RES_PARATR_TABSTOP );
-            if ( pParentTabs )
+            if (const SvxTabStopItem* pParentTabs = pParentStyle->GetAttrSet().GetItem<SvxTabStopItem>(RES_PARATR_TABSTOP))
             {
                 aParentTabs.Insert( pParentTabs );
             }
@@ -4773,7 +4769,7 @@ void WW8AttributeOutput::ParaTabStop( const SvxTabStopItem& rTabStops )
     const SvxTabStopItem* pStyleTabs = 0;
     if ( !m_rWW8Export.m_bStyDef && m_rWW8Export.m_pStyAttr )
     {
-        pStyleTabs = HasItem<SvxTabStopItem>( *m_rWW8Export.m_pStyAttr, RES_PARATR_TABSTOP );
+        pStyleTabs = m_rWW8Export.m_pStyAttr->GetItem<SvxTabStopItem>(RES_PARATR_TABSTOP);
     }
 
     if ( !pStyleTabs )

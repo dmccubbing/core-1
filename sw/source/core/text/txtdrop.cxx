@@ -678,7 +678,6 @@ void SwDropCapCache::CalcFontSize( SwDropPortion* pDrop, SwTextFormatInfo &rInf 
     sal_Int32 nIdx = rInf.GetIdx();
     OUString aStr(rInf.GetText().copy(nIdx, pCurrPart->GetLen()));
 
-    long nAscent = 0;
     long nDescent = 0;
     long nFactor = -1;
 
@@ -707,6 +706,7 @@ void SwDropCapCache::CalcFontSize( SwDropPortion* pDrop, SwTextFormatInfo &rInf 
         nTmpIdx = nIndex;
 
         long nWishedHeight = pDrop->GetDropHeight();
+        long nAscent = 0;
 
         // find out biggest font size for initial scaling factor
         long nMaxFontHeight = 1;
@@ -769,7 +769,7 @@ void SwDropCapCache::CalcFontSize( SwDropPortion* pDrop, SwTextFormatInfo &rInf 
                 // Get without proportion
                 const sal_uInt8 nOldProp = rFnt.GetPropr();
                 rFnt.SetProportion( 100 );
-                Size aOldSize = Size( 0, rFnt.GetHeight( rFnt.GetActual() ) );
+                Size aOldSize( 0, rFnt.GetHeight( rFnt.GetActual() ) );
 
                 Size aNewSize( 0, ( nFactor * nCurrHeight ) / 1000 );
                 rFnt.SetSize( aNewSize, rFnt.GetActual() );

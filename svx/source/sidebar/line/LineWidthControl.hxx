@@ -37,10 +37,10 @@ class LineWidthControl : public svx::sidebar::PopupControl
 public:
     LineWidthControl (vcl::Window* pParent, LinePropertyPanelBase& rPanel);
     virtual ~LineWidthControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void GetFocus() SAL_OVERRIDE;
-    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& aRect) SAL_OVERRIDE;
+    virtual void GetFocus() override;
+    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& aRect) override;
 
     void SetWidthSelect( long lValue, bool bValuable, SfxMapUnit eMapUnit);
     bool IsCloseByEdit()
@@ -72,7 +72,7 @@ private:
 
     void Initialize();
     DECL_LINK_TYPED(VSSelectHdl, ValueSet*, void);
-    DECL_LINK(MFModifyHdl, void *);
+    DECL_LINK_TYPED(MFModifyHdl, Edit&, void);
 };
 
 } } // end of namespace svx::sidebar

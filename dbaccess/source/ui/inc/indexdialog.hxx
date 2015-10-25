@@ -54,7 +54,7 @@ namespace dbaui
 
         void SetEndEditHdl(const Link<SvTreeListEntry*,bool>& _rHdl) { m_aEndEditHdl = _rHdl; }
 
-        virtual bool Select(SvTreeListEntry* pEntry, bool bSelect) SAL_OVERRIDE;
+        virtual bool Select(SvTreeListEntry* pEntry, bool bSelect) override;
 
         void enableSelectHandler();
         void disableSelectHandler();
@@ -67,7 +67,7 @@ namespace dbaui
         }
 
     protected:
-        virtual bool EditedEntry( SvTreeListEntry* pEntry, const OUString& rNewText ) SAL_OVERRIDE;
+        virtual bool EditedEntry( SvTreeListEntry* pEntry, const OUString& rNewText ) override;
 
     private:
         using SvTreeListBox::Select;
@@ -109,19 +109,19 @@ namespace dbaui
             sal_Int32 _nMaxColumnsInIndex
             );
         virtual ~DbaIndexDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
-        virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+        virtual void StateChanged( StateChangedType nStateChange ) override;
+        virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
 
         //TO-DO, remove when all other OToolBoxHelper are converted to .ui
-        virtual void resizeControls(const Size&) SAL_OVERRIDE;
+        virtual void resizeControls(const Size&) override;
 
         /** will be called when the id of the image list needs to change
             @param  _eBitmapSet
                 <svtools/imgdef.hxx>
         */
-        virtual void setImageList(sal_Int16 _eBitmapSet) SAL_OVERRIDE;
+        virtual void setImageList(sal_Int16 _eBitmapSet) override;
     protected:
         void fillIndexList();
         void updateToolbox();
@@ -132,7 +132,7 @@ namespace dbaui
         DECL_LINK_TYPED( OnIndexAction, ToolBox*, void );
         DECL_LINK_TYPED( OnEntryEdited, SvTreeListEntry*, bool );
         DECL_LINK_TYPED( OnModifiedClick, Button*, void );
-        DECL_LINK( OnModified, void* );
+        DECL_LINK_TYPED( OnModified, IndexFieldsControl&, void );
         DECL_LINK_TYPED( OnCloseDialog, Button*, void );
 
         DECL_LINK_TYPED( OnEditIndexAgain, void*, void );

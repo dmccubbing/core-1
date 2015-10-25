@@ -168,7 +168,7 @@ SwAsciiFilterDlg::SwAsciiFilterDlg( vcl::Window* pParent, SwDocShell& rDocSh,
                 }
             }
 
-            m_pLanguageLB->SetLanguageList( SvxLanguageListFlags::ALL, true, false );
+            m_pLanguageLB->SetLanguageList( SvxLanguageListFlags::ALL, true );
             m_pLanguageLB->SelectLanguage( aOpt.GetLanguage() );
         }
 
@@ -318,8 +318,9 @@ LineEnd SwAsciiFilterDlg::GetCRLF() const
     return eEnd;
 }
 
-IMPL_LINK( SwAsciiFilterDlg, CharSetSelHdl, SvxTextEncodingBox*, pBox )
+IMPL_LINK_TYPED( SwAsciiFilterDlg, CharSetSelHdl, ListBox&, rListBox, void )
 {
+    SvxTextEncodingBox* pBox = static_cast<SvxTextEncodingBox*>(&rListBox);
     LineEnd eOldEnd = GetCRLF(), eEnd = (LineEnd)-1;
     LanguageType nLng = m_pFontLB->IsVisible()
                     ? m_pLanguageLB->GetSelectLanguage()
@@ -390,8 +391,6 @@ IMPL_LINK( SwAsciiFilterDlg, CharSetSelHdl, SvxTextEncodingBox*, pBox )
 
     if( nOldLng != nLng && m_pFontLB->IsVisible() )
         m_pLanguageLB->SelectLanguage( nLng );
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwAsciiFilterDlg, LineEndHdl, RadioButton&, rBtn, void )

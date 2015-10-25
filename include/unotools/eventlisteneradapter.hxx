@@ -36,8 +36,8 @@ namespace utl
         friend class OEventListenerImpl;
 
     private:
-        OEventListenerAdapter( const OEventListenerAdapter& _rSource ) SAL_DELETED_FUNCTION;
-        const OEventListenerAdapter& operator=( const OEventListenerAdapter& _rSource ) SAL_DELETED_FUNCTION;
+        OEventListenerAdapter( const OEventListenerAdapter& _rSource ) = delete;
+        const OEventListenerAdapter& operator=( const OEventListenerAdapter& _rSource ) = delete;
 
     protected:
         OEventListenerAdapterImpl*  m_pImpl;
@@ -46,11 +46,11 @@ namespace utl
                 OEventListenerAdapter();
         virtual ~OEventListenerAdapter();
 
-        void startComponentListening( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent >& _rxComp );
-        void stopComponentListening( const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XComponent >& _rxComp );
+        void startComponentListening( const css::uno::Reference< css::lang::XComponent >& _rxComp );
+        void stopComponentListening( const css::uno::Reference< css::lang::XComponent >& _rxComp );
         void stopAllComponentListening(  );
 
-        virtual void _disposing( const ::com::sun::star::lang::EventObject& _rSource ) = 0;
+        virtual void _disposing( const css::lang::EventObject& _rSource ) = 0;
     };
 
 }   // namespace utl

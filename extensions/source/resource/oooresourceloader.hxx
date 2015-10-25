@@ -59,12 +59,12 @@ namespace extensions { namespace resource
 
         OpenOfficeResourceLoader(css::uno::Reference< css::uno::XComponentContext> const&);
         // XResourceBundleLoader
-        virtual  css::uno::Reference< css::resource::XResourceBundle> SAL_CALL loadBundle_Default( const OUString& aBaseName ) throw (css::resource::MissingResourceException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual  css::uno::Reference<  css::resource::XResourceBundle> SAL_CALL loadBundle( const OUString& abaseName, const css::lang::Locale& aLocale ) throw (css::resource::MissingResourceException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual  css::uno::Reference< css::resource::XResourceBundle> SAL_CALL loadBundle_Default( const OUString& aBaseName ) throw (css::resource::MissingResourceException, css::uno::RuntimeException, std::exception) override;
+        virtual  css::uno::Reference<  css::resource::XResourceBundle> SAL_CALL loadBundle( const OUString& abaseName, const css::lang::Locale& aLocale ) throw (css::resource::MissingResourceException, css::uno::RuntimeException, std::exception) override;
 
     private:
-        OpenOfficeResourceLoader( const OpenOfficeResourceLoader& ) SAL_DELETED_FUNCTION;
-        OpenOfficeResourceLoader& operator=( const OpenOfficeResourceLoader& ) SAL_DELETED_FUNCTION;
+        OpenOfficeResourceLoader( const OpenOfficeResourceLoader& ) = delete;
+        OpenOfficeResourceLoader& operator=( const OpenOfficeResourceLoader& ) = delete;
         css::uno::Reference< css::uno::XComponentContext> m_xContext;
         ::osl::Mutex m_aMutex;
         ResourceBundleCache m_aBundleCache;

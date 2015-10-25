@@ -158,12 +158,6 @@ typedef enum
     LOK_CALLBACK_SET_PART,
 
     /**
-     * Number of search results followed by the original searched phrase.
-     * count;phrase
-     */
-    LOK_CALLBACK_SEARCH_RESULT_COUNT,
-
-    /**
      * Selection rectangles of the search result when find all is performed.
      *
      * Payload format example, in case of two matches:
@@ -171,14 +165,20 @@ typedef enum
      * {
      *     "searchString": "...",
      *     "searchResultSelection": [
-     *         "...",
-     *         "..."
+     *         {
+     *             "part": "...",
+     *             "rectangles": "..."
+     *         },
+     *         {
+     *             "part": "...",
+     *             "rectangles": "..."
+     *         }
      *     ]
      * }
      *
      * - searchString is the search query
-     * - searchResultSelection is an array of rectangle list, in
-     *   LOK_CALLBACK_TEXT_SELECTION format.
+     * - searchResultSelection is an array of part-number and rectangle list
+     *   pairs, in LOK_CALLBACK_SET_PART / LOK_CALLBACK_TEXT_SELECTION format.
      */
     LOK_CALLBACK_SEARCH_RESULT_SELECTION
 }

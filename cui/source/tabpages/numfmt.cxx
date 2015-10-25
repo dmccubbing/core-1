@@ -335,30 +335,28 @@ void SvxNumberFormatTabPage::Init_Impl()
     m_pCbSourceFormat->Disable();
     m_pCbSourceFormat->Hide();
 
-    Link<> aLink = LINK( this, SvxNumberFormatTabPage, SelFormatHdl_Impl );
+    Link<ListBox&,void> aLink2 = LINK( this, SvxNumberFormatTabPage, SelFormatListBoxHdl_Impl );
 
-    m_pLbCategory->SetSelectHdl( aLink );
-    m_pLbFormat->SetSelectHdl( LINK( this, SvxNumberFormatTabPage, SelFormatListBoxHdl_Impl ) );
-    m_pLbLanguage->SetSelectHdl( aLink );
-    m_pLbCurrency->SetSelectHdl( aLink );
+    m_pLbCategory->SetSelectHdl( aLink2 );
+    m_pLbFormat->SetSelectHdl( LINK( this, SvxNumberFormatTabPage, SelFormatTreeListBoxHdl_Impl ) );
+    m_pLbLanguage->SetSelectHdl( aLink2 );
+    m_pLbCurrency->SetSelectHdl( aLink2 );
     m_pCbSourceFormat->SetClickHdl( LINK( this, SvxNumberFormatTabPage, SelFormatClickHdl_Impl ) );
 
-    aLink = LINK( this, SvxNumberFormatTabPage, OptHdl_Impl );
+    Link<Edit&,void> aLink = LINK( this, SvxNumberFormatTabPage, OptEditHdl_Impl );
 
     m_pEdDecimals->SetModifyHdl( aLink );
     m_pEdLeadZeroes->SetModifyHdl( aLink );
     m_pBtnNegRed->SetClickHdl( LINK( this, SvxNumberFormatTabPage, OptClickHdl_Impl ) );
     m_pBtnThousand->SetClickHdl( LINK( this, SvxNumberFormatTabPage, OptClickHdl_Impl ) );
     m_pLbFormat->SetDoubleClickHdl( HDL( DoubleClickHdl_Impl ) );
-    m_pEdFormat->SetModifyHdl( HDL( EditHdl_Impl ) );
+    m_pEdFormat->SetModifyHdl( HDL( EditModifyHdl_Impl ) );
     m_pIbAdd->SetClickHdl( HDL( ClickHdl_Impl ) );
     m_pIbRemove->SetClickHdl( HDL( ClickHdl_Impl ) );
     m_pIbInfo->SetClickHdl( HDL( ClickHdl_Impl ) );
     UpdateThousandEngineeringText();
 
-    Link<Control&,void> aLink2 = LINK( this, SvxNumberFormatTabPage, LostFocusHdl_Impl);
-
-    m_pEdComment->SetLoseFocusHdl( aLink2);
+    m_pEdComment->SetLoseFocusHdl( LINK( this, SvxNumberFormatTabPage, LostFocusHdl_Impl) );
     aResetWinTimer.SetTimeoutHdl(LINK( this, SvxNumberFormatTabPage, TimeHdl_Impl));
     aResetWinTimer.SetTimeout( 10);
 
@@ -1194,17 +1192,21 @@ IMPL_LINK_TYPED( SvxNumberFormatTabPage, SelFormatClickHdl_Impl, Button*, pLb, v
 {
     SelFormatHdl_Impl(pLb);
 }
-IMPL_LINK_TYPED( SvxNumberFormatTabPage, SelFormatListBoxHdl_Impl, SvTreeListBox*, pLb, void )
+IMPL_LINK_TYPED( SvxNumberFormatTabPage, SelFormatTreeListBoxHdl_Impl, SvTreeListBox*, pLb, void )
 {
     SelFormatHdl_Impl(pLb);
 }
-IMPL_LINK( SvxNumberFormatTabPage, SelFormatHdl_Impl, void *, pLb )
+IMPL_LINK_TYPED( SvxNumberFormatTabPage, SelFormatListBoxHdl_Impl, ListBox&, rLb, void )
+{
+    SelFormatHdl_Impl(&rLb);
+}
+void SvxNumberFormatTabPage::SelFormatHdl_Impl(void * pLb )
 {
     if (pLb == m_pCbSourceFormat)
     {
         EnableBySourceFormat_Impl();    // enable/disable everything else
         if ( m_pCbSourceFormat->IsChecked() )
-            return 0;   // just disabled everything else
+            return;   // just disabled everything else
 
         // Reinit options enable/disable for current selection.
 
@@ -1272,15 +1274,15 @@ IMPL_LINK( SvxNumberFormatTabPage, SelFormatHdl_Impl, void *, pLb )
         }
         else
         {
-            m_pIbAdd->Enable(true );
-            m_pIbInfo->Enable(true );
+            m_pIbAdd->Enable();
+            m_pIbInfo->Enable();
             m_pIbRemove->Enable(false );
             m_pFtComment->SetText(m_pEdComment->GetText());
 
         }
         UpdateOptions_Impl( false );
 
-        return 0;
+        return;
     }
 
 
@@ -1291,7 +1293,7 @@ IMPL_LINK( SvxNumberFormatTabPage, SelFormatHdl_Impl, void *, pLb )
         EditHdl_Impl( NULL );
         UpdateOptions_Impl( false );
 
-        return 0;
+        return;
     }
 
 
@@ -1301,9 +1303,8 @@ IMPL_LINK( SvxNumberFormatTabPage, SelFormatHdl_Impl, void *, pLb )
         UpdateFormatListBox_Impl( false, true );
         EditHdl_Impl(m_pEdFormat);
 
-        return 0;
+        return;
     }
-    return 0;
 }
 
 
@@ -1497,7 +1498,11 @@ bool SvxNumberFormatTabPage::Click_Impl(PushButton* pIB)
 #*
 #************************************************************************/
 
-IMPL_LINK( SvxNumberFormatTabPage, EditHdl_Impl, Edit*, pEdFormat )
+IMPL_LINK_TYPED( SvxNumberFormatTabPage, EditModifyHdl_Impl, Edit&, rEdit, void )
+{
+    EditHdl_Impl(&rEdit);
+}
+void SvxNumberFormatTabPage::EditHdl_Impl( Edit* pEdFormat )
 {
     sal_uInt32 nCurKey = NUMKEY_UNDEFINED;
 
@@ -1536,8 +1541,8 @@ IMPL_LINK( SvxNumberFormatTabPage, EditHdl_Impl, Edit*, pEdFormat )
         else
         {
 
-            m_pIbAdd->Enable(true );
-            m_pIbInfo->Enable(true);
+            m_pIbAdd->Enable();
+            m_pIbInfo->Enable();
             m_pIbRemove->Enable(false );
 
             m_pFtComment->SetText(m_pEdComment->GetText());
@@ -1550,8 +1555,6 @@ IMPL_LINK( SvxNumberFormatTabPage, EditHdl_Impl, Edit*, pEdFormat )
         pNumFmtShell->SetCurNumFmtKey( nCurKey );
         UpdateOptions_Impl( true );
     }
-
-    return 0;
 }
 
 
@@ -1570,7 +1573,11 @@ IMPL_LINK_TYPED( SvxNumberFormatTabPage, OptClickHdl_Impl, Button*, pOptCtrl, vo
 {
     OptHdl_Impl(pOptCtrl);
 }
-IMPL_LINK( SvxNumberFormatTabPage, OptHdl_Impl, void *, pOptCtrl )
+IMPL_LINK_TYPED( SvxNumberFormatTabPage, OptEditHdl_Impl, Edit&, rEdit, void )
+{
+    OptHdl_Impl(&rEdit);
+}
+void SvxNumberFormatTabPage::OptHdl_Impl( void* pOptCtrl )
 {
     if (   (pOptCtrl == m_pEdLeadZeroes)
         || (pOptCtrl == m_pEdDecimals)
@@ -1616,7 +1623,6 @@ IMPL_LINK( SvxNumberFormatTabPage, OptHdl_Impl, void *, pOptCtrl )
             m_pLbFormat->SetNoSelection();
         }
     }
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SvxNumberFormatTabPage, TimeHdl_Impl, Timer *, void)
@@ -1802,8 +1808,8 @@ void SvxNumberFormatTabPage::AddAutomaticLanguage_Impl(LanguageType eAutoLang, b
 
 void SvxNumberFormatTabPage::PageCreated(const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pNumberInfoItem,SvxNumberInfoItem,SID_ATTR_NUMBERFORMAT_INFO,false);
-    SFX_ITEMSET_ARG (&aSet,pLinkItem,SfxLinkItem,SID_LINK_TYPE,false);
+    const SvxNumberInfoItem* pNumberInfoItem = aSet.GetItem<SvxNumberInfoItem>(SID_ATTR_NUMBERFORMAT_INFO, false);
+    const SfxLinkItem* pLinkItem = aSet.GetItem<SfxLinkItem>(SID_LINK_TYPE, false);
     if (pNumberInfoItem)
         SetNumberFormatList(*pNumberInfoItem);
     if (pLinkItem)

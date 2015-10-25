@@ -39,16 +39,16 @@ namespace cppcanvas
 
             virtual ~ImplSpriteCanvas();
 
-            virtual void                    setTransformation( const ::basegfx::B2DHomMatrix& rMatrix ) SAL_OVERRIDE;
+            virtual void                    setTransformation( const ::basegfx::B2DHomMatrix& rMatrix ) override;
 
-            virtual bool                    updateScreen( bool bUpdateAll ) const SAL_OVERRIDE;
+            virtual bool                    updateScreen( bool bUpdateAll ) const override;
 
-            virtual CustomSpriteSharedPtr   createCustomSprite( const ::basegfx::B2DSize& ) const SAL_OVERRIDE;
+            virtual CustomSpriteSharedPtr   createCustomSprite( const ::basegfx::B2DSize& ) const override;
 
-            virtual CanvasSharedPtr         clone() const SAL_OVERRIDE;
+            virtual CanvasSharedPtr         clone() const override;
 
             virtual css::uno::Reference<
-                css::rendering::XSpriteCanvas >    getUNOSpriteCanvas() const SAL_OVERRIDE;
+                css::rendering::XSpriteCanvas >    getUNOSpriteCanvas() const override;
 
             /** This class passes the view transformation
                 to child sprites
@@ -73,7 +73,7 @@ namespace cppcanvas
             typedef std::shared_ptr< TransformationArbiter > TransformationArbiterSharedPtr;
 
         private:
-            ImplSpriteCanvas& operator=( const ImplSpriteCanvas& ) SAL_DELETED_FUNCTION;
+            ImplSpriteCanvas& operator=( const ImplSpriteCanvas& ) = delete;
 
             const css::uno::Reference< css::rendering::XSpriteCanvas > mxSpriteCanvas;
             TransformationArbiterSharedPtr                             mpTransformArbiter;

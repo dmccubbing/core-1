@@ -30,8 +30,8 @@ namespace rptxml
         ORptFilter& m_rImport;
         OUString m_sStyleName;
         ::com::sun::star::uno::Reference< ::com::sun::star::report::XFormatCondition >  m_xComponent;
-        OXMLFormatCondition(const OXMLFormatCondition&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLFormatCondition&) SAL_DELETED_FUNCTION;
+        OXMLFormatCondition(const OXMLFormatCondition&) = delete;
+        void operator =(const OXMLFormatCondition&) = delete;
     public:
 
         OXMLFormatCondition( ORptFilter& rImport, sal_uInt16 nPrfx,
@@ -40,7 +40,7 @@ namespace rptxml
                     ,const ::com::sun::star::uno::Reference< ::com::sun::star::report::XFormatCondition >& _xComponent
                     );
         virtual ~OXMLFormatCondition();
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
     };
 
 } // namespace rptxml

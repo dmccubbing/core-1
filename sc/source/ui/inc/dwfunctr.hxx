@@ -83,21 +83,21 @@ private:
 
                     DECL_LINK_TYPED( SetSelectionHdl, ListBox&, void );
                     DECL_LINK_TYPED( SetSelectionClickHdl, Button*, void );
-                    DECL_LINK( SelHdl, ListBox* );
+                    DECL_LINK_TYPED( SelHdl, ListBox&, void );
                     DECL_LINK_TYPED( SetSplitHdl, ScPrivatSplit&, void );
                     DECL_LINK_TYPED( TimerHdl, Idle*, void );
 
 protected:
 
-    virtual bool    Close() SAL_OVERRIDE;
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    Resizing( Size& rSize ) SAL_OVERRIDE;
+    virtual bool    Close() override;
+    virtual void    Resize() override;
+    virtual void    Resizing( Size& rSize ) override;
     void            SetSize();
-    virtual void    ToggleFloatingMode() SAL_OVERRIDE;
-    virtual void    StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
+    virtual void    ToggleFloatingMode() override;
+    virtual void    StateChanged( StateChangedType nStateChange ) override;
 
     virtual SfxChildAlignment CheckAlignment(SfxChildAlignment,
-                                SfxChildAlignment eAlign) SAL_OVERRIDE;
+                                SfxChildAlignment eAlign) override;
 
 public:
                     ScFunctionDockWin(  SfxBindings* pBindings,
@@ -106,15 +106,15 @@ public:
                                         const ResId& rResId );
 
                     virtual ~ScFunctionDockWin();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     using SfxDockingWindow::Notify;
-    virtual void    Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void    Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
     void            InitLRUList();
 
     void            Initialize (SfxChildWinInfo* pInfo);
-    virtual void    FillInfo(SfxChildWinInfo&) const SAL_OVERRIDE;
+    virtual void    FillInfo(SfxChildWinInfo&) const override;
 };
 
 #endif

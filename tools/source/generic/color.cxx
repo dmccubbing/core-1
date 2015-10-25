@@ -32,11 +32,6 @@
 #include <tools/helpers.hxx>
 #include <basegfx/color/bcolortools.hxx>
 
-static inline long _FRound( double fVal )
-{
-    return( fVal > 0.0 ? (long) ( fVal + 0.5 ) : -(long) ( -fVal + 0.5 ) );
-}
-
 Color::Color( const ResId& rResId )
 {
     rResId.SetRT( RSC_COLOR );
@@ -68,7 +63,7 @@ sal_uInt8 Color::GetColorError( const Color& rCompareColor ) const
                          labs( (long) rCompareColor.GetGreen() - GetGreen() ) +
                          labs( (long) rCompareColor.GetBlue() - GetBlue() );
 
-    return (sal_uInt8) _FRound( nErrAbs * 0.3333333333 );
+    return (sal_uInt8) FRound( nErrAbs * 0.3333333333 );
 }
 
 void Color::IncreaseLuminance( sal_uInt8 cLumInc )
@@ -92,9 +87,9 @@ void Color::DecreaseContrast( sal_uInt8 cContDec )
         const double fM = ( 128.0 - 0.4985 * cContDec ) / 128.0;
         const double fOff = 128.0 - fM * 128.0;
 
-        SetRed( (sal_uInt8) SAL_BOUND( _FRound( COLORDATA_RED( mnColor ) * fM + fOff ), 0L, 255L ) );
-        SetGreen( (sal_uInt8) SAL_BOUND( _FRound( COLORDATA_GREEN( mnColor ) * fM + fOff ), 0L, 255L ) );
-        SetBlue( (sal_uInt8) SAL_BOUND( _FRound( COLORDATA_BLUE( mnColor ) * fM + fOff ), 0L, 255L ) );
+        SetRed( (sal_uInt8) SAL_BOUND( FRound( COLORDATA_RED( mnColor ) * fM + fOff ), 0L, 255L ) );
+        SetGreen( (sal_uInt8) SAL_BOUND( FRound( COLORDATA_GREEN( mnColor ) * fM + fOff ), 0L, 255L ) );
+        SetBlue( (sal_uInt8) SAL_BOUND( FRound( COLORDATA_BLUE( mnColor ) * fM + fOff ), 0L, 255L ) );
     }
 }
 
@@ -248,7 +243,7 @@ OUString Color::AsRGBHexString() const
 
 SvStream& ReadColor( SvStream& rIStream, Color& rColor )
 {
-    DBG_ASSERTWARNING( rIStream.GetVersion(), "Color::>> - Solar-Version not set on rIStream" );
+    SAL_WARN_IF( !rIStream.GetVersion(), "tools", "Color::>> - Solar-Version not set on rIStream" );
 
     sal_uInt16      nColorName;
 
@@ -340,7 +335,7 @@ void Color::ApplyTintOrShade(sal_Int16 n100thPercent)
 
 SvStream& WriteColor( SvStream& rOStream, const Color& rColor )
 {
-    DBG_ASSERTWARNING( rOStream.GetVersion(), "Color::<< - Solar-Version not set on rOStream" );
+    SAL_WARN_IF( !rOStream.GetVersion(), "tools", "Color::<< - Solar-Version not set on rOStream" );
 
     sal_uInt16 nColorName   = COL_NAME_USER;
     sal_uInt16 nRed         = rColor.GetRed();

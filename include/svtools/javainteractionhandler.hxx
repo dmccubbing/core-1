@@ -36,29 +36,28 @@ namespace svt
 //class.
 
 class SVT_DLLPUBLIC JavaInteractionHandler:
-        public com::sun::star::task::XInteractionHandler
+        public css::task::XInteractionHandler
 {
 public:
     JavaInteractionHandler(bool bReportErrorOnce = true);
 
     // XInterface
-    virtual ::com::sun::star::uno::Any SAL_CALL queryInterface(
-        const ::com::sun::star::uno::Type& aType )
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual css::uno::Any SAL_CALL queryInterface(
+        const css::uno::Type& aType )
+        throw (css::uno::RuntimeException, std::exception) override;
 
-    virtual void SAL_CALL acquire() throw() SAL_OVERRIDE;
+    virtual void SAL_CALL acquire() throw() override;
 
-    virtual void SAL_CALL release() throw() SAL_OVERRIDE;
+    virtual void SAL_CALL release() throw() override;
 
     // XCurrentContext
-    virtual void SAL_CALL handle( const com::sun::star::uno::Reference<
-                                  com::sun::star::task::XInteractionRequest >& Request )
-        throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL handle( const css::uno::Reference< css::task::XInteractionRequest >& Request )
+        throw (css::uno::RuntimeException, std::exception) override;
 
 private:
     oslInterlockedCount m_aRefCount;
-    JavaInteractionHandler(JavaInteractionHandler const&) SAL_DELETED_FUNCTION;
-    JavaInteractionHandler& operator = (JavaInteractionHandler const &) SAL_DELETED_FUNCTION;
+    JavaInteractionHandler(JavaInteractionHandler const&) = delete;
+    JavaInteractionHandler& operator = (JavaInteractionHandler const &) = delete;
     SVT_DLLPRIVATE virtual ~JavaInteractionHandler();
     bool m_bShowErrorsOnce;
     bool m_bJavaDisabled_Handled;

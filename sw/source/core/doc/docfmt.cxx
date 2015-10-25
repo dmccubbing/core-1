@@ -286,7 +286,7 @@ void SwDoc::ResetAttrs( const SwPaM &rRg,
             {
                 nPtPos = nMkPos = rSt.GetIndex();
                 if( bTextAttr )
-                    pTextNd->DontExpandFormat( rSt, true );
+                    pTextNd->DontExpandFormat( rSt );
             }
         }
 
@@ -426,7 +426,7 @@ bool SwDoc::UpdateRsid( const SwPaM &rRg, const sal_Int32 nLen )
     SfxItemSet aSet(GetAttrPool(), RES_CHRATR_RSID, RES_CHRATR_RSID);
     aSet.Put(aRsid);
     bool const bRet(pTextNode->SetAttr(aSet, nStart,
-        rRg.GetPoint()->nContent.GetIndex(), SetAttrMode::DEFAULT));
+        rRg.GetPoint()->nContent.GetIndex()));
 
     if (bRet && GetIDocumentUndoRedo().DoesUndo())
     {
@@ -1820,7 +1820,7 @@ void SwDoc::SetFormatItemByAutoFormat( const SwPaM& rPam, const SfxItemSet& rSet
     }
     whichIds.push_back(0);
     SfxItemSet currentSet(GetAttrPool(), &whichIds[0]);
-    pTNd->GetAttr(currentSet, nEnd, nEnd, false, true);
+    pTNd->GetAttr(currentSet, nEnd, nEnd);
     for (size_t i = 0; whichIds[i]; i += 2)
     {   // yuk - want to explicitly set the pool defaults too :-/
         currentSet.Put(currentSet.Get(whichIds[i]));
@@ -1832,7 +1832,7 @@ void SwDoc::SetFormatItemByAutoFormat( const SwPaM& rPam, const SfxItemSet& rSet
     // here, so insert the old attributes as an empty hint to stop expand
     SwPaM endPam(*pTNd, nEnd);
     endPam.SetMark();
-    getIDocumentContentOperations().InsertItemSet(endPam, currentSet, SetAttrMode::DEFAULT);
+    getIDocumentContentOperations().InsertItemSet(endPam, currentSet);
 
     getIDocumentRedlineAccess().SetRedlineMode_intern( eOld );
 }

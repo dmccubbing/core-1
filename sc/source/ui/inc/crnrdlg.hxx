@@ -36,13 +36,13 @@ public:
                     ScColRowNameRangesDlg( SfxBindings* pB, SfxChildWindow* pCW, vcl::Window* pParent,
                                  ScViewData*    ptrViewData );
                     virtual ~ScColRowNameRangesDlg();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
+    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
 
-    virtual bool    IsRefInputMode() const SAL_OVERRIDE;
-    virtual void    SetActive() SAL_OVERRIDE;
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    IsRefInputMode() const override;
+    virtual void    SetActive() override;
+    virtual bool    Close() override;
 
 private:
     VclPtr<ListBox>         pLbRange;
@@ -81,11 +81,11 @@ private:
     DECL_LINK_TYPED( OkBtnHdl, Button*, void );
     DECL_LINK_TYPED( AddBtnHdl, Button*, void );
     DECL_LINK_TYPED( RemoveBtnHdl, Button*, void );
-    DECL_LINK( Range1SelectHdl, void * );
-    DECL_LINK( Range1DataModifyHdl, void * );
+    DECL_LINK_TYPED( Range1SelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( Range1DataModifyHdl, Edit&, void );
     DECL_LINK_TYPED( ColClickHdl, Button*, void );
     DECL_LINK_TYPED( RowClickHdl, Button*, void );
-    DECL_LINK( Range2DataModifyHdl, void * );
+    DECL_LINK_TYPED( Range2DataModifyHdl, Edit&, void );
     DECL_LINK_TYPED( GetFocusHdl, Control&, void );
     DECL_LINK_TYPED( LoseFocusHdl, Control&, void );
 };

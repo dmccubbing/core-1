@@ -603,7 +603,7 @@ private:
     bool                bVisible            : 1;    // Belongs to the node!
     bool                bForceRepaint       : 1;
 
-                        ParaPortion( const ParaPortion& ) SAL_DELETED_FUNCTION;
+                        ParaPortion( const ParaPortion& ) = delete;
 
 public:
                         ParaPortion( ContentNode* pNode );
@@ -844,7 +844,7 @@ protected:
                         virtual ~EditEngineItemPool();
 public:
 
-    virtual SvStream&   Store( SvStream& rStream ) const SAL_OVERRIDE;
+    virtual SvStream&   Store( SvStream& rStream ) const override;
 };
 
 #endif // INCLUDED_EDITENG_SOURCE_EDITENG_EDITDOC_HXX

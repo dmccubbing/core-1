@@ -44,6 +44,7 @@
 #include <com/sun/star/ucb/XContentProvider.hpp>
 #include <com/sun/star/ucb/XUniversalContentBroker.hpp>
 #include <com/sun/star/util/URLTransformer.hpp>
+#include <com/sun/star/datatransfer/clipboard/XClipboard.hpp>
 
 #include <editeng/fontitem.hxx>
 #include <editeng/flstitem.hxx>
@@ -79,6 +80,7 @@
 #include "../../inc/lib/init.hxx"
 
 #include "lokinteractionhandler.hxx"
+#include <lokclipboard.hxx>
 
 using namespace css;
 using namespace vcl;
@@ -117,6 +119,7 @@ static const ExtensionMap aWriterExtensionMap[] =
     { "pdf",   "writer_pdf_Export" },
     { "txt",   "Text" },
     { "xhtml", "XHTML Writer File" },
+    { "png",   "writer_png_Export" },
     { NULL, NULL }
 };
 
@@ -131,6 +134,7 @@ static const ExtensionMap aCalcExtensionMap[] =
     { "xhtml", "XHTML Calc File" },
     { "xls",   "MS Excel 97" },
     { "xlsx",  "Calc MS Excel 2007 XML" },
+    { "png",   "calc_png_Export" },
     { NULL, NULL }
 };
 
@@ -150,6 +154,7 @@ static const ExtensionMap aImpressExtensionMap[] =
     { "svg",   "impress_svg_Export" },
     { "swf",   "impress_flash_Export" },
     { "xhtml", "XHTML Impress File" },
+    { "png",   "impress_png_Export"},
     { NULL, NULL }
 };
 
@@ -162,6 +167,7 @@ static const ExtensionMap aDrawExtensionMap[] =
     { "svg",   "draw_svg_Export" },
     { "swf",   "draw_flash_Export" },
     { "xhtml", "XHTML Draw File" },
+    { "png",   "draw_png_Export"},
     { NULL, NULL }
 };
 
@@ -243,6 +249,10 @@ static void doc_setTextSelection (LibreOfficeKitDocument* pThis,
 static char* doc_getTextSelection(LibreOfficeKitDocument* pThis,
                                   const char* pMimeType,
                                   char** pUsedMimeType);
+static bool doc_paste(LibreOfficeKitDocument* pThis,
+                      const char* pMimeType,
+                      const char* pData,
+                      size_t nSize);
 static void doc_setGraphicSelection (LibreOfficeKitDocument* pThis,
                                   int nType,
                                   int nX,
@@ -283,6 +293,7 @@ LibLODocument_Impl::LibLODocument_Impl(const uno::Reference <css::lang::XCompone
         m_pDocumentClass->postUnoCommand = doc_postUnoCommand;
         m_pDocumentClass->setTextSelection = doc_setTextSelection;
         m_pDocumentClass->getTextSelection = doc_getTextSelection;
+        m_pDocumentClass->paste = doc_paste;
         m_pDocumentClass->setGraphicSelection = doc_setGraphicSelection;
         m_pDocumentClass->resetSelection = doc_resetSelection;
         m_pDocumentClass->getCommandValues = doc_getCommandValues;
@@ -569,6 +580,14 @@ static void doc_iniUnoCommands ()
         return;
     }
 
+    if (!xContext.is())
+        xContext = comphelper::getProcessComponentContext();
+    if (!xContext.is())
+    {
+        SAL_WARN("lok", "iniUnoCommands: Component context is not available");
+        return;
+    }
+
     SfxSlotPool& rSlotPool = SfxSlotPool::GetSlotPool(pViewFrame);
     uno::Reference<util::XURLTransformer> xParser(util::URLTransformer::create(xContext));
 
@@ -775,6 +794,18 @@ void doc_paintTile (LibreOfficeKitDocument* pThis,
 
     pDoc->paintTile(*pDevice.get(), nCanvasWidth, nCanvasHeight,
                     nTilePosX, nTilePosY, nTileWidth, nTileHeight);
+
+    // Overwrite pBuffer's alpha channel with the separate alpha buffer.
+    for (int nRow = 0; nRow < nCanvasHeight; ++nRow)
+    {
+        for (int nCol = 0; nCol < nCanvasWidth; ++nCol)
+        {
+            const int nOffset = (nCanvasWidth * nRow) + nCol;
+            // VCL's transparent is 0, RGBA's transparent is 0xff.
+            pBuffer[nOffset * 4 +3] = 0xff - aAlpha[nOffset];
+        }
+    }
+
 #else
     SystemGraphicsData aData;
     aData.rCGContext = reinterpret_cast<CGContextRef>(pBuffer);
@@ -784,17 +815,6 @@ void doc_paintTile (LibreOfficeKitDocument* pThis,
     pDoc->paintTile(*pDevice.get(), nCanvasWidth, nCanvasHeight,
                     nTilePosX, nTilePosY, nTileWidth, nTileHeight);
 #endif
-
-    // Overwrite pBuffer's alpha channel with the separate alpha buffer.
-    for (int nRow = 0; nRow < nCanvasHeight; ++nRow)
-    {
-        for (int nCol = 0; nCol < nCanvasWidth; ++nCol)
-        {
-            const int nOffset = (nCanvasHeight * nRow) + nCol;
-            // VCL's transparent is 0, RGBA's transparent is 0xff.
-            pBuffer[nOffset * 4 +3] = 0xff - aAlpha[nOffset];
-        }
-    }
 
     static bool bDebug = getenv("LOK_DEBUG") != 0;
     if (bDebug)
@@ -975,6 +995,37 @@ static char* doc_getTextSelection(LibreOfficeKitDocument* pThis, const char* pMi
     }
 
     return pMemory;
+}
+
+static bool doc_paste(LibreOfficeKitDocument* pThis, const char* pMimeType, const char* pData, size_t nSize)
+{
+    ITiledRenderable* pDoc = getTiledRenderable(pThis);
+    if (!pDoc)
+    {
+        gImpl->maLastExceptionMsg = "Document doesn't support tiled rendering";
+        return false;
+    }
+
+    uno::Reference<datatransfer::XTransferable> xTransferable(new LOKTransferable(pMimeType, pData, nSize));
+    uno::Reference<datatransfer::clipboard::XClipboard> xClipboard(new LOKClipboard());
+    xClipboard->setContents(xTransferable, uno::Reference<datatransfer::clipboard::XClipboardOwner>());
+    vcl::Window* pWindow = pDoc->getWindow();
+    if (!pWindow)
+    {
+        gImpl->maLastExceptionMsg = "Document did not provide a window";
+        return false;
+    }
+
+    pWindow->SetClipboard(xClipboard);
+    OUString aCommand(".uno:Paste");
+    uno::Sequence<beans::PropertyValue> aPropertyValues;
+    if (!comphelper::dispatchCommand(aCommand, aPropertyValues))
+    {
+        gImpl->maLastExceptionMsg = "Failed to dispatch the .uno: command";
+        return false;
+    }
+
+    return true;
 }
 
 static void doc_setGraphicSelection(LibreOfficeKitDocument* pThis, int nType, int nX, int nY)

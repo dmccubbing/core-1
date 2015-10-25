@@ -62,16 +62,16 @@ class SVX_DLLPUBLIC AreaPropertyPanelBase
 {
 public:
 
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     virtual void DataChanged(
-        const DataChangedEvent& rEvent) SAL_OVERRIDE;
+        const DataChangedEvent& rEvent) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     const static sal_Int32 DEFAULT_CENTERX;
     const static sal_Int32 DEFAULT_CENTERY;
@@ -159,10 +159,10 @@ protected:
 
     sfx2::sidebar::SidebarController* mpSidebarController;
 
-    DECL_LINK(SelectFillTypeHdl, ListBox* );
-    DECL_LINK(SelectFillAttrHdl, ListBox* );
-    DECL_LINK(ChangeTrgrTypeHdl_Impl, void*);
-    DECL_LINK(ModifyTransparentHdl_Impl, void*);
+    DECL_LINK_TYPED(SelectFillTypeHdl, ListBox&, void );
+    DECL_LINK_TYPED(SelectFillAttrHdl, ListBox&, void );
+    DECL_LINK_TYPED(ChangeTrgrTypeHdl_Impl, ListBox&, void);
+    DECL_LINK_TYPED(ModifyTransparentHdl_Impl, Edit&, void);
     DECL_LINK_TYPED(ModifyTransSliderHdl, Slider*, void);
 
     // for transparency gradient
@@ -175,10 +175,7 @@ protected:
     void SetTransparency(sal_uInt16 nVal);
 };
 
-
 } } // end of namespace svx::sidebar
-
-
 
 #endif // INCLUDED_SVX_SOURCE_SIDEBAR_AREA_AREAPROPERTYPANEL_HXX
 

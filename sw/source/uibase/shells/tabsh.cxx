@@ -943,9 +943,9 @@ void SwTableShell::Execute(SfxRequest &rReq)
             long nCount=0;
             bool bHorizontal=true;
             bool bProportional = false;
-            SFX_REQUEST_ARG( rReq, pSplit, SfxInt32Item, FN_TABLE_SPLIT_CELLS, false );
-            SFX_REQUEST_ARG( rReq, pHor, SfxBoolItem, FN_PARAM_1, false );
-            SFX_REQUEST_ARG( rReq, pProp, SfxBoolItem, FN_PARAM_2, false );
+            const SfxInt32Item* pSplit = rReq.GetArg<SfxInt32Item>(FN_TABLE_SPLIT_CELLS);
+            const SfxBoolItem* pHor = rReq.GetArg<SfxBoolItem>(FN_PARAM_1);
+            const SfxBoolItem* pProp = rReq.GetArg<SfxBoolItem>(FN_PARAM_2);
             if ( pSplit )
             {
                 nCount = pSplit->GetValue();
@@ -985,7 +985,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
 
         case FN_TABLE_SPLIT_TABLE:
         {
-            SFX_REQUEST_ARG( rReq, pType, SfxUInt16Item, FN_PARAM_1, false );
+            const SfxUInt16Item* pType = rReq.GetArg<SfxUInt16Item>(FN_PARAM_1);
             if( pType )
             {
                 switch( pType->GetValue() )
@@ -1015,7 +1015,7 @@ void SwTableShell::Execute(SfxRequest &rReq)
 
         case FN_TABLE_MERGE_TABLE:
         {
-            bool bPrev = rSh.CanMergeTable( true );
+            bool bPrev = rSh.CanMergeTable();
             bool bNext = rSh.CanMergeTable( false );
 
             if( bPrev && bNext )

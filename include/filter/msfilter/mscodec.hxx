@@ -53,7 +53,7 @@ public:
             The sequence contains the necessary data to initialize
             the codec.
      */
-    bool                InitCodec( const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue >& aData );
+    bool                InitCodec( const css::uno::Sequence< css::beans::NamedValue >& aData );
 
     /** Retrieves the encryption data
 
@@ -61,7 +61,7 @@ public:
             The sequence contains the necessary data to initialize
             the codec.
      */
-    ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue > GetEncryptionData();
+    css::uno::Sequence< css::beans::NamedValue > GetEncryptionData();
 
 
     /** Verifies the validity of the password using the passed key and hash.
@@ -122,12 +122,12 @@ protected:
     sal_Size            mnOffset;       /// Key offset.
 
 private:
-                        MSCodec_Xor95( const MSCodec_Xor95& ) SAL_DELETED_FUNCTION;
-    MSCodec_Xor95&      operator=( const MSCodec_Xor95& ) SAL_DELETED_FUNCTION;
+                        MSCodec_Xor95( const MSCodec_Xor95& ) = delete;
+    MSCodec_Xor95&      operator=( const MSCodec_Xor95& ) = delete;
 
     sal_uInt16          mnKey;          /// Base key from password.
     sal_uInt16          mnHash;         /// Hash value from password.
-    int         mnRotateDistance;
+    int                 mnRotateDistance;
 };
 
 /** Encodes and decodes data from protected MSO XLS 95- documents.
@@ -148,7 +148,7 @@ public:
         @param nBytes
             Size of the passed data block.
     */
-    virtual void                Decode( sal_uInt8* pnData, sal_Size nBytes ) SAL_OVERRIDE;
+    virtual void                Decode( sal_uInt8* pnData, sal_Size nBytes ) override;
 };
 
 /** Encodes and decodes data from protected MSO Word 95- documents.
@@ -169,7 +169,7 @@ public:
         @param nBytes
             Size of the passed data block.
     */
-    virtual void                Decode( sal_uInt8* pnData, sal_Size nBytes ) SAL_OVERRIDE;
+    virtual void                Decode( sal_uInt8* pnData, sal_Size nBytes ) override;
 };
 
 
@@ -193,7 +193,7 @@ public:
             The sequence contains the necessary data to initialize
             the codec.
      */
-    bool                InitCodec( const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue >& aData );
+    bool                InitCodec( const css::uno::Sequence< css::beans::NamedValue >& aData );
 
     /** Retrieves the encryption data
 
@@ -201,7 +201,7 @@ public:
             The sequence contains the necessary data to initialize
             the codec.
      */
-    ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue > GetEncryptionData();
+    css::uno::Sequence< css::beans::NamedValue > GetEncryptionData();
 
 
     /** Initializes the algorithm with the specified password and document ID.
@@ -346,8 +346,8 @@ public:
     void                GetDigestFromSalt( const sal_uInt8 pSaltData[16], sal_uInt8 pDigest[16] );
 
 private:
-                        MSCodec_Std97( const MSCodec_Std97& ) SAL_DELETED_FUNCTION;
-    MSCodec_Std97&      operator=( const MSCodec_Std97& ) SAL_DELETED_FUNCTION;
+                        MSCodec_Std97( const MSCodec_Std97& ) = delete;
+    MSCodec_Std97&      operator=( const MSCodec_Std97& ) = delete;
 
     rtlCipher           m_hCipher;
     rtlDigest           m_hDigest;

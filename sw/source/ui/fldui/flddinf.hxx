@@ -51,25 +51,25 @@ class SwFieldDokInfPage : public SwFieldPage
     OUString     m_sOldCustomFieldName;
 
     DECL_LINK_TYPED(TypeHdl, SvTreeListBox*, void);
-    DECL_LINK(SubTypeHdl, void * = 0);
+    DECL_LINK_TYPED(SubTypeHdl, ListBox&, void);
 
     sal_Int32               FillSelectionLB(sal_uInt16 nSubTypeId);
 
 protected:
-    virtual sal_uInt16      GetGroup() SAL_OVERRIDE;
+    virtual sal_uInt16      GetGroup() override;
 
 public:
                         SwFieldDokInfPage(vcl::Window* pWindow, const SfxItemSet& rSet);
 
                         virtual ~SwFieldDokInfPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage>  Create(vcl::Window* pParent, const SfxItemSet* rAttrSet);
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual void        FillUserData() override;
 };
 
 #endif

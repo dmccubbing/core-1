@@ -52,7 +52,7 @@ namespace svx
 
         /** returns the current value of the property which the provider is responsible for
         */
-        virtual void getCurrentValue( ::com::sun::star::uno::Any& _out_rValue ) const = 0;
+        virtual void getCurrentValue( css::uno::Any& _out_rValue ) const = 0;
 
         virtual ~IPropertyValueProvider();
     };
@@ -75,13 +75,13 @@ namespace svx
         {
         }
 
-        virtual OUString getPropertyName() const SAL_OVERRIDE;
-        virtual void getCurrentValue( ::com::sun::star::uno::Any& _out_rValue ) const SAL_OVERRIDE;
+        virtual OUString getPropertyName() const override;
+        virtual void getCurrentValue( css::uno::Any& _out_rValue ) const override;
 
     protected:
         ::cppu::OWeakObject&    getContext() const { return m_rContext; }
-        PropertyValueProvider(const PropertyValueProvider&) SAL_DELETED_FUNCTION;
-        PropertyValueProvider& operator=(const PropertyValueProvider&) SAL_DELETED_FUNCTION;
+        PropertyValueProvider(const PropertyValueProvider&) = delete;
+        PropertyValueProvider& operator=(const PropertyValueProvider&) = delete;
 
     private:
         ::cppu::OWeakObject&    m_rContext;
@@ -110,8 +110,8 @@ namespace svx
         ~PropertyChangeNotifier();
 
         // listener maintanance
-        void addPropertyChangeListener( const OUString& _rPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& _rxListener );
-        void removePropertyChangeListener( const OUString& _rPropertyName, const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertyChangeListener >& _rxListener );
+        void addPropertyChangeListener( const OUString& _rPropertyName, const css::uno::Reference< css::beans::XPropertyChangeListener >& _rxListener );
+        void removePropertyChangeListener( const OUString& _rPropertyName, const css::uno::Reference< css::beans::XPropertyChangeListener >& _rxListener );
 
         /** registers a IPropertyValueProvider
         */
@@ -129,8 +129,8 @@ namespace svx
         void    disposing();
 
     private:
-        PropertyChangeNotifier(const PropertyChangeNotifier&) SAL_DELETED_FUNCTION;
-        PropertyChangeNotifier& operator=(const PropertyChangeNotifier&) SAL_DELETED_FUNCTION;
+        PropertyChangeNotifier(const PropertyChangeNotifier&) = delete;
+        PropertyChangeNotifier& operator=(const PropertyChangeNotifier&) = delete;
 
         std::unique_ptr< PropertyChangeNotifier_Data >  m_xData;
     };

@@ -51,17 +51,17 @@ class SvxTabulatorTabPage : public SfxTabPage
 
 public:
     virtual ~SvxTabulatorTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rSet );
     static const sal_uInt16* GetRanges() { return pRanges; }
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     void                DisableControls( const sal_uInt16 nFlag );
 
 protected:
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
 private:
     SvxTabulatorTabPage( vcl::Window* pParent, const SfxItemSet& rSet );
@@ -108,18 +108,18 @@ private:
 
     // Handler
     DECL_LINK_TYPED( NewHdl_Impl, Button*, void );
-    DECL_LINK_TYPED(DelHdl_Impl, Button*, void );
-    DECL_LINK_TYPED(DelAllHdl_Impl, Button*, void );
+    DECL_LINK_TYPED( DelHdl_Impl, Button*, void );
+    DECL_LINK_TYPED( DelAllHdl_Impl, Button*, void );
 
     DECL_LINK_TYPED( FillTypeCheckHdl_Impl, Button*, void );
     DECL_LINK_TYPED( TabTypeCheckHdl_Impl, Button*, void );
 
-    DECL_LINK(SelectHdl_Impl, void *);
-    DECL_LINK(ModifyHdl_Impl, void *);
+    DECL_LINK_TYPED( SelectHdl_Impl, ComboBox&, void );
+    DECL_LINK_TYPED( ModifyHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( GetFillCharHdl_Impl, Control&, void );
     DECL_LINK_TYPED( GetDezCharHdl_Impl, Control&, void );
 
-    virtual void            PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void            PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 #endif // INCLUDED_CUI_SOURCE_INC_TABSTPGE_HXX

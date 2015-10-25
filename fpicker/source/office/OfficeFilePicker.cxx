@@ -217,16 +217,15 @@ void SvtFilePicker::prepareExecute()
 }
 
 
-IMPL_LINK( SvtFilePicker, DialogClosedHdl, Dialog*, pDlg )
+IMPL_LINK_TYPED( SvtFilePicker, DialogClosedHdl, Dialog&, rDlg, void )
 {
     if ( m_xDlgClosedListener.is() )
     {
-        sal_Int16 nRet = static_cast< sal_Int16 >( pDlg->GetResult() );
-        ::com::sun::star::ui::dialogs::DialogClosedEvent aEvent( *this, nRet );
+        sal_Int16 nRet = static_cast< sal_Int16 >( rDlg.GetResult() );
+        css::ui::dialogs::DialogClosedEvent aEvent( *this, nRet );
         m_xDlgClosedListener->dialogClosed( aEvent );
         m_xDlgClosedListener.clear();
     }
-    return 0;
 }
 
 
@@ -517,7 +516,7 @@ void SAL_CALL SvtFilePicker::setDialogTitle( const OUString& _rTitle ) throw (Ru
 }
 
 
-void SAL_CALL SvtFilePicker::startExecuteModal( const Reference< ::com::sun::star::ui::dialogs::XDialogClosedListener >& xListener )
+void SAL_CALL SvtFilePicker::startExecuteModal( const Reference< css::ui::dialogs::XDialogClosedListener >& xListener )
     throw (RuntimeException,
            std::exception)
 {
@@ -925,7 +924,7 @@ sal_Bool SAL_CALL SvtFilePicker::setShowState( sal_Bool )
     // else we would have to change the layout
     // of the file dialog dynamically
     // support for set/getShowState is opionally
-    // see com::sun::star::ui::dialogs::XFilePreview
+    // see css::ui::dialogs::XFilePreview
 
         bRet = false;
     }

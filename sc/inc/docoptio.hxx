@@ -46,6 +46,7 @@ class SC_DLLPUBLIC ScDocOptions
     bool       bDoAutoSpell;            ///< auto-spelling
     bool       bLookUpColRowNames;      ///< determine column-/row titles automagically
     bool       bFormulaRegexEnabled;    ///< regular expressions in formulas enabled
+    bool       bWriteCalcConfig;        ///< (subset of) Calc config will be written to user's profile
 public:
                 ScDocOptions();
                 ScDocOptions( const ScDocOptions& rCpy );
@@ -91,6 +92,8 @@ public:
     void    SetFormulaRegexEnabled( bool bVal ) { bFormulaRegexEnabled = bVal; }
     bool    IsFormulaRegexEnabled() const       { return bFormulaRegexEnabled; }
 
+    void    SetWriteCalcConfig( bool bVal ) { bWriteCalcConfig = bVal; }
+    bool    IsWriteCalcConfig() const       { return bWriteCalcConfig; }
 };
 
 inline const ScDocOptions& ScDocOptions::operator=( const ScDocOptions& rCpy )
@@ -110,6 +113,7 @@ inline const ScDocOptions& ScDocOptions::operator=( const ScDocOptions& rCpy )
     bDoAutoSpell        = rCpy.bDoAutoSpell;
     bLookUpColRowNames  = rCpy.bLookUpColRowNames;
     bFormulaRegexEnabled= rCpy.bFormulaRegexEnabled;
+    bWriteCalcConfig    = rCpy.bWriteCalcConfig;
 
     return *this;
 }
@@ -132,6 +136,7 @@ inline bool ScDocOptions::operator==( const ScDocOptions& rOpt ) const
             &&  rOpt.bDoAutoSpell           == bDoAutoSpell
             &&  rOpt.bLookUpColRowNames     == bLookUpColRowNames
             &&  rOpt.bFormulaRegexEnabled   == bFormulaRegexEnabled
+            &&  rOpt.bWriteCalcConfig       == bWriteCalcConfig
             );
 }
 
@@ -151,8 +156,8 @@ public:
                 ScTpCalcItem( const ScTpCalcItem& rItem );
                 virtual ~ScTpCalcItem();
 
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
 
     const ScDocOptions& GetDocOptions() const { return theOptions; }
 

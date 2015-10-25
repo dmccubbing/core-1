@@ -48,12 +48,11 @@ import com.sun.star.uno.UnoRuntime;
 public class _XFormController extends MultiMethodTest {
 
     public static XFormController oObj = null;
-    XWindow otherWind = null;
 
     /**
      * Listener which determines and stores events occurred.
      */
-    protected class MyListener implements XFormControllerListener {
+    protected static class MyListener implements XFormControllerListener {
         public boolean activated = false ;
         public boolean deactivated = false ;
         public void disposing ( EventObject oEvent ) {}

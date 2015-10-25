@@ -26,16 +26,16 @@ class ScDrawLayer;
 
 class ScDrawPage: public FmFormPage
 {
-    ScDrawPage& operator=(const ScDrawPage&) SAL_DELETED_FUNCTION;
+    ScDrawPage& operator=(const ScDrawPage&) = delete;
 
 public:
     explicit ScDrawPage(ScDrawLayer& rNewModel, bool bMasterPage = false);
     virtual ~ScDrawPage();
 
-    virtual ScDrawPage* Clone() const SAL_OVERRIDE;
-    virtual ScDrawPage* Clone(SdrModel* pNewModel) const SAL_OVERRIDE;
+    virtual ScDrawPage* Clone() const override;
+    virtual ScDrawPage* Clone(SdrModel* pNewModel) const override;
 
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface > createUnoPage() SAL_OVERRIDE;
+    virtual ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface > createUnoPage() override;
 
 private:
     ScDrawPage(const ScDrawPage& rSrcPage);

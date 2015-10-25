@@ -93,8 +93,8 @@ class Impl3DMirrorConstructOverlay
     drawinglayer::primitive2d::Primitive2DSequence  maFullOverlay;
 
     // Copy assignment is forbidden and not implemented.
-    Impl3DMirrorConstructOverlay (const Impl3DMirrorConstructOverlay &) SAL_DELETED_FUNCTION;
-    Impl3DMirrorConstructOverlay & operator= (const Impl3DMirrorConstructOverlay &) SAL_DELETED_FUNCTION;
+    Impl3DMirrorConstructOverlay (const Impl3DMirrorConstructOverlay &) = delete;
+    Impl3DMirrorConstructOverlay & operator= (const Impl3DMirrorConstructOverlay &) = delete;
 
 public:
     explicit Impl3DMirrorConstructOverlay(const E3dView& rView);
@@ -674,7 +674,7 @@ void E3dView::ImpChangeSomeAttributesFor3DConversion(SdrObject* pObj)
 
                 // add undo now
                 if( GetModel()->IsUndoEnabled() )
-                    AddUndo(GetModel()->GetSdrUndoFactory().CreateUndoAttrObject(*pObj, false));
+                    AddUndo(GetModel()->GetSdrUndoFactory().CreateUndoAttrObject(*pObj));
             }
 
             pObj->SetMergedItem(SvxColorItem(RGB_Color(COL_GRAY), EE_CHAR_COLOR));
@@ -697,7 +697,7 @@ void E3dView::ImpChangeSomeAttributesFor3DConversion2(SdrObject* pObj)
             && eFillStyle != drawing::FillStyle_NONE)
         {
             if(pObj->GetPage() && GetModel()->IsUndoEnabled() )
-                AddUndo(GetModel()->GetSdrUndoFactory().CreateUndoAttrObject(*pObj, false));
+                AddUndo(GetModel()->GetSdrUndoFactory().CreateUndoAttrObject(*pObj));
             pObj->SetMergedItem(XLineStyleItem(drawing::LineStyle_NONE));
             pObj->SetMergedItem(XLineWidthItem(0L));
         }

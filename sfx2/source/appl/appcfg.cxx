@@ -88,7 +88,7 @@ class SfxEventAsyncer_Impl : public SfxListener
 
 public:
 
-    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void        Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
     explicit SfxEventAsyncer_Impl(const SfxEventHint& rHint);
     virtual ~SfxEventAsyncer_Impl();
     DECL_LINK_TYPED( IdleHdl, Idle*, void );
@@ -480,7 +480,7 @@ bool SfxApplication::GetOptions( SfxItemSet& rSet )
                 break;
 
                 default:
-                    DBG_WARNING( "W1:Wrong ID while getting Options!" );
+                    SAL_INFO( "sfx", "W1:Wrong ID while getting Options!" );
                     break;
             }
 #ifdef DBG_UTIL

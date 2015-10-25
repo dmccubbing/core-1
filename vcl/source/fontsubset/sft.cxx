@@ -643,9 +643,11 @@ static int GetCompoundTTOutline(TrueTypeFont *ttf, sal_uInt32 glyphID, ControlPo
             F16Dot16 t;
             ControlPoint cp;
             cp.flags = nextComponent[i].flags;
-            t = fixedMulDiv(a, nextComponent[i].x << 16, m) + fixedMulDiv(c, nextComponent[i].y << 16, m) + (e << 16);
+            const sal_uInt16 x = nextComponent[i].x;
+            const sal_uInt16 y = nextComponent[i].y;
+            t = fixedMulDiv(a, x << 16, m) + fixedMulDiv(c, y << 16, m) + (e << 16);
             cp.x = (sal_Int16)(fixedMul(t, m) >> 16);
-            t = fixedMulDiv(b, nextComponent[i].x << 16, n) + fixedMulDiv(d, nextComponent[i].y << 16, n) + (f << 16);
+            t = fixedMulDiv(b, x << 16, n) + fixedMulDiv(d, y << 16, n) + (f << 16);
             cp.y = (sal_Int16)(fixedMul(t, n) >> 16);
 
             myPoints.push_back( cp );
@@ -2341,7 +2343,7 @@ int  CreateT42FromTTGlyphs(TrueTypeFont  *ttf,
     fprintf(outf, "    0 1 255 {Encoding exch /.notdef put} for\n");
 
     for (i = 1; i<nGlyphs; i++) {
-        fprintf(outf, "Encoding %d /glyph%d put\n", encoding[i], gID[i]);
+        fprintf(outf, "Encoding %d /glyph%u put\n", encoding[i], gID[i]);
     }
     fprintf(outf, "/XUID [103 0 1 16#%08X %d 16#%08X 16#%08X] def\n", (unsigned int)rtl_crc32(0, ttf->ptr, ttf->fsize), (unsigned int)nGlyphs, (unsigned int)rtl_crc32(0, glyphArray, nGlyphs * 2), (unsigned int)rtl_crc32(0, encoding, nGlyphs));
 
@@ -2413,7 +2415,7 @@ int MapString(TrueTypeFont *ttf, sal_uInt16 *str, int nchars, sal_uInt16 *glyphA
     return nchars;
 }
 
-#if defined(WNT) || defined(MACOSX)
+#if defined(WNT) || defined(MACOSX) || defined(IOS)
 sal_uInt16 MapChar(TrueTypeFont *ttf, sal_uInt16 ch, bool bvertical)
 {
     switch (ttf->cmapType) {
@@ -2631,8 +2633,10 @@ GlyphData *GetTTRawGlyphData(TrueTypeFont *ttf, sal_uInt32 glyphID)
 
     if (length > 0) {
         const sal_uInt8* srcptr = glyf + ttf->goffsets[glyphID];
-        d->ptr = static_cast<sal_uInt8*>(malloc((length + 1) & ~1)); assert(d->ptr != 0);
-        memcpy( d->ptr, srcptr, length );
+        const size_t nChunkLen = ((length + 1) & ~1);
+        d->ptr = static_cast<sal_uInt8*>(malloc(nChunkLen)); assert(d->ptr != 0);
+        memcpy(d->ptr, srcptr, length);
+        memset(d->ptr + length, 0, nChunkLen - length);
         d->compflag = (GetInt16( srcptr, 0, 1 ) < 0);
     } else {
         d->ptr = 0;

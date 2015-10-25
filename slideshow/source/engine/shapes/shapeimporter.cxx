@@ -153,20 +153,20 @@ public:
                   double                                     nPrio );
 
     // Shape:
-    virtual uno::Reference<drawing::XShape> getXShape() const SAL_OVERRIDE;
+    virtual uno::Reference<drawing::XShape> getXShape() const override;
     virtual void addViewLayer( ViewLayerSharedPtr const& pNewLayer,
-                               bool                      bRedrawLayer ) SAL_OVERRIDE;
-    virtual bool removeViewLayer( ViewLayerSharedPtr const& pNewLayer ) SAL_OVERRIDE;
-    virtual bool clearAllViewLayers() SAL_OVERRIDE;
-    virtual bool update() const SAL_OVERRIDE;
-    virtual bool render() const SAL_OVERRIDE;
-    virtual bool isContentChanged() const SAL_OVERRIDE;
-    virtual basegfx::B2DRectangle getBounds() const SAL_OVERRIDE;
-    virtual basegfx::B2DRectangle getDomBounds() const SAL_OVERRIDE;
-    virtual basegfx::B2DRectangle getUpdateArea() const SAL_OVERRIDE;
-    virtual bool isVisible() const SAL_OVERRIDE;
-    virtual double getPriority() const SAL_OVERRIDE;
-    virtual bool isBackgroundDetached() const SAL_OVERRIDE;
+                               bool                      bRedrawLayer ) override;
+    virtual bool removeViewLayer( ViewLayerSharedPtr const& pNewLayer ) override;
+    virtual bool clearAllViewLayers() override;
+    virtual bool update() const override;
+    virtual bool render() const override;
+    virtual bool isContentChanged() const override;
+    virtual basegfx::B2DRectangle getBounds() const override;
+    virtual basegfx::B2DRectangle getDomBounds() const override;
+    virtual basegfx::B2DRectangle getUpdateArea() const override;
+    virtual bool isVisible() const override;
+    virtual double getPriority() const override;
+    virtual bool isBackgroundDetached() const override;
 
 private:
     ShapeSharedPtr const                  mpGroupShape;
@@ -490,12 +490,10 @@ void ShapeImporter::importPolygons(uno::Reference<beans::XPropertySet> const& xP
         aPoint.setY((*pInnerSequence).Y);
         aPoly.append( aPoint );
     }
-    UnoViewVector::const_iterator aIter=(mrContext.mrViewContainer).begin();
-    UnoViewVector::const_iterator aEnd=(mrContext.mrViewContainer).end();
-    while(aIter != aEnd)
+    for( const auto& pView : mrContext.mrViewContainer )
     {
         ::cppcanvas::PolyPolygonSharedPtr pPolyPoly(
-            ::cppcanvas::BaseGfxFactory::createPolyPolygon( (*aIter)->getCanvas(),
+            ::cppcanvas::BaseGfxFactory::createPolyPolygon( pView->getCanvas(),
                                                             aPoly ) );
         if( pPolyPoly )
         {
@@ -504,7 +502,6 @@ void ShapeImporter::importPolygons(uno::Reference<beans::XPropertySet> const& xP
                 pPolyPoly->draw();
                 maPolygons.push_back(pPolyPoly);
         }
-        ++aIter;
     }
 }
 

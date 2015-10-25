@@ -103,10 +103,10 @@ class SvxSwPosSizeTabPage : public SfxTabPage
     DECL_LINK_TYPED(RangeModifyHdl, Control&, void);
     DECL_LINK_TYPED(RangeModifyClickHdl, Button*, void);
     DECL_LINK_TYPED(AnchorTypeHdl, Button*, void);
-    DECL_LINK( PosHdl, ListBox * );
-    DECL_LINK( RelHdl, ListBox * );
+    DECL_LINK_TYPED( PosHdl, ListBox&, void );
+    DECL_LINK_TYPED( RelHdl, ListBox&, void );
     DECL_LINK_TYPED(MirrorHdl, Button*, void);
-    DECL_LINK( ModifyHdl, Edit * );
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
     DECL_LINK_TYPED(ProtectHdl, Button*, void);
 
     void            InitPos(short nAnchorType, sal_uInt16 nH, sal_uInt16 nHRel,
@@ -127,15 +127,15 @@ class SvxSwPosSizeTabPage : public SfxTabPage
 public:
     SvxSwPosSizeTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxSwPosSizeTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16*     GetRanges();
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void    EnableAnchorTypes(sal_uInt16 nAnchorEnable);
 

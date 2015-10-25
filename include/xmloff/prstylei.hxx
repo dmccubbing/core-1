@@ -44,9 +44,9 @@ class XMLOFF_DLLPUBLIC XMLPropStyleContext : public SvXMLStyleContext
 private:
     const OUString msIsPhysical;
     const OUString msFollowStyle;
-    ::std::vector< XMLPropertyState > maProperties;
-    ::com::sun::star::uno::Reference < ::com::sun::star::style::XStyle > mxStyle;
-    SvXMLImportContextRef               mxStyles;
+    ::std::vector< XMLPropertyState >          maProperties;
+    css::uno::Reference < css::style::XStyle > mxStyle;
+    SvXMLImportContextRef                      mxStyles;
 
     //UUUU
     static OldFillStyleDefinitionSet maStandardSet;
@@ -54,8 +54,8 @@ private:
     static OldFillStyleDefinitionSet maFooterSet;
     static OldFillStyleDefinitionSet maParaSet;
 
-    XMLPropStyleContext(XMLPropStyleContext &) SAL_DELETED_FUNCTION;
-    void operator =(XMLPropStyleContext &) SAL_DELETED_FUNCTION;
+    XMLPropStyleContext(XMLPropStyleContext &) = delete;
+    void operator =(XMLPropStyleContext &) = delete;
 
 protected:
 
@@ -85,15 +85,14 @@ protected:
 
     virtual void SetAttribute( sal_uInt16 nPrefixKey,
                                const OUString& rLocalName,
-                               const OUString& rValue ) SAL_OVERRIDE;
+                               const OUString& rValue ) override;
     SvXMLStylesContext *GetStyles() { return static_cast<SvXMLStylesContext *>(&mxStyles); }
     ::std::vector< XMLPropertyState > & GetProperties() { return maProperties; }
 
     // Override this method to create a new style. It's called by
     // CreateInsert to create a style if a style with the requested family and
     // name couldn't be found.
-    virtual ::com::sun::star::uno::Reference <
-        ::com::sun::star::style::XStyle > Create();
+    virtual css::uno::Reference< css::style::XStyle > Create();
 
 public:
 
@@ -101,7 +100,7 @@ public:
 
     XMLPropStyleContext( SvXMLImport& rImport, sal_uInt16 nPrfx,
             const OUString& rLName,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList,
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList,
             SvXMLStylesContext& rStyles, sal_uInt16 nFamily = 0,
             bool bDefaultStyle=false );
     virtual ~XMLPropStyleContext();
@@ -109,26 +108,23 @@ public:
     virtual SvXMLImportContext *CreateChildContext(
             sal_uInt16 nPrefix,
             const OUString& rLocalName,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+            const css::uno::Reference< css::xml::sax::XAttributeList > & xAttrList ) override;
 
     virtual void FillPropertySet(
-            const ::com::sun::star::uno::Reference<
-                ::com::sun::star::beans::XPropertySet > & rPropSet );
+            const css::uno::Reference< css::beans::XPropertySet > & rPropSet );
 
     const SvXMLStylesContext *GetStyles() const { return static_cast<const SvXMLStylesContext *>(&mxStyles); }
     const ::std::vector< XMLPropertyState > & GetProperties() const { return maProperties; }
 
-    const ::com::sun::star::uno::Reference <
-                ::com::sun::star::style::XStyle >&
+    const css::uno::Reference< css::style::XStyle >&
                GetStyle() const { return mxStyle; }
     void SetStyle(
-            const ::com::sun::star::uno::Reference<
-                ::com::sun::star::style::XStyle >& xStl) { mxStyle = xStl; }
+            const css::uno::Reference< css::style::XStyle >& xStl) { mxStyle = xStl; }
 
-    virtual void SetDefaults() SAL_OVERRIDE;
+    virtual void SetDefaults() override;
 
-    virtual void CreateAndInsert( bool bOverwrite ) SAL_OVERRIDE;
-    virtual void Finish( bool bOverwrite ) SAL_OVERRIDE;
+    virtual void CreateAndInsert( bool bOverwrite ) override;
+    virtual void Finish( bool bOverwrite ) override;
 };
 
 #endif

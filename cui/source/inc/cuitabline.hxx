@@ -54,10 +54,10 @@ private:
     sal_Int32           nPosLineEndLb;
     bool            mbAreaTP;
 
-    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 
 protected:
-    virtual short       Ok() SAL_OVERRIDE;
+    virtual short       Ok() override;
     DECL_LINK_TYPED( CancelHdlImpl, Button*, void );
     void                SavePalettes();
 
@@ -173,21 +173,27 @@ private:
     // handler for gallery popup menu button + size
     DECL_LINK_TYPED( GraphicHdl_Impl, MenuButton *, void );
     DECL_LINK_TYPED( MenuCreateHdl_Impl, MenuButton *, void );
-    DECL_LINK( SizeHdl_Impl, MetricField * );
+    DECL_LINK_TYPED( SizeHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( RatioHdl_Impl, Button*, void );
 
-    DECL_LINK( ClickInvisibleHdl_Impl, void * );
-    DECL_LINK( ChangeStartHdl_Impl, void * );
+    DECL_LINK_TYPED( ClickInvisibleHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( ChangeStartClickHdl_Impl, Button*, void );
-    DECL_LINK( ChangeEndHdl_Impl, void * );
+    DECL_LINK_TYPED( ChangeStartListBoxHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ChangeStartModifyHdl_Impl, Edit&, void );
+    void ChangeStartHdl_Impl(void*);
+    DECL_LINK_TYPED( ChangeEndListBoxHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ChangeEndModifyHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( ChangeEndClickHdl_Impl, Button*, void );
-    DECL_LINK( ChangePreviewHdl_Impl, void * );
-    DECL_LINK( ChangeTransparentHdl_Impl, void * );
+    void ChangeEndHdl_Impl(void*);
+    DECL_LINK_TYPED( ChangePreviewListBoxHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ChangePreviewModifyHdl_Impl, Edit&, void );
+    void ChangePreviewHdl_Impl(void*);
+    DECL_LINK_TYPED( ChangeTransparentHdl_Impl, Edit&, void );
 
-    DECL_LINK( ChangeEdgeStyleHdl_Impl, void * );
+    DECL_LINK_TYPED( ChangeEdgeStyleHdl_Impl, ListBox&, void );
 
-     // LineCaps
-     DECL_LINK ( ChangeCapStyleHdl_Impl, void * );
+    // LineCaps
+    DECL_LINK_TYPED( ChangeCapStyleHdl_Impl, ListBox&, void );
 
     bool FillXLSet_Impl();
 
@@ -200,22 +206,22 @@ public:
 
     SvxLineTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~SvxLineTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() { return pLineRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet* ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
-    virtual void FillUserData() SAL_OVERRIDE;
+    virtual void FillUserData() override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetDashList( XDashListRef pDshLst ) { m_pDashList = pDshLst; }
@@ -231,8 +237,8 @@ public:
     void    SetDashChgd( ChangeType* pIn ) { m_pnDashListState = pIn; }
     void    SetColorChgd( ChangeType* pIn ) { m_pnColorListState = pIn; }
 
-    virtual void PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void PageCreated(const SfxAllItemSet& aSet) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 };
 
 /*************************************************************************/
@@ -285,30 +291,32 @@ private:
     DECL_LINK_TYPED( ClickAddHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickModifyHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
-    DECL_LINK( SelectLinestyleHdl_Impl, void * );
-    DECL_LINK( ChangePreviewHdl_Impl, void * );
-    DECL_LINK( ChangeNumber1Hdl_Impl, void * );
-    DECL_LINK( ChangeNumber2Hdl_Impl, void * );
+    DECL_LINK_TYPED( SelectLinestyleListBoxHdl_Impl, ListBox&, void );
+    void SelectLinestyleHdl_Impl(ListBox*);
+    DECL_LINK_TYPED( ChangePreviewHdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( ChangeNumber1Hdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( ChangeNumber2Hdl_Impl, Edit&, void );
     DECL_LINK_TYPED( ClickLoadHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickSaveHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ChangeMetricHdl_Impl, Button*, void );
-    DECL_LINK( SelectTypeHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectTypeListBoxHdl_Impl, ListBox&, void );
+    void SelectTypeHdl_Impl(ListBox*);
 
     void CheckChanges_Impl();
 
 public:
     SvxLineDefTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxLineDefTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void    SetDashList( XDashListRef pDshLst ) { pDashList = pDshLst; }
     void    SetObjSelected( bool bHasObj ) { bObjSelected = bHasObj; }
@@ -319,7 +327,7 @@ public:
 
     void    SetDashChgd( ChangeType* pIn ) { pnDashListState = pIn; }
 
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 };
 
 /*************************************************************************/
@@ -361,7 +369,7 @@ private:
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickLoadHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickSaveHdl_Impl, Button*, void );
-    DECL_LINK( SelectLineEndHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectLineEndHdl_Impl, ListBox&, void );
     long ChangePreviewHdl_Impl( void* p );
 
     void CheckChanges_Impl();
@@ -369,16 +377,16 @@ private:
 public:
     SvxLineEndDefTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~SvxLineEndDefTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void    SetLineEndList( XLineEndListRef pInList ) { pLineEndList = pInList; }
     void    SetPolyObj( const SdrObject* pObj ) { pPolyObj = pObj; }
@@ -390,8 +398,8 @@ public:
 
     void    SetLineEndChgd( ChangeType* pIn ) { pnLineEndListState = pIn; }
 
-    virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual void Resize() SAL_OVERRIDE;
+    virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual void Resize() override;
 };
 
 #endif // INCLUDED_CUI_SOURCE_INC_CUITABLINE_HXX

@@ -100,7 +100,7 @@ namespace dbaui
             if ( rFeatures.has( nItemId ) )
             {
                 get(*setting->ppControl, setting->sControlId);
-                (*setting->ppControl)->SetClickHdl( getControlModifiedClickLink() );
+                (*setting->ppControl)->SetClickHdl( LINK(this, OGenericAdministrationPage, OnControlModifiedClick) );
                 (*setting->ppControl)->Show();
 
                 // check whether this must be a tristate check box
@@ -120,7 +120,7 @@ namespace dbaui
             get(m_pBooleanComparisonModeLabel, "comparisonft");
             get(m_pBooleanComparisonMode, "comparison");
             m_pBooleanComparisonMode->SetDropDownLineCount( 4 );
-            m_pBooleanComparisonMode->SetSelectHdl( getControlModifiedLink() );
+            m_pBooleanComparisonMode->SetSelectHdl( LINK(this, SpecialSettingsPage, BooleanComparisonSelectHdl) );
             m_pBooleanComparisonModeLabel->Show();
             m_pBooleanComparisonMode->Show();
         }
@@ -129,11 +129,16 @@ namespace dbaui
         {
             get(m_pMaxRowScanLabel, "rowsft");
             get(m_pMaxRowScan, "rows");
-            m_pMaxRowScan->SetModifyHdl(getControlModifiedLink());
+            m_pMaxRowScan->SetModifyHdl(LINK(this, OGenericAdministrationPage, OnControlEditModifyHdl));
             m_pMaxRowScan->SetUseThousandSep(false);
             m_pMaxRowScanLabel->Show();
             m_pMaxRowScan->Show();
         }
+    }
+
+    IMPL_LINK_TYPED(SpecialSettingsPage, BooleanComparisonSelectHdl, ListBox&, rControl, void)
+    {
+        callModifiedHdl(&rControl);
     }
 
     SpecialSettingsPage::~SpecialSettingsPage()
@@ -252,7 +257,7 @@ namespace dbaui
             ::boost::optional< bool > aValue(false);
             aValue.reset();
 
-            SFX_ITEMSET_GET( _rSet, pItem, SfxPoolItem, setting->nItemId, true );
+            const SfxPoolItem* pItem = _rSet.GetItem<SfxPoolItem>(setting->nItemId);
             if (const SfxBoolItem *pBoolItem = dynamic_cast<const SfxBoolItem*>( pItem) )
             {
                 aValue.reset( pBoolItem->GetValue() );
@@ -280,13 +285,13 @@ namespace dbaui
         // the non-boolean items
         if ( m_bHasBooleanComparisonMode )
         {
-            SFX_ITEMSET_GET( _rSet, pBooleanComparison, SfxInt32Item, DSID_BOOLEANCOMPARISON, true );
+            const SfxInt32Item* pBooleanComparison = _rSet.GetItem<SfxInt32Item>(DSID_BOOLEANCOMPARISON);
             m_pBooleanComparisonMode->SelectEntryPos( static_cast< sal_uInt16 >( pBooleanComparison->GetValue() ) );
         }
 
         if ( m_bHasMaxRowScan )
         {
-            SFX_ITEMSET_GET(_rSet, pMaxRowScan, SfxInt32Item, DSID_MAX_ROW_SCAN, true);
+            const SfxInt32Item* pMaxRowScan = _rSet.GetItem<SfxInt32Item>(DSID_MAX_ROW_SCAN);
             m_pMaxRowScan->SetValue(pMaxRowScan->GetValue());
         }
 
@@ -336,9 +341,9 @@ namespace dbaui
         get(m_pAutoRetrievingLabel, "queryft");
         get(m_pAutoRetrieving, "query");
 
-        m_pAutoRetrievingEnabled->SetClickHdl( getControlModifiedClickLink() );
-        m_pAutoIncrement->SetModifyHdl( getControlModifiedLink() );
-        m_pAutoRetrieving->SetModifyHdl( getControlModifiedLink() );
+        m_pAutoRetrievingEnabled->SetClickHdl( LINK(this, OGenericAdministrationPage, OnControlModifiedClick) );
+        m_pAutoIncrement->SetModifyHdl( LINK(this, OGenericAdministrationPage, OnControlEditModifyHdl) );
+        m_pAutoRetrieving->SetModifyHdl( LINK(this, OGenericAdministrationPage, OnControlEditModifyHdl) );
 
         m_aControlDependencies.enableOnCheckMark( *m_pAutoRetrievingEnabled,
             *m_pAutoIncrementLabel, *m_pAutoIncrement, *m_pAutoRetrievingLabel, *m_pAutoRetrieving );
@@ -380,9 +385,9 @@ namespace dbaui
         getFlags(_rSet, bValid, bReadonly);
 
         // collect the items
-        SFX_ITEMSET_GET(_rSet, pAutoIncrementItem, SfxStringItem, DSID_AUTOINCREMENTVALUE, true);
-        SFX_ITEMSET_GET(_rSet, pAutoRetrieveValueItem, SfxStringItem, DSID_AUTORETRIEVEVALUE, true);
-        SFX_ITEMSET_GET(_rSet, pAutoRetrieveEnabledItem, SfxBoolItem, DSID_AUTORETRIEVEENABLED, true);
+        const SfxStringItem* pAutoIncrementItem = _rSet.GetItem<SfxStringItem>(DSID_AUTOINCREMENTVALUE);
+        const SfxStringItem* pAutoRetrieveValueItem = _rSet.GetItem<SfxStringItem>(DSID_AUTORETRIEVEVALUE);
+        const SfxBoolItem* pAutoRetrieveEnabledItem = _rSet.GetItem<SfxBoolItem>(DSID_AUTORETRIEVEENABLED);
 
         // forward the values to the controls
         if (bValid)

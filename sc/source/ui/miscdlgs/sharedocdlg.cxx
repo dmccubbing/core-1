@@ -43,7 +43,7 @@ public:
     {
         m_sWidestAccessString = getWidestTime(*ScGlobal::pLocaleData);
     }
-    virtual void Resize() SAL_OVERRIDE
+    virtual void Resize() override
     {
         SvSimpleTable::Resize();
         if (isInitialLayout(this))
@@ -186,20 +186,20 @@ void ScShareDocumentDlg::UpdateView()
                         aString += "\t";
                         aString += formatTime(aDateTime, *ScGlobal::pLocaleData);
 
-                        m_pLbUsers->InsertEntry( aString, NULL );
+                        m_pLbUsers->InsertEntry( aString );
                     }
                 }
             }
             else
             {
-                m_pLbUsers->InsertEntry( m_aStrNoUserData, NULL );
+                m_pLbUsers->InsertEntry( m_aStrNoUserData );
             }
         }
         catch ( uno::Exception& )
         {
             OSL_FAIL( "ScShareDocumentDlg::UpdateView(): caught exception\n" );
             m_pLbUsers->Clear();
-            m_pLbUsers->InsertEntry( m_aStrNoUserData, NULL );
+            m_pLbUsers->InsertEntry( m_aStrNoUserData );
         }
     }
     else
@@ -239,7 +239,7 @@ void ScShareDocumentDlg::UpdateView()
         aString += " ";
         aString += ScGlobal::pLocaleData->getTime( aDateTime, false );
 
-        m_pLbUsers->InsertEntry( aString, NULL );
+        m_pLbUsers->InsertEntry( aString );
     }
 }
 

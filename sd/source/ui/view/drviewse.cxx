@@ -260,7 +260,7 @@ void DrawViewShell::FuPermanent(SfxRequest& rReq)
 
         case SID_FM_CREATE_FIELDCONTROL:
         {
-            SFX_REQUEST_ARG( rReq, pDescriptorItem, SfxUnoAnyItem, SID_FM_DATACCESS_DESCRIPTOR, false );
+            const SfxUnoAnyItem* pDescriptorItem = rReq.GetArg<SfxUnoAnyItem>(SID_FM_DATACCESS_DESCRIPTOR);
             DBG_ASSERT( pDescriptorItem, "DrawViewShell::FuPermanent(SID_FM_CREATE_FIELDCONTROL): invalid request args!" );
 
             if(pDescriptorItem)
@@ -638,7 +638,7 @@ void DrawViewShell::FuDeleteSelectedObjects()
     bool bConsumed = false;
 
     //if any placeholders are selected
-    if (mpDrawView->IsPresObjSelected(false, true, false))
+    if (mpDrawView->IsPresObjSelected(false))
     {
         //If there are placeholders in the list which can be toggled
         //off in edit->master->master elements then do that here,
@@ -912,7 +912,7 @@ void DrawViewShell::FuSupport(SfxRequest& rReq)
 
             if( pReqArgs )
             {
-                SFX_REQUEST_ARG( rReq, pIsActive, SfxUInt32Item, SID_CLIPBOARD_FORMAT_ITEMS, false );
+                const SfxUInt32Item* pIsActive = rReq.GetArg<SfxUInt32Item>(SID_CLIPBOARD_FORMAT_ITEMS);
                 nFormat = static_cast<SotClipboardFormatId>(pIsActive->GetValue());
             }
 
@@ -993,7 +993,7 @@ void DrawViewShell::FuSupport(SfxRequest& rReq)
 
             if ( pReqArgs )
             {
-                SFX_REQUEST_ARG (rReq, pIsActive, SfxBoolItem, SID_MASTERPAGE, false);
+                const SfxBoolItem* pIsActive = rReq.GetArg<SfxBoolItem>(SID_MASTERPAGE);
                 mbIsLayerModeActive = pIsActive->GetValue ();
             }
 
@@ -1115,7 +1115,7 @@ void DrawViewShell::FuSupport(SfxRequest& rReq)
 
             if ( pReqArgs )
             {
-                SFX_REQUEST_ARG (rReq, pIsActive, SfxBoolItem, SID_RULER, false);
+                const SfxBoolItem* pIsActive = rReq.GetArg<SfxBoolItem>(SID_RULER);
                 SetRuler (pIsActive->GetValue ());
             }
             else SetRuler (!HasRuler());

@@ -2970,7 +2970,7 @@ void DocxAttributeOutput::TableCellProperties( ww8::WW8TableNodeInfoInner::Point
                 FSEND );
     }
 
-    if (const SfxGrabBagItem* pItem = sw::util::HasItem<SfxGrabBagItem>(pTableBox->GetFrameFormat()->GetAttrSet(), RES_FRMATR_GRABBAG))
+    if (const SfxGrabBagItem* pItem = pTableBox->GetFrameFormat()->GetAttrSet().GetItem<SfxGrabBagItem>(RES_FRMATR_GRABBAG))
     {
         const std::map<OUString, uno::Any>& rGrabBag = pItem->GetGrabBag();
         std::map<OUString, uno::Any>::const_iterator it = rGrabBag.find("CellCnfStyle");
@@ -3081,7 +3081,7 @@ void DocxAttributeOutput::StartTableRow( ww8::WW8TableNodeInfoInner::Pointer_t p
 
     const SwTableBox *pTableBox = pTableTextNodeInfoInner->getTableBox();
     const SwTableLine* pTableLine = pTableBox->GetUpper();
-    if (const SfxGrabBagItem* pItem = sw::util::HasItem<SfxGrabBagItem>(pTableLine->GetFrameFormat()->GetAttrSet(), RES_FRMATR_GRABBAG))
+    if (const SfxGrabBagItem* pItem = pTableLine->GetFrameFormat()->GetAttrSet().GetItem<SfxGrabBagItem>(RES_FRMATR_GRABBAG))
     {
         const std::map<OUString, uno::Any>& rGrabBag = pItem->GetGrabBag();
         std::map<OUString, uno::Any>::const_iterator it = rGrabBag.find("RowCnfStyle");
@@ -3198,7 +3198,6 @@ void DocxAttributeOutput::TableDefinition( ww8::WW8TableNodeInfoInner::Pointer_t
 
     long nPageSize = 0;
     const char* widthType = "dxa";
-    bool bRelBoxSize = false;
 
     // If actual width of table is relative it should export is as "pct".`
     const SwTable *pTable = pTableTextNodeInfoInner->getTable();
@@ -3227,6 +3226,7 @@ void DocxAttributeOutput::TableDefinition( ww8::WW8TableNodeInfoInner::Pointer_t
     }
     else
     {
+        bool bRelBoxSize = false;
         // Create the SwWriteTable instance to use col spans (and maybe other infos)
         GetTablePageSize( pTableTextNodeInfoInner.get(), nPageSize, bRelBoxSize );
         if(nPageSize == 0)
@@ -3241,7 +3241,7 @@ void DocxAttributeOutput::TableDefinition( ww8::WW8TableNodeInfoInner::Pointer_t
 
     // Look for the table style property in the table grab bag
     std::map<OUString, com::sun::star::uno::Any> aGrabBag =
-            sw::util::HasItem<SfxGrabBagItem>( pTableFormat->GetAttrSet(), RES_FRMATR_GRABBAG )->GetGrabBag();
+            pTableFormat->GetAttrSet().GetItem<SfxGrabBagItem>(RES_FRMATR_GRABBAG)->GetGrabBag();
 
     // We should clear the TableStyle map. In case of Table inside multiple tables it contains the
     // table border style of the previous table.
@@ -3463,12 +3463,12 @@ void DocxAttributeOutput::TableBackgrounds( ww8::WW8TableNodeInfoInner::Pointer_
     const SwTableBox *pTableBox = pTableTextNodeInfoInner->getTableBox( );
     const SwFrameFormat *pFormat = pTableBox->GetFrameFormat( );
 
-    const SvxBrushItem *aColorProp = sw::util::HasItem<SvxBrushItem>( pFormat->GetAttrSet(), RES_BACKGROUND );
-    Color aColor = aColorProp ? aColorProp->GetColor() : COL_AUTO;
+    const SvxBrushItem *pColorProp = pFormat->GetAttrSet().GetItem<SvxBrushItem>(RES_BACKGROUND);
+    Color aColor = pColorProp ? pColorProp->GetColor() : COL_AUTO;
     OString sColor = msfilter::util::ConvertColor( aColor );
 
     std::map<OUString, com::sun::star::uno::Any> aGrabBag =
-            sw::util::HasItem<SfxGrabBagItem>( pFormat->GetAttrSet(), RES_FRMATR_GRABBAG )->GetGrabBag();
+            pFormat->GetAttrSet().GetItem<SfxGrabBagItem>(RES_FRMATR_GRABBAG)->GetGrabBag();
 
     OString sOriginalColor;
     std::map<OUString, com::sun::star::uno::Any>::iterator aGrabBagElement = aGrabBag.find("originalColor");
@@ -5760,6 +5760,27 @@ void DocxAttributeOutput::SectionType( sal_uInt8 nBreakCode )
         m_pSerializer->singleElementNS( XML_w, XML_type,
                 FSNS( XML_w, XML_val ), pType,
                 FSEND );
+}
+
+void DocxAttributeOutput::TextVerticalAdjustment( const drawing::TextVerticalAdjust nVA )
+{
+    switch( nVA )
+    {
+        case drawing::TextVerticalAdjust_CENTER:
+            m_pSerializer->singleElementNS( XML_w, XML_vAlign,
+                FSNS( XML_w, XML_val ), "center", FSEND );
+            break;
+        case drawing::TextVerticalAdjust_BOTTOM:
+            m_pSerializer->singleElementNS( XML_w, XML_vAlign,
+                FSNS( XML_w, XML_val ), "bottom", FSEND );
+            break;
+        case drawing::TextVerticalAdjust_BLOCK:  //justify
+            m_pSerializer->singleElementNS( XML_w, XML_vAlign,
+                FSNS( XML_w, XML_val ), "both", FSEND );
+            break;
+        default:
+            break;
+    }
 }
 
 void DocxAttributeOutput::StartFont( const OUString& rFamilyName ) const

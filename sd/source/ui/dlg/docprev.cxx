@@ -203,8 +203,7 @@ bool SdDocPreviewWin::Notify( NotifyEvent& rNEvt )
         {
             if( rNEvt.GetWindow() == this )
             {
-                if(aClickHdl.IsSet())
-                    aClickHdl.Call(*this);
+                aClickHdl.Call(*this);
             }
         }
     }
@@ -275,7 +274,7 @@ void SdDocPreviewWin::updateViewSettings()
 
         // Use new StandardCheckVisisbilityRedirector
         StandardCheckVisisbilityRedirector aRedirector;
-        const Rectangle aRedrawRectangle = Rectangle( Point(), aNewSize );
+        const Rectangle aRedrawRectangle( Point(), aNewSize );
         vcl::Region aRedrawRegion(aRedrawRectangle);
         pView->SdrPaintView::CompleteRedraw(pVDev,aRedrawRegion,&aRedirector);
 

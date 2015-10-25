@@ -38,11 +38,11 @@ public:
     static VclPtr<SfxTabPage> Create(vcl::Window *pParent, const SfxItemSet *rSet);
     static const sal_uInt16* GetRanges() { return aPageRg; }
 
-    virtual bool FillItemSet(SfxItemSet *rSet) SAL_OVERRIDE;
-    virtual void Reset(const SfxItemSet *rSet) SAL_OVERRIDE;
+    virtual bool FillItemSet(SfxItemSet *rSet) override;
+    virtual void Reset(const SfxItemSet *rSet) override;
 
     virtual ~SwFootNotePage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 private:
 
     VclPtr<RadioButton>    m_pMaxHeightPageBtn;
@@ -57,19 +57,19 @@ private:
     VclPtr<MetricField>    m_pLineLengthEdit;
     VclPtr<MetricField>    m_pLineDistEdit;
 
-    DECL_LINK_TYPED(HeightPage, Button*, void);
-    DECL_LINK_TYPED(HeightMetric, Button*, void);
-    DECL_LINK_TYPED(HeightModify, Control&, void);
-    DECL_LINK( LineWidthChanged_Impl, void * );
-    DECL_LINK( LineColorSelected_Impl, void * );
+    DECL_LINK_TYPED( HeightPage, Button*, void );
+    DECL_LINK_TYPED( HeightMetric, Button*, void );
+    DECL_LINK_TYPED( HeightModify, Control&, void );
+    DECL_LINK_TYPED( LineWidthChanged_Impl, Edit&, void );
+    DECL_LINK_TYPED( LineColorSelected_Impl, ListBox&, void );
 
     long            lMaxHeight;
 
     using SfxTabPage::ActivatePage;
     using SfxTabPage::DeactivatePage;
 
-    virtual void    ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg   DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual void    ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg   DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
 };
 

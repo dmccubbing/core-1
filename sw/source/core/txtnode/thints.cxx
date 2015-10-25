@@ -901,7 +901,7 @@ void SwpHints::BuildPortions( SwTextNode& rNode, SwTextAttr& rNewHint,
                             if ( !pCurrentCharFormat || 0 == CharFormat::GetItem( *pCurrentCharFormat, pItem->Which() ) )
                             {
                                 if ( !pNewSet )
-                                    pNewSet = pNewStyle->Clone( true );
+                                    pNewSet = pNewStyle->Clone();
                                 pNewSet->ClearItem( pItem->Which() );
                             }
                         }
@@ -1221,7 +1221,7 @@ SwTextAttr* SwTextNode::InsertItem(
     const sal_Int32 nEnd,
     const SetAttrMode nMode )
 {
-   // character attributes will be inserted as automatic styles:
+    // character attributes will be inserted as automatic styles:
     OSL_ENSURE( !isCHRATR(rAttr.Which()), "AUTOSTYLES - "
         "SwTextNode::InsertItem should not be called with character attributes");
 
@@ -1932,7 +1932,7 @@ bool SwTextNode::SetAttr(
                      static_cast<const SwFormatCharFormat*>(pItem)->GetCharFormat()))
                 {
                     SwIndex aIndex( this, nStt );
-                    RstTextAttr( aIndex, nEnd - nStt, RES_TXTATR_CHARFMT, 0 );
+                    RstTextAttr( aIndex, nEnd - nStt, RES_TXTATR_CHARFMT );
                     DontExpandFormat( aIndex );
                 }
                 else
@@ -1995,7 +1995,7 @@ static void lcl_MergeAttr( SfxItemSet& rSet, const SfxPoolItem& rAttr )
         {
             if( ( nWhich < RES_CHRATR_END ||
                   RES_TXTATR_UNKNOWN_CONTAINER == nWhich ) &&
-                ( SfxItemState::SET == pCFSet->GetItemState( nWhich, true ) ) )
+                ( SfxItemState::SET == pCFSet->GetItemState( nWhich ) ) )
                 rSet.Put( pCFSet->Get( nWhich ) );
             nWhich = aIter.NextWhich();
         }
@@ -2020,7 +2020,7 @@ static void lcl_MergeAttr_ExpandChrFormat( SfxItemSet& rSet, const SfxPoolItem& 
             {
                 if( ( nWhich < RES_CHRATR_END ||
                       ( RES_TXTATR_AUTOFMT == rAttr.Which() && RES_TXTATR_UNKNOWN_CONTAINER == nWhich ) ) &&
-                    ( SfxItemState::SET == pCFSet->GetItemState( nWhich, true ) ) )
+                    ( SfxItemState::SET == pCFSet->GetItemState( nWhich ) ) )
                     rSet.Put( pCFSet->Get( nWhich ) );
                 nWhich = aIter.NextWhich();
             }
@@ -3111,10 +3111,10 @@ bool SwpHints::TryInsertHint(
         {
             // search for a reference with the same name
             SwTextAttr* pTmpHt;
-            sal_Int32 *pTmpHtEnd;
-            sal_Int32 *pTmpHintEnd;
             for( size_t n = 0, nEnd = Count(); n < nEnd; ++n )
             {
+                sal_Int32 *pTmpHtEnd;
+                sal_Int32 *pTmpHintEnd;
                 if (RES_TXTATR_REFMARK == (pTmpHt = Get(n))->Which() &&
                     pHint->GetAttr() == pTmpHt->GetAttr() &&
                     0 != ( pTmpHtEnd = pTmpHt->GetEnd() ) &&

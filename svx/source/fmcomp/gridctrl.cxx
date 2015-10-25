@@ -97,10 +97,10 @@ public:
 
 private:
     // XEventListener
-    virtual void SAL_CALL disposing(const ::com::sun::star::lang::EventObject& /*i_aEvt*/) throw ( RuntimeException, std::exception ) SAL_OVERRIDE
+    virtual void SAL_CALL disposing(const ::com::sun::star::lang::EventObject& /*i_aEvt*/) throw ( RuntimeException, std::exception ) override
     {
     }
-    virtual void SAL_CALL rowsChanged(const ::com::sun::star::sdb::RowsChangeEvent& i_aEvt) throw ( RuntimeException, std::exception ) SAL_OVERRIDE
+    virtual void SAL_CALL rowsChanged(const ::com::sun::star::sdb::RowsChangeEvent& i_aEvt) throw ( RuntimeException, std::exception ) override
     {
         if ( i_aEvt.Action == RowChangeAction::UPDATE )
         {
@@ -138,7 +138,7 @@ public:
     GridFieldValueListener(DbGridControl& _rParent, const Reference< XPropertySet >& xField, sal_uInt16 _nId);
     virtual ~GridFieldValueListener();
 
-    virtual void _propertyChanged(const PropertyChangeEvent& evt) throw( RuntimeException ) SAL_OVERRIDE;
+    virtual void _propertyChanged(const PropertyChangeEvent& evt) throw( RuntimeException ) override;
 
     void suspend() { ++m_nSuspended; }
     void resume() { --m_nSuspended; }
@@ -203,7 +203,7 @@ public:
     DisposeListenerGridBridge(  DbGridControl& _rParent, const Reference< XComponent >& _rxObject, sal_Int16 _rId = -1);
     virtual ~DisposeListenerGridBridge();
 
-    virtual void disposing(const EventObject& _rEvent, sal_Int16 _nId) throw( RuntimeException ) SAL_OVERRIDE { m_rParent.disposing(_nId, _rEvent); }
+    virtual void disposing(const EventObject& _rEvent, sal_Int16 _nId) throw( RuntimeException ) override { m_rParent.disposing(_nId, _rEvent); }
 };
 
 DisposeListenerGridBridge::DisposeListenerGridBridge(DbGridControl& _rParent, const Reference< XComponent >& _rxObject, sal_Int16 _rId)
@@ -263,7 +263,7 @@ public:
     void suspend() { ++m_nSuspended; }
     void resume() { --m_nSuspended; }
 
-    virtual void _propertyChanged(const PropertyChangeEvent& evt) throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void _propertyChanged(const PropertyChangeEvent& evt) throw( RuntimeException, std::exception ) override;
 };
 
 FmXGridSourcePropListener::FmXGridSourcePropListener(DbGridControl* _pParent)
@@ -1297,14 +1297,14 @@ sal_uInt16 DbGridControl::SetOptions(sal_uInt16 nOpt)
         if (m_nOptions & OPT_INSERT)
         {   // the insert option is to be set
             m_xEmptyRow = new DbGridRow();
-            RowInserted(GetRowCount(), 1, true);
+            RowInserted(GetRowCount());
         }
         else
         {   // the insert option is to be reset
             m_xEmptyRow = NULL;
             if ((GetCurRow() == GetRowCount() - 1) && (GetCurRow() > 0))
                 GoToRowColumnId(GetCurRow() - 1, GetCurColumnId());
-            RowRemoved(GetRowCount(), 1);
+            RowRemoved(GetRowCount());
         }
     }
 
@@ -1952,7 +1952,7 @@ void DbGridControl::AdjustRows()
             m_aBar->InvalidateAll(m_nCurrentPos, true);
         }
         else  // too few
-            RowInserted(GetRowCount(), -nDelta, true);
+            RowInserted(GetRowCount(), -nDelta);
     }
 
     if (m_bRecordCountFinal && m_nTotalCount < 0)
@@ -2258,14 +2258,14 @@ sal_Int32 DbGridControl::AlignSeekCursor()
             if ( m_pDataCursor->isBeforeFirst() )
             {
                 // this is somewhat strange, but can nevertheless happen
-                DBG_WARNING( "DbGridControl::AlignSeekCursor: nobody should tamper with my cursor this way (before first)!" );
+                SAL_INFO( "svx", "DbGridControl::AlignSeekCursor: nobody should tamper with my cursor this way (before first)!" );
                 m_pSeekCursor->first();
                 m_pSeekCursor->previous();
                 m_nSeekPos = -1;
             }
             else if ( m_pDataCursor->isAfterLast() )
             {
-                DBG_WARNING( "DbGridControl::AlignSeekCursor: nobody should tamper with my cursor this way (after last)!" );
+                SAL_INFO( "svx", "DbGridControl::AlignSeekCursor: nobody should tamper with my cursor this way (after last)!" );
                 m_pSeekCursor->last();
                 m_pSeekCursor->next();
                 m_nSeekPos = -1;
@@ -2614,7 +2614,7 @@ void DbGridControl::SetFilterMode(bool bMode)
             }
 
             // one row for filtering
-            RowInserted(0, 1, true);
+            RowInserted(0);
             SetUpdateMode(true);
         }
         else
@@ -2717,7 +2717,7 @@ void DbGridControl::DataSourcePropertyChanged(const PropertyChangeEvent& evt) th
                 // -> we've to add a new grid row
                 if ((nRecordCount == GetRowCount() - 1)  && m_xCurrentRow->IsNew())
                 {
-                    RowInserted(GetRowCount(), 1, true);
+                    RowInserted(GetRowCount());
                     InvalidateStatusCell(m_nCurrentPos);
                     m_aBar->InvalidateAll(m_nCurrentPos);
                 }
@@ -2729,7 +2729,7 @@ void DbGridControl::DataSourcePropertyChanged(const PropertyChangeEvent& evt) th
                 // one is about to be cleaned, too, the second one is obsolete now.
                 if (m_xCurrentRow->IsNew() && nRecordCount == (GetRowCount() - 2))
                 {
-                    RowRemoved(GetRowCount() - 1, 1);
+                    RowRemoved(GetRowCount() - 1);
                     InvalidateStatusCell(m_nCurrentPos);
                     m_aBar->InvalidateAll(m_nCurrentPos);
                 }
@@ -2937,7 +2937,7 @@ void DbGridControl::CellModified()
             if (m_nCurrentPos == GetRowCount() - 1)
             {
                 // increment RowCount
-                RowInserted(GetRowCount(), 1, true);
+                RowInserted(GetRowCount());
                 InvalidateStatusCell(m_nCurrentPos);
                 m_aBar->InvalidateAll(m_nCurrentPos);
             }
@@ -3021,7 +3021,7 @@ void DbGridControl::Undo()
             if (m_nCurrentPos == GetRowCount() - 2)
             {   // maybe we already removed it (in resetCurrentRow, called if the above moveToInsertRow
                 // caused our data source form to be reset - which should be the usual case ....)
-                RowRemoved(GetRowCount() - 1, 1);
+                RowRemoved(GetRowCount() - 1);
                 m_aBar->InvalidateAll(m_nCurrentPos);
             }
 
@@ -3048,7 +3048,7 @@ void DbGridControl::resetCurrentRow()
             {
                 if (m_nCurrentPos == GetRowCount() - 2)
                 {
-                    RowRemoved(GetRowCount() - 1, 1);
+                    RowRemoved(GetRowCount() - 1);
                     m_aBar->InvalidateAll(m_nCurrentPos);
                 }
             }

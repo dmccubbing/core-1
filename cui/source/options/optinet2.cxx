@@ -525,9 +525,9 @@ void SvxProxyTabPage::EnableControls_Impl(bool bEnable)
 
 
 
-IMPL_LINK( SvxProxyTabPage, ProxyHdl_Impl, ListBox *, pBox )
+IMPL_LINK_TYPED( SvxProxyTabPage, ProxyHdl_Impl, ListBox&, rBox, void )
 {
-    sal_Int32 nPos = pBox->GetSelectEntryPos();
+    sal_Int32 nPos = rBox.GetSelectEntryPos();
 
     // Restore original system values
     if( nPos == 1 )
@@ -536,7 +536,6 @@ IMPL_LINK( SvxProxyTabPage, ProxyHdl_Impl, ListBox *, pBox )
     }
 
     EnableControls_Impl(nPos == 2);
-    return 0;
 }
 
 
@@ -685,11 +684,11 @@ IMPL_LINK_NOARG_TYPED(SvxSecurityTabPage, SavePasswordHdl, Button*, void)
             xMasterPasswd->removeMasterPassword();
             if ( xMasterPasswd->changeMasterPassword( Reference< task::XInteractionHandler >() ) )
             {
-                m_pMasterPasswordPB->Enable( true );
+                m_pMasterPasswordPB->Enable();
                 m_pMasterPasswordCB->Check();
-                m_pMasterPasswordCB->Enable( true );
-                m_pMasterPasswordFT->Enable( true );
-                m_pShowConnectionsPB->Enable( true );
+                m_pMasterPasswordCB->Enable();
+                m_pMasterPasswordFT->Enable();
+                m_pShowConnectionsPB->Enable();
             }
             else
             {
@@ -714,8 +713,8 @@ IMPL_LINK_NOARG_TYPED(SvxSecurityTabPage, SavePasswordHdl, Button*, void)
             else
             {
                 m_pSavePasswordsCB->Check();
-                m_pMasterPasswordPB->Enable( true );
-                m_pShowConnectionsPB->Enable( true );
+                m_pMasterPasswordPB->Enable();
+                m_pShowConnectionsPB->Enable();
             }
         }
     }
@@ -750,14 +749,14 @@ IMPL_LINK_NOARG_TYPED(SvxSecurityTabPage, MasterPasswordCBHdl, Button*, void)
         {
             if ( xMasterPasswd->isPersistentStoringAllowed() && xMasterPasswd->changeMasterPassword( Reference< task::XInteractionHandler >() ) )
             {
-                m_pMasterPasswordPB->Enable( true );
-                m_pMasterPasswordFT->Enable( true );
+                m_pMasterPasswordPB->Enable();
+                m_pMasterPasswordFT->Enable();
             }
             else
             {
                 m_pMasterPasswordCB->Check( false );
-                m_pMasterPasswordPB->Enable( true );
-                m_pMasterPasswordFT->Enable( true );
+                m_pMasterPasswordPB->Enable();
+                m_pMasterPasswordFT->Enable();
             }
         }
         else
@@ -770,8 +769,8 @@ IMPL_LINK_NOARG_TYPED(SvxSecurityTabPage, MasterPasswordCBHdl, Button*, void)
             else
             {
                 m_pMasterPasswordCB->Check();
-                m_pMasterPasswordPB->Enable( true );
-                m_pShowConnectionsPB->Enable( true );
+                m_pMasterPasswordPB->Enable();
+                m_pShowConnectionsPB->Enable();
             }
         }
     }
@@ -873,17 +872,17 @@ void SvxSecurityTabPage::InitControls()
 
         if ( xMasterPasswd->isPersistentStoringAllowed() )
         {
-            m_pMasterPasswordCB->Enable( true );
-            m_pShowConnectionsPB->Enable( true );
+            m_pMasterPasswordCB->Enable();
+            m_pShowConnectionsPB->Enable();
             m_pSavePasswordsCB->Check();
 
             if ( xMasterPasswd->isDefaultMasterPasswordUsed() )
                 m_pMasterPasswordCB->Check( false );
             else
             {
-                m_pMasterPasswordPB->Enable( true );
+                m_pMasterPasswordPB->Enable();
                 m_pMasterPasswordCB->Check();
-                m_pMasterPasswordFT->Enable( true );
+                m_pMasterPasswordFT->Enable();
             }
         }
     }
@@ -1041,8 +1040,8 @@ bool SvxEMailTabPage::FillItemSet( SfxItemSet* )
 
 void SvxEMailTabPage::Reset( const SfxItemSet* )
 {
-    m_pMailerURLED->Enable(true );
-    m_pMailerURLPB->Enable(true );
+    m_pMailerURLED->Enable();
+    m_pMailerURLPB->Enable();
 
     if (pImpl->bROProgram)
         m_pMailerURLFI->Show();

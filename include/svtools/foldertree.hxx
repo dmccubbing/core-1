@@ -47,12 +47,12 @@ private:
 public:
     FolderTree( vcl::Window* pParent, WinBits nBits );
 
-    virtual void RequestingChildren( SvTreeListEntry* pEntry ) SAL_OVERRIDE;
+    virtual void RequestingChildren( SvTreeListEntry* pEntry ) override;
 
     void FillTreeEntry( SvTreeListEntry* pEntry );
     void FillTreeEntry( const OUString & rUrl, const ::std::vector< std::pair< OUString, OUString > >& rFolders );
     void SetTreePath( OUString const & sUrl );
-    void SetBlackList( const ::com::sun::star::uno::Sequence< OUString >& rBlackList );
+    void SetBlackList( const css::uno::Sequence< OUString >& rBlackList );
 };
 
 #endif

@@ -26,14 +26,9 @@ class SwNavigationPI;
 
 class SwHelpToolBox: public ToolBox, public DropTargetHelper
 {
-    Link<> aRightClickLink;     // link gets mouse event as parameter !!!
-
-    using ToolBox::DoubleClick;
-
 protected:
-    virtual void MouseButtonDown(const MouseEvent &rEvt) SAL_OVERRIDE;
-    virtual sal_Int8    AcceptDrop( const AcceptDropEvent& rEvt ) SAL_OVERRIDE;
-    virtual sal_Int8    ExecuteDrop( const ExecuteDropEvent& rEvt ) SAL_OVERRIDE;
+    virtual sal_Int8    AcceptDrop( const AcceptDropEvent& rEvt ) override;
+    virtual sal_Int8    ExecuteDrop( const ExecuteDropEvent& rEvt ) override;
 
 public:
     SwHelpToolBox(SwNavigationPI* pParent, const ResId &);

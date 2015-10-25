@@ -176,10 +176,10 @@ FmFilterItem* FmFilterItems::Find( const ::sal_Int32 _nFilterComponentIndex ) co
             ++i
         )
     {
-        FmFilterItem* pCondition = dynamic_cast<FmFilterItem*>( *i  );
-        DBG_ASSERT( pCondition, "FmFilterItems::Find: Wrong element in container!" );
-        if ( _nFilterComponentIndex == pCondition->GetComponentIndex() )
-            return pCondition;
+        FmFilterData* pData = *i;
+        FmFilterItem& rCondition = dynamic_cast<FmFilterItem&>(*pData);
+        if ( _nFilterComponentIndex == rCondition.GetComponentIndex() )
+            return &rCondition;
     }
     return NULL;
 }
@@ -290,12 +290,12 @@ public:
     FmFilterAdapter(FmFilterModel* pModel, const Reference< XIndexAccess >& xControllers);
 
 // XEventListener
-    virtual void SAL_CALL disposing(const EventObject& Source) throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing(const EventObject& Source) throw( RuntimeException, std::exception ) override;
 
 // XFilterControllerListener
-    virtual void SAL_CALL predicateExpressionChanged( const FilterEvent& _Event ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL disjunctiveTermRemoved( const FilterEvent& _Event ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL disjunctiveTermAdded( const FilterEvent& _Event ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL predicateExpressionChanged( const FilterEvent& _Event ) throw (RuntimeException, std::exception) override;
+    virtual void SAL_CALL disjunctiveTermRemoved( const FilterEvent& _Event ) throw (RuntimeException, std::exception) override;
+    virtual void SAL_CALL disjunctiveTermAdded( const FilterEvent& _Event ) throw (RuntimeException, std::exception) override;
 
 // helpers
     void dispose() throw( RuntimeException );
@@ -424,8 +424,9 @@ void FmFilterAdapter::predicateExpressionChanged( const FilterEvent& _Event ) th
 
     const sal_Int32 nActiveTerm( xFilterController->getActiveTerm() );
 
-    FmFilterItems* pFilter = dynamic_cast<FmFilterItems*>( pFormItem->GetChildren()[ nActiveTerm ]  );
-    FmFilterItem* pFilterItem = pFilter->Find( _Event.FilterComponent );
+    FmFilterData* pData = pFormItem->GetChildren()[nActiveTerm];
+    FmFilterItems& rFilter = dynamic_cast<FmFilterItems&>(*pData);
+    FmFilterItem* pFilterItem = rFilter.Find( _Event.FilterComponent );
     if ( pFilterItem )
     {
         if ( !_Event.PredicateExpression.isEmpty())
@@ -446,8 +447,8 @@ void FmFilterAdapter::predicateExpressionChanged( const FilterEvent& _Event ) th
         // searching the component by field name
         OUString aFieldName( lcl_getLabelName_nothrow( xFilterController->getFilterComponent( _Event.FilterComponent ) ) );
 
-        pFilterItem = new FmFilterItem( pFilter, aFieldName, _Event.PredicateExpression, _Event.FilterComponent );
-        m_pModel->Insert(pFilter->GetChildren().end(), pFilterItem);
+        pFilterItem = new FmFilterItem(&rFilter, aFieldName, _Event.PredicateExpression, _Event.FilterComponent);
+        m_pModel->Insert(rFilter.GetChildren().end(), pFilterItem);
     }
 
     // ensure there's one empty term in the filter, just in case the active term was previously empty
@@ -779,7 +780,6 @@ void FmFilterModel::Insert(const ::std::vector<FmFilterData*>::iterator& rPos, F
     Broadcast( aInsertedHint );
 }
 
-
 void FmFilterModel::Remove(FmFilterData* pData)
 {
     FmParentData* pParent = pData->GetParent();
@@ -823,26 +823,25 @@ void FmFilterModel::Remove(FmFilterData* pData)
     }
     else // FormItems can not be deleted
     {
-        FmFilterItem* pFilterItem = dynamic_cast<FmFilterItem*>( pData );
+        FmFilterItem& rFilterItem = dynamic_cast<FmFilterItem&>(*pData);
 
         // if its the last condition remove the parent
         if (rItems.size() == 1)
-            Remove(pFilterItem->GetParent());
+            Remove(rFilterItem.GetParent());
         else
         {
             // find the position of the father within his father
             ::std::vector<FmFilterData*>& rParentParentItems = pData->GetParent()->GetParent()->GetChildren();
-            ::std::vector<FmFilterData*>::iterator j = ::std::find(rParentParentItems.begin(), rParentParentItems.end(), pFilterItem->GetParent());
+            ::std::vector<FmFilterData*>::iterator j = ::std::find(rParentParentItems.begin(), rParentParentItems.end(), rFilterItem.GetParent());
             DBG_ASSERT(j != rParentParentItems.end(), "FmFilterModel::Remove(): unknown Item");
             sal_Int32 nParentPos = j - rParentParentItems.begin();
 
             // EmptyText removes the filter
-            FmFilterAdapter::setText(nParentPos, pFilterItem, OUString());
+            FmFilterAdapter::setText(nParentPos, &rFilterItem, OUString());
             Remove( i );
         }
     }
 }
-
 
 void FmFilterModel::Remove( const ::std::vector<FmFilterData*>::iterator& rPos )
 {
@@ -1015,8 +1014,8 @@ public:
         :SvLBoxString(pEntry,nFlags,rStr){}
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
-    virtual void InitViewData( SvTreeListBox* pView,SvTreeListEntry* pEntry, SvViewDataItem* pViewData) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
+    virtual void InitViewData( SvTreeListBox* pView,SvTreeListEntry* pEntry, SvViewDataItem* pViewData) override;
 };
 
 const int nxDBmp = 12;
@@ -1076,8 +1075,8 @@ public:
     }
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
-    virtual void InitViewData( SvTreeListBox* pView,SvTreeListEntry* pEntry, SvViewDataItem* pViewData) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
+    virtual void InitViewData( SvTreeListBox* pView,SvTreeListEntry* pEntry, SvViewDataItem* pViewData) override;
 };
 
 const int nxD = 4;

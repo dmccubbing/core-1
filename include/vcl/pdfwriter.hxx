@@ -73,7 +73,7 @@ class VCL_DLLPUBLIC PDFOutputStream
 {
     public:
     virtual ~PDFOutputStream();
-    virtual void write( const com::sun::star::uno::Reference< com::sun::star::io::XOutputStream >& xStream ) = 0;
+    virtual void write( const css::uno::Reference< css::io::XOutputStream >& xStream ) = 0;
 };
 
 class VCL_DLLPUBLIC PDFWriter
@@ -332,7 +332,7 @@ public:
                   Dest( -1 ), Submit( false ), SubmitGet( false )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new PushButtonWidget( *this );
         }
@@ -349,7 +349,7 @@ public:
                   ButtonIsLeft( true )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new CheckBoxWidget( *this );
         }
@@ -369,7 +369,7 @@ public:
                   ButtonIsLeft( true )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new RadioButtonWidget( *this );
         }
@@ -398,7 +398,7 @@ public:
                   MaxLen( 0 )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new EditWidget( *this );
         }
@@ -422,7 +422,7 @@ public:
                   MultiSelect( false )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new ListBoxWidget( *this );
         }
@@ -440,7 +440,7 @@ public:
                   Sort( false )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new ComboBoxWidget( *this );
         }
@@ -462,7 +462,7 @@ public:
                   SigHidden( true )
         {}
 
-        virtual AnyWidget* Clone() const SAL_OVERRIDE
+        virtual AnyWidget* Clone() const override
         {
             return new SignatureWidget( *this );
         }
@@ -624,16 +624,16 @@ The following structure describes the permissions used in PDF security
         PDFWriter::PDFDocInfo           DocumentInfo;
 
         bool                            SignPDF;
-        OUString                   SignLocation;
-        OUString                   SignPassword;
-        OUString                   SignReason;
-        OUString                   SignContact;
-        com::sun::star::lang::Locale    DocumentLocale; // defines the document default language
+        OUString                        SignLocation;
+        OUString                        SignPassword;
+        OUString                        SignReason;
+        OUString                        SignContact;
+        css::lang::Locale               DocumentLocale; // defines the document default language
         sal_uInt32                      DPIx, DPIy;     // how to handle MapMode( MAP_PIXEL )
                                                         // 0 here specifies a default handling
         PDFWriter::ColorMode            ColorMode;
-        com::sun::star::uno::Reference< com::sun::star::security::XCertificate> SignCertificate;
-        OUString                   SignTSA;
+        css::uno::Reference< css::security::XCertificate> SignCertificate;
+        OUString                        SignTSA;
 
         PDFWriterContext() :
                 RelFsys( false ), //i56629, i49415?, i64585?
@@ -668,7 +668,7 @@ The following structure describes the permissions used in PDF security
         {}
     };
 
-    PDFWriter( const PDFWriterContext& rContext, const com::sun::star::uno::Reference< com::sun::star::beans::XMaterialHolder >& );
+    PDFWriter( const PDFWriterContext& rContext, const css::uno::Reference< css::beans::XMaterialHolder >& );
     ~PDFWriter();
 
     /** Returns an OutputDevice for formatting
@@ -714,7 +714,7 @@ The following structure describes the permissions used in PDF security
     /* sets the document locale originally passed with the context to a new value
      * only affects the output if used before calling Emit.
      */
-    void SetDocumentLocale( const com::sun::star::lang::Locale& rDocLocale );
+    void SetDocumentLocale( const css::lang::Locale& rDocLocale );
 
     /* finishes the file */
     bool Emit();
@@ -726,7 +726,7 @@ The following structure describes the permissions used in PDF security
      */
     std::set< ErrorCode > GetErrors();
 
-    static com::sun::star::uno::Reference< com::sun::star::beans::XMaterialHolder >
+    static css::uno::Reference< css::beans::XMaterialHolder >
            InitEncryption( const OUString& i_rOwnerPassword,
                            const OUString& i_rUserPassword,
                            bool b128Bit

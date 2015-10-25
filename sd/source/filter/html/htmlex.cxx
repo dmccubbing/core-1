@@ -830,8 +830,8 @@ void HtmlExport::SetDocColors( SdPage* pPage )
     if(pSheet)
     {
         SfxItemSet& rSet = pSheet->GetItemSet();
-        if(rSet.GetItemState(EE_CHAR_COLOR,true) == SfxItemState::SET)
-            maTextColor = static_cast<const SvxColorItem*>(rSet.GetItem(EE_CHAR_COLOR,true))->GetValue();
+        if(rSet.GetItemState(EE_CHAR_COLOR) == SfxItemState::SET)
+            maTextColor = static_cast<const SvxColorItem*>(rSet.GetItem(EE_CHAR_COLOR))->GetValue();
     }
 
     // default background from the background of the master page of the first page
@@ -1785,7 +1785,7 @@ bool HtmlExport::CreateHtmlForPresPages()
 
                             default:
                             {
-                                DBG_WARNING("unknown IMAP_OBJ_type");
+                                SAL_INFO("sd", "unknown IMAP_OBJ_type");
                             }
                             break;
                         }

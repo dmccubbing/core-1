@@ -83,7 +83,7 @@ namespace dbaui
         m_pTablesList->set_width_request(56 * m_pTablesList->approximate_char_width());
         m_pTablesList->set_height_request(12 * m_pTablesList->GetTextHeight());
 
-        m_pTablesList->SetCheckHandler(getControlModifiedLink());
+        m_pTablesList->SetCheckHandler(LINK(this,OGenericAdministrationPage,OnControlModified));
 
         // initialize the TabListBox
         m_pTablesList->SetSelectionMode( MULTIPLE_SELECTION );
@@ -226,7 +226,7 @@ namespace dbaui
         getFlags(_rSet, bValid, bReadonly);
 
         // get the name of the data source we're working for
-        SFX_ITEMSET_GET(_rSet, pNameItem, SfxStringItem, DSID_NAME, true);
+        const SfxStringItem* pNameItem = _rSet.GetItem<SfxStringItem>(DSID_NAME);
         OSL_ENSURE(pNameItem, "OTableSubscriptionPage::implInitControls: missing the name attribute!");
         OUString sDSName = pNameItem->GetValue();
 
@@ -350,7 +350,7 @@ namespace dbaui
         }
 
         // get the current table filter
-        SFX_ITEMSET_GET(_rSet, pTableFilter, OStringListItem, DSID_TABLEFILTER, true);
+        const OStringListItem* pTableFilter = _rSet.GetItem<OStringListItem>(DSID_TABLEFILTER);
         Sequence< OUString > aTableFilter;
         if (pTableFilter)
             aTableFilter = pTableFilter->getList();
@@ -402,9 +402,9 @@ namespace dbaui
     {
         callModifiedHdl();
     }
-    IMPL_LINK( OTableSubscriptionPage, OnTreeEntryChecked, Control*, _pControl )
+    IMPL_LINK_TYPED( OTableSubscriptionPage, OnTreeEntryChecked, void*, _pControl, void )
     {
-        return OnControlModified(static_cast<Button*>(_pControl));
+        OnControlModified(_pControl);
     }
     IMPL_LINK_TYPED( OTableSubscriptionPage, OnTreeEntryCompare, const SvSortData&, _rSortData, sal_Int32 )
     {

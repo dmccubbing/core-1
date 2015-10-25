@@ -39,6 +39,20 @@ class View;
 class ViewShell;
 class Window;
 
+/// Describes a single search hit: a set of rectangles on a given page.
+struct SearchSelection
+{
+    /// 0-based index of the page that has the selection.
+    int m_nPage;
+    /**
+     * List of selection rectangles in twips -- multiple rectangles only in
+     * case the selection spans over more layout lines.
+     */
+    OString m_aRectangles;
+
+    SearchSelection(int nPage, const OString& rRectangles);
+};
+
 /** The main purpose of this class is searching and replacing as well as
     spelling of impress documents.  The main part of both tasks lies in
     iterating over the pages and view modes of a document and apply the
@@ -145,7 +159,7 @@ public:
     void EndSpelling();
 
     /** callback for textconversion */
-    bool ConvertNextDocument() SAL_OVERRIDE;
+    bool ConvertNextDocument() override;
 
     /** Starts the text conversion (hangul/hanja or Chinese simplified/traditional)
     for the current viewshell */
@@ -350,11 +364,14 @@ private:
     bool SearchAndReplaceAll();
 
     /** Do search and replace for next match.
+        @param pSelections
+            When tiled rendering and not 0, then don't emit LOK events, instead
+            assume the caller will do so.
         @return
             The return value specifies whether the search ended (</sal_True>) or
             another call to this method is required (</sal_False>).
     */
-    bool SearchAndReplaceOnce();
+    bool SearchAndReplaceOnce(std::vector<SearchSelection>* pSelections = 0);
 
     /** Detect changes of the document or view and react accordingly.  Such
         changes may occur because different calls to
@@ -519,7 +536,7 @@ private:
             required.  When all text objects have been processed then
             <FALSE/> is returned.
     */
-    virtual bool SpellNextDocument() SAL_OVERRIDE;
+    virtual bool SpellNextDocument() override;
 
     /** Show the given message box and make it modal.  It is assumed that
         the parent of the given dialog is NULL, i.e. the application

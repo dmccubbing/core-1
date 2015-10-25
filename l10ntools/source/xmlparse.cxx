@@ -431,7 +431,6 @@ XMLFile& XMLFile::operator=(const XMLFile& rObj)
 
 void XMLFile::SearchL10NElements( XMLChildNode *pCur, int nPos )
 {
-    bool bInsert = true;
     if ( !pCur )
         SearchL10NElements( this  );
     else
@@ -453,6 +452,7 @@ void XMLFile::SearchL10NElements( XMLChildNode *pCur, int nPos )
             break;
             case XML_NODE_TYPE_ELEMENT:
             {
+                bool bInsert = true;
                 XMLElement *pElement = static_cast<XMLElement*>(pCur);
                 const OString sName(pElement->GetName().toAsciiLowerCase());
                 OString sLanguage, sTmpStrVal, sOldref;
@@ -507,7 +507,6 @@ bool XMLFile::CheckExportStatus( XMLParentNode *pCur )
 {
     static bool bStatusExport = true;
 
-    bool bInsert = true;
     if ( !pCur )
         CheckExportStatus( this );
     else {
@@ -532,7 +531,7 @@ bool XMLFile::CheckExportStatus( XMLParentNode *pCur )
                 {
                     if ( pElement->GetAttributeList())
                     {
-                        for (size_t j = 0 , cnt = pElement->GetAttributeList()->size(); j < cnt && bInsert; ++j)
+                        for (size_t j = 0 , cnt = pElement->GetAttributeList()->size(); j < cnt; ++j)
                         {
                             const OString tmpStr((*pElement->GetAttributeList())[j]->GetName());
                             if (tmpStr.equalsIgnoreAsciiCase("STATUS"))
@@ -1125,7 +1124,7 @@ OString XMLUtil::QuotHTML( const OString &rString )
     icu::UnicodeString sReturn;
     int32_t nEndPos = 0;
     int32_t nStartPos = 0;
-    while( aRegexMatcher.find(nStartPos, nIcuErr) && nIcuErr == U_ZERO_ERROR )
+    while( aRegexMatcher.find(nStartPos, nIcuErr) && U_SUCCESS(nIcuErr) )
     {
         nStartPos = aRegexMatcher.start(nIcuErr);
         if ( nEndPos < nStartPos )
@@ -1140,7 +1139,7 @@ OString XMLUtil::QuotHTML( const OString &rString )
         }
         else
             sReturn.append(lcl_QuotRange(sSource, nStartPos, nEndPos));
-        ++nStartPos;
+        nStartPos = nEndPos;
     }
     if( nEndPos < sSource.length() )
         sReturn.append(lcl_QuotRange(sSource, nEndPos, sSource.length()));

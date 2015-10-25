@@ -524,7 +524,7 @@ SwCalcExp* SwCalc::VarLook( const OUString& rStr, bool bIns )
         OUString sSourceName(sDBName.getToken(0, DB_DELIM));
         OUString sTableName(sDBName.getToken(0, ';').getToken(1, DB_DELIM));
         if( pMgr && !sSourceName.isEmpty() && !sTableName.isEmpty() &&
-            pMgr->OpenDataSource(sSourceName, sTableName, -1))
+            pMgr->OpenDataSource(sSourceName, sTableName))
         {
             OUString sColumnName( GetColumnName( sTmpName ));
             OSL_ENSURE(!sColumnName.isEmpty(), "Missing DB column name");
@@ -587,7 +587,7 @@ SwCalcExp* SwCalc::VarLook( const OUString& rStr, bool bIns )
         OUString sSourceName(sDBName.getToken(0, DB_DELIM));
         OUString sTableName(sDBName.getToken(0, ';').getToken(1, DB_DELIM));
         if( pMgr && !sSourceName.isEmpty() && !sTableName.isEmpty() &&
-            pMgr->OpenDataSource(sSourceName, sTableName, -1) &&
+            pMgr->OpenDataSource(sSourceName, sTableName) &&
             !pMgr->IsInMerge())
         {
             pNewExp->nValue.PutULong( pMgr->GetSelectedRecordId(sSourceName, sTableName));
@@ -1666,7 +1666,7 @@ void main()
 
     for( int n = 0; n < 27; ++n )
     {
-        unsigned long ii = 0;
+        unsigned int ii = 0;
         const sal_Char* pp = sNTypeTab[ n ];
 
         while( *pp )
@@ -1677,7 +1677,7 @@ void main()
 
         ch = aArr[ ii ] ? 'X' : ' ';
         aArr[ ii ] = 1;
-        printf( "%-20s -> %3d [%c]\n", sNTypeTab[ n ], ii, ch );
+        printf( "%-20s -> %3u [%c]\n", sNTypeTab[ n ], ii, ch );
     }
 }
 

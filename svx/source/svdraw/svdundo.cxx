@@ -323,7 +323,7 @@ SdrUndoAttrObj::~SdrUndoAttrObj()
 void SdrUndoAttrObj::Undo()
 {
     E3DModifySceneSnapRectUpdater aUpdater(pObj);
-    bool bIs3DScene(pObj && dynamic_cast< E3dScene* >(pObj) !=  nullptr);
+    bool bIs3DScene(dynamic_cast< E3dScene* >(pObj) !=  nullptr);
 
     // Trigger PageChangeCall
     ImpShowPageOfThisObject();
@@ -430,7 +430,7 @@ void SdrUndoAttrObj::Undo()
 void SdrUndoAttrObj::Redo()
 {
     E3DModifySceneSnapRectUpdater aUpdater(pObj);
-    bool bIs3DScene(pObj && dynamic_cast< E3dScene* >(pObj) !=  nullptr);
+    bool bIs3DScene(dynamic_cast< E3dScene* >(pObj) !=  nullptr);
 
     if(!pUndoGroup || bIs3DScene)
     {
@@ -729,9 +729,7 @@ void SdrUndoRemoveObj::Undo()
         // position of the target object.
         Point aOwnerAnchorPos(0, 0);
 
-        if(pObjList &&
-           pObjList->GetOwnerObj() &&
-           dynamic_cast<const SdrObjGroup*>(pObjList->GetOwnerObj()) != nullptr)
+        if (dynamic_cast<const SdrObjGroup*>(pObjList->GetOwnerObj()) != nullptr)
         {
             aOwnerAnchorPos = pObjList->GetOwnerObj()->GetAnchorPos();
         }
@@ -792,9 +790,7 @@ void SdrUndoInsertObj::Redo()
         // which becomes a member of a group, because its cleared in method
         // <InsertObject(..)>. Needed for correct Redo in Writer. (#i45952#)
         Point aAnchorPos( 0, 0 );
-        if ( pObjList &&
-             pObjList->GetOwnerObj() &&
-             dynamic_cast<const SdrObjGroup*>(pObjList->GetOwnerObj()) != nullptr )
+        if (dynamic_cast<const SdrObjGroup*>(pObjList->GetOwnerObj()) != nullptr)
         {
             aAnchorPos = pObj->GetAnchorPos();
         }
@@ -1519,14 +1515,14 @@ void SdrUndoDelPage::Redo()
 OUString SdrUndoDelPage::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoDelPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoDelPage,aStr);
     return aStr;
 }
 
 OUString SdrUndoDelPage::GetSdrRepeatComment(SdrView& /*rView*/) const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoDelPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoDelPage,aStr);
     return aStr;
 }
 
@@ -1558,7 +1554,7 @@ void SdrUndoNewPage::Redo()
 OUString SdrUndoNewPage::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoNewPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoNewPage,aStr);
     return aStr;
 }
 
@@ -1567,14 +1563,14 @@ OUString SdrUndoNewPage::GetComment() const
 OUString SdrUndoCopyPage::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoCopPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoCopPage,aStr);
     return aStr;
 }
 
 OUString SdrUndoCopyPage::GetSdrRepeatComment(SdrView& /*rView*/) const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoCopPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoCopPage,aStr);
     return aStr;
 }
 
@@ -1603,7 +1599,7 @@ void SdrUndoSetPageNum::Redo()
 OUString SdrUndoSetPageNum::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoMovPage,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoMovPage,aStr);
     return aStr;
 }
 
@@ -1646,7 +1642,7 @@ void SdrUndoPageRemoveMasterPage::Redo()
 OUString SdrUndoPageRemoveMasterPage::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoDelPageMasterDscr,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoDelPageMasterDscr,aStr);
     return aStr;
 }
 
@@ -1690,7 +1686,7 @@ void SdrUndoPageChangeMasterPage::Redo()
 OUString SdrUndoPageChangeMasterPage::GetComment() const
 {
     OUString aStr;
-    ImpTakeDescriptionStr(STR_UndoChgPageMasterDscr,aStr,0);
+    ImpTakeDescriptionStr(STR_UndoChgPageMasterDscr,aStr);
     return aStr;
 }
 

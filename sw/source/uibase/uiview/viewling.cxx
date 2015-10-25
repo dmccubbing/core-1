@@ -651,7 +651,7 @@ bool SwView::ExecSpellPopup(const Point& rPt)
             // This makes it possible to suggest spelling corrections for
             // wrong words independent of the spell-checking idle job.
             if (pNode && pNode->IsWrongDirty() &&
-                dynamic_cast< const SwCrsrShell *>( m_pWrtShell ) !=  nullptr && !pCrsrShell->IsTableMode() &&
+                !pCrsrShell->IsTableMode() &&
                 !pCrsr->HasMark() && !pCrsr->IsMultiSelection())
             {
                 SwContentFrm *pFrm = pCrsr->GetContentNode()->getLayoutFrm(
@@ -823,12 +823,12 @@ private:
     VclPtr<ListBox> aListBox;
     IFieldmark *pFieldmark;
 
-    DECL_LINK( MyListBoxHandler, ListBox * );
+    DECL_LINK_TYPED( MyListBoxHandler, ListBox&, void );
 
 public:
     SwFieldDialog( SwEditWin* parent, IFieldmark *fieldBM );
     virtual ~SwFieldDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 };
 
 SwFieldDialog::SwFieldDialog( SwEditWin* parent, IFieldmark *fieldBM ) :
@@ -886,12 +886,11 @@ void SwFieldDialog::dispose()
     FloatingWindow::dispose();
 }
 
-IMPL_LINK( SwFieldDialog, MyListBoxHandler, ListBox *, pBox )
+IMPL_LINK_TYPED( SwFieldDialog, MyListBoxHandler, ListBox&, rBox, void )
 {
-    short res = 0;
-    if ( !pBox->IsTravelSelect() )
+    if ( !rBox.IsTravelSelect() )
     {
-        sal_Int32 selection = pBox->GetSelectEntryPos();
+        sal_Int32 selection = rBox.GetSelectEntryPos();
         if ( selection >= 0 )
         {
             OUString sKey = OUString(  ODF_FORMDROPDOWN_RESULT  );
@@ -902,9 +901,7 @@ IMPL_LINK( SwFieldDialog, MyListBoxHandler, ListBox *, pBox )
         }
 
         EndPopupMode();
-        res = 1;
     }
-    return res;
 }
 
 IMPL_LINK_NOARG_TYPED(SwView, FieldPopupModeEndHdl, FloatingWindow*, void)

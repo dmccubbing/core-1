@@ -27,8 +27,6 @@
 
 #include <basegfx/numeric/ftools.hxx>
 
-#include <boost/bind.hpp>
-
 #include <cmath>
 #include <algorithm>
 #include <functional>
@@ -76,34 +74,34 @@ namespace slideshow
                              const SlideShowContext&                    rContext ); // throw ShapeLoadFailedException;
 
             virtual ::com::sun::star::uno::Reference<
-                ::com::sun::star::drawing::XShape > getXShape() const SAL_OVERRIDE;
+                ::com::sun::star::drawing::XShape > getXShape() const override;
 
             // View layer methods
 
 
             virtual void addViewLayer( const ViewLayerSharedPtr&    rNewLayer,
-                                       bool                         bRedrawLayer ) SAL_OVERRIDE;
-            virtual bool removeViewLayer( const ViewLayerSharedPtr& rNewLayer ) SAL_OVERRIDE;
-            virtual bool clearAllViewLayers() SAL_OVERRIDE;
+                                       bool                         bRedrawLayer ) override;
+            virtual bool removeViewLayer( const ViewLayerSharedPtr& rNewLayer ) override;
+            virtual bool clearAllViewLayers() override;
 
 
             // attribute methods
 
 
-            virtual ::basegfx::B2DRectangle getBounds() const SAL_OVERRIDE;
-            virtual ::basegfx::B2DRectangle getDomBounds() const SAL_OVERRIDE;
-            virtual ::basegfx::B2DRectangle getUpdateArea() const SAL_OVERRIDE;
-            virtual bool isVisible() const SAL_OVERRIDE;
-            virtual double getPriority() const SAL_OVERRIDE;
-            virtual bool isBackgroundDetached() const SAL_OVERRIDE;
+            virtual ::basegfx::B2DRectangle getBounds() const override;
+            virtual ::basegfx::B2DRectangle getDomBounds() const override;
+            virtual ::basegfx::B2DRectangle getUpdateArea() const override;
+            virtual bool isVisible() const override;
+            virtual double getPriority() const override;
+            virtual bool isBackgroundDetached() const override;
 
 
             // render methods
 
 
-            virtual bool update() const SAL_OVERRIDE;
-            virtual bool render() const SAL_OVERRIDE;
-            virtual bool isContentChanged() const SAL_OVERRIDE;
+            virtual bool update() const override;
+            virtual bool render() const override;
+            virtual bool isContentChanged() const override;
 
         private:
             /// The metafile actually representing the Shape
@@ -169,11 +167,8 @@ namespace slideshow
             // already added?
             if( ::std::any_of( maViewShapes.begin(),
                                maViewShapes.end(),
-                               ::boost::bind<bool>(
-                                    ::std::equal_to< ViewLayerSharedPtr >(),
-                                    ::boost::bind( &ViewBackgroundShape::getViewLayer,
-                                                   _1 ),
-                                    ::boost::cref( rNewLayer ) ) ) )
+                               [&rNewLayer]( const ViewBackgroundShapeSharedPtr& pBgShape )
+                               { return pBgShape->getViewLayer() == rNewLayer; } ) )
             {
                 // yes, nothing to do
                 return;
@@ -195,22 +190,16 @@ namespace slideshow
 
             OSL_ENSURE( ::std::count_if(maViewShapes.begin(),
                                         aEnd,
-                                        ::boost::bind<bool>(
-                                            ::std::equal_to< ViewLayerSharedPtr >(),
-                                            ::boost::bind( &ViewBackgroundShape::getViewLayer,
-                                                           _1 ),
-                                            ::boost::cref( rLayer ) ) ) < 2,
+                                        [&rLayer]( const ViewBackgroundShapeSharedPtr& pBgShape )
+                                        { return pBgShape->getViewLayer() == rLayer; } ) < 2,
                         "BackgroundShape::removeViewLayer(): Duplicate ViewLayer entries!" );
 
             ViewBackgroundShapeVector::iterator aIter;
 
             if( (aIter=::std::remove_if( maViewShapes.begin(),
                                          aEnd,
-                                         ::boost::bind<bool>(
-                                             ::std::equal_to< ViewLayerSharedPtr >(),
-                                             ::boost::bind( &ViewBackgroundShape::getViewLayer,
-                                                            _1 ),
-                                             ::boost::cref( rLayer ) ) )) == aEnd )
+                                         [&rLayer]( const ViewBackgroundShapeSharedPtr& pBgShape )
+                                         { return pBgShape->getViewLayer() == rLayer; } )) == aEnd )
             {
                 // view layer seemingly was not added, failed
                 return false;
@@ -280,9 +269,8 @@ namespace slideshow
             // redraw all view shapes, by calling their render() method
             if( ::std::count_if( maViewShapes.begin(),
                                  maViewShapes.end(),
-                                 ::boost::bind( &ViewBackgroundShape::render,
-                                                _1,
-                                                ::boost::cref( mpMtf ) ) )
+                                 [this]( const ViewBackgroundShapeSharedPtr& pBgShape )
+                                 { return pBgShape->render( this->mpMtf ); } )
                 != static_cast<ViewBackgroundShapeVector::difference_type>(maViewShapes.size()) )
             {
                 // at least one of the ViewBackgroundShape::render() calls did return

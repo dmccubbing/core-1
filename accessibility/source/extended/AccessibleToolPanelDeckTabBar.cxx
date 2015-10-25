@@ -63,8 +63,6 @@ namespace accessibility
     namespace AccessibleEventId = ::com::sun::star::accessibility::AccessibleEventId;
     namespace AccessibleStateType = ::com::sun::star::accessibility::AccessibleStateType;
 
-    typedef css::awt::Point        UnoPoint;
-
     // AccessibleWrapper
     typedef ::cppu::WeakImplHelper< XAccessible > AccessibleWrapper_Base;
     class AccessibleWrapper : public AccessibleWrapper_Base
@@ -76,7 +74,7 @@ namespace accessibility
         }
 
         // XAccessible
-        virtual Reference< XAccessibleContext > SAL_CALL getAccessibleContext(  ) throw (RuntimeException, std::exception) SAL_OVERRIDE
+        virtual Reference< XAccessibleContext > SAL_CALL getAccessibleContext(  ) throw (RuntimeException, std::exception) override
         {
             return m_xContext;
         }
@@ -110,11 +108,11 @@ namespace accessibility
 
     protected:
         // IToolPanelDeckListener
-        virtual void PanelInserted( const ::svt::PToolPanel& i_pPanel, const size_t i_nPosition ) SAL_OVERRIDE;
-        virtual void PanelRemoved( const size_t i_nPosition ) SAL_OVERRIDE;
-        virtual void ActivePanelChanged( const ::boost::optional< size_t >& i_rOldActive, const ::boost::optional< size_t >& i_rNewActive ) SAL_OVERRIDE;
-        virtual void LayouterChanged( const ::svt::PDeckLayouter& i_rNewLayouter ) SAL_OVERRIDE;
-        virtual void Dying() SAL_OVERRIDE;
+        virtual void PanelInserted( const ::svt::PToolPanel& i_pPanel, const size_t i_nPosition ) override;
+        virtual void PanelRemoved( const size_t i_nPosition ) override;
+        virtual void ActivePanelChanged( const ::boost::optional< size_t >& i_rOldActive, const ::boost::optional< size_t >& i_rNewActive ) override;
+        virtual void LayouterChanged( const ::svt::PDeckLayouter& i_rNewLayouter ) override;
+        virtual void Dying() override;
 
         DECL_LINK_TYPED( OnWindowEvent, VclWindowEvent&, void );
 
@@ -340,12 +338,12 @@ namespace accessibility
         }
     }
 
-    Reference< XAccessible > SAL_CALL AccessibleToolPanelTabBar::getAccessibleAtPoint( const UnoPoint& i_rPoint ) throw (RuntimeException, std::exception)
+    Reference< XAccessible > SAL_CALL AccessibleToolPanelTabBar::getAccessibleAtPoint( const css::awt::Point& i_rPoint ) throw (RuntimeException, std::exception)
     {
         MethodGuard aGuard( *m_xImpl );
 
         // check the tab items
-        const UnoPoint aOwnScreenPos( getLocationOnScreen() );
+        const css::awt::Point aOwnScreenPos( getLocationOnScreen() );
         const ::Point aRequestedScreenPoint( i_rPoint.X + aOwnScreenPos.X, i_rPoint.Y + aOwnScreenPos.Y );
 
         for ( size_t i=0; i<m_xImpl->getPanelDeck()->GetPanelCount(); ++i )

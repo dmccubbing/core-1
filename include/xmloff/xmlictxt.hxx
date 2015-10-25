@@ -79,12 +79,12 @@ public:
      * CreateContext method is called to create a new default context. */
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                                    const OUString& rLocalName,
-                                   const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList >& xAttrList );
+                                   const css::uno::Reference< css::xml::sax::XAttributeList >& xAttrList );
 
     /** StartElement is called after a context has been constructed and
      * before a elements context is parsed. It may be used for actions that
      * require virtual methods. The default is to do nothing. */
-    virtual void StartElement( const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList >& xAttrList );
+    virtual void StartElement( const css::uno::Reference< css::xml::sax::XAttributeList >& xAttrList );
 
     /** EndElement is called before a context will be destructed, but
      * after a elements context has been parsed. It may be used for actions
@@ -95,32 +95,32 @@ public:
      * current element. The default is to ignore them. */
     virtual void Characters( const OUString& rChars );
 
-    // ::com::sun::star::xml::sax::XFastContextHandler:
+    // css::xml::sax::XFastContextHandler:
     virtual void SAL_CALL startFastElement (sal_Int32 Element,
         const css::uno::Reference< css::xml::sax::XFastAttributeList >& Attribs)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual void SAL_CALL startUnknownElement(const OUString & Namespace, const OUString & Name,
         const css::uno::Reference< css::xml::sax::XFastAttributeList > & Attribs)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual void SAL_CALL endFastElement(sal_Int32 Element)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual void SAL_CALL endUnknownElement(const OUString & Namespace, const OUString & Name)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual css::uno::Reference< XFastContextHandler >  SAL_CALL createFastChildContext(sal_Int32 Element,
         const css::uno::Reference<css::xml::sax::XFastAttributeList>& Attribs)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual css::uno::Reference< css::xml::sax::XFastContextHandler > SAL_CALL createUnknownChildContext(
         const OUString & Namespace, const OUString & Name,
         const css::uno::Reference< css::xml::sax::XFastAttributeList > & Attribs)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     virtual void SAL_CALL characters(const OUString & aChars)
-        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, css::xml::sax::SAXException, std::exception) override;
 
     // #i124143# allow to copy evtl. useful data from another temporary import context, e.g. used to
     // support multiple images and to rescue evtl. GluePoints imported with one of the

@@ -344,7 +344,7 @@ void ScDrawTextObjectBar::Execute( SfxRequest &rReq )
         case SID_THES:
             {
                 OUString aReplaceText;
-                SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_THES, false );
+                const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_THES);
                 if (pItem2)
                     aReplaceText = pItem2->GetValue();
                 if (!aReplaceText.isEmpty())
@@ -1105,7 +1105,7 @@ void ScDrawTextObjectBar::GetAttrState( SfxItemSet& rDestSet )
 
     //  Unterstreichung
 
-    eState = aAttrSet.GetItemState( EE_CHAR_UNDERLINE, true );
+    eState = aAttrSet.GetItemState( EE_CHAR_UNDERLINE );
     if ( eState == SfxItemState::DONTCARE )
     {
         rDestSet.InvalidateItem( SID_ULINE_VAL_NONE );

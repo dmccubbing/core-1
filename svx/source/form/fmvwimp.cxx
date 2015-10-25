@@ -160,7 +160,7 @@ class FmXFormView::ObjectRemoveListener : public SfxListener
     FmXFormView* m_pParent;
 public:
     explicit ObjectRemoveListener( FmXFormView* pParent );
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 };
 
 FormViewPageWindowAdapter::FormViewPageWindowAdapter( const css::uno::Reference<css::uno::XComponentContext>& _rContext, const SdrPageWindow& _rWindow, FmXFormView* _pViewImpl )
@@ -1250,7 +1250,7 @@ SdrObject* FmXFormView::implCreateFieldControl( const svx::ODataAccessDescriptor
         if ( !xField.is() )
             return NULL;
 
-        Reference< XNumberFormatsSupplier > xSupplier( getNumberFormats( xConnection, false ), UNO_SET_THROW );
+        Reference< XNumberFormatsSupplier > xSupplier( getNumberFormats( xConnection ), UNO_SET_THROW );
         Reference< XNumberFormats >  xNumberFormats( xSupplier->getNumberFormats(), UNO_SET_THROW );
 
         OUString sLabelPostfix;
@@ -1447,8 +1447,7 @@ SdrObject* FmXFormView::implCreateXFormsControl( const svx::OXFormsDescriptor &_
         if(OUString(_rDesc.szServiceName) == FM_COMPONENT_COMMANDBUTTON)
             nOBJID = OBJ_FM_BUTTON;
 
-        typedef ::com::sun::star::form::submission::XSubmission XSubmission_t;
-        Reference< XSubmission_t > xSubmission(_rDesc.xPropSet, UNO_QUERY);
+        Reference< css::form::submission::XSubmission > xSubmission(_rDesc.xPropSet, UNO_QUERY);
 
         // xform control or submission button?
         if ( !xSubmission.is() )
@@ -1492,7 +1491,7 @@ SdrObject* FmXFormView::implCreateXFormsControl( const svx::OXFormsDescriptor &_
             const MapMode eSourceMode(MAP_100TH_MM);
             const sal_uInt16 nObjID = OBJ_FM_BUTTON;
             ::Size controlSize(4000, 500);
-            FmFormObj *pControl = static_cast<FmFormObj*>(SdrObjFactory::MakeNewObject( FmFormInventor, nObjID, NULL, NULL ));
+            FmFormObj *pControl = static_cast<FmFormObj*>(SdrObjFactory::MakeNewObject( FmFormInventor, nObjID, NULL ));
             controlSize.Width() = Fraction(controlSize.Width(), 1) * eTargetMode.GetScaleX();
             controlSize.Height() = Fraction(controlSize.Height(), 1) * eTargetMode.GetScaleY();
             ::Point controlPos( OutputDevice::LogicToLogic( ::Point( controlSize.Width(), 0 ), eSourceMode, eTargetMode ) );
@@ -1506,8 +1505,7 @@ SdrObject* FmXFormView::implCreateXFormsControl( const svx::OXFormsDescriptor &_
             // connect the submission with the submission supplier (aka the button)
             xControlSet->setPropertyValue( FM_PROP_BUTTON_TYPE,
                                            makeAny( FormButtonType_SUBMIT ) );
-            typedef ::com::sun::star::form::submission::XSubmissionSupplier XSubmissionSupplier_t;
-            Reference< XSubmissionSupplier_t > xSubmissionSupplier(pControl->GetUnoControlModel(), UNO_QUERY);
+            Reference< css::form::submission::XSubmissionSupplier > xSubmissionSupplier(pControl->GetUnoControlModel(), UNO_QUERY);
             xSubmissionSupplier->setSubmission(xSubmission);
 
             return pControl;

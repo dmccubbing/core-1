@@ -20,6 +20,7 @@
 
 #include <svx/tbcontrl.hxx>
 #include <sfx2/sidebar/SidebarToolBox.hxx>
+#include <vcl/svapp.hxx>
 
 #include <com/sun/star/view/XSelectionSupplier.hpp>
 
@@ -135,7 +136,11 @@ ChartLinePanel::ChartLinePanel(vcl::Window* pParent,
     mbModelValid(true),
     maLineColorWrapper(mxModel, getColorToolBoxControl(mpTBColor.get()), "LineColor")
 {
-    std::vector<ObjectType> aAcceptedTypes { OBJECTTYPE_PAGE, OBJECTTYPE_DIAGRAM, OBJECTTYPE_DATA_SERIES, OBJECTTYPE_TITLE, OBJECTTYPE_LEGEND};
+    disableArrowHead();
+    std::vector<ObjectType> aAcceptedTypes { OBJECTTYPE_PAGE, OBJECTTYPE_DIAGRAM,
+        OBJECTTYPE_DATA_SERIES, OBJECTTYPE_DATA_POINT,
+        OBJECTTYPE_TITLE, OBJECTTYPE_LEGEND, OBJECTTYPE_DATA_CURVE,
+        OBJECTTYPE_DATA_AVERAGE_LINE, OBJECTTYPE_AXIS};
     mxSelectionListener->setAcceptedTypes(aAcceptedTypes);
     Initialize();
 }
@@ -178,6 +183,7 @@ void ChartLinePanel::updateData()
     if (!mbUpdate || !mbModelValid)
         return;
 
+    SolarMutexGuard aGuard;
     css::uno::Reference<css::beans::XPropertySet> xPropSet = getPropSet(mxModel);
     if (!xPropSet.is())
         return;

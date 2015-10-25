@@ -713,7 +713,7 @@ static sal_uInt16 lcl_ScRange_Parse_XL_R1C1( ScRange& r,
     sal_uInt16 nFlags2 = SCA_VALID_TAB;
 
     p = r.Parse_XL_Header( p, pDoc, aExternDocName, aStartTabName,
-            aEndTabName, nFlags, bOnlyAcceptSingle, NULL );
+            aEndTabName, nFlags, bOnlyAcceptSingle );
 
     if (!aExternDocName.isEmpty())
         lcl_ScRange_External_TabSpan( r, nFlags, pExtInfo, aExternDocName,
@@ -846,9 +846,9 @@ static inline const sal_Unicode* lcl_a1_get_col( const sal_Unicode* p,
     if( !rtl::isAsciiAlpha( *p ) )
         return NULL;
 
-    nCol = sal::static_int_cast<SCCOL>( toupper( char(*p++) ) - 'A' );
+    nCol = sal::static_int_cast<SCCOL>( rtl::toAsciiUpperCase( *p++ ) - 'A' );
     while (nCol <= MAXCOL && rtl::isAsciiAlpha(*p))
-        nCol = sal::static_int_cast<SCCOL>( ((nCol + 1) * 26) + toupper( char(*p++) ) - 'A' );
+        nCol = sal::static_int_cast<SCCOL>( ((nCol + 1) * 26) + rtl::toAsciiUpperCase( *p++ ) - 'A' );
     if( nCol > MAXCOL || rtl::isAsciiAlpha( *p ) )
         return NULL;
 
@@ -1145,14 +1145,14 @@ static sal_uInt16 lcl_ScAddress_Parse_OOo( const sal_Unicode* p, ScDocument* pDo
 
         if (rtl::isAsciiAlpha( *p ))
         {
-            nCol = sal::static_int_cast<SCCOL>( toupper( char(*p++) ) - 'A' );
+            nCol = sal::static_int_cast<SCCOL>( rtl::toAsciiUpperCase( *p++ ) - 'A' );
             while (nCol < MAXCOL && rtl::isAsciiAlpha(*p))
-                nCol = sal::static_int_cast<SCCOL>( ((nCol + 1) * 26) + toupper( char(*p++) ) - 'A' );
+                nCol = sal::static_int_cast<SCCOL>( ((nCol + 1) * 26) + rtl::toAsciiUpperCase( *p++ ) - 'A' );
         }
         else
             nBits = 0;
 
-        if( nCol > MAXCOL || rtl::isAsciiAlpha( *p ) )
+        if (nCol > MAXCOL || (*p && *p != '$' && !rtl::isAsciiDigit( *p )))
             nBits = 0;
         nRes |= nBits;
         if( !nBits )
@@ -1325,7 +1325,7 @@ static sal_uInt16 lcl_ScAddress_Parse ( const sal_Unicode* p, ScDocument* pDoc, 
         case formula::FormulaGrammar::CONV_OOO:
         {
             sal_uInt16 nRawRes = 0;
-            return lcl_ScAddress_Parse_OOo( p, pDoc, rAddr, nRawRes, pExtInfo, NULL );
+            return lcl_ScAddress_Parse_OOo( p, pDoc, rAddr, nRawRes, pExtInfo );
         }
     }
 }
@@ -1461,7 +1461,7 @@ static sal_uInt16 lcl_ScRange_Parse_OOo( ScRange& rRange,
         aTmp[nPos] = 0;
         const sal_Unicode* p = aTmp.getStr();
         sal_uInt16 nRawRes1 = 0;
-        if (((nRes1 = lcl_ScAddress_Parse_OOo( p, pDoc, rRange.aStart, nRawRes1, pExtInfo, NULL)) != 0) ||
+        if (((nRes1 = lcl_ScAddress_Parse_OOo( p, pDoc, rRange.aStart, nRawRes1, pExtInfo)) != 0) ||
                 ((nRawRes1 & (SCA_VALID_COL | SCA_VALID_ROW)) && (nRawRes1 & SCA_VALID_TAB)))
         {
             rRange.aEnd = rRange.aStart;  // sheet must be initialized identical to first sheet

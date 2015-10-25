@@ -38,9 +38,9 @@ namespace toolkit
 
     struct AnimatedImagesPeer_Data;
     typedef ::cppu::ImplInheritanceHelper3  <   VCLXWindow
-                                            ,   ::com::sun::star::awt::XAnimation
-                                            ,   ::com::sun::star::container::XContainerListener
-                                            ,   ::com::sun::star::util::XModifyListener
+                                            ,   css::awt::XAnimation
+                                            ,   css::container::XContainerListener
+                                            ,   css::util::XModifyListener
                                             >   AnimatedImagesPeer_Base;
 
     class AnimatedImagesPeer    :public AnimatedImagesPeer_Base
@@ -53,39 +53,39 @@ namespace toolkit
 
     public:
         // XAnimation
-        virtual void SAL_CALL startAnimation(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL stopAnimation(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual sal_Bool SAL_CALL isAnimationRunning(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL startAnimation(  ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL stopAnimation(  ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual sal_Bool SAL_CALL isAnimationRunning(  ) throw (css::uno::RuntimeException, std::exception) override;
 
         // VclWindowPeer
-        virtual void SAL_CALL setProperty( const OUString& PropertyName, const ::com::sun::star::uno::Any& Value ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual ::com::sun::star::uno::Any SAL_CALL getProperty( const OUString& PropertyName ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL setProperty( const OUString& PropertyName, const css::uno::Any& Value ) throw(css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Any SAL_CALL getProperty( const OUString& PropertyName ) throw(css::uno::RuntimeException, std::exception) override;
 
         // XContainerListener
-        virtual void SAL_CALL elementInserted( const ::com::sun::star::container::ContainerEvent& Event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL elementRemoved( const ::com::sun::star::container::ContainerEvent& Event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL elementReplaced( const ::com::sun::star::container::ContainerEvent& Event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL elementInserted( const css::container::ContainerEvent& Event ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL elementRemoved( const css::container::ContainerEvent& Event ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL elementReplaced( const css::container::ContainerEvent& Event ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XEventListener
-        virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& i_event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL disposing( const css::lang::EventObject& i_event ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XModifyListener
-        virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& i_event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL modified( const css::lang::EventObject& i_event ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XComponent
-        void SAL_CALL dispose(  ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        void SAL_CALL dispose(  ) throw(css::uno::RuntimeException, std::exception) override;
 
     protected:
-        void ProcessWindowEvent( const VclWindowEvent& i_windowEvent ) SAL_OVERRIDE;
+        void ProcessWindowEvent( const VclWindowEvent& i_windowEvent ) override;
 
     private:
         /** updates our images with the ones from the given XAnimatedImages component
         */
-        void    impl_updateImages_nolck( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface >& i_animatedImages );
+        void    impl_updateImages_nolck( const css::uno::Reference< css::uno::XInterface >& i_animatedImages );
 
     private:
-        AnimatedImagesPeer(const AnimatedImagesPeer&) SAL_DELETED_FUNCTION;
-        AnimatedImagesPeer& operator=(const AnimatedImagesPeer&) SAL_DELETED_FUNCTION;
+        AnimatedImagesPeer(const AnimatedImagesPeer&) = delete;
+        AnimatedImagesPeer& operator=(const AnimatedImagesPeer&) = delete;
 
         std::unique_ptr< AnimatedImagesPeer_Data >   m_xData;
     };

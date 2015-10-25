@@ -111,7 +111,7 @@ public:
         const Link<FmSearchContext&,sal_uInt32>& lnkContextSupplier);
 
     virtual ~FmSearchDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     /** The found-handler gets in the 'found'-case a pointer on a FmFoundRecordInformation-structure
         (which is only valid in the handler; so if one needs to memorize the data, don't copy the pointer but
@@ -132,7 +132,7 @@ public:
     inline void SetActiveField(const OUString& strField);
 
 protected:
-    virtual bool Close() SAL_OVERRIDE;
+    virtual bool Close() override;
 
     void Init(const OUString& strVisibleFields, const OUString& strInitialText);
     // only to be used out of the constructors
@@ -161,15 +161,15 @@ private:
     DECL_LINK_TYPED(OnClickedSearchAgain, Button *, void);
     DECL_LINK_TYPED( OnClickedSpecialSettings, Button*, void );
 
-    DECL_LINK(OnSearchTextModified, void *);
+    DECL_LINK_TYPED(OnSearchTextModified, Edit&, void);
 
-    DECL_LINK( OnPositionSelected, ListBox* );
-    DECL_LINK( OnFieldSelected, ListBox* );
+    DECL_LINK_TYPED( OnPositionSelected, ListBox&, void );
+    DECL_LINK_TYPED( OnFieldSelected, ListBox&, void );
 
     DECL_LINK_TYPED( OnFocusGrabbed, Control&, void );
     DECL_LINK_TYPED( OnCheckBoxToggled, CheckBox&, void );
 
-    DECL_LINK( OnContextSelection, ListBox* );
+    DECL_LINK_TYPED( OnContextSelection, ListBox&, void );
 
     DECL_LINK_TYPED( OnSearchProgress, const FmSearchProgress*, void );
 
@@ -184,7 +184,7 @@ inline void FmSearchDialog::SetActiveField(const OUString& strField)
     if (nInitialField == LISTBOX_ENTRY_NOTFOUND)
         nInitialField = 0;
     m_plbField->SelectEntryPos(nInitialField);
-    LINK(this, FmSearchDialog, OnFieldSelected).Call(m_plbField);
+    LINK(this, FmSearchDialog, OnFieldSelected).Call(*m_plbField);
 }
 
 #endif // INCLUDED_CUI_SOURCE_INC_CUIFMSEARCH_HXX

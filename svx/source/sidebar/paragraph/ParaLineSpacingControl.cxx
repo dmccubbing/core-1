@@ -72,11 +72,11 @@ ParaLineSpacingControl::ParaLineSpacingControl(sal_uInt16 nId)
     mpSpacing15Button->SetClickHdl(aLink);
     mpSpacing2Button->SetClickHdl(aLink);
 
-    Link<> aLink2 = LINK( this, ParaLineSpacingControl, LineSPDistHdl_Impl );
-    mpLineDist->SetSelectHdl(aLink2);
+    Link<ListBox&,void> aLink3 = LINK( this, ParaLineSpacingControl, LineSPDistHdl_Impl );
+    mpLineDist->SetSelectHdl(aLink3);
     SelectEntryPos(LLINESPACE_1);
 
-    aLink2 = LINK( this, ParaLineSpacingControl, LineSPDistAtHdl_Impl );
+    Link<Edit&,void> aLink2 = LINK( this, ParaLineSpacingControl, LineSPDistAtHdl_Impl );
     mpLineDistAtPercentBox->SetModifyHdl( aLink2 );
     mpLineDistAtMetricBox->SetModifyHdl( aLink2 );
 
@@ -321,17 +321,15 @@ void ParaLineSpacingControl::SelectEntryPos(sal_Int32 nPos)
     UpdateMetricFields();
 }
 
-IMPL_LINK(ParaLineSpacingControl, LineSPDistHdl_Impl, ListBox*, /*pBox*/)
+IMPL_LINK_NOARG_TYPED(ParaLineSpacingControl, LineSPDistHdl_Impl, ListBox&, void)
 {
     UpdateMetricFields();
     ExecuteLineSpace();
-    return 0;
 }
 
-IMPL_LINK_NOARG( ParaLineSpacingControl, LineSPDistAtHdl_Impl )
+IMPL_LINK_NOARG_TYPED( ParaLineSpacingControl, LineSPDistAtHdl_Impl, Edit&, void )
 {
     ExecuteLineSpace();
-    return 0L;
 }
 
 void ParaLineSpacingControl::ExecuteLineSpace()

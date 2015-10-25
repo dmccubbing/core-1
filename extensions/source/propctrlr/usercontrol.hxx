@@ -35,21 +35,22 @@ namespace pcr
 
     //= NumberFormatSampleField
 
-    class NumberFormatSampleField : public ControlWindow< FormattedField >
+    class NumberFormatSampleField : public FormattedField
     {
-    private:
-        typedef ControlWindow< FormattedField > BaseClass;
-
     public:
         NumberFormatSampleField( vcl::Window* _pParent, WinBits _nStyle )
-            :BaseClass( _pParent, _nStyle )
+            : FormattedField(_pParent, _nStyle)
+            , m_pHelper(nullptr)
         {
         }
 
-        void SetFormatSupplier( const SvNumberFormatsSupplierObj* pSupplier );
+        void         SetFormatSupplier( const SvNumberFormatsSupplierObj* pSupplier );
+        void         setControlHelper( CommonBehaviourControlHelper& _rControlHelper ) { m_pHelper = &_rControlHelper; }
 
     protected:
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
+    private:
+        CommonBehaviourControlHelper* m_pHelper;
     };
 
 
@@ -62,9 +63,9 @@ namespace pcr
         OFormatSampleControl( vcl::Window* pParent, WinBits nWinStyle );
 
         // XPropertyControl
-        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) override;
 
         inline void SetFormatSupplier( const SvNumberFormatsSupplierObj* _pSupplier )
         {
@@ -95,7 +96,7 @@ namespace pcr
 
     //= OFormattedNumericControl
 
-    typedef CommonBehaviourControl< css::inspection::XPropertyControl, ControlWindow< FormattedField > > OFormattedNumericControl_Base;
+    typedef CommonBehaviourControl< css::inspection::XPropertyControl, FormattedField > OFormattedNumericControl_Base;
     class OFormattedNumericControl : public OFormattedNumericControl_Base
     {
     private:
@@ -105,9 +106,9 @@ namespace pcr
         OFormattedNumericControl( vcl::Window* pParent, WinBits nWinStyle = WB_TABSTOP);
 
         // XPropertyControl
-        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) override;
 
         void SetFormatDescription( const FormatDescription& rDesc );
 
@@ -124,16 +125,16 @@ namespace pcr
 
     //= OFileUrlControl
 
-    typedef CommonBehaviourControl< css::inspection::XPropertyControl, ControlWindow< ::svt::FileURLBox > > OFileUrlControl_Base;
+    typedef CommonBehaviourControl< css::inspection::XPropertyControl, ::svt::FileURLBox > OFileUrlControl_Base;
     class OFileUrlControl : public OFileUrlControl_Base
     {
     public:
         OFileUrlControl( vcl::Window* pParent, WinBits nWinStyle );
 
         // XPropertyControl
-        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual css::uno::Any SAL_CALL getValue() throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL setValue( const css::uno::Any& _value ) throw (css::beans::IllegalTypeException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Type SAL_CALL getValueType() throw (css::uno::RuntimeException, std::exception) override;
 
     protected:
         virtual ~OFileUrlControl();
@@ -149,7 +150,7 @@ namespace pcr
         virtual ~OTimeDurationControl();
 
         // XPropertyControl
-        ::sal_Int16 SAL_CALL getControlType() throw (css::uno::RuntimeException) SAL_OVERRIDE;
+        ::sal_Int16 SAL_CALL getControlType() throw (css::uno::RuntimeException) override;
 
     private:
         DECL_LINK_TYPED( OnCustomConvert, MetricFormatter&, void );

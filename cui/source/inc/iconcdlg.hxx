@@ -84,7 +84,7 @@ protected:
 
 public:
     virtual ~IconChoicePage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     const SfxItemSet&   GetItemSet() const { return *pSet; }
 
@@ -104,12 +104,12 @@ public:
     };
 
     virtual void        ActivatePage( const SfxItemSet& );
-    virtual int         DeactivatePage( SfxItemSet* pSet = 0 );
+    virtual int         DeactivatePage( SfxItemSet* pSet );
     OUString            GetUserData() { return aUserString; }
     virtual bool        QueryClose();
 
-    void                StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    void                DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    void                StateChanged( StateChangedType nType ) override;
+    void                DataChanged( const DataChangedEvent& rDCEvt ) override;
 };
 
 class IconChoiceDialog : public ModalDialog
@@ -175,7 +175,7 @@ public:
     IconChoiceDialog ( vcl::Window* pParent, const OUString& rID, const OUString& rUIXMLDescription,
                        const SfxItemSet * pItemSet = 0 );
     virtual ~IconChoiceDialog ();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     // interface
     SvxIconChoiceCtrlEntry* AddTabPage(
@@ -198,7 +198,7 @@ public:
     const CancelButton& GetCancelButton() const { return *m_pCancelBtn; }
     CancelButton&       GetCancelButton() { return *m_pCancelBtn; }
 
-    short               Execute() SAL_OVERRIDE;
+    short               Execute() override;
     void                Start( bool bShow = true );
     bool                QueryClose();
 

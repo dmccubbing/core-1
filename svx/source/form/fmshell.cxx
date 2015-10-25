@@ -265,7 +265,7 @@ bool FmFormShell::PrepareClose(bool bUI)
                 const svx::ControllerFeatures& rController = GetImpl()->getActiveControllerFeatures();
                 if ( rController->commitCurrentControl() )
                 {
-                    bool bModified = rController->isModifiedRow();
+                    const bool bModified = rController->isModifiedRow();
 
                     if ( bModified && bUI )
                     {
@@ -274,17 +274,16 @@ bool FmFormShell::PrepareClose(bool bUI)
                             "svx/ui/savemodifieddialog.ui");
                         switch (aQry->Execute())
                         {
+                            case RET_YES:
+                                bResult = rController->commitCurrentRecord( );
+                                // fallthrough to next case
                             case RET_NO:
-                                bModified = false;
                                 GetImpl()->didPrepareClose( true );
                                 break;
 
                             case RET_CANCEL:
                                 return false;
                         }
-
-                            if ( bModified )
-                                bResult = rController->commitCurrentRecord( );
                     }
                 }
             }
@@ -492,7 +491,7 @@ void FmFormShell::Execute(SfxRequest &rReq)
         case SID_FM_SCROLLBAR:
         case SID_FM_SPINBUTTON:
         {
-            SFX_REQUEST_ARG( rReq, pGrabFocusItem, SfxBoolItem, SID_FM_TOGGLECONTROLFOCUS, false );
+            const SfxBoolItem* pGrabFocusItem = rReq.GetArg<SfxBoolItem>(SID_FM_TOGGLECONTROLFOCUS);
             if ( pGrabFocusItem && pGrabFocusItem->GetValue() )
             {   // see below
                 SfxViewShell* pShell = GetViewShell();
@@ -602,7 +601,7 @@ void FmFormShell::Execute(SfxRequest &rReq)
             break;
         case SID_FM_SHOW_PROPERTY_BROWSER:
         {
-            SFX_REQUEST_ARG( rReq, pShowItem, SfxBoolItem, SID_FM_SHOW_PROPERTIES, false );
+            const SfxBoolItem* pShowItem = rReq.GetArg<SfxBoolItem>(SID_FM_SHOW_PROPERTIES);
             bool bShow = true;
             if ( pShowItem )
                 bShow = pShowItem->GetValue();
@@ -614,7 +613,7 @@ void FmFormShell::Execute(SfxRequest &rReq)
         case SID_FM_PROPERTIES:
         {
             // PropertyBrowser anzeigen
-            SFX_REQUEST_ARG(rReq, pShowItem, SfxBoolItem, nSlot, false);
+            const SfxBoolItem* pShowItem = rReq.GetArg<SfxBoolItem>(nSlot);
             bool bShow = pShowItem == nullptr || pShowItem->GetValue();
 
             InterfaceBag aOnlyTheForm;
@@ -628,7 +627,7 @@ void FmFormShell::Execute(SfxRequest &rReq)
 
         case SID_FM_CTL_PROPERTIES:
         {
-            SFX_REQUEST_ARG(rReq, pShowItem, SfxBoolItem, nSlot, false);
+            const SfxBoolItem* pShowItem = rReq.GetArg<SfxBoolItem>(nSlot);
             bool bShow = pShowItem == nullptr || pShowItem->GetValue();
 
             OSL_ENSURE( GetImpl()->onlyControlsAreMarked(), "FmFormShell::Execute: ControlProperties should be disabled!" );
@@ -665,7 +664,7 @@ void FmFormShell::Execute(SfxRequest &rReq)
 
         case SID_FM_DESIGN_MODE:
         {
-            SFX_REQUEST_ARG(rReq, pDesignItem, SfxBoolItem, nSlot, false);
+            const SfxBoolItem* pDesignItem = rReq.GetArg<SfxBoolItem>(nSlot);
             bool bDesignMode = pDesignItem ? pDesignItem->GetValue() : !m_bDesignMode;
             SetDesignMode( bDesignMode );
             if ( m_bDesignMode == bDesignMode )
@@ -1361,7 +1360,7 @@ namespace
         }
 
     public:
-        virtual bool    includeObject( const SdrObject& i_rObject ) const SAL_OVERRIDE
+        virtual bool    includeObject( const SdrObject& i_rObject ) const override
         {
             const SdrUnoObj* pUnoObj = dynamic_cast< const SdrUnoObj* >( &i_rObject );
             if ( !pUnoObj )

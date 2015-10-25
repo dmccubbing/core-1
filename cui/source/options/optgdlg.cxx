@@ -287,12 +287,12 @@ OfaMiscTabPage::OfaMiscTabPage(vcl::Window* pParent, const SfxItemSet& rSet)
 
     m_aStrDateInfo = m_pToYearFT->GetText();
     m_pYearValueField->SetModifyHdl( LINK( this, OfaMiscTabPage, TwoFigureHdl ) );
-    Link<> aLink = LINK( this, OfaMiscTabPage, TwoFigureConfigHdl );
+    Link<SpinField&,void> aLink = LINK( this, OfaMiscTabPage, TwoFigureConfigHdl );
     m_pYearValueField->SetDownHdl( aLink );
     m_pYearValueField->SetUpHdl( aLink );
     m_pYearValueField->SetLoseFocusHdl( LINK( this, OfaMiscTabPage, TwoFigureConfigFocusHdl ) );
     m_pYearValueField->SetFirstHdl( aLink );
-    TwoFigureConfigHdl(m_pYearValueField);
+    TwoFigureConfigHdl(*m_pYearValueField);
 
     SetExchangeSupport();
 }
@@ -400,7 +400,7 @@ void OfaMiscTabPage::Reset( const SfxItemSet* rSet )
     if ( SfxItemState::SET == rSet->GetItemState( SID_ATTR_YEAR2000, false, &pItem ) )
     {
         m_pYearValueField->SetValue( static_cast<const SfxUInt16Item*>(pItem)->GetValue() );
-        TwoFigureConfigHdl(m_pYearValueField);
+        TwoFigureConfigHdl(*m_pYearValueField);
     }
     else
     {
@@ -411,10 +411,8 @@ void OfaMiscTabPage::Reset( const SfxItemSet* rSet )
     m_pCollectUsageInfo->SaveValue();
 }
 
-IMPL_LINK( OfaMiscTabPage, TwoFigureHdl, NumericField*, pEd )
+IMPL_LINK_NOARG_TYPED( OfaMiscTabPage, TwoFigureHdl, Edit&, void )
 {
-    (void)pEd;
-
     OUString aOutput( m_aStrDateInfo );
     OUString aStr( m_pYearValueField->GetText() );
     OUString sSep( SvtSysLocale().GetLocaleData().getNumThousandSep() );
@@ -430,21 +428,19 @@ IMPL_LINK( OfaMiscTabPage, TwoFigureHdl, NumericField*, pEd )
         aOutput += OUString::number( nNum );
     }
     m_pToYearFT->SetText( aOutput );
-    return 0;
 }
 
 IMPL_LINK_TYPED( OfaMiscTabPage, TwoFigureConfigFocusHdl, Control&, rControl, void )
 {
-    TwoFigureConfigHdl(static_cast<NumericField*>(&rControl));
+    TwoFigureConfigHdl(static_cast<SpinField&>(rControl));
 }
-IMPL_LINK( OfaMiscTabPage, TwoFigureConfigHdl, NumericField*, pEd )
+IMPL_LINK_TYPED( OfaMiscTabPage, TwoFigureConfigHdl, SpinField&, rEd, void )
 {
     sal_Int64 nNum = m_pYearValueField->GetValue();
     OUString aOutput(OUString::number(nNum));
     m_pYearValueField->SetText(aOutput);
     m_pYearValueField->SetSelection( Selection( 0, aOutput.getLength() ) );
-    TwoFigureHdl( pEd );
-    return 0;
+    TwoFigureHdl( static_cast<Edit&>(rEd) );
 }
 
 class CanvasSettings
@@ -1109,7 +1105,7 @@ OfaLanguagesTabPage::OfaLanguagesTabPage(vcl::Window* pParent, const SfxItemSet&
     m_pComplexLanguageLB->SetLanguageList( SvxLanguageListFlags::CTL     | SvxLanguageListFlags::ONLY_KNOWN, true, false, true );
     m_pComplexLanguageLB->InsertDefaultLanguage( css::i18n::ScriptType::COMPLEX );
 
-    m_pLocaleSettingLB->SetLanguageList( SvxLanguageListFlags::ALL     | SvxLanguageListFlags::ONLY_KNOWN, false, false);
+    m_pLocaleSettingLB->SetLanguageList( SvxLanguageListFlags::ALL     | SvxLanguageListFlags::ONLY_KNOWN, false );
     m_pLocaleSettingLB->InsertSystemLanguage( );
 
     const NfCurrencyTable& rCurrTab = SvNumberFormatter::GetTheCurrencyTable();
@@ -1473,7 +1469,7 @@ void OfaLanguagesTabPage::Reset( const SfxItemSet* rSet )
     // let LocaleSettingHdl enable/disable checkboxes for CJK/CTL support
     // #i15812# must be done *before* the configured currency is set
     // and update the decimal separator used for the given locale
-    LocaleSettingHdl(m_pLocaleSettingLB);
+    LocaleSettingHdl(*m_pLocaleSettingLB);
 
     // configured currency, for example, USD-en-US or EUR-de-DE, or empty for locale default
     OUString aAbbrev;
@@ -1542,7 +1538,7 @@ void OfaLanguagesTabPage::Reset( const SfxItemSet* rSet )
     //overwrite them by the values provided by the DocShell
     if(pCurrentDocShell)
     {
-        m_pCurrentDocCB->Enable(true);
+        m_pCurrentDocCB->Enable();
         m_pCurrentDocCB->Check(bLanguageCurrentDoc_Impl);
         const SfxPoolItem* pLang;
         if( SfxItemState::SET == rSet->GetItemState(SID_ATTR_LANGUAGE, false, &pLang))
@@ -1607,7 +1603,7 @@ void OfaLanguagesTabPage::Reset( const SfxItemSet* rSet )
     if ( SfxItemState::SET == rSet->GetItemState(SID_SET_DOCUMENT_LANGUAGE, false, &pLang ) && static_cast<const SfxBoolItem*>(pLang)->GetValue() )
     {
         m_pWesternLanguageLB->GrabFocus();
-        m_pCurrentDocCB->Enable(true);
+        m_pCurrentDocCB->Enable();
         m_pCurrentDocCB->Check();
     }
 }
@@ -1651,8 +1647,9 @@ namespace
     }
 }
 
-IMPL_LINK( OfaLanguagesTabPage, LocaleSettingHdl, SvxLanguageBox*, pBox )
+IMPL_LINK_TYPED( OfaLanguagesTabPage, LocaleSettingHdl, ListBox&, rListBox, void )
 {
+    SvxLanguageBox* pBox = static_cast<SvxLanguageBox*>(&rListBox);
     LanguageType eLang = pBox->GetSelectLanguage();
     SvtScriptType nType = SvtLanguageOptions::GetScriptTypeOfLanguage(eLang);
     // first check if CTL must be enabled
@@ -1697,13 +1694,11 @@ IMPL_LINK( OfaLanguagesTabPage, LocaleSettingHdl, SvxLanguageBox*, pBox )
     OUString aDatePatternsString = lcl_getDatePatternsConfigString( aLocaleWrapper);
     m_bDatePatternsValid = true;
     m_pDatePatternsED->SetText( aDatePatternsString);
-
-    return 0;
 }
 
-IMPL_LINK( OfaLanguagesTabPage, DatePatternsHdl, Edit*, pEd )
+IMPL_LINK_TYPED( OfaLanguagesTabPage, DatePatternsHdl, Edit&, rEd, void )
 {
-    const OUString aPatterns( pEd->GetText());
+    const OUString aPatterns( rEd.GetText());
     OUStringBuffer aBuf( aPatterns);
     sal_Int32 nChar = 0;
     bool bValid = true;
@@ -1789,26 +1784,25 @@ IMPL_LINK( OfaLanguagesTabPage, DatePatternsHdl, Edit*, pEd )
         // Do not use SetText(...,GetSelection()) because internally the
         // reference's pointer of the selection is obtained resulting in the
         // entire text being selected at the end.
-        Selection aSelection( pEd->GetSelection());
-        pEd->SetText( aBuf.makeStringAndClear(), aSelection);
+        Selection aSelection( rEd.GetSelection());
+        rEd.SetText( aBuf.makeStringAndClear(), aSelection);
     }
     if (bValid)
     {
-        pEd->SetControlForeground();
-        pEd->SetControlBackground();
+        rEd.SetControlForeground();
+        rEd.SetControlBackground();
     }
     else
     {
 #if 0
         //! Gives white on white!?! instead of white on reddish.
-        pEd->SetControlBackground( ::Color( RGB_COLORDATA( 0xff, 0x65, 0x63)));
-        pEd->SetControlForeground( ::Color( COL_WHITE));
+        rEd.SetControlBackground( ::Color( RGB_COLORDATA( 0xff, 0x65, 0x63)));
+        rEd.SetControlForeground( ::Color( COL_WHITE));
 #else
-        pEd->SetControlForeground( ::Color( RGB_COLORDATA( 0xf0, 0, 0)));
+        rEd.SetControlForeground( ::Color( RGB_COLORDATA( 0xf0, 0, 0)));
 #endif
     }
     m_bDatePatternsValid = bValid;
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

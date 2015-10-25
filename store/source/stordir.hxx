@@ -70,7 +70,7 @@ public:
 
     /** IStoreHandle.
      */
-    virtual bool isKindOf (sal_uInt32 nTypeId) SAL_OVERRIDE;
+    virtual bool isKindOf (sal_uInt32 nTypeId) override;
 
 protected:
     /** Destruction.
@@ -98,8 +98,8 @@ private:
     sal_uInt32                 m_nPath;
     rtl_TextToUnicodeConverter m_hTextCvt;
 
-    OStoreDirectory_Impl (const OStoreDirectory_Impl&) SAL_DELETED_FUNCTION;
-    OStoreDirectory_Impl& operator= (const OStoreDirectory_Impl&) SAL_DELETED_FUNCTION;
+    OStoreDirectory_Impl (const OStoreDirectory_Impl&) = delete;
+    OStoreDirectory_Impl& operator= (const OStoreDirectory_Impl&) = delete;
 };
 
 template<> inline OStoreDirectory_Impl*

@@ -55,19 +55,19 @@ class SwInsFootNoteDlg: public SvxStandardDialog
     VclPtr<PushButton>     m_pNextBT;
 
     DECL_LINK_TYPED(NumberCharHdl, Button *, void);
-    DECL_LINK(NumberEditHdl, void *);
+    DECL_LINK_TYPED(NumberEditHdl, Edit&, void);
     DECL_LINK_TYPED(NumberAutoBtnHdl, Button *, void);
     DECL_LINK_TYPED(NumberExtCharHdl, Button *, void);
     DECL_LINK_TYPED(NextPrevHdl, Button *, void);
 
-    virtual void    Apply() SAL_OVERRIDE;
+    virtual void    Apply() override;
 
     void            Init();
 
 public:
     SwInsFootNoteDlg(vcl::Window * pParent, SwWrtShell &rSh, bool bEd = false);
     virtual ~SwInsFootNoteDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     OUString        GetFontName() { return m_aFontName; }
     bool            IsEndNote() { return m_pEndNoteBtn->IsChecked(); }

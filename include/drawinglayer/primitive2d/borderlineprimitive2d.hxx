@@ -77,7 +77,7 @@ namespace drawinglayer
 
             bool isSolidLine() const
             {
-                return mnStyle == com::sun::star::table::BorderLineStyle::SOLID;
+                return mnStyle == css::table::BorderLineStyle::SOLID;
             }
 
             bool isInsideUsed() const
@@ -95,7 +95,7 @@ namespace drawinglayer
                     const geometry::ViewInformation2D& rViewInformation) const;
 
             /// create local decomposition
-            virtual Primitive2DSequence create2DDecomposition(const geometry::ViewInformation2D& rViewInformation) const SAL_OVERRIDE;
+            virtual Primitive2DSequence create2DDecomposition(const geometry::ViewInformation2D& rViewInformation) const override;
 
         public:
             /// constructor
@@ -134,7 +134,7 @@ namespace drawinglayer
             double getPatternScale() const { return mfPatternScale; }
 
             /// compare operator
-            virtual bool operator==(const BasePrimitive2D& rPrimitive) const SAL_OVERRIDE;
+            virtual bool operator==(const BasePrimitive2D& rPrimitive) const override;
 
             /// provide unique ID
             DeclPrimitive2DIDBlock()

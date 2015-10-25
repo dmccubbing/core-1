@@ -40,7 +40,7 @@ class ScPivotFilterDlg : public ModalDialog
 public:
     ScPivotFilterDlg(vcl::Window* pParent, const SfxItemSet& rArgSet, SCTAB nSourceTab);
     virtual ~ScPivotFilterDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     const ScQueryItem&  GetOutputItem();
 
@@ -90,8 +90,8 @@ private:
     sal_uInt16  GetFieldSelPos  ( SCCOL nField );
 
     // Handler:
-    DECL_LINK( LbSelectHdl, ListBox* );
-    DECL_LINK( ValModifyHdl, ComboBox* );
+    DECL_LINK_TYPED( LbSelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( ValModifyHdl, Edit&, void );
     DECL_LINK_TYPED( CheckBoxHdl, Button*, void );
 };
 

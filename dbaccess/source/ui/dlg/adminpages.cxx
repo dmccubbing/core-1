@@ -96,24 +96,27 @@ namespace dbaui
 
     void OGenericAdministrationPage::getFlags(const SfxItemSet& _rSet, bool& _rValid, bool& _rReadonly)
     {
-        SFX_ITEMSET_GET(_rSet, pInvalid, SfxBoolItem, DSID_INVALID_SELECTION, true);
+        const SfxBoolItem* pInvalid = _rSet.GetItem<SfxBoolItem>(DSID_INVALID_SELECTION);
         _rValid = !pInvalid || !pInvalid->GetValue();
-        SFX_ITEMSET_GET(_rSet, pReadonly, SfxBoolItem, DSID_READONLY, true);
+        const SfxBoolItem* pReadonly = _rSet.GetItem<SfxBoolItem>(DSID_READONLY);
         _rReadonly = !_rValid || (pReadonly && pReadonly->GetValue());
     }
 
-    IMPL_LINK(OGenericAdministrationPage, OnControlModified, Button*, /*pCtrl*/)
+    IMPL_LINK_TYPED(OGenericAdministrationPage, OnControlModified, void*, pCtrl, void)
     {
-        callModifiedHdl();
-        return 0;
+        callModifiedHdl(pCtrl);
     }
     IMPL_LINK_TYPED(OGenericAdministrationPage, OnControlModifiedClick, Button*, pCtrl, void)
     {
-        getControlModifiedLink().Call(pCtrl);
+        callModifiedHdl(pCtrl);
     }
     IMPL_LINK_TYPED(OGenericAdministrationPage, ControlModifiedCheckBoxHdl, CheckBox&, rCtrl, void)
     {
-        getControlModifiedLink().Call(&rCtrl);
+        callModifiedHdl(&rCtrl);
+    }
+    IMPL_LINK_TYPED(OGenericAdministrationPage, OnControlEditModifyHdl, Edit&, rCtrl, void)
+    {
+        callModifiedHdl(&rCtrl);
     }
     bool OGenericAdministrationPage::getSelectedDataSource(OUString& _sReturn, OUString& _sCurr)
     {

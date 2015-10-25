@@ -68,7 +68,7 @@ void FuOutlineBullet::DoExecute( SfxRequest& rReq )
     }
 
     const SfxItemSet* pArgs = rReq.GetArgs();
-    SFX_ITEMSET_ARG( pArgs, pPageItem, SfxStringItem, FN_PARAM_1, false );
+    const SfxStringItem* pPageItem = SfxItemSet::GetItem<SfxStringItem>(pArgs, FN_PARAM_1, false);
 
     if ( !pArgs || pPageItem )
     {
@@ -143,7 +143,7 @@ void FuOutlineBullet::SetCurrentBulletsNumbering(SfxRequest& rReq)
         return;
     }
 
-    SFX_REQUEST_ARG( rReq, pItem, SfxUInt16Item, nSId, false );
+    const SfxUInt16Item* pItem = rReq.GetArg<SfxUInt16Item>(nSId);
     if ( !pItem )
     {
         rReq.Done();
@@ -347,9 +347,9 @@ const SfxPoolItem* FuOutlineBullet::GetNumBulletItem(SfxItemSet& aNewAttr, sal_u
 
             aNewAttr.Put(*pItem, EE_PARA_NUMBULLET);
 
-            if(bTitle && aNewAttr.GetItemState(EE_PARA_NUMBULLET,true) == SfxItemState::SET )
+            if(bTitle && aNewAttr.GetItemState(EE_PARA_NUMBULLET) == SfxItemState::SET )
             {
-                const SvxNumBulletItem* pBulletItem = static_cast<const SvxNumBulletItem*>( aNewAttr.GetItem(EE_PARA_NUMBULLET,true) );
+                const SvxNumBulletItem* pBulletItem = static_cast<const SvxNumBulletItem*>( aNewAttr.GetItem(EE_PARA_NUMBULLET) );
                 SvxNumRule* pLclRule = pBulletItem->GetNumRule();
                 if(pLclRule)
                 {

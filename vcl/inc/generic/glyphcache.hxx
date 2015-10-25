@@ -288,9 +288,9 @@ class VCL_DLLPUBLIC ServerFontLayout : public GenericSalLayout
 public:
                             ServerFontLayout( ServerFont& );
 
-    virtual bool            LayoutText( ImplLayoutArgs& ) SAL_OVERRIDE;
-    virtual void            AdjustLayout( ImplLayoutArgs& ) SAL_OVERRIDE;
-    virtual void            DrawText( SalGraphics& ) const SAL_OVERRIDE;
+    virtual bool            LayoutText( ImplLayoutArgs& ) override;
+    virtual void            AdjustLayout( ImplLayoutArgs& ) override;
+    virtual void            DrawText( SalGraphics& ) const override;
 
     void                    SetNeedFallback(
                                 ImplLayoutArgs& rArgs,
@@ -300,14 +300,14 @@ public:
     ServerFont&             GetServerFont() const   { return mrServerFont; }
 
     virtual std::shared_ptr<vcl::TextLayoutCache>
-        CreateTextLayoutCache(OUString const&) const SAL_OVERRIDE;
+        CreateTextLayoutCache(OUString const&) const override;
 
 private:
     ServerFont&             mrServerFont;
     com::sun::star::uno::Reference<com::sun::star::i18n::XBreakIterator> mxBreak;
 
-                            ServerFontLayout( const ServerFontLayout& ) SAL_DELETED_FUNCTION;
-                            ServerFontLayout& operator=( const ServerFontLayout& ) SAL_DELETED_FUNCTION;
+                            ServerFontLayout( const ServerFontLayout& ) = delete;
+                            ServerFontLayout& operator=( const ServerFontLayout& ) = delete;
 
 };
 

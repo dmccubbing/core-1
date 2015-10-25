@@ -140,8 +140,8 @@ GalleryBrowser1::GalleryBrowser1(
         ImplInsertThemeEntry( mpGallery->GetThemeInfo( i ) );
 
     ImplAdjustControls();
-    maNewTheme->Show( true );
-    mpThemes->Show( true );
+    maNewTheme->Show();
+    mpThemes->Show();
 }
 
 GalleryBrowser1::~GalleryBrowser1()
@@ -284,7 +284,7 @@ void GalleryBrowser1::ImplGalleryThemeProperties( const OUString & rThemeName, b
     }
 }
 
-void GalleryBrowser1::ImplEndGalleryThemeProperties( VclAbstractDialog2* pDialog, bool bCreateNew )
+void GalleryBrowser1::ImplEndGalleryThemeProperties(Dialog* pDialog, bool bCreateNew)
 {
     long nRet = pDialog->GetResult();
 
@@ -311,7 +311,7 @@ void GalleryBrowser1::ImplEndGalleryThemeProperties( VclAbstractDialog2* pDialog
         if ( bCreateNew )
         {
             mpThemes->SelectEntry( mpExchangeData->pTheme->GetName() );
-            SelectThemeHdl( NULL );
+            SelectThemeHdl( *mpThemes );
         }
     }
 
@@ -327,16 +327,14 @@ void GalleryBrowser1::ImplEndGalleryThemeProperties( VclAbstractDialog2* pDialog
     Application::PostUserEvent( LINK( this, GalleryBrowser1, DestroyThemePropertiesDlgHdl ), pDialog, true );
 }
 
-IMPL_LINK( GalleryBrowser1, EndNewThemePropertiesDlgHdl, VclAbstractDialog2*, pDialog )
+IMPL_LINK_TYPED( GalleryBrowser1, EndNewThemePropertiesDlgHdl, Dialog&, rDialog, void )
 {
-    ImplEndGalleryThemeProperties( pDialog, true );
-    return 0L;
+    ImplEndGalleryThemeProperties(&rDialog, true);
 }
 
-IMPL_LINK( GalleryBrowser1, EndThemePropertiesDlgHdl, VclAbstractDialog2*, pDialog )
+IMPL_LINK_TYPED( GalleryBrowser1, EndThemePropertiesDlgHdl, Dialog&, rDialog, void )
 {
-    ImplEndGalleryThemeProperties( pDialog, false );
-    return 0L;
+    ImplEndGalleryThemeProperties(&rDialog, false);
 }
 
 IMPL_LINK_TYPED( GalleryBrowser1, DestroyThemePropertiesDlgHdl, void*, p, void )
@@ -472,7 +470,7 @@ void GalleryBrowser1::Notify( SfxBroadcaster&, const SfxHint& rHint )
             if( nCurSelectPos == nRenameEntryPos )
             {
                 mpThemes->SelectEntry( rGalleryHint.GetStringData() );
-                SelectThemeHdl( NULL );
+                SelectThemeHdl( *mpThemes );
             }
         }
         break;
@@ -497,7 +495,7 @@ void GalleryBrowser1::Notify( SfxBroadcaster&, const SfxHint& rHint )
                 else
                     mpThemes->SetNoSelection();
 
-                SelectThemeHdl( NULL );
+                SelectThemeHdl( *mpThemes );
             }
         }
         break;
@@ -614,11 +612,10 @@ IMPL_LINK_TYPED( GalleryBrowser1, PopupMenuHdl, Menu*, pMenu, bool )
     return false;
 }
 
-IMPL_LINK_NOARG(GalleryBrowser1, SelectThemeHdl)
+IMPL_LINK_NOARG_TYPED(GalleryBrowser1, SelectThemeHdl, ListBox&, void)
 {
     if (maThemeSlectionHandler)
         maThemeSlectionHandler();
-    return 0L;
 }
 
 IMPL_LINK_NOARG_TYPED(GalleryBrowser1, ClickNewThemeHdl, Button*, void)

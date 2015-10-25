@@ -192,15 +192,13 @@ void SvxHyperlinkMailTp::SetInitFocus()
 
 void SvxHyperlinkMailTp::SetScheme(const OUString& rScheme)
 {
-    const bool bMail = true;
-
     //update target:
     RemoveImproperProtocol(rScheme);
     m_pCbbReceiver->SetSmartProtocol( INetProtocol::Mailto );
 
     //show/hide  special fields for MAIL:
-    m_pBtAdrBook->Enable(bMail);
-    m_pEdSubject->Enable(bMail);
+    m_pBtAdrBook->Enable();
+    m_pEdSubject->Enable();
 }
 
 /*************************************************************************
@@ -229,13 +227,11 @@ void SvxHyperlinkMailTp::RemoveImproperProtocol(const OUString& aProperScheme)
 |*
 |************************************************************************/
 
-IMPL_LINK_NOARG(SvxHyperlinkMailTp, ModifiedReceiverHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxHyperlinkMailTp, ModifiedReceiverHdl_Impl, Edit&, void)
 {
     OUString aScheme = GetSchemeFromURL( m_pCbbReceiver->GetText() );
     if(!aScheme.isEmpty())
         SetScheme( aScheme );
-
-    return 0L;
 }
 
 /*************************************************************************

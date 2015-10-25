@@ -44,8 +44,8 @@ namespace comphelper
         virtual ~AnyEvent();
 
     private:
-        AnyEvent( AnyEvent& ) SAL_DELETED_FUNCTION;
-        void operator=( AnyEvent& ) SAL_DELETED_FUNCTION;
+        AnyEvent( AnyEvent& ) = delete;
+        void operator=( AnyEvent& ) = delete;
     };
 
 
@@ -105,7 +105,7 @@ namespace comphelper
         SAL_DLLPRIVATE virtual ~AsyncEventNotifier();
 
         // Thread
-        SAL_DLLPRIVATE virtual void execute() SAL_OVERRIDE;
+        SAL_DLLPRIVATE virtual void execute() override;
 
     public:
         /** constructs a notifier thread
@@ -123,7 +123,7 @@ namespace comphelper
             itself, it will return immediately, and the thread will be terminated as soon as
             the current notification is finished.
         */
-        virtual void SAL_CALL terminate() SAL_OVERRIDE;
+        virtual void SAL_CALL terminate() override;
 
         /** adds an event to the queue, together with the instance which is responsible for
             processing it

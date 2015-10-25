@@ -252,13 +252,12 @@ void ScSpecialFilterDlg::SetActive()
         if ( pRefInputEdit == pEdCopyArea )
         {
             pEdCopyArea->GrabFocus();
-            if ( pEdCopyArea->GetModifyHdl().IsSet() )
-                ((Link<>&)pEdCopyArea->GetModifyHdl()).Call( pEdCopyArea );
+            pEdCopyArea->GetModifyHdl().Call( *pEdCopyArea );
         }
         else if ( pRefInputEdit == pEdFilterArea )
         {
             pEdFilterArea->GrabFocus();
-            FilterAreaModHdl( pEdFilterArea );
+            FilterAreaModHdl( *pEdFilterArea );
         }
     }
     else
@@ -425,9 +424,9 @@ IMPL_LINK_TYPED( ScSpecialFilterDlg, TimeOutHdl, Idle*, _pIdle, void )
     pIdle->Start();
 }
 
-IMPL_LINK( ScSpecialFilterDlg, FilterAreaSelHdl, ListBox*, pLb )
+IMPL_LINK_TYPED( ScSpecialFilterDlg, FilterAreaSelHdl, ListBox&, rLb, void )
 {
-    if ( pLb == pLbFilterArea )
+    if ( &rLb == pLbFilterArea )
     {
         OUString  aString;
         const sal_Int32 nSelPos = pLbFilterArea->GetSelectEntryPos();
@@ -437,17 +436,15 @@ IMPL_LINK( ScSpecialFilterDlg, FilterAreaSelHdl, ListBox*, pLb )
 
         pEdFilterArea->SetText( aString );
     }
-
-    return 0;
 }
 
-IMPL_LINK( ScSpecialFilterDlg, FilterAreaModHdl, formula::RefEdit*, pEd )
+IMPL_LINK_TYPED( ScSpecialFilterDlg, FilterAreaModHdl, Edit&, rEd, void )
 {
-    if ( pEd == pEdFilterArea )
+    if ( &rEd == pEdFilterArea )
     {
         if ( pDoc && pViewData )
         {
-            OUString  theCurAreaStr = pEd->GetText();
+            OUString  theCurAreaStr = rEd.GetText();
             sal_uInt16  nResult = ScRange().Parse( theCurAreaStr, pDoc );
 
             if ( SCA_VALID == (nResult & SCA_VALID) )
@@ -460,7 +457,7 @@ IMPL_LINK( ScSpecialFilterDlg, FilterAreaModHdl, formula::RefEdit*, pEd )
                     if (theCurAreaStr == *pStr)
                     {
                         pLbFilterArea->SelectEntryPos( i );
-                        return 0;
+                        return;
                     }
                 }
                 pLbFilterArea->SelectEntryPos( 0 );
@@ -469,8 +466,6 @@ IMPL_LINK( ScSpecialFilterDlg, FilterAreaModHdl, formula::RefEdit*, pEd )
         else
             pLbFilterArea->SelectEntryPos( 0 );
     }
-
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

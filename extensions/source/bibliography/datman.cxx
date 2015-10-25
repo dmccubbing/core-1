@@ -138,7 +138,7 @@ Reference< XConnection >    getConnection(const Reference< XInterface > & xRowSe
         xConn = Reference< XConnection > (*static_cast<Reference< XInterface > const *>(xFormProps->getPropertyValue("ActiveConnection").getValue()), UNO_QUERY);
         if (!xConn.is())
         {
-            DBG_WARNING("no active connection");
+            SAL_INFO("extensions", "no active connection");
         }
     }
     catch (const Exception&)
@@ -237,12 +237,12 @@ class MappingDialog_Impl : public ModalDialog
 
 
     DECL_LINK_TYPED(OkHdl, Button*, void);
-    DECL_LINK(ListBoxSelectHdl, ListBox*);
+    DECL_LINK_TYPED(ListBoxSelectHdl, ListBox&, void);
 
 public:
     MappingDialog_Impl(vcl::Window* pParent, BibDataManager* pDatMan);
     virtual ~MappingDialog_Impl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    SetModified() {bModified = true;}
 
@@ -348,7 +348,7 @@ MappingDialog_Impl::MappingDialog_Impl(vcl::Window* pParent, BibDataManager* pMa
             aListBoxes[0]->InsertEntry(pNames[nField]);
     }
 
-    Link<> aLnk = LINK(this, MappingDialog_Impl, ListBoxSelectHdl);
+    Link<ListBox&,void> aLnk = LINK(this, MappingDialog_Impl, ListBoxSelectHdl);
 
     aListBoxes[0]->SelectEntryPos(0);
     aListBoxes[0]->SetSelectHdl(aLnk);
@@ -422,19 +422,18 @@ void MappingDialog_Impl::dispose()
     ModalDialog::dispose();
 }
 
-IMPL_LINK(MappingDialog_Impl, ListBoxSelectHdl, ListBox*, pListBox)
+IMPL_LINK_TYPED(MappingDialog_Impl, ListBoxSelectHdl, ListBox&, rListBox, void)
 {
-    const sal_Int32 nEntryPos = pListBox->GetSelectEntryPos();
+    const sal_Int32 nEntryPos = rListBox.GetSelectEntryPos();
     if(0 < nEntryPos)
     {
         for(sal_uInt16 i = 0; i < COLUMN_COUNT; i++)
         {
-            if(pListBox != aListBoxes[i] && aListBoxes[i]->GetSelectEntryPos() == nEntryPos)
+            if(&rListBox != aListBoxes[i] && aListBoxes[i]->GetSelectEntryPos() == nEntryPos)
                 aListBoxes[i]->SelectEntryPos(0);
         }
     }
     SetModified();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(MappingDialog_Impl, OkHdl, Button*, void)
@@ -478,7 +477,7 @@ class DBChangeDialog_Impl : public ModalDialog
 public:
     DBChangeDialog_Impl(vcl::Window* pParent, BibDataManager* pMan );
     virtual ~DBChangeDialog_Impl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     OUString     GetCurrentURL()const;
 };

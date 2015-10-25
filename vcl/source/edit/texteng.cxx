@@ -912,7 +912,6 @@ Rectangle TextEngine::GetEditCursor( const TextPaM& rPaM, bool bSpecial, bool bP
 
         pLine = & ( pPortion->GetLines().back() );
         nY -= mnCharHeight;
-        nCurIndex = nCurIndex - pLine->GetLen();
     }
 
     Rectangle aEditCursor;
@@ -2532,7 +2531,7 @@ bool TextEngine::Write( SvStream& rOutput, const TextSelection* pSel, bool bHTML
             else
             {
                 sal_Int32 nTmpStart = nStartPos;
-                sal_Int32 nTmpEnd = nEndPos;
+                sal_Int32 nTmpEnd;
                 do
                 {
                     const TextCharAttrib* pAttr = pNode->GetCharAttribs().FindNextAttrib( TEXTATTR_HYPERLINK, nTmpStart, nEndPos );
@@ -2590,7 +2589,7 @@ void TextEngine::RemoveAttribs( sal_uInt32 nPara, bool bIdleFormatAndUpdate )
             if ( bIdleFormatAndUpdate )
                 IdleFormatAndUpdate( NULL, 0xFFFF );
             else
-                FormatAndUpdate( NULL );
+                FormatAndUpdate();
         }
     }
 }
@@ -2614,7 +2613,7 @@ void TextEngine::RemoveAttribs( sal_uInt32 nPara, sal_uInt16 nWhich, bool bIdleF
             if(bIdleFormatAndUpdate)
                 IdleFormatAndUpdate( NULL, 0xFFFF );
             else
-                FormatAndUpdate( NULL );
+                FormatAndUpdate();
         }
     }
 }
@@ -2638,7 +2637,7 @@ void TextEngine::RemoveAttrib( sal_uInt32 nPara, const TextCharAttrib& rAttrib )
             TEParaPortion* pTEParaPortion = mpTEParaPortions->GetObject( nPara );
             pTEParaPortion->MarkSelectionInvalid( 0, pNode->GetText().getLength() );
             mbFormatted = false;
-            FormatAndUpdate( NULL );
+            FormatAndUpdate();
         }
     }
 }
@@ -2669,7 +2668,7 @@ void TextEngine::SetAttrib( const TextAttrib& rAttr, sal_uInt32 nPara, sal_Int32
         if ( bIdleFormatAndUpdate )
             IdleFormatAndUpdate( NULL, 0xFFFF );
         else
-            FormatAndUpdate( NULL );
+            FormatAndUpdate();
     }
 }
 

@@ -85,9 +85,11 @@
 #include <columnspanset.hxx>
 #include <rowheightcontext.hxx>
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
+#include <comphelper/lok.hxx>
 
 #include <vector>
 #include <memory>
+#include <boost/property_tree/json_parser.hpp>
 
 using namespace com::sun::star;
 using ::editeng::SvxBorderLine;
@@ -1736,7 +1738,7 @@ bool ScViewFunc::SearchAndReplace( const SvxSearchItem* pSearchItem,
             if (nCommand == SvxSearchCmd::FIND_ALL || nCommand == SvxSearchCmd::REPLACE_ALL)
             {
                 SfxViewFrame* pViewFrm = SfxViewFrame::Current();
-                if (pViewFrm)
+                if (pViewFrm && !comphelper::LibreOfficeKit::isActive())
                 {
                     pViewFrm->ShowChildWindow(sc::SearchResultsDlgWrapper::GetChildWindowId());
                     SfxChildWindow* pWnd = pViewFrm->GetChildWindow(sc::SearchResultsDlgWrapper::GetChildWindowId());
@@ -1836,19 +1838,43 @@ bool ScViewFunc::SearchAndReplace( const SvxSearchItem* pSearchItem,
         AlignToCursor( nCol, nRow, SC_FOLLOW_JUMP );
         SetCursor( nCol, nRow, true );
 
-        // Don't move cell selection handles for find-all: selection of all but the first result would be lost.
-        if (rDoc.GetDrawLayer()->isTiledRendering() && nCommand == SvxSearchCmd::FIND)
+        if (rDoc.GetDrawLayer()->isTiledRendering())
         {
             Point aCurPos = GetViewData().GetScrPos(nCol, nRow, GetViewData().GetActivePart());
 
             // just update the cell selection
             ScGridWindow* pGridWindow = GetViewData().GetActiveWin();
-            if (pGridWindow)
+            // Don't move cell selection handles for find-all: selection of all but the first result would be lost.
+            if (pGridWindow && nCommand == SvxSearchCmd::FIND)
             {
                 // move the cell selection handles
                 pGridWindow->SetCellSelectionPixel(LOK_SETTEXTSELECTION_RESET, aCurPos.X(), aCurPos.Y());
                 pGridWindow->SetCellSelectionPixel(LOK_SETTEXTSELECTION_START, aCurPos.X(), aCurPos.Y());
                 pGridWindow->SetCellSelectionPixel(LOK_SETTEXTSELECTION_END, aCurPos.X(), aCurPos.Y());
+            }
+
+            if (pGridWindow)
+            {
+                std::vector<Rectangle> aLogicRects;
+                pGridWindow->GetCellSelection(aLogicRects);
+
+                boost::property_tree::ptree aTree;
+                aTree.put("searchString", pSearchItem->GetSearchString().toUtf8().getStr());
+
+                boost::property_tree::ptree aSelections;
+                for (const Rectangle& rLogicRect : aLogicRects)
+                {
+                    boost::property_tree::ptree aSelection;
+                    aSelection.put("part", OString::number(nTab).getStr());
+                    aSelection.put("rectangles", rLogicRect.toString().getStr());
+                    aSelections.push_back(std::make_pair("", aSelection));
+                }
+                aTree.add_child("searchResultSelection", aSelections);
+
+                std::stringstream aStream;
+                boost::property_tree::write_json(aStream, aTree);
+                OString aPayload = aStream.str().c_str();
+                rDoc.GetDrawLayer()->libreOfficeKitCallback(LOK_CALLBACK_SEARCH_RESULT_SELECTION, aPayload.getStr());
             }
         }
 
@@ -1869,7 +1895,7 @@ bool ScViewFunc::SearchAndReplace( const SvxSearchItem* pSearchItem,
 
                     ScRangeList aMatchedRanges;
                     ScTable::UpdateSearchItemAddressForReplace( aSearchItem, nCol, nRow );
-                    if ( rDoc.SearchAndReplace( aSearchItem, nCol, nRow, nTab, rMark, aMatchedRanges, aUndoStr, NULL ) &&
+                    if ( rDoc.SearchAndReplace( aSearchItem, nCol, nRow, nTab, rMark, aMatchedRanges, aUndoStr ) &&
                             ( nTab == nOldTab ) &&
                             ( nCol != nOldCol || nRow != nOldRow ) )
                     {
@@ -2062,7 +2088,7 @@ bool ScViewFunc::InsertTables(std::vector<OUString>& aNames, SCTAB nTab,
     {
         rDoc.CreateValidTabNames(aNames, nCount);
     }
-    if (rDoc.InsertTabs(nTab, aNames, false))
+    if (rDoc.InsertTabs(nTab, aNames))
     {
         pDocSh->Broadcast( ScTablesHint( SC_TABS_INSERTED, nTab, nCount ) );
         bFlag = true;
@@ -3053,16 +3079,15 @@ void ScViewFunc::SetSelectionFrameLines( const SvxBorderLine* pLine,
                                             ATTR_PATTERN_START,
                                             ATTR_PATTERN_END ));
 
-            const SvxBorderLine*    pBoxLine = NULL;
             SvxBorderLine           aLine;
-
-            // here pBoxLine is used
 
             if( pBorderAttr )
             {
+                const SvxBorderLine*    pBoxLine = NULL;
                 SvxBoxItem      aBoxItem( *static_cast<const SvxBoxItem*>(pBorderAttr) );
                 SvxBoxInfoItem  aBoxInfoItem( ATTR_BORDER_INNER );
 
+                // here pBoxLine is used
                 SET_LINE_ATTRIBUTES(Top,SvxBoxItemLine::TOP)
                 SET_LINE_ATTRIBUTES(Bottom,SvxBoxItemLine::BOTTOM)
                 SET_LINE_ATTRIBUTES(Left,SvxBoxItemLine::LEFT)

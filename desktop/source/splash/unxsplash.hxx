@@ -31,8 +31,8 @@ namespace desktop {
 class  UnxSplashScreen : public ::cppu::WeakImplHelper< css::task::XStatusIndicator, css::lang::XInitialization, css::lang::XServiceInfo >
 {
 private:
-    UnxSplashScreen( const UnxSplashScreen& ) SAL_DELETED_FUNCTION;
-    UnxSplashScreen operator =( const UnxSplashScreen& ) SAL_DELETED_FUNCTION;
+    UnxSplashScreen( const UnxSplashScreen& ) = delete;
+    UnxSplashScreen operator =( const UnxSplashScreen& ) = delete;
 
     virtual ~UnxSplashScreen();
 
@@ -47,23 +47,23 @@ public:
     explicit UnxSplashScreen( const css::uno::Reference< css::uno::XComponentContext >& xCtx );
 
     // XStatusIndicator
-    virtual void SAL_CALL start( const OUString& aText, sal_Int32 nRange ) throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL end() throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL reset() throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL setText( const OUString& aText ) throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL setValue( sal_Int32 nValue ) throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL start( const OUString& aText, sal_Int32 nRange ) throw ( css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL end() throw ( css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL reset() throw ( css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL setText( const OUString& aText ) throw ( css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL setValue( sal_Int32 nValue ) throw ( css::uno::RuntimeException, std::exception ) override;
 
     // XInitialize
-    virtual void SAL_CALL initialize( const css::uno::Sequence< css::uno::Any>& aArguments ) throw ( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL initialize( const css::uno::Sequence< css::uno::Any>& aArguments ) throw ( css::uno::RuntimeException, std::exception ) override;
 
     virtual OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual sal_Bool SAL_CALL supportsService(OUString const & ServiceName)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 };
 
 }

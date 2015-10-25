@@ -35,9 +35,9 @@ class ScTableProtectionDlg : public ModalDialog
 public:
     explicit ScTableProtectionDlg(vcl::Window* pParent);
     virtual ~ScTableProtectionDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
 
     void SetDialogData(const ScTableProtection& rData);
 
@@ -66,7 +66,7 @@ private:
 
     DECL_LINK_TYPED( OKHdl, Button*, void );
     DECL_LINK_TYPED( CheckBoxHdl, Button*, void );
-    DECL_LINK( PasswordModifyHdl, void* );
+    DECL_LINK_TYPED( PasswordModifyHdl, Edit&, void );
 };
 
 #endif

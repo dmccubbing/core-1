@@ -28,7 +28,7 @@ public:
                     const ScAutoFormatData* pSelFormatData,
                     ScViewData *pViewData);
     virtual ~ScAutoFormatDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     sal_uInt16 GetIndex() const { return nIndex; }
     OUString GetCurrFormatName();
@@ -65,7 +65,7 @@ private:
     DECL_LINK_TYPED( CheckHdl, Button*, void );
     DECL_LINK_TYPED( AddHdl, Button*, void );
     DECL_LINK_TYPED( RemoveHdl, Button*, void );
-    DECL_LINK( SelFmtHdl, void * );
+    DECL_LINK_TYPED( SelFmtHdl, ListBox&, void );
     DECL_LINK_TYPED( CloseHdl, Button *, void );
     DECL_LINK_TYPED( DblClkHdl, ListBox&, void );
     DECL_LINK_TYPED( RenameHdl, Button*, void );

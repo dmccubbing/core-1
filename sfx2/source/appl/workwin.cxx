@@ -1213,7 +1213,7 @@ bool SfxWorkWindow::IsPluginMode( SfxObjectShell* pObjShell )
 {
     if ( pObjShell && pObjShell->GetMedium() )
     {
-        SFX_ITEMSET_ARG( pObjShell->GetMedium()->GetItemSet(), pViewOnlyItem, SfxBoolItem, SID_VIEWONLY, false );
+        const SfxBoolItem* pViewOnlyItem = SfxItemSet::GetItem<SfxBoolItem>(pObjShell->GetMedium()->GetItemSet(), SID_VIEWONLY, false);
         if ( pViewOnlyItem && pViewOnlyItem->GetValue() )
             return true;
     }
@@ -2489,7 +2489,7 @@ void SfxWorkWindow::EndAutoShow_Impl( Point aPos )
         if ( p && p->IsAutoHide() )
         {
             Point aLocalPos = p->ScreenToOutputPixel( aPos );
-        Point aEmptyPoint = Point();
+            Point aEmptyPoint;
             Rectangle aRect( aEmptyPoint, p->GetSizePixel() );
             if ( !aRect.IsInside( aLocalPos ) )
                 p->FadeOut();

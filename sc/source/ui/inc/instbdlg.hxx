@@ -44,9 +44,9 @@ class ScInsertTableDlg : public ModalDialog
 public:
             ScInsertTableDlg( vcl::Window* pParent, ScViewData& rViewData, SCTAB nTabCount, bool bFromFile );
             virtual ~ScInsertTableDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual short   Execute() SAL_OVERRIDE; // override to set parent dialog
+    virtual short   Execute() override; // override to set parent dialog
 
     bool        GetTablesFromFile() const { return m_pBtnFromFile->IsChecked(); }
     bool        GetTablesAsLink() const { return m_pBtnLink->IsChecked(); }
@@ -91,12 +91,12 @@ private:
     void    FillTables_Impl( ScDocument* pSrcDoc );
     void    DoEnable_Impl();
 
-    DECL_LINK_TYPED(BrowseHdl_Impl, Button*, void);
-    DECL_LINK_TYPED(ChoiceHdl_Impl, Button*, void);
-    DECL_LINK(SelectHdl_Impl, void *);
-    DECL_LINK(CountHdl_Impl, void *);
-    DECL_LINK_TYPED(DoEnterHdl, Button*, void);
-    DECL_LINK_TYPED(BrowseTimeoutHdl, Timer *, void);
+    DECL_LINK_TYPED( BrowseHdl_Impl, Button*, void );
+    DECL_LINK_TYPED( ChoiceHdl_Impl, Button*, void );
+    DECL_LINK_TYPED( SelectHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( CountHdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( DoEnterHdl, Button*, void );
+    DECL_LINK_TYPED( BrowseTimeoutHdl, Timer *, void );
     DECL_LINK_TYPED( DialogClosedHdl, sfx2::FileDialogHelper*, void );
 };
 

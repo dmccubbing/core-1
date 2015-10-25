@@ -31,14 +31,14 @@ namespace rptui
 class ORptPageDialog : public SfxTabDialog
 {
 private:
-    ORptPageDialog(const ORptPageDialog&) SAL_DELETED_FUNCTION;
-    void operator =(const ORptPageDialog&) SAL_DELETED_FUNCTION;
+    ORptPageDialog(const ORptPageDialog&) = delete;
+    void operator =(const ORptPageDialog&) = delete;
 
     sal_uInt16 m_nCharBgdId;
 public:
 
     ORptPageDialog(vcl::Window* pParent, const SfxItemSet* pAttr, const OUString &rDialog);
-    virtual void PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 };
 
 } // namespace rptui

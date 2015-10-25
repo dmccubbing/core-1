@@ -179,8 +179,8 @@ void SlideChangeBase::prefetch( const AnimatableShapeSharedPtr&,
     mrEventMultiplexer.addViewHandler( shared_from_this() );
 
     // init views and create slide bitmaps
-    for( const auto& rView : mrViewContainer )
-        this->viewAdded( rView );
+    for( const auto& pView : mrViewContainer )
+        this->viewAdded( pView );
 
     mbPrefetched = true;
 }
@@ -411,8 +411,7 @@ void SlideChangeBase::viewRemoved( const UnoViewSharedPtr& rView )
         std::remove_if(
             maViewData.begin(),
             maViewData.end(),
-            [&rView]( const ViewEntry& rViewEntry )
-            // select and compare view
+            [rView]( const ViewEntry& rViewEntry )
             { return rView == rViewEntry.getView(); } ),
         maViewData.end() );
 }
@@ -428,7 +427,7 @@ void SlideChangeBase::viewChanged( const UnoViewSharedPtr& rView )
         std::find_if(
             maViewData.begin(),
             maViewData.end(),
-            [&rView]( const ViewEntry& rViewEntry )
+            [rView]( const ViewEntry& rViewEntry )
             { return rView == rViewEntry.getView(); } ) );
 
     OSL_ASSERT( aModifiedEntry != maViewData.end() );
@@ -447,16 +446,12 @@ void SlideChangeBase::viewsChanged()
     if( mbFinished )
         return;
 
-    ViewsVecT::iterator       aIter( maViewData.begin() );
-    ViewsVecT::iterator const aEnd ( maViewData.end() );
-    while( aIter != aEnd )
+    for( auto& pView : maViewData )
     {
         // clear stale info (both bitmaps and sprites prolly need a
         // resize)
-        clearViewEntry( *aIter );
-        addSprites( *aIter );
-
-        ++aIter;
+        clearViewEntry( pView );
+        addSprites( pView );
     }
 }
 

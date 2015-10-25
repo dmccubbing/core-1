@@ -1374,15 +1374,15 @@ ErrCode FileDialogHelper_Impl::execute( std::vector<OUString>& rpURLList,
         // check password checkbox if the document had password before
         if( mbHasPassword )
         {
-            SFX_ITEMSET_ARG( rpSet, pPassItem, SfxBoolItem, SID_PASSWORDINTERACTION, false );
+            const SfxBoolItem* pPassItem = SfxItemSet::GetItem<SfxBoolItem>(rpSet, SID_PASSWORDINTERACTION, false);
             mbPwdCheckBoxState = ( pPassItem != NULL && pPassItem->GetValue() );
 
             // in case the document has password to modify, the dialog should be shown
-            SFX_ITEMSET_ARG( rpSet, pPassToModifyItem, SfxUnoAnyItem, SID_MODIFYPASSWORDINFO, false );
+            const SfxUnoAnyItem* pPassToModifyItem = SfxItemSet::GetItem<SfxUnoAnyItem>(rpSet, SID_MODIFYPASSWORDINFO, false);
             mbPwdCheckBoxState |= ( pPassToModifyItem && pPassToModifyItem->GetValue().hasValue() );
         }
 
-        SFX_ITEMSET_ARG( rpSet, pSelectItem, SfxBoolItem, SID_SELECTION, false );
+        const SfxBoolItem* pSelectItem = SfxItemSet::GetItem<SfxBoolItem>(rpSet, SID_SELECTION, false);
         if ( pSelectItem )
             mbSelection = pSelectItem->GetValue();
         else
@@ -2166,14 +2166,14 @@ bool FileDialogHelper_Impl::isShowFilterExtensionEnabled() const
 void FileDialogHelper_Impl::addFilterPair( const OUString& rFilter,
                                            const OUString& rFilterWithExtension )
 {
-    maFilters.push_back( FilterPair( rFilter, rFilterWithExtension ) );
+    maFilters.push_back( css::beans::StringPair( rFilter, rFilterWithExtension ) );
 
 }
 
 OUString FileDialogHelper_Impl::getFilterName( const OUString& rFilterWithExtension ) const
 {
     OUString sRet;
-    for( ::std::vector< FilterPair >::const_iterator pIter = maFilters.begin(); pIter != maFilters.end(); ++pIter )
+    for( ::std::vector< css::beans::StringPair >::const_iterator pIter = maFilters.begin(); pIter != maFilters.end(); ++pIter )
     {
         if ( (*pIter).Second == rFilterWithExtension )
         {
@@ -2187,7 +2187,7 @@ OUString FileDialogHelper_Impl::getFilterName( const OUString& rFilterWithExtens
 OUString FileDialogHelper_Impl::getFilterWithExtension( const OUString& rFilter ) const
 {
     OUString sRet;
-    for( ::std::vector< FilterPair >::const_iterator pIter = maFilters.begin(); pIter != maFilters.end(); ++pIter )
+    for( ::std::vector< css::beans::StringPair >::const_iterator pIter = maFilters.begin(); pIter != maFilters.end(); ++pIter )
     {
         if ( (*pIter).First == rFilter )
         {
@@ -2308,8 +2308,7 @@ void FileDialogHelper::SetContext( Context _eNewContext )
 IMPL_LINK_NOARG_TYPED(FileDialogHelper, ExecuteSystemFilePicker, void*, void)
 {
     m_nError = mpImp->execute();
-    if ( m_aDialogClosedLink.IsSet() )
-        m_aDialogClosedLink.Call( this );
+    m_aDialogClosedLink.Call( this );
 }
 
 // rDirPath has to be a directory
@@ -2573,8 +2572,7 @@ void SAL_CALL FileDialogHelper::DialogSizeChanged()
 void SAL_CALL FileDialogHelper::DialogClosed( const DialogClosedEvent& _rEvent )
 {
     m_nError = ( RET_OK == _rEvent.DialogResult ) ? ERRCODE_NONE : ERRCODE_ABORT;
-    if ( m_aDialogClosedLink.IsSet() )
-        m_aDialogClosedLink.Call( this );
+    m_aDialogClosedLink.Call( this );
 }
 
 ErrCode FileOpenDialog_Impl( sal_Int16 nDialogType,

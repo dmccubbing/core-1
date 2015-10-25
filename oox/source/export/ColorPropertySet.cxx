@@ -42,9 +42,9 @@ public:
 
 protected:
     // ____ XPropertySetInfo ____
-    virtual Sequence< Property > SAL_CALL getProperties()                throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual Property SAL_CALL getPropertyByName( const OUString& aName ) throw (UnknownPropertyException, RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL hasPropertyByName( const OUString& Name )  throw (RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual Sequence< Property > SAL_CALL getProperties()                throw (RuntimeException, std::exception) override;
+    virtual Property SAL_CALL getPropertyByName( const OUString& aName ) throw (UnknownPropertyException, RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL hasPropertyByName( const OUString& Name )  throw (RuntimeException, std::exception) override;
 
 private:
     OUString m_aColorPropName;
@@ -125,7 +125,7 @@ uno::Any SAL_CALL ColorPropertySet::getPropertyValue( const OUString& aPropertyN
 {
     if( aPropertyName == "FillStyle" && m_bIsFillColor )
     {
-        ::com::sun::star::drawing::FillStyle aFillStyle = ::com::sun::star::drawing::FillStyle_SOLID;
+        css::drawing::FillStyle aFillStyle = css::drawing::FillStyle_SOLID;
         return uno::makeAny(aFillStyle);
     }
     return uno::makeAny( m_nColor );

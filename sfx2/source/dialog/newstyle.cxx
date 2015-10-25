@@ -30,9 +30,9 @@
 
 IMPL_LINK_NOARG_TYPED( SfxNewStyleDlg, OKClickHdl, Button*, void )
 {
-    OKHdl(NULL);
+    OKHdl(*m_pColBox);
 }
-IMPL_LINK( SfxNewStyleDlg, OKHdl, Control *, /*pControl*/ )
+IMPL_LINK_NOARG_TYPED( SfxNewStyleDlg, OKHdl, ComboBox&, void )
 {
     const OUString aName( m_pColBox->GetText() );
     SfxStyleSheetBase* pStyle = rPool.Find( aName, rPool.GetSearchFamily() );
@@ -41,7 +41,7 @@ IMPL_LINK( SfxNewStyleDlg, OKHdl, Control *, /*pControl*/ )
         if ( !pStyle->IsUserDefined() )
         {
             ScopedVclPtrInstance<MessageDialog>::Create( this, SfxResId( STR_POOL_STYLE_NAME ), VCL_MESSAGE_INFO )->Execute();
-            return 0;
+            return;
         }
 
         if ( RET_YES == aQueryOverwriteBox->Execute() )
@@ -49,14 +49,11 @@ IMPL_LINK( SfxNewStyleDlg, OKHdl, Control *, /*pControl*/ )
     }
     else
         EndDialog( RET_OK );
-
-    return 0;
 }
 
-IMPL_LINK( SfxNewStyleDlg, ModifyHdl, ComboBox *, pBox )
+IMPL_LINK_TYPED( SfxNewStyleDlg, ModifyHdl, Edit&, rBox, void )
 {
-    m_pOKBtn->Enable( !comphelper::string::remove(pBox->GetText(), ' ').isEmpty() );
-    return 0;
+    m_pOKBtn->Enable( !comphelper::string::remove(rBox.GetText(), ' ').isEmpty() );
 }
 
 SfxNewStyleDlg::SfxNewStyleDlg( vcl::Window* pParent, SfxStyleSheetBasePool& rInPool )

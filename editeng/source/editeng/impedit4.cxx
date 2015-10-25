@@ -190,7 +190,7 @@ EditPaM ImpEditEngine::ReadHTML( SvStream& rInput, const OUString& rBaseURL, Edi
 EditPaM ImpEditEngine::ReadBin( SvStream& rInput, EditSelection aSel )
 {
     // Simply abuse a temporary text object ...
-    std::unique_ptr<EditTextObject> xObj(EditTextObject::Create( rInput, NULL ));
+    std::unique_ptr<EditTextObject> xObj(EditTextObject::Create( rInput ));
 
     EditPaM aLastPaM = aSel.Max();
     if (xObj)
@@ -1476,7 +1476,7 @@ SpellInfo * ImpEditEngine::CreateSpellInfo( bool bMultipleDocs )
 
 EESpellState ImpEditEngine::Spell( EditView* pEditView, bool bMultipleDoc )
 {
-    DBG_ASSERTWARNING( xSpeller.is(), "No Spell checker set!" );
+    SAL_WARN_IF( !xSpeller.is(), "editeng", "No Spell checker set!" );
 
     if ( !xSpeller.is() )
         return EE_SPELL_NOSPELLER;
@@ -2403,7 +2403,7 @@ void ImpEditEngine::DoOnlineSpelling( ContentNode* pThisNodeOnly, bool bSpellAtC
                     if ( pActiveView && pActiveView->HasSelection() )
                     {
                         // Then no output through VDev.
-                        UpdateViews( NULL );
+                        UpdateViews();
                     }
                     else if ( bSimpleRepaint )
                     {

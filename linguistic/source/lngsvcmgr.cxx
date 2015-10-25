@@ -200,18 +200,18 @@ public:
     // lang::XEventListener
     virtual void SAL_CALL
         disposing( const lang::EventObject& rSource )
-            throw(uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            throw(uno::RuntimeException, std::exception) override;
 
     // linguistic2::XLinguServiceEventListener
     virtual void SAL_CALL
         processLinguServiceEvent( const linguistic2::LinguServiceEvent& aLngSvcEvent )
-            throw(uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            throw(uno::RuntimeException, std::exception) override;
 
     // linguistic2::XDictionaryListEventListener
     virtual void SAL_CALL
         processDictionaryListEvent(
                 const linguistic2::DictionaryListEvent& rDicListEvent )
-            throw(uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            throw(uno::RuntimeException, std::exception) override;
 
     inline  bool    AddLngSvcMgrListener(
                         const uno::Reference< lang::XEventListener >& rxListener );
@@ -269,7 +269,7 @@ long LngSvcMgrListenerHelper::Timeout()
         // probably do not know (and need not to know) about the specific
         // SpellChecker's or Hyphenator's.
         linguistic2::LinguServiceEvent aEvtObj(
-            static_cast<com::sun::star::linguistic2::XLinguServiceManager*>(&rMyManager), nCombinedLngSvcEvt );
+            static_cast<css::linguistic2::XLinguServiceManager*>(&rMyManager), nCombinedLngSvcEvt );
         nCombinedLngSvcEvt = 0;
 
         if (rMyManager.pSpellDsp)
@@ -363,7 +363,7 @@ void SAL_CALL
 void LngSvcMgrListenerHelper::LaunchEvent( sal_Int16 nLngSvcEvtFlags )
 {
     linguistic2::LinguServiceEvent aEvt(
-        static_cast<com::sun::star::linguistic2::XLinguServiceManager*>(&rMyManager), nLngSvcEvtFlags );
+        static_cast<css::linguistic2::XLinguServiceManager*>(&rMyManager), nLngSvcEvtFlags );
 
     // pass event on to linguistic2::XLinguServiceEventListener's
     cppu::OInterfaceIteratorHelper aIt( aLngSvcMgrListeners );
@@ -497,7 +497,7 @@ LngSvcMgr::LngSvcMgr()
     }
 }
 
-// ::com::sun::star::util::XModifyListener
+// css::util::XModifyListener
 void LngSvcMgr::modified(const lang::EventObject&)
     throw(uno::RuntimeException, std::exception)
 {

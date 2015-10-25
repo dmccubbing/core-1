@@ -39,17 +39,17 @@ protected:
   OUString m_aWorkdirRootURL;
   OUString m_aWorkdirRootPath;
 
-  com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext> m_xContext;
-  com::sun::star::uno::Reference<com::sun::star::lang::XMultiServiceFactory> m_xSFactory;
-  com::sun::star::uno::Reference<com::sun::star::lang::XMultiComponentFactory> m_xFactory;
+  css::uno::Reference<css::uno::XComponentContext> m_xContext;
+  css::uno::Reference<css::lang::XMultiServiceFactory> m_xSFactory;
+  css::uno::Reference<css::lang::XMultiComponentFactory> m_xFactory;
 
 public:
   BootstrapFixtureBase();
   virtual ~BootstrapFixtureBase();
 
-  com::sun::star::uno::Reference<com::sun::star::uno::XComponentContext>
+  css::uno::Reference<css::uno::XComponentContext>
 	          getComponentContext() { return m_xContext; }
-  com::sun::star::uno::Reference<com::sun::star::lang::XMultiServiceFactory>
+  css::uno::Reference<css::lang::XMultiServiceFactory>
 	          getMultiServiceFactory() { return m_xSFactory; }
 
   OUString getSrcRootURL()       { return m_aSrcRootURL; }
@@ -70,8 +70,8 @@ public:
   // return a Path to a given c-str path from the workdir directory
   OUString getPathFromWorkdir( const char *pPath );
 #endif
-  virtual void setUp() SAL_OVERRIDE;
-  virtual void tearDown() SAL_OVERRIDE;
+  virtual void setUp() override;
+  virtual void tearDown() override;
 
 };
 

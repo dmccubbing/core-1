@@ -91,9 +91,9 @@ class SwNumPositionTabPage : public SfxTabPage
 
     void                InitControls();
 
-    DECL_LINK( LevelHdl, ListBox * );
-    DECL_LINK(EditModifyHdl, void *);
-    DECL_LINK( DistanceHdl, MetricField * );
+    DECL_LINK_TYPED( LevelHdl, ListBox&, void );
+    DECL_LINK_TYPED(EditModifyHdl, ListBox&, void);
+    DECL_LINK_TYPED( DistanceHdl, SpinField&, void );
     DECL_LINK_TYPED( DistanceLoseFocusHdl, Control&, void );
     DECL_LINK_TYPED( RelativeHdl, Button*, void );
     DECL_LINK_TYPED(StandardHdl, Button*, void);
@@ -101,10 +101,10 @@ class SwNumPositionTabPage : public SfxTabPage
     void InitPosAndSpaceMode();
     void ShowControlsDependingOnPosAndSpaceMode();
 
-    DECL_LINK(LabelFollowedByHdl_Impl, void *);
-    DECL_LINK( ListtabPosHdl_Impl, MetricField* );
-    DECL_LINK( AlignAtHdl_Impl, MetricField* );
-    DECL_LINK( IndentAtHdl_Impl, MetricField* );
+    DECL_LINK_TYPED(LabelFollowedByHdl_Impl, ListBox&, void);
+    DECL_LINK_TYPED( ListtabPosHdl_Impl, SpinField&, void );
+    DECL_LINK_TYPED( AlignAtHdl_Impl, SpinField&, void );
+    DECL_LINK_TYPED( IndentAtHdl_Impl, SpinField&, void );
 
     using SfxTabPage::ActivatePage;
     using SfxTabPage::DeactivatePage;
@@ -114,12 +114,12 @@ public:
     SwNumPositionTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
     virtual ~SwNumPositionTabPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window* pParent,
                                       const SfxItemSet* rAttrSet);
@@ -149,8 +149,8 @@ class SwSvxNumBulletTabDialog : public SfxTabDialog
     sal_uInt16 m_nPositionPageId;
 
     protected:
-        virtual short   Ok() SAL_OVERRIDE;
-        virtual void    PageCreated(sal_uInt16 nPageId, SfxTabPage& rPage) SAL_OVERRIDE;
+        virtual short   Ok() override;
+        virtual void    PageCreated(sal_uInt16 nPageId, SfxTabPage& rPage) override;
         DECL_LINK_TYPED(RemoveNumberingHdl, Button*, void);
     public:
         SwSvxNumBulletTabDialog(vcl::Window* pParent,

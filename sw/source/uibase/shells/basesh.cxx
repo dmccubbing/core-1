@@ -708,7 +708,7 @@ void SwBaseShell::Execute(SfxRequest &rReq)
         break;
         case SID_GALLERY_FORMATS:
         {
-            SFX_ITEMSET_ARG( pArgs, pGalleryItem, SvxGalleryItem, SID_GALLERY_FORMATS, false );
+            const SvxGalleryItem* pGalleryItem = SfxItemSet::GetItem<SvxGalleryItem>(pArgs, SID_GALLERY_FORMATS, false);
             if ( !pGalleryItem )
                 break;
 
@@ -1054,7 +1054,7 @@ void SwBaseShell::Execute(SfxRequest &rReq)
 
                 case FLY_AT_PARA:
                     // left, from left, right, top, no wrap, wrap left and right
-                    if(eSurround != SURROUND_LEFT || eSurround != SURROUND_RIGHT)
+                    if (eSurround != SURROUND_LEFT && eSurround != SURROUND_RIGHT)
                         aSet.Put(SwFormatSurround(SURROUND_LEFT));
 
                     if( eVOrient != text::VertOrientation::TOP)
@@ -1107,7 +1107,7 @@ void SwBaseShell::Execute(SfxRequest &rReq)
                 {
                     rSh.EnterStdMode();
                     rSh.StartAllAction();
-                    rSh.GetLinkManager().UpdateAllLinks( false, false, false );
+                    rSh.GetLinkManager().UpdateAllLinks( false, false );
                     rSh.EndAllAction();
                 }
             }
@@ -2559,7 +2559,7 @@ void SwBaseShell::InsertTable( SfxRequest& _rRequest )
             rSh.StartUndo(UNDO_INSTABLE);
             bCallEndUndo = true;
 
-            bool bInserted = rSh.TextToTable( aInsTableOpts, '\t', text::HoriOrientation::FULL );
+            bool bInserted = rSh.TextToTable( aInsTableOpts, '\t' );
             rSh.EnterStdMode();
             if (bInserted)
                 rTempView.AutoCaption(TABLE_CAP);
@@ -2576,11 +2576,11 @@ void SwBaseShell::InsertTable( SfxRequest& _rRequest )
 
             if( pArgs && pArgs->Count() >= 2 )
             {
-                SFX_REQUEST_ARG( _rRequest, pName, SfxStringItem, FN_INSERT_TABLE, false );
-                SFX_REQUEST_ARG( _rRequest, pCols, SfxUInt16Item, SID_ATTR_TABLE_COLUMN, false );
-                SFX_REQUEST_ARG( _rRequest, pRows, SfxUInt16Item, SID_ATTR_TABLE_ROW, false );
-                SFX_REQUEST_ARG( _rRequest, pFlags, SfxInt32Item, FN_PARAM_1, false );
-                SFX_REQUEST_ARG( _rRequest, pAuto, SfxStringItem, FN_PARAM_2, false );
+                const SfxStringItem* pName = _rRequest.GetArg<SfxStringItem>(FN_INSERT_TABLE);
+                const SfxUInt16Item* pCols = _rRequest.GetArg<SfxUInt16Item>(SID_ATTR_TABLE_COLUMN);
+                const SfxUInt16Item* pRows = _rRequest.GetArg<SfxUInt16Item>(SID_ATTR_TABLE_ROW);
+                const SfxInt32Item* pFlags = _rRequest.GetArg<SfxInt32Item>(FN_PARAM_1);
+                const SfxStringItem* pAuto = _rRequest.GetArg<SfxStringItem>(FN_PARAM_2);
 
                 if ( pName )
                     aTableName = pName->GetValue();
@@ -2772,8 +2772,8 @@ void SwBaseShell::ExecuteGallery(SfxRequest &rReq)
             if ( nSel & nsSelectionType::SEL_DRW_TXT )
                 break;
 
-            SFX_REQUEST_ARG( rReq, pPos, SfxUInt16Item, SID_GALLERY_BG_POS, false );
-            SFX_REQUEST_ARG( rReq, pBrush, SvxBrushItem, SID_GALLERY_BG_BRUSH, false );
+            const SfxUInt16Item* pPos = rReq.GetArg<SfxUInt16Item>(SID_GALLERY_BG_POS);
+            const SvxBrushItem* pBrush = rReq.GetArg<SvxBrushItem>(SID_GALLERY_BG_BRUSH);
             if ( !pPos || !pBrush )
                 break;
 

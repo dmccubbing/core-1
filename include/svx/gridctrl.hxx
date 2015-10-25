@@ -41,7 +41,7 @@
 class DbGridControl;
 class CursorWrapper;
 
-bool CompareBookmark(const ::com::sun::star::uno::Any& aLeft, const ::com::sun::star::uno::Any& aRight);
+bool CompareBookmark(const css::uno::Any& aLeft, const css::uno::Any& aRight);
 
 namespace svxform
 {
@@ -62,7 +62,7 @@ enum GridRowStatus
 
 class DbGridRow : public SvRefBase
 {
-    ::com::sun::star::uno::Any  m_aBookmark;        // Bookmark of the row, can be set
+    css::uno::Any  m_aBookmark;        // Bookmark of the row, can be set
     ::std::vector< ::svxform::DataColumn* >
                                 m_aVariants;
     GridRowStatus               m_eStatus;
@@ -84,7 +84,7 @@ public:
     void            SetNew(bool _bNew)              { m_bIsNew = _bNew; }
     bool            IsNew() const                   { return m_bIsNew; }
 
-    const ::com::sun::star::uno::Any& GetBookmark() const { return m_aBookmark; }
+    const css::uno::Any& GetBookmark() const { return m_aBookmark; }
 
     bool    IsValid() const { return m_eStatus == GRS_CLEAN || m_eStatus == GRS_MODIFIED; }
     bool    IsModified() const { return m_eStatus == GRS_MODIFIED; }
@@ -144,8 +144,8 @@ public:
         public:
             AbsolutePos(vcl::Window* pParent, WinBits nStyle = 0);
 
-            virtual void KeyInput(const KeyEvent& rEvt) SAL_OVERRIDE;
-            virtual void LoseFocus() SAL_OVERRIDE;
+            virtual void KeyInput(const KeyEvent& rEvt) override;
+            virtual void LoseFocus() override;
         };
 
         friend class NavigationBar::AbsolutePos;
@@ -184,7 +184,7 @@ public:
 
         NavigationBar(vcl::Window* pParent, WinBits nStyle = 0);
         virtual ~NavigationBar();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         // Status methods for Controls
         void InvalidateAll(sal_Int32 nCurrentPos = -1, bool bAll = false);
@@ -194,9 +194,9 @@ public:
         sal_uInt16 GetDefaultWidth() const {return m_nDefaultWidth;}
 
     protected:
-        virtual void Resize() SAL_OVERRIDE;
-        virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
-        virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
+        virtual void Resize() override;
+        virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
+        virtual void StateChanged( StateChangedType nType ) override;
 
     private:
         DECL_LINK_TYPED(OnClick, Button*, void);
@@ -223,8 +223,8 @@ private:
     Link<sal_uInt16,int>   m_aMasterStateProvider;
     Link<sal_uInt16,bool>   m_aMasterSlotExecutor;
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::util::XNumberFormatter >    m_xFormatter;
-    ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >    m_xContext;
+    css::uno::Reference< css::util::XNumberFormatter >    m_xFormatter;
+    css::uno::Reference< css::uno::XComponentContext >    m_xContext;
 
     DbGridColumns   m_aColumns;         // Column description
     VclPtr<NavigationBar>   m_aBar;
@@ -242,7 +242,7 @@ private:
     // For that reason we have to listen to some properties of our data source.
     ::comphelper::OPropertyChangeMultiplexer*       m_pDataSourcePropMultiplexer;
     FmXGridSourcePropListener*                      m_pDataSourcePropListener;
-    ::com::sun::star::uno::Reference< ::com::sun::star::sdb::XRowsChangeListener>
+    css::uno::Reference< css::sdb::XRowsChangeListener>
                                                     m_xRowSetListener; // get notification when rows were changed
 
     void*                                           m_pFieldListeners;
@@ -269,7 +269,7 @@ private:
     osl::Mutex          m_aDestructionSafety;
     osl::Mutex          m_aAdjustSafety;
 
-    com::sun::star::util::Date
+    css::util::Date
                         m_aNullDate;        // NullDate of the Numberformatter;
 
     BrowserMode         m_nMode;
@@ -301,34 +301,34 @@ protected:
     bool                m_bUpdating : 1;            // are any updates being executed right now?
 
 protected:
-    virtual bool SeekRow(long nRow) SAL_OVERRIDE;
-    virtual void VisibleRowsChanged( long nNewTopRow, sal_uInt16 nNumRows) SAL_OVERRIDE;
-    virtual void PaintStatusCell(OutputDevice& rDev, const Rectangle& rRect) const SAL_OVERRIDE;
-    virtual void PaintCell(OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId) const SAL_OVERRIDE;
-    virtual RowStatus GetRowStatus(long nRow) const SAL_OVERRIDE;
-    virtual bool CursorMoving(long nNewRow, sal_uInt16 nNewCol) SAL_OVERRIDE;
-    virtual void CursorMoved() SAL_OVERRIDE;
-    virtual void ArrangeControls(sal_uInt16& nX, sal_uInt16 nY) SAL_OVERRIDE;
-    virtual sal_uInt32 GetTotalCellWidth(long nRow, sal_uInt16 nColId) SAL_OVERRIDE;
-    virtual void Command(const CommandEvent& rEvt) SAL_OVERRIDE;
-    virtual bool PreNotify(NotifyEvent& rEvt) SAL_OVERRIDE;
-    virtual void KeyInput(const KeyEvent& rEvt) SAL_OVERRIDE;
-    virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual void Select() SAL_OVERRIDE;
+    virtual bool SeekRow(long nRow) override;
+    virtual void VisibleRowsChanged( long nNewTopRow, sal_uInt16 nNumRows) override;
+    virtual void PaintStatusCell(OutputDevice& rDev, const Rectangle& rRect) const override;
+    virtual void PaintCell(OutputDevice& rDev, const Rectangle& rRect, sal_uInt16 nColId) const override;
+    virtual RowStatus GetRowStatus(long nRow) const override;
+    virtual bool CursorMoving(long nNewRow, sal_uInt16 nNewCol) override;
+    virtual void CursorMoved() override;
+    virtual void ArrangeControls(sal_uInt16& nX, sal_uInt16 nY) override;
+    virtual sal_uInt32 GetTotalCellWidth(long nRow, sal_uInt16 nColId) override;
+    virtual void Command(const CommandEvent& rEvt) override;
+    virtual bool PreNotify(NotifyEvent& rEvt) override;
+    virtual void KeyInput(const KeyEvent& rEvt) override;
+    virtual void StateChanged( StateChangedType nType ) override;
+    virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual void Select() override;
 
-    virtual ::svt::CellController* GetController(long nRow, sal_uInt16 nCol) SAL_OVERRIDE;
+    virtual ::svt::CellController* GetController(long nRow, sal_uInt16 nCol) override;
 
-    virtual void CellModified() SAL_OVERRIDE;
-    virtual bool SaveModified() SAL_OVERRIDE;
-    virtual bool IsModified() const SAL_OVERRIDE;
+    virtual void CellModified() override;
+    virtual bool SaveModified() override;
+    virtual bool IsModified() const override;
 
-    virtual sal_uInt16 AppendColumn(const OUString& rName, sal_uInt16 nWidth = 0, sal_uInt16 nPos = HEADERBAR_APPEND, sal_uInt16 nId = (sal_uInt16)-1) SAL_OVERRIDE;
+    virtual sal_uInt16 AppendColumn(const OUString& rName, sal_uInt16 nWidth = 0, sal_uInt16 nPos = HEADERBAR_APPEND, sal_uInt16 nId = (sal_uInt16)-1) override;
     void RemoveColumn(sal_uInt16 nId);
     DbGridColumn* CreateColumn(sal_uInt16 nId) const;
-    virtual void ColumnMoved(sal_uInt16 nId) SAL_OVERRIDE;
-    virtual bool SaveRow() SAL_OVERRIDE;
-    virtual bool IsTabAllowed(bool bForward) const SAL_OVERRIDE;
+    virtual void ColumnMoved(sal_uInt16 nId) override;
+    virtual bool SaveRow() override;
+    virtual bool IsTabAllowed(bool bForward) const override;
 
     /// hide a column
     virtual void    HideColumn(sal_uInt16 nId);
@@ -347,12 +347,12 @@ protected:
     */
     virtual void PostExecuteRowContextMenu(sal_uInt16 nRow, const PopupMenu& rMenu, sal_uInt16 nExecutionResult);
 
-    void DataSourcePropertyChanged(const ::com::sun::star::beans::PropertyChangeEvent& evt) throw(::com::sun::star::uno::RuntimeException, std::exception);
+    void DataSourcePropertyChanged(const css::beans::PropertyChangeEvent& evt) throw(css::uno::RuntimeException, std::exception);
 
-    void FieldValueChanged(sal_uInt16 _nId, const ::com::sun::star::beans::PropertyChangeEvent& _evt);
+    void FieldValueChanged(sal_uInt16 _nId, const css::beans::PropertyChangeEvent& _evt);
     void FieldListenerDisposing(sal_uInt16 _nId);
 
-    void disposing(sal_uInt16 _nId, const ::com::sun::star::lang::EventObject& _rEvt);
+    void disposing(sal_uInt16 _nId, const css::lang::EventObject& _rEvt);
 
     // own overridables
     /// called when the current row changed
@@ -361,22 +361,22 @@ protected:
     virtual void onColumnChange();
 
     // DragSourceHelper overridables
-    virtual void StartDrag( sal_Int8 nAction, const Point& rPosPixel ) SAL_OVERRIDE;
+    virtual void StartDrag( sal_Int8 nAction, const Point& rPosPixel ) override;
 
     void    executeRowContextMenu( long _nRow, const Point& _rPreferredPos );
 
 public:
     DbGridControl(
-        ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >,
+        css::uno::Reference< css::uno::XComponentContext >,
         vcl::Window* pParent,
         WinBits nBits = WB_BORDER);
 
     virtual ~DbGridControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void Init() SAL_OVERRIDE;
-    virtual void InitColumnsByFields(const ::com::sun::star::uno::Reference< ::com::sun::star::container::XIndexAccess >& xFields) = 0;
-    virtual void RemoveRows() SAL_OVERRIDE;
+    virtual void Init() override;
+    virtual void InitColumnsByFields(const css::uno::Reference< css::container::XIndexAccess >& xFields) = 0;
+    virtual void RemoveRows() override;
 
     /** GetCellText returns the text at the given position
         @param  _nRow
@@ -386,17 +386,17 @@ public:
         @return
             the text out of the cell
     */
-    virtual OUString  GetCellText(long _nRow, sal_uInt16 _nColId) const SAL_OVERRIDE;
+    virtual OUString  GetCellText(long _nRow, sal_uInt16 _nColId) const override;
 
     void RemoveRows(bool bNewCursor);
 
-    const ::com::sun::star::uno::Reference< ::com::sun::star::util::XNumberFormatter >& getNumberFormatter() const {return m_xFormatter;}
+    const css::uno::Reference< css::util::XNumberFormatter >& getNumberFormatter() const {return m_xFormatter;}
 
     // the data source
     // the options can restrict but not extend the update abilities
-    void setDataSource(const ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XRowSet >& rCursor,
+    void setDataSource(const css::uno::Reference< css::sdbc::XRowSet >& rCursor,
         sal_uInt16 nOpts = OPT_INSERT | OPT_UPDATE | OPT_DELETE);
-    virtual void Dispatch(sal_uInt16 nId) SAL_OVERRIDE;
+    virtual void Dispatch(sal_uInt16 nId) override;
 
     CursorWrapper* getDataSource() const {return m_pDataCursor;}
     const DbGridColumns& GetColumns() const {return m_aColumns;}
@@ -408,7 +408,7 @@ public:
     // which position does the column with the id in the View have, the handle column doesn't count
     sal_uInt16 GetViewColumnPos( sal_uInt16 nId ) const { sal_uInt16 nPos = GetColumnPos(nId); return (nPos==BROWSER_INVALIDID) ? GRID_COLUMN_NOT_FOUND : nPos-1; }
 
-    // which position does the column with the id in m_aColumns have, that means the ::com::sun::star::sdbcx::Container
+    // which position does the column with the id in m_aColumns have, that means the css::sdbcx::Container
     // returned from the GetColumns (may be different from the position returned by GetViewColumnPos
     // if there are hidden columns)
     sal_uInt16 GetModelColumnPos( sal_uInt16 nId ) const;
@@ -438,7 +438,7 @@ public:
         // to update, to insert or to restore, the according options are ignored. If the grid isn't
         // connected to a data source, all options except OPT_READONLY are ignored.
 
-    const com::sun::star::util::Date&   getNullDate() const {return m_aNullDate;}
+    const css::util::Date&   getNullDate() const {return m_aNullDate;}
 
     // positioning
     void MoveToPosition(sal_uInt32 nPos);
@@ -497,7 +497,7 @@ public:
     */
     void        ForceHideScrollbars( bool _bForce );
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >
+    css::uno::Reference< css::uno::XComponentContext >
         getContext() const { return m_xContext; }
 
     /// returns <TRUE/> if the text of the given cell can be copied into the clipboard
@@ -528,7 +528,7 @@ public:
         @return
             The count of additional controls of the control area.
     */
-    virtual sal_Int32 GetAccessibleControlCount() const SAL_OVERRIDE;
+    virtual sal_Int32 GetAccessibleControlCount() const override;
 
     /** Creates the accessible object of an additional control.
         @param _nIndex
@@ -536,18 +536,18 @@ public:
         @return
             The XAccessible interface of the specified control.
     */
-    virtual ::com::sun::star::uno::Reference<
-        ::com::sun::star::accessibility::XAccessible >
-    CreateAccessibleControl( sal_Int32 _nIndex ) SAL_OVERRIDE;
+    virtual css::uno::Reference<
+        css::accessibility::XAccessible >
+    CreateAccessibleControl( sal_Int32 _nIndex ) override;
 
     // IAccessibleTableProvider
     /** Creates the accessible object of a data table cell.
         @param nRow  The row index of the cell.
         @param nColumnId  The column ID of the cell.
         @return  The XAccessible interface of the specified cell. */
-    virtual ::com::sun::star::uno::Reference<
-        ::com::sun::star::accessibility::XAccessible >
-    CreateAccessibleCell( sal_Int32 nRow, sal_uInt16 nColumnId ) SAL_OVERRIDE;
+    virtual css::uno::Reference<
+        css::accessibility::XAccessible >
+    CreateAccessibleCell( sal_Int32 nRow, sal_uInt16 nColumnId ) override;
 
 protected:
     void RecalcRows(long nNewTopRow, sal_uInt16 nLinesOnScreen, bool bUpdateCursor);

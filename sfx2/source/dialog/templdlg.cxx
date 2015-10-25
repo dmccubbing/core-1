@@ -95,11 +95,11 @@ public:
                        SvTreeListBox& rDevice,
                        vcl::RenderContext& rRenderContext,
                        const SvViewDataEntry* pView,
-                       const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvTreeListEntry& rEntry) override;
 
     virtual void InitViewData(SvTreeListBox* pView,
                               SvTreeListEntry* pEntry,
-                              SvViewDataItem* pViewData) SAL_OVERRIDE;
+                              SvViewDataItem* pViewData) override;
 };
 
 
@@ -1698,9 +1698,9 @@ void SfxCommonTemplateDialog_Impl::EnableHierarchical(bool const bEnable)
     }
 }
 
-IMPL_LINK( SfxCommonTemplateDialog_Impl, FilterSelectHdl, ListBox *, pBox )
+IMPL_LINK_TYPED( SfxCommonTemplateDialog_Impl, FilterSelectHdl, ListBox&, rBox, void )
 {
-    if (SfxResId(STR_STYLE_FILTER_HIERARCHICAL).toString() == pBox->GetSelectEntry())
+    if (SfxResId(STR_STYLE_FILTER_HIERARCHICAL).toString() == rBox.GetSelectEntry())
     {
         EnableHierarchical(true);
     }
@@ -1708,8 +1708,6 @@ IMPL_LINK( SfxCommonTemplateDialog_Impl, FilterSelectHdl, ListBox *, pBox )
     {
         EnableHierarchical(false);
     }
-
-    return 0;
 }
 
 // Select-Handler for the Toolbox
@@ -2156,7 +2154,7 @@ IMPL_LINK_TYPED( SfxCommonTemplateDialog_Impl, MenuSelectHdl, Menu*, pMenu, bool
 {
     nLastItemId = pMenu->GetCurItemId();
     Application::PostUserEvent(
-        LINK( this, SfxCommonTemplateDialog_Impl, MenuSelectAsyncHdl ), 0 );
+        LINK( this, SfxCommonTemplateDialog_Impl, MenuSelectAsyncHdl ) );
     return true;
 }
 

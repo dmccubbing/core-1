@@ -433,7 +433,7 @@ public:
     Sequence< PropertyValue >   getValues() const { return m_aValues; }
 
 // XInteractionSupplyParameters
-    virtual void SAL_CALL setParameters( const Sequence< PropertyValue >& _rValues ) throw(RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL setParameters( const Sequence< PropertyValue >& _rValues ) throw(RuntimeException, std::exception) override;
 };
 
 
@@ -465,11 +465,11 @@ public:
     {
     }
 
-    virtual OUString GetComponentServiceName() SAL_OVERRIDE {return OUString("Edit");}
-    virtual void SAL_CALL createPeer( const Reference< XToolkit > & rxToolkit, const Reference< XWindowPeer >  & rParentPeer ) throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual OUString GetComponentServiceName() override {return OUString("Edit");}
+    virtual void SAL_CALL createPeer( const Reference< XToolkit > & rxToolkit, const Reference< XWindowPeer >  & rParentPeer ) throw( RuntimeException, std::exception ) override;
 
 protected:
-    virtual void ImplSetPeerProperty( const OUString& rPropName, const Any& rVal ) SAL_OVERRIDE;
+    virtual void ImplSetPeerProperty( const OUString& rPropName, const Any& rVal ) override;
 };
 
 
@@ -825,7 +825,7 @@ void FormController::getFastPropertyValue( Any& rValue, sal_Int32 nHandle ) cons
                             if ( pParseNode != nullptr )
                             {
                                 // don't use a parse context here, we need it unlocalized
-                                pParseNode->parseNodeToStr( sCriteria, xConnection, NULL );
+                                pParseNode->parseNodeToStr( sCriteria, xConnection );
                                 if ( condition != rRow.begin() )
                                     aRowFilter.append( " AND " );
                                 aRowFilter.append( sCriteria );

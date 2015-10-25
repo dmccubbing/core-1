@@ -97,14 +97,14 @@ public:
     explicit XIMStatusWindow( bool bOn );
     virtual ~XIMStatusWindow();
 
-    virtual void setPosition( SalFrame* ) SAL_OVERRIDE;
-    virtual void setText( const OUString & ) SAL_OVERRIDE;
-    virtual void show( bool bShow, I18NStatus::ShowReason eReason ) SAL_OVERRIDE;
-    virtual void toggle( bool bOn ) SAL_OVERRIDE;
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void setPosition( SalFrame* ) override;
+    virtual void setText( const OUString & ) override;
+    virtual void show( bool bShow, I18NStatus::ShowReason eReason ) override;
+    virtual void toggle( bool bOn ) override;
+    virtual void dispose() override;
 
     // override WorkWindow::DataChanged
-    virtual void DataChanged( const DataChangedEvent& rEvt ) SAL_OVERRIDE;
+    virtual void DataChanged( const DataChangedEvent& rEvt ) override;
 };
 
 }
@@ -154,7 +154,7 @@ void XIMStatusWindow::layout()
 
     m_aStatusText->SetPosSizePixel( Point( 1, 1 ), aControlSize );
     m_aStatusText->SetFont( aFont );
-    m_aStatusText->Show( true );
+    m_aStatusText->Show();
 
     if (m_bAnchoredAtRight && IsVisible())
     {
@@ -312,17 +312,17 @@ class IIIMPStatusWindow : public StatusWindow
 public:
     IIIMPStatusWindow( SalFrame* pParent, bool bOn ); // for initial position
 
-    virtual void setText( const OUString & ) SAL_OVERRIDE;
-    virtual void show( bool bShow, I18NStatus::ShowReason eReason ) SAL_OVERRIDE;
-    virtual void toggle( bool bOn ) SAL_OVERRIDE;
+    virtual void setText( const OUString & ) override;
+    virtual void show( bool bShow, I18NStatus::ShowReason eReason ) override;
+    virtual void toggle( bool bOn ) override;
     virtual ~IIIMPStatusWindow() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     void layout();
 
     // override Window focus handler
-    virtual void        GetFocus() SAL_OVERRIDE;
+    virtual void        GetFocus() override;
     // override WorkWindow::DataChanged
-    virtual void DataChanged( const DataChangedEvent& rEvt ) SAL_OVERRIDE;
+    virtual void DataChanged( const DataChangedEvent& rEvt ) override;
 };
 
 }
@@ -340,7 +340,7 @@ IIIMPStatusWindow::IIIMPStatusWindow( SalFrame* pParent, bool bOn ) :
 
     m_aStatusBtn->SetSelectHdl( LINK( this, IIIMPStatusWindow, SelectHdl ) );
     m_aStatusBtn->SetPopupMenu( &m_aMenu );
-    m_aStatusBtn->Show( true );
+    m_aStatusBtn->Show();
 
     const ::std::vector< I18NStatus::ChoiceData >& rChoices( I18NStatus::get().getChoices() );
     int i = 1;

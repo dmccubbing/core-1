@@ -171,7 +171,7 @@ svt::ToolboxController* SAL_CALL SfxToolBoxControllerFactory( const Reference< X
     if ( pModule )
         pSlotPool = pModule->GetSlotPool();
     else
-        pSlotPool = &(SfxSlotPool::GetSlotPool( NULL ));
+        pSlotPool = &(SfxSlotPool::GetSlotPool());
 
     const SfxSlot* pSlot = pSlotPool->GetUnoSlot( aTargetURL.Path );
     if ( pSlot )
@@ -745,10 +745,25 @@ VclPtr<vcl::Window> SfxToolBoxControl::CreateItemWindow( vcl::Window * )
     return VclPtr<vcl::Window>();
 }
 
+class SfxFrameStatusListener : public svt::FrameStatusListener
+{
+    public:
+        SfxFrameStatusListener( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
+                                const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& xFrame,
+                                SfxPopupWindow* pCallee );
+        virtual ~SfxFrameStatusListener();
+
+        // XStatusListener
+        virtual void SAL_CALL statusChanged( const ::com::sun::star::frame::FeatureStateEvent& Event )
+            throw ( ::com::sun::star::uno::RuntimeException, std::exception ) override;
+
+    private:
+        VclPtr<SfxPopupWindow> m_pCallee;
+};
 SfxFrameStatusListener::SfxFrameStatusListener(
     const Reference< XComponentContext >& rxContext,
     const Reference< XFrame >& xFrame,
-    SfxStatusListenerInterface* pCallee ) :
+    SfxPopupWindow* pCallee ) :
     svt::FrameStatusListener( rxContext, xFrame ),
     m_pCallee( pCallee )
 {
@@ -958,6 +973,7 @@ void SfxPopupWindow::dispose()
     {
         m_xStatusListener->dispose();
         m_xStatusListener.clear();
+        m_pStatusListener = nullptr;
     }
 
     vcl::Window* pWindow = GetTopMostParentSystemWindow( this );
@@ -1113,8 +1129,7 @@ void SfxPopupWindow::StateChanged(
 
 void SfxPopupWindow::Delete()
 {
-    if ( m_aDeleteLink.IsSet() )
-        m_aDeleteLink.Call( this );
+    m_aDeleteLink.Call( this );
     disposeOnce();
 }
 

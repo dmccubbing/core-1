@@ -172,8 +172,8 @@ class VCL_DLLPUBLIC GraphicDescriptor
     bool            ImpDetectSGV( SvStream& rStm, bool bExtendedInfo );
     bool            ImpDetectEMF( SvStream& rStm, bool bExtendedInfo );
     bool            ImpDetectSVG( SvStream& rStm, bool bExtendedInfo );
-    GraphicDescriptor( const GraphicDescriptor& ) SAL_DELETED_FUNCTION;
-    GraphicDescriptor& operator=( const GraphicDescriptor& ) SAL_DELETED_FUNCTION;
+    GraphicDescriptor( const GraphicDescriptor& ) = delete;
+    GraphicDescriptor& operator=( const GraphicDescriptor& ) = delete;
 
 public:
 
@@ -310,7 +310,7 @@ public:
                                    SvStream& rStream,
                                    sal_uInt16 nFormat,
                                    sal_uInt16 * pDeterminedFormat, GraphicFilterImportFlags nImportFlags,
-                                   com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >* pFilterData,
+                                   css::uno::Sequence< css::beans::PropertyValue >* pFilterData,
                                    WMF_EXTERNALHEADER *pExtHeader = NULL );
 
     void                Abort() { bAbort = true; }

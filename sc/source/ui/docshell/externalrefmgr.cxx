@@ -55,6 +55,7 @@
 #include "scmatrix.hxx"
 #include <columnspanset.hxx>
 #include <column.hxx>
+#include <com/sun/star/document/MacroExecMode.hpp>
 
 #include <memory>
 #include <algorithm>
@@ -711,6 +712,18 @@ bool ScExternalRefCache::isValidRangeName(sal_uInt16 nFileId, const OUString& rN
 
     const RangeNameMap& rMap = pDoc->maRangeNames;
     return rMap.count(rName) > 0;
+}
+
+void ScExternalRefCache::setRangeName(sal_uInt16 nFileId, const OUString& rName)
+{
+    osl::MutexGuard aGuard(&maMtxDocs);
+
+    DocItem* pDoc = getDocItem(nFileId);
+    if (!pDoc)
+        return;
+
+    OUString aUpperName = ScGlobal::pCharClass->uppercase(rName);
+    pDoc->maRealRangeNameMap.insert(NamePairMap::value_type(aUpperName, rName));
 }
 
 void ScExternalRefCache::setCellData(sal_uInt16 nFileId, const OUString& rTabName, SCCOL nCol, SCROW nRow,
@@ -1998,7 +2011,12 @@ bool ScExternalRefManager::isValidRangeName(sal_uInt16 nFileId, const OUString& 
     if (pSrcDoc)
     {
         // Only check the presence of the name.
-        return hasRangeName(*pSrcDoc, rName);
+        if (hasRangeName(*pSrcDoc, rName))
+        {
+            maRefCache.setRangeName(nFileId, rName);
+            return true;
+        }
+        return false;
     }
 
     if (maRefCache.isValidRangeName(nFileId, rName))
@@ -2010,7 +2028,13 @@ bool ScExternalRefManager::isValidRangeName(sal_uInt16 nFileId, const OUString& 
         // failed to load document from disk.
         return false;
 
-    return hasRangeName(*pSrcDoc, rName);
+    if (hasRangeName(*pSrcDoc, rName))
+    {
+        maRefCache.setRangeName(nFileId, rName);
+        return true;
+    }
+
+    return false;
 }
 
 void ScExternalRefManager::refreshAllRefCells(sal_uInt16 nFileId)
@@ -2389,6 +2413,21 @@ SfxObjectShellRef ScExternalRefManager::loadSrcDocument(sal_uInt16 nFileId, OUSt
     // make medium hidden to prevent assertion from progress bar
     pSet->Put( SfxBoolItem(SID_HIDDEN, true) );
 
+    // If the current document is allowed to execute macros then the referenced
+    // document may execute macros according to the security configuration.
+    SfxObjectShell* pShell = mpDoc->GetDocumentShell();
+    if (pShell)
+    {
+        SfxMedium* pMedium = pShell->GetMedium();
+        if (pMedium)
+        {
+            const SfxPoolItem* pItem;
+            if (pMedium->GetItemSet()->GetItemState( SID_MACROEXECMODE, false, &pItem ) == SfxItemState::SET &&
+                    static_cast<const SfxUInt16Item*>(pItem)->GetValue() != css::document::MacroExecMode::NEVER_EXECUTE)
+                pSet->Put( SfxUInt16Item( SID_MACROEXECMODE, css::document::MacroExecMode::USE_CONFIG));
+        }
+    }
+
     unique_ptr<SfxMedium> pMedium(new SfxMedium(aFile, STREAM_STD_READ, pFilter, pSet));
     if (pMedium->GetError() != ERRCODE_NONE)
         return NULL;
@@ -2675,7 +2714,7 @@ public:
     RefCacheFiller( svl::SharedStringPool& rStrPool, ScExternalRefCache& rRefCache, sal_uInt16 nFileId ) :
         mrStrPool(rStrPool), mrRefCache(rRefCache), mnFileId(nFileId), mpCurCol(NULL) {}
 
-    virtual void startColumn( ScColumn* pCol ) SAL_OVERRIDE
+    virtual void startColumn( ScColumn* pCol ) override
     {
         mpCurCol = pCol;
         if (!mpCurCol)
@@ -2685,7 +2724,7 @@ public:
         mpRefTab = mrRefCache.getCacheTable(mnFileId, mpCurCol->GetTab());
     }
 
-    virtual void execute( SCROW nRow1, SCROW nRow2, bool bVal ) SAL_OVERRIDE
+    virtual void execute( SCROW nRow1, SCROW nRow2, bool bVal ) override
     {
         if (!mpCurCol || !bVal)
             return;

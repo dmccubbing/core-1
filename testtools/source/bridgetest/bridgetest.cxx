@@ -114,12 +114,12 @@ public:
     }
 
     // XServiceInfo
-    virtual OUString SAL_CALL getImplementationName() throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL supportsService( const OUString & rServiceName ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual Sequence< OUString > SAL_CALL getSupportedServiceNames() throw (RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual OUString SAL_CALL getImplementationName() throw (RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL supportsService( const OUString & rServiceName ) throw (RuntimeException, std::exception) override;
+    virtual Sequence< OUString > SAL_CALL getSupportedServiceNames() throw (RuntimeException, std::exception) override;
 
     // XMain
-    virtual sal_Int32 SAL_CALL run( const Sequence< OUString > & rArgs ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual sal_Int32 SAL_CALL run( const Sequence< OUString > & rArgs ) throw (RuntimeException, std::exception) override;
 };
 
 
@@ -313,7 +313,7 @@ public:
     void SAL_CALL callRecursivly(
         const ::com::sun::star::uno::Reference< XRecursiveCall >& xCall,
         sal_Int32 nToCall )
-        throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw(::com::sun::star::uno::RuntimeException, std::exception) override
         {
             MutexGuard guard( m_mutex );
             if( nToCall )
@@ -339,8 +339,8 @@ class MyClass : public osl::DebugBase<MyClass>, public OWeakObject
 public:
     MyClass();
     virtual ~MyClass();
-    virtual void SAL_CALL acquire() throw () SAL_OVERRIDE;
-    virtual void SAL_CALL release() throw () SAL_OVERRIDE;
+    virtual void SAL_CALL acquire() throw () override;
+    virtual void SAL_CALL release() throw () override;
 };
 
 
@@ -653,8 +653,6 @@ static bool performTest(
             static_cast< sal_Int64 >(SAL_CONST_INT64(0x8000000000000000)), 1,
             SAL_CONST_INT64(0x7FFFFFFFFFFFFFFF) };
         sal_uInt64 _arUHyper[] = { 0, 1, SAL_CONST_UINT64(0xFFFFFFFFFFFFFFFF) };
-        float _arFloat[] = { 1.1f, 2.2f, 3.3f };
-        double _arDouble[] = { 1.11, 2.22, 3.33 };
         OUString _arString[] = {
             OUString("String 1"),
             OUString("String 2"),
@@ -691,6 +689,8 @@ static bool performTest(
             TestEnum_CHECK, STRING_TEST_CONSTANT, _arObj[2],
             Any(&_arObj[2], cppu::UnoType<XInterface>::get()));
         {
+            float _arFloat[] = { 1.1f, 2.2f, 3.3f };
+            double _arDouble[] = { 1.11, 2.22, 3.33 };
             Sequence<sal_Bool> arBool(_arBool, 3);
             Sequence<sal_Unicode> arChar( _arChar, 3);
             Sequence<sal_Int8> arByte(_arByte, 3);

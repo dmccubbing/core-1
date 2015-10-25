@@ -105,11 +105,11 @@ public:
 
     // XEventListener
     virtual void SAL_CALL disposing( const lang::EventObject& rEventObject )
-        throw ( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw ( uno::RuntimeException, std::exception ) override;
 
     // XClipboardListener
     virtual void SAL_CALL changedContents( const datatransfer::clipboard::ClipboardEvent& rEventObject )
-        throw ( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw ( uno::RuntimeException, std::exception ) override;
 
     void DisconnectViewShell() { m_pViewShell = NULL; }
     void ChangedContents();
@@ -472,7 +472,7 @@ void SfxViewShell::ExecMisc_Impl( SfxRequest &rReq )
     {
         case SID_STYLE_FAMILY :
         {
-            SFX_REQUEST_ARG(rReq, pItem, SfxUInt16Item, nId, false);
+            const SfxUInt16Item* pItem = rReq.GetArg<SfxUInt16Item>(nId);
             if (pItem)
             {
                 pImp->m_nFamily = pItem->GetValue();
@@ -555,11 +555,11 @@ void SfxViewShell::ExecMisc_Impl( SfxRequest &rReq )
             SfxMailModel  aModel;
             OUString aDocType;
 
-            SFX_REQUEST_ARG(rReq, pMailSubject, SfxStringItem, SID_MAIL_SUBJECT, false );
+            const SfxStringItem* pMailSubject = rReq.GetArg<SfxStringItem>(SID_MAIL_SUBJECT);
             if ( pMailSubject )
                 aModel.SetSubject( pMailSubject->GetValue() );
 
-            SFX_REQUEST_ARG(rReq, pMailRecipient, SfxStringItem, SID_MAIL_RECIPIENT, false );
+            const SfxStringItem* pMailRecipient = rReq.GetArg<SfxStringItem>(SID_MAIL_RECIPIENT);
             if ( pMailRecipient )
             {
                 OUString aRecipient( pMailRecipient->GetValue() );
@@ -569,7 +569,7 @@ void SfxViewShell::ExecMisc_Impl( SfxRequest &rReq )
                     aRecipient = aRecipient.copy( aMailToStr.getLength() );
                 aModel.AddAddress( aRecipient, SfxMailModel::ROLE_TO );
             }
-            SFX_REQUEST_ARG(rReq, pMailDocType, SfxStringItem, SID_TYPE_NAME, false );
+            const SfxStringItem* pMailDocType = rReq.GetArg<SfxStringItem>(SID_TYPE_NAME);
             if ( pMailDocType )
                 aDocType = pMailDocType->GetValue();
 
@@ -750,7 +750,7 @@ void SfxViewShell::ExecMisc_Impl( SfxRequest &rReq )
         // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
         case SID_PLUGINS_ACTIVE:
         {
-            SFX_REQUEST_ARG(rReq, pShowItem, SfxBoolItem, nId, false);
+            const SfxBoolItem* pShowItem = rReq.GetArg<SfxBoolItem>(nId);
             bool const bActive = (pShowItem)
                 ? pShowItem->GetValue()
                 : !pImp->m_bPlugInsActive;
@@ -1601,7 +1601,7 @@ void SfxViewShell::Notify( SfxBroadcaster& rBC,
                         if ( frame == GetViewFrame() && &rBC == GetObjectShell() )
                         {
                             SfxItemSet* pSet = GetObjectShell()->GetMedium()->GetItemSet();
-                            SFX_ITEMSET_ARG( pSet, pItem, SfxUnoAnyItem, SID_VIEW_DATA, false );
+                            const SfxUnoAnyItem* pItem = SfxItemSet::GetItem<SfxUnoAnyItem>(pSet, SID_VIEW_DATA, false);
                             if ( pItem )
                             {
                                 pImp->m_pController->restoreViewData( pItem->GetValue() );

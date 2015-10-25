@@ -121,12 +121,12 @@ friend class SvxJSearchOptionsDialog;
 public:
     SvxSearchDialog( vcl::Window* pParent, SfxChildWindow* pChildWin, SfxBindings& rBind );
     virtual ~SvxSearchDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    Close() override;
 
     // Window
-    virtual void    Activate() SAL_OVERRIDE;
+    virtual void    Activate() override;
 
     const SearchAttrItemList*   GetSearchItemList() const
                                     { return pSearchList; }
@@ -139,8 +139,8 @@ public:
     vcl::Window* GetDocWin() { return mpDocWin; }
     void SetSrchFlag( bool bSuccess ) { mbSuccess = bSuccess; }
     bool GetSrchFlag() { return mbSuccess; }
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::awt::XWindowPeer >
-        GetComponentInterface( bool bCreate ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::awt::XWindowPeer >
+        GetComponentInterface( bool bCreate ) override;
 
     void            SetSaveToModule(bool b);
 
@@ -171,6 +171,7 @@ private:
     VclPtr<PushButton>     m_pSearchComponent2PB;
 
     VclPtr<CheckBox>       m_pMatchCaseCB;
+    VclPtr<CheckBox>       m_pSearchFormattedCB;
     VclPtr<CheckBox>       m_pWordBtn;
 
     VclPtr<PushButton>     m_pCloseBtn;
@@ -230,12 +231,12 @@ private:
 
     mutable sal_Int32           nTransliterationFlags;
 
-    DECL_LINK( ModifyHdl_Impl, ComboBox* );
+    DECL_LINK_TYPED( ModifyHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( FlagHdl_Impl, Button*, void );
     DECL_LINK_TYPED( CommandHdl_Impl, Button*, void );
     DECL_LINK_TYPED(TemplateHdl_Impl, Button*, void);
     DECL_LINK_TYPED( FocusHdl_Impl, Control&, void );
-    DECL_LINK( LBSelectHdl_Impl, Control* );
+    DECL_LINK_TYPED( LBSelectHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED(LoseFocusHdl_Impl, Control&, void);
     DECL_LINK_TYPED(FormatHdl_Impl, Button*, void);
     DECL_LINK_TYPED(NoFormatHdl_Impl, Button*, void);

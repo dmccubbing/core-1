@@ -248,7 +248,7 @@ IMPL_LINK_TYPED(SwMailMergeAddressBlockPage, AddressBlockHdl_Impl, Button*, pBox
     m_pWizard->UpdateRoadmap();
 }
 
-IMPL_LINK_NOARG(SwMailMergeAddressBlockPage, AddressBlockSelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwMailMergeAddressBlockPage, AddressBlockSelectHdl_Impl, LinkParamNone*, void)
 {
     const sal_uInt16 nSel = m_pSettingsWIN->GetSelectedAddress();
     const uno::Sequence< OUString> aBlocks =
@@ -258,7 +258,6 @@ IMPL_LINK_NOARG(SwMailMergeAddressBlockPage, AddressBlockSelectHdl_Impl)
     m_pWizard->GetConfigItem().SetCurrentAddressBlockIndex( nSel );
     GetWizard()->UpdateRoadmap();
     GetWizard()->enableButtons(WizardButtonFlags::NEXT, GetWizard()->isStateEnabled(MM_GREETINGSPAGE));
-    return 0;
 }
 
 IMPL_LINK_TYPED(SwMailMergeAddressBlockPage, HideParagraphsHdl_Impl, Button*, pBox, void)
@@ -549,9 +548,9 @@ SwCustomizeAddressBlockDialog::SwCustomizeAddressBlockDialog(
     m_pAddressElementsLB->SetSelectHdl(LINK(this, SwCustomizeAddressBlockDialog, ListBoxSelectHdl_Impl ));
     m_pDragED->SetModifyHdl(LINK(this, SwCustomizeAddressBlockDialog, EditModifyHdl_Impl));
     m_pDragED->SetSelectionChangedHdl( LINK( this, SwCustomizeAddressBlockDialog, SelectionChangedHdl_Impl));
-    Link<> aFieldsLink = LINK(this, SwCustomizeAddressBlockDialog, FieldChangeHdl_Impl);
+    Link<Edit&,void> aFieldsLink = LINK(this, SwCustomizeAddressBlockDialog, FieldChangeHdl_Impl);
     m_pFieldCB->SetModifyHdl(aFieldsLink);
-    m_pFieldCB->SetSelectHdl(aFieldsLink);
+    m_pFieldCB->SetSelectHdl(LINK(this, SwCustomizeAddressBlockDialog, FieldChangeComboBoxHdl_Impl));
     Link<Button*,void> aImgButtonHdl = LINK(this, SwCustomizeAddressBlockDialog, ImageButtonHdl_Impl);
     m_pInsertFieldIB->SetClickHdl(aImgButtonHdl);
     m_pRemoveFieldIB->SetClickHdl(aImgButtonHdl);
@@ -598,11 +597,10 @@ IMPL_LINK_TYPED(SwCustomizeAddressBlockDialog, ListBoxSelectHdl_Impl, SvTreeList
     m_pInsertFieldIB->Enable(nUserData >= 0 || !HasItem_Impl(nUserData));
 }
 
-IMPL_LINK_NOARG(SwCustomizeAddressBlockDialog, EditModifyHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwCustomizeAddressBlockDialog, EditModifyHdl_Impl, Edit&, void)
 {
     m_pPreviewWIN->SetAddress(SwAddressPreview::FillData(GetAddress(), m_rConfigItem));
     UpdateImageButtons_Impl();
-    return 0;
 }
 
 IMPL_LINK_TYPED(SwCustomizeAddressBlockDialog, ImageButtonHdl_Impl, Button*, pButton, void)
@@ -707,8 +705,8 @@ IMPL_LINK_TYPED(SwCustomizeAddressBlockDialog, SelectionChangedHdl_Impl, Address
                 m_pFieldCB->InsertEntry(*aIterator);
         }
         m_pFieldCB->SetText(sSelect);
-        m_pFieldCB->Enable(true);
-        m_pFieldFT->Enable(true);
+        m_pFieldCB->Enable();
+        m_pFieldFT->Enable();
     }
     else
     {
@@ -720,7 +718,11 @@ IMPL_LINK_TYPED(SwCustomizeAddressBlockDialog, SelectionChangedHdl_Impl, Address
     bOnEntry = false;
 }
 
-IMPL_LINK_NOARG(SwCustomizeAddressBlockDialog, FieldChangeHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwCustomizeAddressBlockDialog, FieldChangeComboBoxHdl_Impl, ComboBox&, void)
+{
+    FieldChangeHdl_Impl(*m_pFieldCB);
+}
+IMPL_LINK_NOARG_TYPED(SwCustomizeAddressBlockDialog, FieldChangeHdl_Impl, Edit&, void)
 {
     //changing the field content changes the related members, too
     sal_Int32 nSelected = GetSelectedItem_Impl();
@@ -739,7 +741,6 @@ IMPL_LINK_NOARG(SwCustomizeAddressBlockDialog, FieldChangeHdl_Impl)
     UpdateImageButtons_Impl();
     m_pPreviewWIN->SetAddress(GetAddress());
     m_pDragED->Modify();
-    return 0;
 }
 
 void SwCustomizeAddressBlockDialog::UpdateImageButtons_Impl()
@@ -810,17 +811,17 @@ class SwAssignFieldsControl : public Control
     long                        m_nFirstYPos;
 
     DECL_LINK_TYPED(ScrollHdl_Impl, ScrollBar*, void);
-    DECL_LINK(MatchHdl_Impl, ListBox*);
+    DECL_LINK_TYPED(MatchHdl_Impl, ListBox&, void);
     DECL_LINK_TYPED(GotFocusHdl_Impl, Control&, void);
 
-    virtual bool        PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
-    virtual void        Command( const CommandEvent& rCEvt ) SAL_OVERRIDE;
+    virtual bool        PreNotify( NotifyEvent& rNEvt ) override;
+    virtual void        Command( const CommandEvent& rCEvt ) override;
 
     void                MakeVisible( sal_Int32 nIndex );
 public:
     SwAssignFieldsControl(vcl::Window* pParent, WinBits nBits);
     virtual ~SwAssignFieldsControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void        Init(SwMailMergeConfigItem& rConfigItem);
     void        SetModifyHdl(const Link<LinkParamNone*,void>& rModifyHdl)
@@ -828,8 +829,8 @@ public:
                     m_aModifyHdl = rModifyHdl;
                     m_aModifyHdl.Call(nullptr);
                 }
-    virtual void Resize() SAL_OVERRIDE;
-    virtual Size GetOptimalSize() const SAL_OVERRIDE;
+    virtual void Resize() override;
+    virtual Size GetOptimalSize() const override;
 };
 
 VCL_BUILDER_FACTORY_ARGS(SwAssignFieldsControl, WB_BORDER)
@@ -881,7 +882,7 @@ void SwAssignFieldsControl::Init(SwMailMergeConfigItem& rConfigItem)
     //each position in this sequence matches the position in the header array rHeaders
     //if no assignment is available an empty sequence will be returned
     uno::Sequence< OUString> aAssignments = rConfigItem.GetColumnAssignment( rConfigItem.GetCurrentDBData() );
-    Link<> aMatchHdl = LINK(this, SwAssignFieldsControl, MatchHdl_Impl);
+    Link<ListBox&,void> aMatchHdl = LINK(this, SwAssignFieldsControl, MatchHdl_Impl);
     Link<Control&,void> aFocusHdl = LINK(this, SwAssignFieldsControl, GotFocusHdl_Impl);
 
     //fill the controls
@@ -1098,9 +1099,9 @@ IMPL_LINK_TYPED(SwAssignFieldsControl, ScrollHdl_Impl, ScrollBar*, pScroll, void
     SetUpdateMode(true);
 }
 
-IMPL_LINK(SwAssignFieldsControl, MatchHdl_Impl, ListBox*, pBox)
+IMPL_LINK_TYPED(SwAssignFieldsControl, MatchHdl_Impl, ListBox&, rBox, void)
 {
-    const OUString sColumn = pBox->GetSelectEntry();
+    const OUString sColumn = rBox.GetSelectEntry();
     uno::Reference< XColumnsSupplier > xColsSupp( m_rConfigItem->GetResultSet(), uno::UNO_QUERY);
     uno::Reference <XNameAccess> xColAccess = xColsSupp.is() ? xColsSupp->getColumns() : 0;
     OUString sPreview;
@@ -1123,14 +1124,13 @@ IMPL_LINK(SwAssignFieldsControl, MatchHdl_Impl, ListBox*, pBox)
     sal_Int32 nIndex = 0;
     for(auto aLBIter = m_aMatches.begin(); aLBIter != m_aMatches.end(); ++aLBIter, ++nIndex)
     {
-        if(*aLBIter == pBox)
+        if(*aLBIter == &rBox)
         {
             m_aPreviews[nIndex]->SetText(sPreview);
             break;
         }
     }
     m_aModifyHdl.Call(0);
-    return 0;
 }
 
 IMPL_LINK_TYPED(SwAssignFieldsControl, GotFocusHdl_Impl, Control&, rControl, void)

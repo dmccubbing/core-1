@@ -47,13 +47,13 @@ namespace rptxml
 
         ORptFilter& GetOwnImport() const { return m_rImport;}
 
-        OControlStyleContext(const OControlStyleContext&) SAL_DELETED_FUNCTION;
-        void operator =(const OControlStyleContext&) SAL_DELETED_FUNCTION;
+        OControlStyleContext(const OControlStyleContext&) = delete;
+        void operator =(const OControlStyleContext&) = delete;
     protected:
 
         virtual void SetAttribute( sal_uInt16 nPrefixKey,
                                 const OUString& rLocalName,
-                                const OUString& rValue ) SAL_OVERRIDE;
+                                const OUString& rValue ) override;
 
     public:
 
@@ -68,9 +68,9 @@ namespace rptxml
 
 
         virtual void FillPropertySet(const ::com::sun::star::uno::Reference<
-                    ::com::sun::star::beans::XPropertySet > & rPropSet ) SAL_OVERRIDE;
+                    ::com::sun::star::beans::XPropertySet > & rPropSet ) override;
 
-        virtual void SetDefaults() SAL_OVERRIDE;
+        virtual void SetDefaults() override;
 
         void AddProperty(sal_Int16 nContextID, const com::sun::star::uno::Any& aValue);
     };
@@ -102,8 +102,8 @@ namespace rptxml
 
         ORptFilter& GetOwnImport() const { return m_rImport;}
 
-        OReportStylesContext(const OReportStylesContext&) SAL_DELETED_FUNCTION;
-        void operator =(const OReportStylesContext&) SAL_DELETED_FUNCTION;
+        OReportStylesContext(const OReportStylesContext&) = delete;
+        void operator =(const OReportStylesContext&) = delete;
     protected:
 
         // Create a style context.
@@ -111,13 +111,13 @@ namespace rptxml
                 sal_uInt16 nFamily,
                 sal_uInt16 nPrefix,
                 const OUString& rLocalName,
-                const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
         virtual SvXMLStyleContext *CreateDefaultStyleStyleChildContext(
                 sal_uInt16 nFamily, sal_uInt16 nPrefix,
                 const OUString& rLocalName,
                 const ::com::sun::star::uno::Reference<
-                    ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
     public:
 
@@ -129,15 +129,15 @@ namespace rptxml
                 const bool bAutoStyles );
         virtual ~OReportStylesContext();
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
 
         virtual rtl::Reference < SvXMLImportPropertyMapper > GetImportPropertyMapper(
-                            sal_uInt16 nFamily ) const SAL_OVERRIDE;
+                            sal_uInt16 nFamily ) const override;
         virtual ::com::sun::star::uno::Reference <
                         ::com::sun::star::container::XNameContainer >
-            GetStylesContainer( sal_uInt16 nFamily ) const SAL_OVERRIDE;
-        virtual OUString GetServiceName( sal_uInt16 nFamily ) const SAL_OVERRIDE;
-        virtual sal_uInt16 GetFamily( const OUString& rFamily ) const SAL_OVERRIDE;
+            GetStylesContainer( sal_uInt16 nFamily ) const override;
+        virtual OUString GetServiceName( sal_uInt16 nFamily ) const override;
+        virtual sal_uInt16 GetFamily( const OUString& rFamily ) const override;
 
         sal_Int32 GetIndex(const sal_Int16 nContextID);
     };

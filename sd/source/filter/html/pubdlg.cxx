@@ -353,9 +353,9 @@ private:
 public:
     SdDesignNameDlg(vcl::Window* pWindow, const OUString& aName );
     virtual ~SdDesignNameDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     OUString GetDesignName();
-    DECL_LINK(ModifyHdl, void *);
+    DECL_LINK_TYPED(ModifyHdl, Edit&, void);
 };
 
 // SdPublishingDlg Methods
@@ -971,7 +971,7 @@ IMPL_LINK_TYPED( SdPublishingDlg, DesignHdl, Button *, pButton, void )
 }
 
 // Clickhandler for the choice of one design
-IMPL_LINK_NOARG(SdPublishingDlg, DesignSelectHdl)
+IMPL_LINK_NOARG_TYPED(SdPublishingDlg, DesignSelectHdl, ListBox&, void)
 {
     const sal_Int32 nPos = pPage1_Designs->GetSelectEntryPos();
     m_pDesign = &m_aDesignList[nPos];
@@ -981,8 +981,6 @@ IMPL_LINK_NOARG(SdPublishingDlg, DesignSelectHdl)
         SetDesign(m_pDesign);
 
     UpdatePage();
-
-    return 0;
 }
 
 // Clickhandler for the delete of one design
@@ -1630,11 +1628,9 @@ OUString SdDesignNameDlg::GetDesignName()
     return m_pEdit->GetText();
 }
 
-IMPL_LINK_NOARG(SdDesignNameDlg, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(SdDesignNameDlg, ModifyHdl, Edit&, void)
 {
     m_pBtnOK->Enable(!m_pEdit->GetText().isEmpty());
-
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

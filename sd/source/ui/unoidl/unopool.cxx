@@ -42,15 +42,15 @@ LanguageType SdUnoGetLanguage( const lang::Locale& rLocale )
     return eRet;
 }
 
-class SdUnoDrawPool :   public SvxUnoDrawPool
+class SdUnoDrawPool : public SvxUnoDrawPool
 {
 public:
-    SdUnoDrawPool( SdDrawDocument* pModel ) throw();
+    explicit SdUnoDrawPool(SdDrawDocument* pModel) throw();
     virtual ~SdUnoDrawPool() throw();
 
 protected:
     virtual void putAny( SfxItemPool* pPool, const PropertyMapEntry* pEntry, const uno::Any& rValue )
-        throw( beans::UnknownPropertyException, lang::IllegalArgumentException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( beans::UnknownPropertyException, lang::IllegalArgumentException, uno::RuntimeException, std::exception ) override;
 
 private:
     SdDrawDocument* mpDrawModel;

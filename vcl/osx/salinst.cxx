@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 
-#include <tools/solarmutex.hxx>
+#include <comphelper/solarmutex.hxx>
 
 #include "comphelper/lok.hxx"
 
@@ -81,7 +81,7 @@ class AquaDelayedSettingsChanged : public Idle
     {
     }
 
-    virtual void Invoke() SAL_OVERRIDE
+    virtual void Invoke() override
     {
         SalData* pSalData = GetSalData();
         if( ! pSalData->maFrames.empty() )
@@ -350,7 +350,7 @@ AquaSalInstance::AquaSalInstance()
 {
     mpSalYieldMutex = new SalYieldMutex;
     mpSalYieldMutex->acquire();
-    ::tools::SolarMutex::SetSolarMutex( mpSalYieldMutex );
+    ::comphelper::SolarMutex::setSolarMutex( mpSalYieldMutex );
     maMainThread = osl::Thread::getCurrentIdentifier();
     mbWaitingYield = false;
     maUserEventListMutex = osl_createMutex();
@@ -360,7 +360,7 @@ AquaSalInstance::AquaSalInstance()
 
 AquaSalInstance::~AquaSalInstance()
 {
-    ::tools::SolarMutex::SetSolarMutex( 0 );
+    ::comphelper::SolarMutex::setSolarMutex( 0 );
     mpSalYieldMutex->release();
     delete mpSalYieldMutex;
     osl_destroyMutex( maUserEventListMutex );
@@ -979,8 +979,8 @@ public:
 
     // asks whether there is a status window available
     // to toggle into menubar
-    virtual bool canToggle() SAL_OVERRIDE { return false; }
-    virtual void toggle() SAL_OVERRIDE {}
+    virtual bool canToggle() override { return false; }
+    virtual void toggle() override {}
 };
 
 SalI18NImeStatus* AquaSalInstance::CreateI18NImeStatus()

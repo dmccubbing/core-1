@@ -129,7 +129,7 @@ public:
     void SAL_CALL acquire();
     void SAL_CALL release();
 
-    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
     SvxTextForwarder*       GetTextForwarder();
     SvxEditViewForwarder*   GetEditViewForwarder( bool );
@@ -150,7 +150,7 @@ public:
 
     DECL_LINK_TYPED( NotifyHdl, EENotify&, void );
 
-    virtual void ObjectInDestruction(const SdrObject& rObject) SAL_OVERRIDE;
+    virtual void ObjectInDestruction(const SdrObject& rObject) override;
 
     void ChangeModel( SdrModel* pNewModel );
 
@@ -818,7 +818,7 @@ SvxEditViewForwarder* SvxTextEditSourceImpl::GetEditViewForwarder( bool bCreate 
             // enter edit mode
             mpView->SdrEndTextEdit();
 
-            if(mpView->SdrBeginTextEdit(mpObject, 0L, 0L, false, nullptr, 0L, false, false))
+            if(mpView->SdrBeginTextEdit(mpObject))
             {
                 SdrTextObj* pTextObj = dynamic_cast<SdrTextObj*>( mpObject  );
                 if (pTextObj && pTextObj->IsTextEditActive())

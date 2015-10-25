@@ -848,6 +848,24 @@ if echo "$host_os" | grep -q linux-android ; then
     if test ! -d "$ANDROID_SDK_HOME/platforms"; then
         AC_MSG_ERROR([the --with-android-sdk option does not point to an Android SDK])
     fi
+
+    BUILD_TOOLS_VERSION=`$SED -n -e 's/.*buildToolsVersion "\(.*\)"/\1/p' $SRC_ROOT/android/source/build.gradle`
+    if test ! -d "$ANDROID_SDK_HOME/build-tools/$BUILD_TOOLS_VERSION"; then
+        AC_MSG_WARN([android build-tools $BUILD_TOOLS_VERSION not found - install with
+                         $ANDROID_SDK_HOME/tools/android update sdk -u --all --filter build-tools-$BUILD_TOOLS_VERSION
+                    or adjust change $SRC_ROOT/android/source/build.gradle accordingly])
+        add_warning "android build-tools $BUILD_TOOLS_VERSION not found - install with"
+        add_warning "    $ANDROID_SDK_HOME/tools/android update sdk -u --all --filter build-tools-$BUILD_TOOLS_VERSION"
+        add_warning "or adjust $SRC_ROOT/android/source/build.gradle accordingly"
+    fi
+    if test ! -f "$ANDROID_SDK_HOME/extras/android/m2repository/source.properties"; then
+        AC_MSG_WARN([android support repository not found - install with
+                         $ANDROID_SDK_HOME/tools/android update sdk -u --filter extra-android-m2repository
+                     to allow the build to download the specified version of the android support libraries])
+        add_warning "android support repository not found - install with"
+        add_warning "    $ANDROID_SDK_HOME/tools/android update sdk -u --filter extra-android-m2repository"
+        add_warning "to allow the build to download the specified version of the android support libraries"
+    fi
 fi
 
 if test "$_os" = "AIX"; then
@@ -862,6 +880,15 @@ AC_SUBST(SDKDIRNAME)
 AC_SUBST(WITH_MINGW)
 AC_SUBST(PTHREAD_CFLAGS)
 AC_SUBST(PTHREAD_LIBS)
+
+if test $_os != "WINNT"; then
+    save_LIBS="$LIBS"
+    AC_SEARCH_LIBS([dlopen], [dl],
+        [case "$ac_cv_search_dlopen" in -l*) DLOPEN_LIBS="$ac_cv_search_dlopen";; esac],
+        [AC_MSG_ERROR([dlopen not found in either libc nor libdl])])
+    LIBS="$save_LIBS"
+fi
+AC_SUBST(DLOPEN_LIBS)
 
 ###############################################################################
 # Extensions switches --enable/--disable
@@ -980,11 +1007,6 @@ AC_ARG_ENABLE(orcus,
 AC_ARG_ENABLE(fetch-external,
     AS_HELP_STRING([--disable-fetch-external],
         [Disables fetching external tarballs from web sources.])
-)
-
-AC_ARG_ENABLE(lockdown,
-    AS_HELP_STRING([--disable-lockdown],
-        [Disables the gconf integration work in LibreOffice.]),
 )
 
 AC_ARG_ENABLE(pch,
@@ -1179,11 +1201,6 @@ AC_ARG_ENABLE(sdremote-bluetooth,
     AS_HELP_STRING([--disable-sdremote-bluetooth],
         [Determines whether to build sdremote with bluetooth support.
          Requires dbus on Linux.]))
-
-AC_ARG_ENABLE(gconf,
-    AS_HELP_STRING([--disable-gconf],
-        [Determines whether to use the GConf support.]),
-,enable_gconf=yes)
 
 AC_ARG_ENABLE(gio,
     AS_HELP_STRING([--disable-gio],
@@ -1415,7 +1432,7 @@ AC_ARG_ENABLE(lotuswordpro,
 AC_ARG_ENABLE(firebird-sdbc,
     AS_HELP_STRING([--disable-firebird-sdbc],
         [Disable the build of the Firebird-SDBC driver if it doesn't compile for you.]),
-,enable_firebird_sdbc=yes)
+)
 
 AC_ARG_ENABLE(winegcc,
     AS_HELP_STRING([--enable-winegcc],
@@ -3031,7 +3048,7 @@ if test $_os = iOS; then
     xcode_developer=`xcode-select -print-path`
 
     current_sdk_ver=8.3
-    for sdkver in 9.0 8.4 8.3 8.2 8.1 8.0; do
+    for sdkver in 9.1 9.0 8.4 8.3 8.2 8.1 8.0; do
         t=$xcode_developer/Platforms/$platform.platform/Developer/SDKs/$platform$sdkver.sdk
         if test -d $t; then
             ios_sdk=$sdkver
@@ -3263,8 +3280,8 @@ if test "$GCC" = "yes"; then
 
     if test "$COM_GCC_IS_CLANG" = TRUE; then
         AC_MSG_CHECKING([the Clang version])
-        clang_version=`echo __clang_major__.__clang_minor__.__clang_patchlevel__ | $CC -E -P -`
-        CLANG_FULL_VERSION=`echo __clang_version__ | $CC -E -P -`
+        clang_version=`echo __clang_major__.__clang_minor__.__clang_patchlevel__ | $CC -E -P /dev/stdin`
+        CLANG_FULL_VERSION=`echo __clang_version__ | $CC -E -P /dev/stdin`
         CLANGVER=`echo $clang_version | $AWK -F. '{ print \$1*10000+\$2*100+\$3 }'`
         AC_MSG_RESULT([Clang $CLANG_FULL_VERSION, $CLANGVER])
         AC_DEFINE_UNQUOTED(CLANG_FULL_VERSION,$CLANG_FULL_VERSION)
@@ -3289,8 +3306,8 @@ if test "$GCC" = "yes" -a -z "$COM_GCC_IS_CLANG"; then
 
     AC_MSG_RESULT([gcc $_gcc_version])
 
-    if test "$GCC_VERSION" -lt 0406; then
-        AC_MSG_ERROR([GCC $_gcc_version is too old, must be at least GCC 4.6.0])
+    if test "$GCC_VERSION" -lt 0407; then
+        AC_MSG_ERROR([GCC $_gcc_version is too old, must be at least GCC 4.7.0])
     fi
 else
     # Explicitly force GCC_VERSION to be empty, even for Clang, to check incorrect uses.
@@ -6191,146 +6208,6 @@ CXXFLAGS=$save_CXXFLAGS
 
 AC_SUBST(CXXFLAGS_CXX11)
 
-dnl ==================================
-dnl Check for C++11 "= delete" support
-dnl ==================================
-
-AC_MSG_CHECKING([whether $CXX supports C++11 = delete syntax])
-save_CXXFLAGS=$CXXFLAGS
-CXXFLAGS="$CXXFLAGS $CXXFLAGS_CXX11"
-AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-struct A
-    {
-    void test() = delete;
-    };
-]])],[HAVE_CXX11_DELETE=TRUE],[])
-
-AC_LANG_POP([C++])
-CXXFLAGS=$save_CXXFLAGS
-if test "$HAVE_CXX11_DELETE" = "TRUE"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE([HAVE_CXX11_DELETE])
-else
-    AC_MSG_RESULT([no])
-fi
-
-dnl ==================================
-dnl Check for C++11 "override" support
-dnl ==================================
-
-AC_MSG_CHECKING([whether $CXX supports C++11 "override" syntax])
-save_CXXFLAGS=$CXXFLAGS
-CXXFLAGS="$CXXFLAGS $CXXFLAGS_CXX11"
-AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-struct A
-{
-        virtual void test();
-};
-
-struct B : A
-{
-        virtual void test() override;
-};
-]])],[HAVE_CXX11_OVERRIDE=TRUE],[])
-
-AC_LANG_POP([C++])
-CXXFLAGS=$save_CXXFLAGS
-if test "$HAVE_CXX11_OVERRIDE" = "TRUE"; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE([HAVE_CXX11_OVERRIDE])
-else
-    AC_MSG_RESULT([no])
-fi
-
-dnl ==================================
-dnl Check for C++11 "final" support
-dnl ==================================
-
-AC_MSG_CHECKING([whether $CXX supports C++11 "final" syntax])
-save_CXXFLAGS=$CXXFLAGS
-CXXFLAGS="$CXXFLAGS $CXXFLAGS_CXX11"
-AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-// First check that this correct program that uses "final" compiles
-struct A final
-{
-};
-
-struct B
-{
-        virtual void test();
-};
-
-struct C : B
-{
-        void test() final;
-};
-]])],[have_final=yes],[])
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-// Then check that the "final" works as expected,
-// that this program fails to compile
-struct A final
-{
-};
-
-struct B : A
-{
-};
-]])],[],[final_class_works=yes])
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-// Also this should fail to compile
-struct B
-{
-        virtual void test();
-};
-
-struct C : B
-{
-        void test() final;
-};
-
-struct D : C
-{
-        void test();
-};
-]])],[],[final_method_works=yes])
-AC_LANG_POP([C++])
-
-CXXFLAGS=$save_CXXFLAGS
-
-if test "$have_final" = yes -a "$final_class_works" = yes -a "$final_method_works" = yes; then
-    AC_MSG_RESULT([yes])
-    AC_DEFINE([HAVE_CXX11_FINAL])
-else
-    AC_MSG_RESULT([no])
-fi
-
-dnl ===================================================================
-dnl Check for C++11 perfect forwarding support
-dnl ===================================================================
-AC_MSG_CHECKING([whether $CXX supports C++11 perfect forwarding])
-save_CXXFLAGS=$CXXFLAGS
-CXXFLAGS="$CXXFLAGS $CXXFLAGS_CXX11"
-AC_LANG_PUSH([C++])
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-    #include <utility>
-    template<typename T, typename... Args> T * f(Args &&... v) {
-        return new T(std::forward<Args>(v)...);
-    }
-    ]], [[
-    f<int>(0);
-    ]])], [perfect_forwarding=yes], [perfect_forwarding=no])
-AC_LANG_POP([C++])
-CXXFLAGS=$save_CXXFLAGS
-AC_MSG_RESULT([$perfect_forwarding])
-if test "$perfect_forwarding" = yes; then
-    AC_DEFINE([HAVE_CXX11_PERFECT_FORWARDING])
-fi
-
 AC_MSG_CHECKING([whether $CXX supports C++11 constexpr])
 save_CXXFLAGS=$CXXFLAGS
 CXXFLAGS="$CXXFLAGS $CXXFLAGS_CXX11"
@@ -6829,7 +6706,7 @@ if test "$ENABLE_JAVA" != ""; then
         JAVAINTERPRETER=`win_short_path_for_make "$JAVAINTERPRETER"`
     elif test "$cross_compiling" != "yes"; then
         case $CPUNAME in
-            AARCH64|AXP|X86_64|HPPA|IA64|POWERPC64|S390X|SPARC64)
+            AARCH64|AXP|X86_64|HPPA|IA64|POWERPC64|S390X|SPARC64|GODSON64)
                 if test -f "$JAVAINTERPRETER" -a "`$JAVAINTERPRETER -version 2>&1 | $GREP -i 64-bit`" = "" >/dev/null; then
                     AC_MSG_WARN([You are building 64-bit binaries but the JDK $JAVAINTERPRETER is 32-bit])
                     AC_MSG_ERROR([You should pass the --with-jdk-home option pointing to a 64-bit JDK])
@@ -7288,7 +7165,7 @@ if test "$enable_epm" = "yes"; then
             AC_PATH_PROG(EPM, epm, no)
         fi
         if test "$EPM" = "no" -o "$EPM" = "internal"; then
-            echo "EPM will be built."
+            AC_MSG_NOTICE([EPM will be built.])
             BUILD_TYPE="$BUILD_TYPE EPM"
             EPM=${WORKDIR}/UnpackedTarball/epm/epm
         else
@@ -7563,10 +7440,13 @@ AC_MSG_CHECKING([which zlib to use])
 if test "$with_system_zlib" = "yes"; then
     AC_MSG_RESULT([external])
     SYSTEM_ZLIB=TRUE
-    AC_CHECK_HEADER(zlib.h, [],
-        [AC_MSG_ERROR(zlib.h not found. install zlib)], [])
-    AC_CHECK_LIB(z, deflate, [ ZLIB=-lz ],
-        [AC_MSG_ERROR(zlib not found or functional)], [])
+    if test "$_os" != "Emscripten"; then
+        # Emscripten provides its own zlib, don't check for that
+        AC_CHECK_HEADER(zlib.h, [],
+            [AC_MSG_ERROR(zlib.h not found. install zlib)], [])
+        AC_CHECK_LIB(z, deflate, [ ZLIB=-lz ],
+            [AC_MSG_ERROR(zlib not found or functional)], [])
+    fi
 else
     AC_MSG_RESULT([internal])
     SYSTEM_ZLIB=
@@ -7859,7 +7739,7 @@ libo_CHECK_SYSTEM_MODULE([libabw],[ABW],[libabw-0.1])
 dnl ===================================================================
 dnl Check for system libwps
 dnl ===================================================================
-libo_CHECK_SYSTEM_MODULE([libwps],[WPS],[libwps-0.4])
+libo_CHECK_SYSTEM_MODULE([libwps],[WPS],[libwps-0.4 >= 0.4.2])
 
 dnl ===================================================================
 dnl Check for system libwpg
@@ -8436,9 +8316,9 @@ if test "x$enable_postgresql_sdbc" != "xno"; then
         AC_MSG_ERROR([GSSAPI needs OpenSSL, but --disable-openssl was given.])
     fi
 
-    AC_MSG_CHECKING([PostgreSQL C interface])
+    postgres_interface=""
     if test "$with_system_postgresql" = "yes"; then
-        AC_MSG_RESULT([external PostgreSQL])
+        postgres_interface="external PostgreSQL"
         SYSTEM_POSTGRESQL=TRUE
         if test "$_os" = Darwin; then
             supp_path=''
@@ -8533,17 +8413,21 @@ if test "x$enable_postgresql_sdbc" != "xno"; then
 
         if test -n "$with_libpq_path"; then
             SYSTEM_POSTGRESQL=TRUE
-            AC_MSG_RESULT([external libpq])
+            postgres_interface="external libpq"
             POSTGRESQL_LIB="-L${with_libpq_path}/lib/"
             POSTGRESQL_INC=-I"${with_libpq_path}/include/"
         else
             SYSTEM_POSTGRESQL=
-            AC_MSG_RESULT([internal])
+            postgres_interface="internal"
             POSTGRESQL_LIB=""
             POSTGRESQL_INC="%OVERRIDE_ME%"
             BUILD_TYPE="$BUILD_TYPE POSTGRESQL"
         fi
     fi
+
+    AC_MSG_CHECKING([PostgreSQL C interface])
+    AC_MSG_RESULT([$postgres_interface])
+
     if test "${SYSTEM_POSTGRESQL}" = "TRUE"; then
         AC_MSG_NOTICE([checking system PostgreSQL prerequisites])
         save_CFLAGS=$CFLAGS
@@ -8573,7 +8457,15 @@ dnl ===================================================================
 dnl Check for Firebird stuff
 dnl ===================================================================
 ENABLE_FIREBIRD_SDBC=""
-if test "x$enable_firebird_sdbc" = "xyes"; then
+if test -z "$enable_firebird_sdbc" ; then
+    if test "$_os" = "Darwin" -a "$MACOSX_SDK_VERSION" -ge 101100 ; then
+        AC_MSG_NOTICE([firebird does not build on 10.11.. default to --disable-firebird-sdbc ])
+        enable_firebird_sdbc="no"
+    else
+        enable_firebird_sdbc="yes"
+    fi
+fi
+if test "$enable_firebird_sdbc" = "yes" ; then
     SCPDEFS="$SCPDEFS -DWITH_FIREBIRD_SDBC"
 
     dnl ===================================================================
@@ -8670,8 +8562,6 @@ if test "$with_system_curl" = "yes"; then
     AC_MSG_RESULT([external])
     SYSTEM_CURL=TRUE
 
-    AC_MSG_CHECKING([whether libcurl is >= 7.19.4])
-
     # First try PKGCONFIG and then fall back
     PKG_CHECK_MODULES(CURL, libcurl >= 7.19.4,, [:])
 
@@ -8684,17 +8574,18 @@ if test "$with_system_curl" = "yes"; then
         CURL_CFLAGS=$("$CURLCONFIG" --cflags | sed -e "s/-I/${ISYSTEM?}/g")
         curl_version=`$CURLCONFIG --version | $SED -e 's/^libcurl //'`
 
+        AC_MSG_CHECKING([whether libcurl is >= 7.19.4])
         case $curl_version in
         dnl brackets doubled below because Autoconf uses them as m4 quote characters,
         dnl so they need to be doubled to end up in the configure script
         7.19.4|7.19.[[5-9]]|7.[[2-9]]?.*|7.???.*|[[8-9]].*|[[1-9]][[0-9]].*)
+            AC_MSG_RESULT([yes])
             ;;
         *)
             AC_MSG_ERROR([no, you have $curl_version])
             ;;
         esac
     fi
-    AC_MSG_RESULT([yes])
 
     libo_MINGW_CHECK_DLL([libcurl])
     libo_MINGW_TRY_DLL([libintl])
@@ -9029,7 +8920,7 @@ SYSTEM_GENBRK=
 SYSTEM_GENCCODE=
 SYSTEM_GENCMN=
 
-ICU_MAJOR=54
+ICU_MAJOR=56
 ICU_MINOR=1
 ICU_RECLASSIFIED_CLOSE_PARENTHESIS="TRUE"
 ICU_RECLASSIFIED_PREPEND_SET_EMPTY="TRUE"
@@ -10041,7 +9932,6 @@ dnl ===================================================================
 dnl Test which vclplugs have to be built.
 dnl ===================================================================
 R=""
-AC_MSG_CHECKING([which VCLplugs shall be built])
 if test "$USING_X11" != TRUE; then
     enable_gtk=no
     enable_gtk3=no
@@ -10099,36 +9989,18 @@ fi
 AC_SUBST(ENABLE_KDE4)
 
 ENABLE_HEADLESS=""
-if test "x$with_x" = "xno" -o $CXX = "emcc"; then
+if test "x$with_x" = "xno" -o "$CXX" = "emcc"; then
     ENABLE_HEADLESS="TRUE"
     SCPDEFS="$SCPDEFS -DLIBO_HEADLESS"
     R="headless"
 fi
 AC_SUBST(ENABLE_HEADLESS)
 
-if test -z "$R"; then
-    AC_MSG_RESULT([none])
-else
-    AC_MSG_RESULT([$R])
+build_vcl_plugins="$R"
+if test -z "$build_vcl_plugins"; then
+    build_vcl_plugins="none"
 fi
-
-dnl ===================================================================
-dnl GCONF check
-dnl ===================================================================
-
-ENABLE_GCONF=
-AC_MSG_CHECKING([whether to enable GConf support])
-if test "$_os" != "WINNT" -a "$_os" != "Darwin" -a "$_os" != "iOS" -a "$enable_gconf" = "yes"; then
-    ENABLE_GCONF="TRUE"
-    AC_MSG_RESULT([yes])
-    PKG_CHECK_MODULES( GCONF, gconf-2.0 gobject-2.0 )
-    GCONF_CFLAGS=$(printf '%s' "$GCONF_CFLAGS" | sed -e "s/-I/${ISYSTEM?}/g")
-else
-    AC_MSG_RESULT([no])
-fi
-AC_SUBST(GCONF_LIBS)
-AC_SUBST(GCONF_CFLAGS)
-AC_SUBST(ENABLE_GCONF)
+AC_MSG_NOTICE([VCLplugs to be built: $build_vcl_plugins])
 
 dnl ===================================================================
 dnl check for dbus support
@@ -10242,7 +10114,7 @@ ENABLE_SYSTRAY_GTK=""
 if test  "$test_gtk" = "yes"; then
 
     if test "$ENABLE_GTK" = "TRUE"; then
-        PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.10.0 gdk-pixbuf-2.0 >= 2.2 ,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
+        PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.18.0 gdk-pixbuf-2.0 >= 2.2 ,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
         GTK_CFLAGS=$(printf '%s' "$GTK_CFLAGS" | sed -e "s/-I/${ISYSTEM?}/g")
         PKG_CHECK_MODULES(GTHREAD, gthread-2.0,,AC_MSG_ERROR([requirements to build the gtk-plugin not met. Use --disable-gtk or install the missing packages]))
         BUILD_TYPE="$BUILD_TYPE GTK"
@@ -10298,7 +10170,7 @@ if test "$_os" != "WINNT" -a "$_os" != "Darwin" -a "$enable_telepathy" = "yes"; 
     ENABLE_TELEPATHY="TRUE"
     AC_DEFINE(ENABLE_TELEPATHY)
     AC_MSG_RESULT([yes])
-    PKG_CHECK_MODULES( TELEPATHY, telepathy-glib >= 0.18.0 glib-2.0 gobject-2.0 gthread-2.0 gio-2.0 gtk+-2.0 >= 2.10 )
+    PKG_CHECK_MODULES( TELEPATHY, telepathy-glib >= 0.18.0 glib-2.0 gobject-2.0 gthread-2.0 gio-2.0 gtk+-2.0 >= 2.18.0 )
     TELEPATHY_CFLAGS=$(printf '%s' "$TELEPATHY_CFLAGS" | sed -e "s/-I/${ISYSTEM?}/g")
 else
     AC_MSG_RESULT([no])
@@ -10829,84 +10701,24 @@ AC_SUBST(LIBSERIALIZER_JAR)
 # this has to be here because both the Wiki Publisher and the SRB use
 # commons-logging
 COMMONS_LOGGING_VERSION=1.2
-if test "$ENABLE_MEDIAWIKI" = "TRUE" -o "$ENABLE_REPORTBUILDER" = "TRUE"; then
+if test "$ENABLE_REPORTBUILDER" = "TRUE"; then
     AC_MSG_CHECKING([which Apache commons-* libs to use])
     if test "$with_system_apache_commons" = "yes"; then
         SYSTEM_APACHE_COMMONS=TRUE
         AC_MSG_RESULT([external])
-        if test "$ENABLE_MEDIAWIKI" = "TRUE"; then
-            if test -z $COMMONS_CODEC_JAR; then
-                _commons_codec_path=""
-                if test "$HAVE_JAVA6" = "TRUE"; then
-                    _commons_codec_path="/usr/share/java/commons-codec-1.9.jar"
-                else
-                    _commons_codec_path="/usr/share/java/commons-codec-1.6.jar"
-                fi
-                AC_CHECK_FILE($_commons_codec_path,
-                    [ COMMONS_CODEC_JAR=$_commons_codec_path ],
-                    [
-                        AC_CHECK_FILE(/usr/share/java/commons-codec.jar,
-                            [ COMMONS_CODEC_JAR=/usr/share/java/commons-codec.jar ],
-                            [AC_MSG_ERROR(commons-codec.jar replacement not found.)]
-                        )
-                    ]
-                )
-            else
-                AC_CHECK_FILE($COMMONS_CODEC_JAR, [],
-                    [AC_MSG_ERROR(commons-codec.jar not found.)], [])
-            fi
-
-            if test -z $COMMONS_LANG_JAR; then
-                _commons_lang_path=""
-                if test "$HAVE_JAVA6" = "TRUE"; then
-                    _commons_lang_path="/usr/share/java/commons-lang3-3.3.1-src.tar.gz"
-                else
-                    _commons_lang_path="/usr/share/java/commons-lang-2.4.jar"
-                fi
-                AC_CHECK_FILE($_commons_lang_path,
-                    [ COMMONS_LANG_JAR=$commons_lang_path ],
-                    [
-                        AC_CHECK_FILE(/usr/share/java/commons-lang.jar,
-                            [ COMMONS_LANG_JAR=/usr/share/java/commons-lang.jar ],
-                            [AC_MSG_ERROR(commons-lang.jar replacement not found.)]
-                            )
-                    ]
-                )
-            else
-                AC_CHECK_FILE($COMMONS_LANG_JAR, [],
-                    [AC_MSG_ERROR(commons-lang.jar not found.)], [])
-            fi
-
-            if test -z $COMMONS_HTTPCLIENT_JAR; then
-                AC_CHECK_FILE(/usr/share/java/commons-httpclient-3.1.jar,
-                    [ COMMONS_HTTPCLIENT_JAR=/usr/share/java/commons-httpclient-3.1.jar ],
-                    [
-                        AC_CHECK_FILE(/usr/share/java/commons-httpclient.jar,
-                            [ COMMONS_HTTPCLIENT_JAR=/usr/share/java/commons-httpclient.jar ],
-                            [AC_MSG_ERROR(commons-httpclient.jar replacement not found.)]
-                        )
-                    ]
-                )
-            else
-                AC_CHECK_FILE($COMMONS_HTTPCLIENT_JAR, [],
-                    [AC_MSG_ERROR(commons-httpclient.jar not found.)], [])
-            fi
-        fi
-        if test "$ENABLE_MEDIAWIKI" = "TRUE" -o "$ENABLE_REPORTBUILDER" = "TRUE"; then
-            if test -z $COMMONS_LOGGING_JAR; then
-                AC_CHECK_FILE(/usr/share/java/commons-logging-${COMMONS_LOGGING_VERSION}.jar,
-                   [ COMMONS_LOGGING_JAR=/usr/share/java/commons-logging-${COMMONS_LOGGING_VERSION}.jar ],
-                   [
-                        AC_CHECK_FILE(/usr/share/java/commons-logging.jar,
-                            [ COMMONS_LOGGING_JAR=/usr/share/java/commons-logging.jar ],
-                            [AC_MSG_ERROR(commons-logging.jar replacement not found.)]
-                        )
-                    ]
-                )
-            else
-                AC_CHECK_FILE($COMMONS_LOGGING_JAR, [],
-                    [AC_MSG_ERROR(commons-logging.jar not found.)], [])
-            fi
+        if test -z $COMMONS_LOGGING_JAR; then
+            AC_CHECK_FILE(/usr/share/java/commons-logging-${COMMONS_LOGGING_VERSION}.jar,
+               [ COMMONS_LOGGING_JAR=/usr/share/java/commons-logging-${COMMONS_LOGGING_VERSION}.jar ],
+               [
+                    AC_CHECK_FILE(/usr/share/java/commons-logging.jar,
+                        [ COMMONS_LOGGING_JAR=/usr/share/java/commons-logging.jar ],
+                        [AC_MSG_ERROR(commons-logging.jar replacement not found.)]
+                    )
+                ]
+            )
+        else
+            AC_CHECK_FILE($COMMONS_LOGGING_JAR, [],
+                [AC_MSG_ERROR(commons-logging.jar not found.)], [])
         fi
     else
         AC_MSG_RESULT([internal])
@@ -10915,9 +10727,6 @@ if test "$ENABLE_MEDIAWIKI" = "TRUE" -o "$ENABLE_REPORTBUILDER" = "TRUE"; then
     fi
 fi
 AC_SUBST(SYSTEM_APACHE_COMMONS)
-AC_SUBST(COMMONS_CODEC_JAR)
-AC_SUBST(COMMONS_LANG_JAR)
-AC_SUBST(COMMONS_HTTPCLIENT_JAR)
 AC_SUBST(COMMONS_LOGGING_JAR)
 AC_SUBST(COMMONS_LOGGING_VERSION)
 
@@ -11325,7 +11134,6 @@ int main(int argc, char **argv) {
             $MOC4 "${TSTBASE}.hxx" -o "${TSTBASE}.moc"
 
             AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#define SAL_OVERRIDE
 #include <cstdlib>
 #include "tst_exclude_socket_notifiers.moc"
 
@@ -11359,7 +11167,6 @@ int main(int argc, char *argv[])
             $MOC4 "${TSTBASE}.hxx" -o "${TSTBASE}.moc"
 
             AC_RUN_IFELSE([AC_LANG_SOURCE([[
-#define SAL_OVERRIDE
 #include <cstdlib>
 #include "tst_exclude_posted_events.moc"
 
@@ -11401,19 +11208,6 @@ AC_SUBST(MOC4)
 AC_SUBST(KDE_GLIB_CFLAGS)
 AC_SUBST(KDE_GLIB_LIBS)
 AC_SUBST(KDE_HAVE_GLIB)
-
-dnl ===================================================================
-dnl Test for the enabling the lockdown pieces
-dnl ===================================================================
-AC_MSG_CHECKING([whether to enable the lockdown pieces])
-ENABLE_LOCKDOWN=
-if test -n "$enable_lockdown" -a "$enable_lockdown" != "no"; then
-    ENABLE_LOCKDOWN=TRUE
-    AC_MSG_RESULT([yes])
-else
-    AC_MSG_RESULT([no])
-fi
-AC_SUBST(ENABLE_LOCKDOWN)
 
 dnl ===================================================================
 dnl Test whether to include Evolution 2 support
@@ -11927,7 +11721,8 @@ dnl ===================================================================
 ENABLE_LIBLANGTAG=
 SYSTEM_LIBLANGTAG=
 AC_MSG_CHECKING([whether to use liblangtag])
-if test "$enable_liblangtag" = "yes" -o \( "$enable_liblangtag" = "" -a $_os != Android -a $_os != iOS \); then
+if test "$enable_liblangtag" = "yes" -o \
+        \( "$enable_liblangtag" = "" -a $_os != Android -a $_os != iOS -a $_os != Emscripten \); then
     ENABLE_LIBLANGTAG=TRUE
     AC_MSG_RESULT([yes])
     AC_MSG_CHECKING([whether to use system liblangtag])
@@ -11949,6 +11744,7 @@ if test "$enable_liblangtag" = "yes" -o \( "$enable_liblangtag" = "" -a $_os != 
             LIBLANGTAG_LIBS="-L${WORKDIR}/UnpackedTarball/langtag/liblangtag/.libs -llangtag"
         fi
     fi
+    AC_DEFINE(ENABLE_LIBLANGTAG)
 else
     AC_MSG_RESULT([no])
 fi
@@ -12483,10 +12279,6 @@ if echo "$host_os" | grep -q linux-android ; then
 
         AC_MSG_RESULT([not set, using $ANDROID_PACKAGE_NAME])
     else
-        if test -n "$ENABLE_DEBUG" -a "$with_android_package_name" != "org.libreoffice" ; then
-            AC_MSG_ERROR([The package name must be set
-to org.libreoffice when debugging, please avoid --with-android-package-name.])
-        fi
         ANDROID_PACKAGE_NAME="$with_android_package_name"
         AC_MSG_RESULT([$ANDROID_PACKAGE_NAME])
     fi
@@ -12890,7 +12682,7 @@ AC_SUBST(MPL_SUBSET)
 dnl ===================================================================
 dnl Setting up the environment.
 dnl ===================================================================
-echo "setting up the build environment variables..."
+AC_MSG_NOTICE([setting up the build environment variables...])
 
 AC_SUBST(COMPATH)
 

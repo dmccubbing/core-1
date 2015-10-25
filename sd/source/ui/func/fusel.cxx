@@ -177,7 +177,6 @@ bool FuSelection::MouseButtonDown(const MouseEvent& rMEvt)
         ******************************************************************/
         mpWindow->CaptureMouse();
         pHdl = mpView->PickHandle(aMDPos);
-        SdrObject* pObj;
         SdrPageView* pPV;
 
         long nAngle0  = GetAngle(aMDPos - mpView->GetRef1());
@@ -239,6 +238,7 @@ bool FuSelection::MouseButtonDown(const MouseEvent& rMEvt)
         }
         else
         {
+            SdrObject* pObj;
             if (!rMEvt.IsMod2() && mpView->PickObj(aMDPos, mpView->getHitTolLog(), pObj, pPV, SdrSearchOptions::PICKMACRO))
             {
                 mpView->BegMacroObj(aMDPos, nHitLog, pObj, pPV, mpWindow);
@@ -625,8 +625,6 @@ bool FuSelection::MouseButtonUp(const MouseEvent& rMEvt)
     // (and deselect others) as a preparation for showing the context
     // menu.
     const bool bSelectionOnly = rMEvt.IsRight();
-    SdrObject* pObj;
-    SdrPageView* pPV;
 
     if (bHideAndAnimate)
     {
@@ -665,7 +663,7 @@ bool FuSelection::MouseButtonUp(const MouseEvent& rMEvt)
 
             if (bDragWithCopy)
             {
-                bDragWithCopy = !mpView->IsPresObjSelected(false, true);
+                bDragWithCopy = !mpView->IsPresObjSelected(false);
             }
 
             mpView->SetDragWithCopy(bDragWithCopy);
@@ -682,12 +680,14 @@ bool FuSelection::MouseButtonUp(const MouseEvent& rMEvt)
                 * If a user wants to click on an object in front of a marked
                 * one, he releases the mouse button immediately
                 **************************************************************/
+                SdrPageView* pPV;
+                SdrObject* pObj;
                 if (mpView->PickObj(aMDPos, mpView->getHitTolLog(), pObj, pPV, SdrSearchOptions::ALSOONMASTER | SdrSearchOptions::BEFOREMARK))
                 {
                     if (pPV->IsObjSelectable(pObj))
                     {
                         mpView->UnmarkAllObj();
-                        mpView->MarkObj(pObj,pPV,false);
+                        mpView->MarkObj(pObj,pPV);
                         return true;
                     }
                 }
@@ -867,7 +867,7 @@ bool FuSelection::MouseButtonUp(const MouseEvent& rMEvt)
 
                 if (bDragWithCopy)
                 {
-                    bDragWithCopy = !mpView->IsPresObjSelected(false, true);
+                    bDragWithCopy = !mpView->IsPresObjSelected(false);
                 }
 
                 mpView->SetDragWithCopy(bDragWithCopy);
@@ -1362,7 +1362,7 @@ bool FuSelection::AnimateObj(SdrObject* pObj, const Point& rPos)
                 {
                     // Assign verb
                     mpView->UnmarkAll();
-                    mpView->MarkObj(pObj, mpView->GetSdrPageView(), false);
+                    mpView->MarkObj(pObj, mpView->GetSdrPageView());
                     pDrViewSh->DoVerb((sal_Int16)pInfo->mnVerb);
                     bAnimated = true;
                 }

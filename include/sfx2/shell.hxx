@@ -142,8 +142,8 @@ class SFX2_DLLPUBLIC SfxShell: public SfxBroadcaster
     ::svl::IUndoManager*        pUndoMgr;
 
 private:
-                                SfxShell( const SfxShell & ) SAL_DELETED_FUNCTION;
-    SfxShell&                                   operator = ( const SfxShell & ) SAL_DELETED_FUNCTION;
+                                SfxShell( const SfxShell & ) = delete;
+    SfxShell&                                   operator = ( const SfxShell & ) = delete;
 
 protected:
     /**
@@ -439,8 +439,8 @@ public:
     void                        PutItem( const SfxPoolItem& rItem );
 
     // TODO/CLEANUP: still needed?!
-    void SetVerbs(const com::sun::star::uno::Sequence < com::sun::star::embed::VerbDescriptor >& aVerbs);
-    const com::sun::star::uno::Sequence < com::sun::star::embed::VerbDescriptor >& GetVerbs() const;
+    void SetVerbs(const css::uno::Sequence < css::embed::VerbDescriptor >& aVerbs);
+    const css::uno::Sequence < css::embed::VerbDescriptor >& GetVerbs() const;
     void                        VerbExec (SfxRequest&);
     static void                 VerbState (SfxItemSet&);
     SAL_DLLPRIVATE const SfxSlot* GetVerbSlot_Impl(sal_uInt16 nId) const;
@@ -539,7 +539,7 @@ inline void SfxShell::SetPool
             static SfxInterface*                GetStaticInterface();       \
             static SfxInterfaceId               GetInterfaceId() {return SfxInterfaceId(nId);} \
             static void                         RegisterInterface(SfxModule* pMod=NULL); \
-            virtual SfxInterface*       GetInterface() const SAL_OVERRIDE;
+            virtual SfxInterface*       GetInterface() const override;
 
 #define SFX_TMPL_INTERFACE(Class,SuperClass,Abstract)                       \
                                                                             \

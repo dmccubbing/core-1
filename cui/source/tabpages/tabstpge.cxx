@@ -52,9 +52,9 @@ public:
     {
     }
     virtual ~TabWin_Impl() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE { mpPage.clear(); vcl::Window::dispose(); }
+    virtual void dispose() override { mpPage.clear(); vcl::Window::dispose(); }
 
-    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
+    virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
 
     void SetTabulatorTabPage(SvxTabulatorTabPage* pPage) { mpPage = pPage; }
     void SetTabStyle(sal_uInt16 nStyle) {nTabStyle = nStyle; }
@@ -115,8 +115,8 @@ SvxTabulatorTabPage::SvxTabulatorTabPage(vcl::Window* pParent, const SfxItemSet&
     SvtCJKOptions aCJKOptions;
     get(m_pLeftTab,  aCJKOptions.IsAsianTypographyEnabled() ? "radiobuttonST_LEFTTAB_ASIAN" : "radiobuttonBTN_TABTYPE_LEFT");
     get(m_pRightTab, aCJKOptions.IsAsianTypographyEnabled() ? "radiobuttonST_RIGHTTAB_ASIAN" : "radiobuttonBTN_TABTYPE_RIGHT");
-    m_pLeftTab->Show(true);
-    m_pRightTab->Show(true);
+    m_pLeftTab->Show();
+    m_pRightTab->Show();
     get(m_pCenterTab,"radiobuttonBTN_TABTYPE_CENTER");
     get(m_pDezTab,"radiobuttonBTN_TABTYPE_DECIMAL");
     get(m_pDezChar,"entryED_TABTYPE_DECCHAR");
@@ -657,7 +657,7 @@ IMPL_LINK_TYPED( SvxTabulatorTabPage, GetDezCharHdl_Impl, Control&, rControl, vo
     }
 }
 
-IMPL_LINK_NOARG(SvxTabulatorTabPage, SelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxTabulatorTabPage, SelectHdl_Impl, ComboBox&, void)
 {
     sal_Int32 nPos = m_pTabBox->GetValuePos( m_pTabBox->GetValue( eDefUnit ), eDefUnit );
     if ( nPos != COMBOBOX_ENTRY_NOTFOUND )
@@ -666,10 +666,9 @@ IMPL_LINK_NOARG(SvxTabulatorTabPage, SelectHdl_Impl)
         m_pNewBtn->Disable();
         SetFillAndTabType_Impl();
     }
-    return 0;
 }
 
-IMPL_LINK_NOARG(SvxTabulatorTabPage, ModifyHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxTabulatorTabPage, ModifyHdl_Impl, Edit&, void)
 {
     sal_Int32 nPos = m_pTabBox->GetValuePos( m_pTabBox->GetValue( eDefUnit ), eDefUnit );
     if ( nPos != COMBOBOX_ENTRY_NOTFOUND )
@@ -682,16 +681,15 @@ IMPL_LINK_NOARG(SvxTabulatorTabPage, ModifyHdl_Impl)
 
         m_pNewBtn->Disable();
         m_pDelBtn->Enable();
-        return 0;
+        return;
     }
     m_pNewBtn->Enable();
     m_pDelBtn->Disable();
-    return 0;
 }
 
 void SvxTabulatorTabPage::PageCreated(const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pControlItem,SfxUInt16Item,SID_SVXTABULATORTABPAGE_CONTROLFLAGS,false);
+    const SfxUInt16Item* pControlItem = aSet.GetItem<SfxUInt16Item>(SID_SVXTABULATORTABPAGE_CONTROLFLAGS, false);
     if (pControlItem)
         DisableControls(pControlItem->GetValue());
 }

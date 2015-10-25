@@ -32,16 +32,16 @@ namespace oox { namespace ppt {
         : public TimeNodeContext
     {
     public:
-        CommonTimeNodeContext( ::oox::core::FragmentHandler2& rParent, sal_Int32  aElement, const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttribs, const TimeNodePtr & pNode);
+        CommonTimeNodeContext( ::oox::core::FragmentHandler2& rParent, sal_Int32  aElement, const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttribs, const TimeNodePtr & pNode);
         virtual ~CommonTimeNodeContext( ) throw( );
 
-        virtual void onEndElement() SAL_OVERRIDE;
+        virtual void onEndElement() override;
 
-        virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) SAL_OVERRIDE;
+        virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) override;
 
     private:
         bool mbIterate;
-        ::com::sun::star::uno::Reference< ::com::sun::star::animations::XIterateContainer > mxIter;
+        css::uno::Reference< css::animations::XIterateContainer > mxIter;
     };
 
 } }

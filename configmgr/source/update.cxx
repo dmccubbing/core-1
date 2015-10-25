@@ -68,29 +68,29 @@ public:
     }
 
 private:
-    Service(const Service&) SAL_DELETED_FUNCTION;
-    Service& operator=(const Service&) SAL_DELETED_FUNCTION;
+    Service(const Service&) = delete;
+    Service& operator=(const Service&) = delete;
 
     virtual ~Service() {}
 
     virtual void SAL_CALL insertExtensionXcsFile(
         sal_Bool shared, OUString const & fileUri)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual void SAL_CALL insertExtensionXcuFile(
         sal_Bool shared, OUString const & fileUri)
         throw (css::uno::RuntimeException,
-               std::exception) SAL_OVERRIDE;
+               std::exception) override;
 
     virtual void SAL_CALL removeExtensionXcuFile(OUString const & fileUri)
         throw (css::uno::RuntimeException,
-               std::exception) SAL_OVERRIDE;
+               std::exception) override;
 
     virtual void SAL_CALL insertModificationXcuFile(
         OUString const & fileUri,
         css::uno::Sequence< OUString > const & includedPaths,
         css::uno::Sequence< OUString > const & excludedPaths)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     std::shared_ptr<osl::Mutex> lock_;
     css::uno::Reference< css::uno::XComponentContext > context_;

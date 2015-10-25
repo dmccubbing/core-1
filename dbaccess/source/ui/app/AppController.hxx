@@ -20,7 +20,6 @@
 #ifndef INCLUDED_DBACCESS_SOURCE_UI_APP_APPCONTROLLER_HXX
 #define INCLUDED_DBACCESS_SOURCE_UI_APP_APPCONTROLLER_HXX
 
-#include "IApplicationController.hxx"
 #include "AppElementType.hxx"
 #include "callbacks.hxx"
 #include "commontypes.hxx"
@@ -63,14 +62,12 @@ namespace com { namespace sun { namespace star {
 
 namespace dbaui
 {
-
     class SubComponentManager;
-
-    // OApplicationController
     class OApplicationController;
     class OApplicationView;
     class OLinkedDocumentsAccess;
-    typedef OGenericUnoController   OApplicationController_CBASE;
+    class SelectionNotifier;
+
     typedef ::cppu::ImplHelper5 <   css::container::XContainerListener
                                 ,   css::beans::XPropertyChangeListener
                                 ,   css::sdb::application::XDatabaseDocumentUI
@@ -78,12 +75,12 @@ namespace dbaui
                                 ,   css::view::XSelectionSupplier
                                 >   OApplicationController_Base;
 
-    class SelectionNotifier;
 
     class OApplicationController
-            :public OApplicationController_CBASE
+            :public OGenericUnoController
             ,public OApplicationController_Base
-            ,public IApplicationController
+            ,public IControlActionListener
+            ,public IContextMenuProvider
     {
     public:
         typedef ::std::vector< css::uno::Reference< css::container::XContainer > >  TContainerVector;
@@ -116,11 +113,11 @@ namespace dbaui
         TransferableClipboardListener*
                                 m_pClipbordNotifier;        // notifier for changes in the clipboard
         ImplSVEvent *           m_nAsyncDrop;
-        OAsynchronousLink        m_aSelectContainerEvent;
+        OAsynchronousLink       m_aSelectContainerEvent;
         PreviewMode             m_ePreviewMode;             // the mode of the preview
         ElementType             m_eCurrentType;
-        bool                m_bNeedToReconnect;         // true when the settings of the data source were modified and the connection is no longer up to date
-        bool                m_bSuspended;               // is true when the controller was already suspended
+        bool                    m_bNeedToReconnect;         // true when the settings of the data source were modified and the connection is no longer up to date
+        bool                    m_bSuspended;               // is true when the controller was already suspended
 
         ::std::unique_ptr< SelectionNotifier >
                                 m_pSelectionNotifier;
@@ -396,14 +393,14 @@ namespace dbaui
         // initalizing members
 
         // state of a feature. 'feature' may be the handle of a css::util::URL somebody requested a dispatch interface for OR a toolbar slot.
-        virtual FeatureState    GetState(sal_uInt16 nId) const SAL_OVERRIDE;
+        virtual FeatureState    GetState(sal_uInt16 nId) const override;
         // execute a feature
-        virtual void            Execute(sal_uInt16 nId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) SAL_OVERRIDE;
+        virtual void            Execute(sal_uInt16 nId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) override;
 
         // OGenericUnoController
-        virtual void            onLoadedMenu( const css::uno::Reference< css::frame::XLayoutManager >& _xLayoutManager ) SAL_OVERRIDE;
+        virtual void            onLoadedMenu( const css::uno::Reference< css::frame::XLayoutManager >& _xLayoutManager ) override;
 
-        virtual css::uno::Reference< css::frame::XModel > getPrivateModel() const SAL_OVERRIDE
+        virtual css::uno::Reference< css::frame::XModel > getPrivateModel() const override
         {
             return m_xModel;
         }
@@ -417,8 +414,8 @@ namespace dbaui
         DECLARE_XTYPEPROVIDER( )
 
         // XServiceInfo
-        virtual OUString SAL_CALL getImplementationName() throw(css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Sequence< OUString> SAL_CALL getSupportedServiceNames() throw(css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual OUString SAL_CALL getImplementationName() throw(css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Sequence< OUString> SAL_CALL getSupportedServiceNames() throw(css::uno::RuntimeException, std::exception) override;
         // need by registration
         static OUString getImplementationName_Static() throw( css::uno::RuntimeException );
         static css::uno::Sequence< OUString > getSupportedServiceNames_Static() throw( css::uno::RuntimeException );
@@ -426,43 +423,43 @@ namespace dbaui
                 SAL_CALL Create(const css::uno::Reference< css::lang::XMultiServiceFactory >&);
 
         // css::frame::XController
-        virtual void SAL_CALL attachFrame(const css::uno::Reference< css::frame::XFrame > & xFrame) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual sal_Bool SAL_CALL suspend(sal_Bool bSuspend) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual sal_Bool SAL_CALL attachModel(const css::uno::Reference< css::frame::XModel > & xModel) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::frame::XModel >  SAL_CALL getModel() throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        virtual void SAL_CALL attachFrame(const css::uno::Reference< css::frame::XFrame > & xFrame) throw( css::uno::RuntimeException, std::exception ) override;
+        virtual sal_Bool SAL_CALL suspend(sal_Bool bSuspend) throw( css::uno::RuntimeException, std::exception ) override;
+        virtual sal_Bool SAL_CALL attachModel(const css::uno::Reference< css::frame::XModel > & xModel) throw( css::uno::RuntimeException, std::exception ) override;
+        virtual css::uno::Reference< css::frame::XModel >  SAL_CALL getModel() throw( css::uno::RuntimeException, std::exception ) override;
 
         // css::container::XContainerListener
-        virtual void SAL_CALL elementInserted(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual void SAL_CALL elementRemoved(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual void SAL_CALL elementReplaced(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        virtual void SAL_CALL elementInserted(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) override;
+        virtual void SAL_CALL elementRemoved(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) override;
+        virtual void SAL_CALL elementReplaced(const css::container::ContainerEvent& Event) throw( css::uno::RuntimeException, std::exception ) override;
 
         // XPropertyChangeListener
-        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XDatabaseDocumentUI
-        virtual css::uno::Reference< css::sdbc::XDataSource > SAL_CALL getDataSource() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::awt::XWindow > SAL_CALL getApplicationMainWindow() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::sdbc::XConnection > SAL_CALL getActiveConnection() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Sequence< css::uno::Reference< css::lang::XComponent > > SAL_CALL getSubComponents() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual sal_Bool SAL_CALL isConnected(  ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual css::uno::Reference< css::sdbc::XDataSource > SAL_CALL getDataSource() throw (css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::awt::XWindow > SAL_CALL getApplicationMainWindow() throw (css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::sdbc::XConnection > SAL_CALL getActiveConnection() throw (css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Sequence< css::uno::Reference< css::lang::XComponent > > SAL_CALL getSubComponents() throw (css::uno::RuntimeException, std::exception) override;
+        virtual sal_Bool SAL_CALL isConnected(  ) throw (css::uno::RuntimeException, std::exception) override;
         // DO NOT CALL with getMutex() held!!
-        virtual void SAL_CALL connect(  ) throw (css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::beans::Pair< ::sal_Int32, OUString > SAL_CALL identifySubComponent( const css::uno::Reference< css::lang::XComponent >& SubComponent ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual sal_Bool SAL_CALL closeSubComponents(  ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL loadComponent( ::sal_Int32 ObjectType, const OUString& ObjectName, sal_Bool ForEditing ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL loadComponentWithArguments( ::sal_Int32 ObjectType, const OUString& ObjectName, sal_Bool ForEditing, const css::uno::Sequence< css::beans::PropertyValue >& Arguments ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL createComponent( ::sal_Int32 ObjectType, css::uno::Reference< css::lang::XComponent >& o_DocumentDefinition ) throw (css::lang::IllegalArgumentException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL createComponentWithArguments( ::sal_Int32 ObjectType, const css::uno::Sequence< css::beans::PropertyValue >& Arguments, css::uno::Reference< css::lang::XComponent >& o_DocumentDefinition ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL connect(  ) throw (css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
+        virtual css::beans::Pair< ::sal_Int32, OUString > SAL_CALL identifySubComponent( const css::uno::Reference< css::lang::XComponent >& SubComponent ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) override;
+        virtual sal_Bool SAL_CALL closeSubComponents(  ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL loadComponent( ::sal_Int32 ObjectType, const OUString& ObjectName, sal_Bool ForEditing ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL loadComponentWithArguments( ::sal_Int32 ObjectType, const OUString& ObjectName, sal_Bool ForEditing, const css::uno::Sequence< css::beans::PropertyValue >& Arguments ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL createComponent( ::sal_Int32 ObjectType, css::uno::Reference< css::lang::XComponent >& o_DocumentDefinition ) throw (css::lang::IllegalArgumentException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Reference< css::lang::XComponent > SAL_CALL createComponentWithArguments( ::sal_Int32 ObjectType, const css::uno::Sequence< css::beans::PropertyValue >& Arguments, css::uno::Reference< css::lang::XComponent >& o_DocumentDefinition ) throw (css::lang::IllegalArgumentException, css::container::NoSuchElementException, css::sdbc::SQLException, css::uno::RuntimeException, std::exception) override;
 
         // XContextMenuInterception
-        virtual void SAL_CALL registerContextMenuInterceptor( const css::uno::Reference< css::ui::XContextMenuInterceptor >& Interceptor ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL releaseContextMenuInterceptor( const css::uno::Reference< css::ui::XContextMenuInterceptor >& Interceptor ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL registerContextMenuInterceptor( const css::uno::Reference< css::ui::XContextMenuInterceptor >& Interceptor ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL releaseContextMenuInterceptor( const css::uno::Reference< css::ui::XContextMenuInterceptor >& Interceptor ) throw (css::uno::RuntimeException, std::exception) override;
 
         // XSelectionSupplier
-        virtual sal_Bool SAL_CALL select( const css::uno::Any& xSelection ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Any SAL_CALL getSelection(  ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL addSelectionChangeListener( const css::uno::Reference< css::view::XSelectionChangeListener >& xListener ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL removeSelectionChangeListener( const css::uno::Reference< css::view::XSelectionChangeListener >& xListener ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual sal_Bool SAL_CALL select( const css::uno::Any& xSelection ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Any SAL_CALL getSelection(  ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL addSelectionChangeListener( const css::uno::Reference< css::view::XSelectionChangeListener >& xListener ) throw (css::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL removeSelectionChangeListener( const css::uno::Reference< css::view::XSelectionChangeListener >& xListener ) throw (css::uno::RuntimeException, std::exception) override;
 
         /** retrieves the current connection, creates it if necessary
 
@@ -484,44 +481,67 @@ namespace dbaui
         */
         void refreshTables();
 
-        // IApplicationController
-        virtual bool onEntryDoubleClick(SvTreeListBox& _rTree) SAL_OVERRIDE;
-        virtual bool onContainerSelect(ElementType _eType) SAL_OVERRIDE;
-        virtual void onSelectionChanged() SAL_OVERRIDE;
-        virtual void onCutEntry() SAL_OVERRIDE;
-        virtual void onCopyEntry() SAL_OVERRIDE;
-        virtual void onPasteEntry() SAL_OVERRIDE;
-        virtual void onDeleteEntry() SAL_OVERRIDE;
-        virtual void previewChanged( sal_Int32 _nMode) SAL_OVERRIDE;
-        virtual void containerFound( const css::uno::Reference< css::container::XContainer >& _xContainer) SAL_OVERRIDE;
+        /** called when an entry in a tree list box has been double-clicked
+            @param  _rTree
+                The tree list box.
+            @return
+                <TRUE/> if the double click event has been handled by the called, and should not
+                be processed further.
+        */
+        bool onEntryDoubleClick(SvTreeListBox& _rTree);
+        /** called when a container (category) in the application view has been selected
+            @param  _pTree
+                The tree list box.
+            @return
+                <TRUE/> if the cotainer could be changed otherwise <FALSE/>
+        */
+        bool onContainerSelect(ElementType _eType);
+        /** called when an entry in a tree view has been selected
+            @param  _pEntry
+                the selected entry
+        */
+        void onSelectionChanged();
+        /** called when a "Copy" command is executed in a tree view
+        */
+        void onCopyEntry();
+        /** called when a "Paste" command is executed in a tree view
+        */
+        void onPasteEntry();
+        /** called when a "Delete" command is executed in a tree view
+        */
+        void onDeleteEntry();
+        /// called when the preview mode was changed
+        void previewChanged( sal_Int32 _nMode);
+        /// called when an object container of any kind was found during enumerating tree view elements
+        void containerFound( const css::uno::Reference< css::container::XContainer >& _xContainer);
 
-        // IController (base of IApplicationController)
-        virtual void        executeUnChecked(const css::util::URL& _rCommand, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) SAL_OVERRIDE;
-        virtual void        executeChecked(const css::util::URL& _rCommand, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) SAL_OVERRIDE;
-        virtual void        executeUnChecked(sal_uInt16 _nCommandId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) SAL_OVERRIDE;
-        virtual void        executeChecked(sal_uInt16 _nCommandId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) SAL_OVERRIDE;
-        virtual bool        isCommandEnabled(sal_uInt16 _nCommandId) const SAL_OVERRIDE;
-        virtual bool        isCommandEnabled( const OUString& _rCompleteCommandURL ) const SAL_OVERRIDE;
-        virtual sal_uInt16  registerCommandURL( const OUString& _rCompleteCommandURL ) SAL_OVERRIDE;
-        virtual void        notifyHiContrastChanged() SAL_OVERRIDE;
-        virtual bool        isDataSourceReadOnly() const SAL_OVERRIDE;
+        // IController
+        virtual void        executeUnChecked(const css::util::URL& _rCommand, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) override;
+        virtual void        executeChecked(const css::util::URL& _rCommand, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) override;
+        virtual void        executeUnChecked(sal_uInt16 _nCommandId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) override;
+        virtual void        executeChecked(sal_uInt16 _nCommandId, const css::uno::Sequence< css::beans::PropertyValue>& aArgs) override;
+        virtual bool        isCommandEnabled(sal_uInt16 _nCommandId) const override;
+        virtual bool        isCommandEnabled( const OUString& _rCompleteCommandURL ) const override;
+        virtual sal_uInt16  registerCommandURL( const OUString& _rCompleteCommandURL ) override;
+        virtual void        notifyHiContrastChanged() override;
+        virtual bool        isDataSourceReadOnly() const override;
         virtual css::uno::Reference< css::frame::XController >
-                            getXController() throw( css::uno::RuntimeException ) SAL_OVERRIDE;
-        virtual bool        interceptUserInput( const NotifyEvent& _rEvent ) SAL_OVERRIDE;
+                            getXController() throw( css::uno::RuntimeException ) override;
+        virtual bool        interceptUserInput( const NotifyEvent& _rEvent ) override;
 
         // IControlActionListener overridables
-        virtual bool        requestQuickHelp( const SvTreeListEntry* _pEntry, OUString& _rText ) const SAL_OVERRIDE;
-        virtual bool        requestDrag( sal_Int8 _nAction, const Point& _rPosPixel ) SAL_OVERRIDE;
-        virtual sal_Int8    queryDrop( const AcceptDropEvent& _rEvt, const DataFlavorExVector& _rFlavors ) SAL_OVERRIDE;
-        virtual sal_Int8    executeDrop( const ExecuteDropEvent& _rEvt ) SAL_OVERRIDE;
+        virtual bool        requestQuickHelp( const SvTreeListEntry* _pEntry, OUString& _rText ) const override;
+        virtual bool        requestDrag( sal_Int8 _nAction, const Point& _rPosPixel ) override;
+        virtual sal_Int8    queryDrop( const AcceptDropEvent& _rEvt, const DataFlavorExVector& _rFlavors ) override;
+        virtual sal_Int8    executeDrop( const ExecuteDropEvent& _rEvt ) override;
 
-        // IContextMenuProvider (base of IApplicationController)
-        virtual PopupMenu*      getContextMenu( Control& _rControl ) const SAL_OVERRIDE;
-        virtual IController&    getCommandController() SAL_OVERRIDE;
+        // IContextMenuProvider
+        virtual PopupMenu*      getContextMenu( Control& _rControl ) const override;
+        virtual IController&    getCommandController() override;
         virtual ::cppu::OInterfaceContainerHelper*
-                                getContextMenuInterceptors() SAL_OVERRIDE;
+                                getContextMenuInterceptors() override;
         virtual css::uno::Any
-                                getCurrentSelection( Control& _rControl ) const SAL_OVERRIDE;
+                                getCurrentSelection( Control& _rControl ) const override;
 
         void OnInvalidateClipboard();
         DECL_LINK_TYPED( OnClipboardChanged, TransferableDataHelper*, void );
@@ -531,22 +551,22 @@ namespace dbaui
         void OnFirstControllerConnected();
 
     protected:
-        using OApplicationController_CBASE::connect;
+        using OGenericUnoController::connect;
 
         /** disconnects from our XConnection, and cleans up this connection
         */
         void        disconnect();
 
         // late construction
-        virtual bool        Construct(vcl::Window* pParent) SAL_OVERRIDE;
-        virtual void        describeSupportedFeatures() SAL_OVERRIDE;
+        virtual bool        Construct(vcl::Window* pParent) override;
+        virtual void        describeSupportedFeatures() override;
 
     protected:
         // XEventListener
-        virtual void SAL_CALL disposing(const css::lang::EventObject& Source) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        virtual void SAL_CALL disposing(const css::lang::EventObject& Source) throw( css::uno::RuntimeException, std::exception ) override;
 
         // OComponentHelper
-        virtual void SAL_CALL disposing() SAL_OVERRIDE;
+        virtual void SAL_CALL disposing() override;
     };
 
 }   // namespace dbaui

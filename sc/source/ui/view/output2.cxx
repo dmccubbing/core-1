@@ -170,7 +170,7 @@ public:
     void    SetShrinkScale( long nScale, SvtScriptType nScript );
 
     bool    HasCondHeight() const   { return pCondSet && SfxItemState::SET ==
-                                        pCondSet->GetItemState( ATTR_FONT_HEIGHT, true ); }
+                                        pCondSet->GetItemState( ATTR_FONT_HEIGHT ); }
 
     bool    HasEditCharacters() const;
 
@@ -1432,7 +1432,7 @@ static SvxCellHorJustify getAlignmentFromContext( SvxCellHorJustify eInHorJust,
 
 void ScOutputData::DrawStrings( bool bPixelToLogic )
 {
-    LayoutStrings(bPixelToLogic, true);
+    LayoutStrings(bPixelToLogic);
 }
 
 Rectangle ScOutputData::LayoutStrings(bool bPixelToLogic, bool bPaint, const ScAddress &rAddress)
@@ -2803,7 +2803,7 @@ void ScOutputData::DrawEditStandard(DrawEditParam& rParam)
 
     //  Initial page size - large for normal text, cell size for automatic line breaks
 
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     if (rParam.mbBreak)
     {
         //  call GetOutputArea with nNeeded=0, to get only the cell width
@@ -3022,7 +3022,7 @@ void ScOutputData::DrawEditStandard(DrawEditParam& rParam)
         if ( eType != OUTTYPE_PRINTER ||
             ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
             ( rParam.mpCondSet && SfxItemState::SET ==
-                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
+                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT) ) )
             bClip = true;
         else
             bSimClip = true;
@@ -3234,7 +3234,7 @@ bool ScOutputData::Clip( DrawEditParam& rParam, const Size& aCellSize,
         if ( eType != OUTTYPE_PRINTER ||
             ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
             ( rParam.mpCondSet && SfxItemState::SET ==
-                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
+                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT) ) )
             bClip = true;
         else
             bSimClip = true;
@@ -3298,7 +3298,7 @@ void ScOutputData::DrawEditBottomTop(DrawEditParam& rParam)
 
     //  Initial page size - large for normal text, cell size for automatic line breaks
 
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     if (rParam.mbBreak)
     {
         //  call GetOutputArea with nNeeded=0, to get only the cell width
@@ -3558,7 +3558,7 @@ void ScOutputData::DrawEditTopBottom(DrawEditParam& rParam)
 
     //  Initial page size - large for normal text, cell size for automatic line breaks
 
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     if (rParam.hasLineBreak())
     {
         //  call GetOutputArea with nNeeded=0, to get only the cell width
@@ -3825,7 +3825,7 @@ void ScOutputData::DrawEditStacked(DrawEditParam& rParam)
 
     //  Initial page size - large for normal text, cell size for automatic line breaks
 
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     //  call GetOutputArea with nNeeded=0, to get only the cell width
 
     //! handle nArrY == 0
@@ -3996,7 +3996,7 @@ void ScOutputData::DrawEditStacked(DrawEditParam& rParam)
         if ( eType != OUTTYPE_PRINTER ||
             ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
             ( rParam.mpCondSet && SfxItemState::SET ==
-                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
+                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT) ) )
             bClip = true;
         else
             bSimClip = true;
@@ -4179,7 +4179,7 @@ void ScOutputData::DrawEditAsianVertical(DrawEditParam& rParam)
 
     //  Initial page size - large for normal text, cell size for automatic line breaks
 
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     //  call GetOutputArea with nNeeded=0, to get only the cell width
 
     //! handle nArrY == 0
@@ -4342,7 +4342,7 @@ void ScOutputData::DrawEditAsianVertical(DrawEditParam& rParam)
         if ( eType != OUTTYPE_PRINTER ||
             ( mpDoc->GetRowFlags( rParam.mnCellY, nTab ) & CR_MANUALSIZE ) ||
             ( rParam.mpCondSet && SfxItemState::SET ==
-                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT, true) ) )
+                rParam.mpCondSet->GetItemState(ATTR_FONT_HEIGHT) ) )
             bClip = true;
         else
             bSimClip = true;
@@ -4699,7 +4699,6 @@ void ScOutputData::DrawRotated(bool bPixelToLogic)
                             lcl_ClearEdit( *pEngine );      // also calls SetUpdateMode(sal_False)
 
                         long nPosY = nRowPosY;
-                        bool bVisChanged = false;
 
                         //! rest from merged cells further up do not work!
 
@@ -4865,7 +4864,7 @@ void ScOutputData::DrawRotated(bool bPixelToLogic)
                                 }
                             }
 
-                            Size aPaperSize = Size( 1000000, 1000000 );
+                            Size aPaperSize( 1000000, 1000000 );
                             if (eOrient==SVX_ORIENTATION_STACKED)
                                 aPaperSize.Width() = nOutWidth;             // to center
                             else if (bBreak)
@@ -5001,7 +5000,7 @@ void ScOutputData::DrawRotated(bool bPixelToLogic)
                             if (!bHidden)
                             {
                                 bool bClip = false;
-                                Size aClipSize = Size( nScrX+nScrW-nStartX, nScrY+nScrH-nStartY );
+                                Size aClipSize( nScrX+nScrW-nStartX, nScrY+nScrH-nStartY );
 
                                 // go on writing
 
@@ -5084,7 +5083,7 @@ void ScOutputData::DrawRotated(bool bPixelToLogic)
                                 }
 
                                 long nClipStartY = nStartY;
-                                if (nArrY==0 || bVisChanged)
+                                if (nArrY==0)
                                 {
                                     if ( nClipStartY < nRowPosY )
                                     {

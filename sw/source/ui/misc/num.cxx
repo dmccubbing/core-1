@@ -115,7 +115,7 @@ SwNumPositionTabPage::SwNumPositionTabPage(vcl::Window* pParent,
     m_pAlign2LB->SetDropDownLineCount( m_pAlign2LB->GetEntryCount() );
     m_pAlign2FT->SetText( m_pAlignFT->GetText() );
 
-    Link<> aLk = LINK(this, SwNumPositionTabPage, DistanceHdl);
+    Link<SpinField&,void> aLk = LINK(this, SwNumPositionTabPage, DistanceHdl);
     Link<Control&,void> aLk2 = LINK(this, SwNumPositionTabPage, DistanceLoseFocusHdl);
     m_pDistBorderMF->SetUpHdl(aLk);
     m_pDistNumMF->SetUpHdl(aLk);
@@ -344,8 +344,8 @@ void SwNumPositionTabPage::InitControls()
 
     if ( aNumFormatArr[nLvl]->GetLabelFollowedBy() == SvxNumberFormat::LISTTAB )
     {
-        m_pListtabFT->Enable( true );
-        m_pListtabMF->Enable( true );
+        m_pListtabFT->Enable();
+        m_pListtabMF->Enable();
         if ( bSameListtab )
         {
             m_pListtabMF->SetValue(m_pListtabMF->Normalize(aNumFormatArr[nLvl]->GetListtabPos()),FUNIT_TWIP);
@@ -588,7 +588,7 @@ void SwNumPositionTabPage::SetWrtShell(SwWrtShell* pSh)
     m_pIndentAtMF->SetUnit( eMetric );
 }
 
-IMPL_LINK_NOARG(SwNumPositionTabPage, EditModifyHdl)
+IMPL_LINK_NOARG_TYPED(SwNumPositionTabPage, EditModifyHdl, ListBox&, void)
 {
     sal_uInt16 nMask = 1;
     for(sal_uInt16 i = 0; i < MAXLEVEL; i++)
@@ -611,32 +611,31 @@ IMPL_LINK_NOARG(SwNumPositionTabPage, EditModifyHdl)
         nMask <<= 1;
     }
     SetModified();
-    return 0;
 }
 
-IMPL_LINK( SwNumPositionTabPage, LevelHdl, ListBox *, pBox )
+IMPL_LINK_TYPED( SwNumPositionTabPage, LevelHdl, ListBox&, rBox, void )
 {
     sal_uInt16 nSaveNumLvl = nActNumLvl;
     nActNumLvl = 0;
-    if(pBox->IsEntryPosSelected( MAXLEVEL ) &&
-            (pBox->GetSelectEntryCount() == 1 || nSaveNumLvl != 0xffff))
+    if(rBox.IsEntryPosSelected( MAXLEVEL ) &&
+            (rBox.GetSelectEntryCount() == 1 || nSaveNumLvl != 0xffff))
     {
         nActNumLvl = 0xFFFF;
-        pBox->SetUpdateMode(false);
+        rBox.SetUpdateMode(false);
         for( sal_uInt16 i = 0; i < MAXLEVEL; i++ )
-            pBox->SelectEntryPos( i, false );
-        pBox->SetUpdateMode(true);
+            rBox.SelectEntryPos( i, false );
+        rBox.SetUpdateMode(true);
     }
-    else if(pBox->GetSelectEntryCount())
+    else if(rBox.GetSelectEntryCount())
     {
         sal_uInt16 nMask = 1;
         for( sal_uInt16 i = 0; i < MAXLEVEL; i++ )
         {
-            if(pBox->IsEntryPosSelected( i ))
+            if(rBox.IsEntryPosSelected( i ))
                 nActNumLvl |= nMask;
             nMask <<= 1;
         }
-        pBox->SelectEntryPos( MAXLEVEL, false );
+        rBox.SelectEntryPos( MAXLEVEL, false );
     }
     else
     {
@@ -646,7 +645,7 @@ IMPL_LINK( SwNumPositionTabPage, LevelHdl, ListBox *, pBox )
         {
             if(nActNumLvl & nMask)
             {
-                pBox->SelectEntryPos(i);
+                rBox.SelectEntryPos(i);
                 break;
             }
             nMask <<=1;
@@ -657,25 +656,25 @@ IMPL_LINK( SwNumPositionTabPage, LevelHdl, ListBox *, pBox )
     InitPosAndSpaceMode();
     ShowControlsDependingOnPosAndSpaceMode();
     InitControls();
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwNumPositionTabPage, DistanceLoseFocusHdl, Control&, rControl, void )
 {
-    DistanceHdl(static_cast<MetricField*>(&rControl));
+    DistanceHdl(static_cast<SpinField&>(rControl));
 }
-IMPL_LINK( SwNumPositionTabPage, DistanceHdl, MetricField *, pField )
+IMPL_LINK_TYPED( SwNumPositionTabPage, DistanceHdl, SpinField&, rSpin, void )
 {
     if(bInInintControl)
-        return 0;
-    long nValue = static_cast< long >(pField->Denormalize(pField->GetValue(FUNIT_TWIP)));
+        return;
+    MetricField& rField = static_cast<MetricField&>(rSpin);
+    long nValue = static_cast< long >(rField.Denormalize(rField.GetValue(FUNIT_TWIP)));
     sal_uInt16 nMask = 1;
     for(sal_uInt16 i = 0; i < MAXLEVEL; i++)
     {
         if(nActNumLvl & nMask)
         {
             SwNumFormat aNumFormat( pActNum->Get( i ) );
-            if(pField == m_pDistBorderMF)
+            if(&rField == m_pDistBorderMF)
             {
 
                 if(m_pRelativeCB->IsChecked() && m_pRelativeCB->IsEnabled())
@@ -699,11 +698,11 @@ IMPL_LINK( SwNumPositionTabPage, DistanceHdl, MetricField *, pField )
                     aNumFormat.SetAbsLSpace( (short)nValue - aNumFormat.GetFirstLineOffset());
                 }
             }
-            else if (pField == m_pDistNumMF)
+            else if (&rField == m_pDistNumMF)
             {
                 aNumFormat.SetCharTextDistance( nValue );
             }
-            else if (pField == m_pIndentMF)
+            else if (&rField == m_pIndentMF)
             {
                 // now AbsLSpace also has to be modified by FirstLineOffset
                 long nDiff = nValue + aNumFormat.GetFirstLineOffset();
@@ -720,8 +719,6 @@ IMPL_LINK( SwNumPositionTabPage, DistanceHdl, MetricField *, pField )
     SetModified();
     if(!m_pDistBorderMF->IsEnabled())
         m_pDistBorderMF->SetText(aEmptyOUStr);
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwNumPositionTabPage, RelativeHdl, Button *, pBox, void )
@@ -762,7 +759,7 @@ IMPL_LINK_TYPED( SwNumPositionTabPage, RelativeHdl, Button *, pBox, void )
     bLastRelative = bOn;
 }
 
-IMPL_LINK_NOARG(SwNumPositionTabPage, LabelFollowedByHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwNumPositionTabPage, LabelFollowedByHdl_Impl, ListBox&, void)
 {
     // determine value to be set at the chosen list levels
     SvxNumberFormat::LabelFollowedBy eLabelFollowedBy = SvxNumberFormat::LISTTAB;
@@ -819,14 +816,13 @@ IMPL_LINK_NOARG(SwNumPositionTabPage, LabelFollowedByHdl_Impl)
     }
 
     SetModified();
-
-    return 0;
 }
 
-IMPL_LINK( SwNumPositionTabPage, ListtabPosHdl_Impl, MetricField*, pField )
+IMPL_LINK_TYPED( SwNumPositionTabPage, ListtabPosHdl_Impl, SpinField&, rSpin, void )
 {
+    MetricField& rField = static_cast<MetricField&>(rSpin);
     // determine value to be set at the chosen list levels
-    const long nValue = static_cast< long >(pField->Denormalize(pField->GetValue(FUNIT_TWIP)));
+    const long nValue = static_cast< long >(rField.Denormalize(rField.GetValue(FUNIT_TWIP)));
 
     // set value at the chosen list levels
     sal_uInt16 nMask = 1;
@@ -842,14 +838,13 @@ IMPL_LINK( SwNumPositionTabPage, ListtabPosHdl_Impl, MetricField*, pField )
     }
 
     SetModified();
-
-    return 0;
 }
 
-IMPL_LINK( SwNumPositionTabPage, AlignAtHdl_Impl, MetricField*, pField )
+IMPL_LINK_TYPED( SwNumPositionTabPage, AlignAtHdl_Impl, SpinField&, rSpin, void )
 {
+    MetricField& rField = static_cast<MetricField&>(rSpin);
     // determine value to be set at the chosen list levels
-    const long nValue = static_cast< long >(pField->Denormalize(pField->GetValue(FUNIT_TWIP)));
+    const long nValue = static_cast< long >(rField.Denormalize(rField.GetValue(FUNIT_TWIP)));
 
     // set value at the chosen list levels
     sal_uInt16 nMask = 1;
@@ -866,14 +861,13 @@ IMPL_LINK( SwNumPositionTabPage, AlignAtHdl_Impl, MetricField*, pField )
     }
 
     SetModified();
-
-    return 0;
 }
 
-IMPL_LINK( SwNumPositionTabPage, IndentAtHdl_Impl, MetricField*, pField )
+IMPL_LINK_TYPED( SwNumPositionTabPage, IndentAtHdl_Impl, SpinField&, rSpin, void )
 {
+    MetricField& rField = static_cast<MetricField&>(rSpin);
     // determine value to be set at the chosen list levels
-    const long nValue = static_cast< long >(pField->Denormalize(pField->GetValue(FUNIT_TWIP)));
+    const long nValue = static_cast< long >(rField.Denormalize(rField.GetValue(FUNIT_TWIP)));
 
     // set value at the chosen list levels
     sal_uInt16 nMask = 1;
@@ -893,8 +887,6 @@ IMPL_LINK( SwNumPositionTabPage, IndentAtHdl_Impl, MetricField*, pField )
     }
 
     SetModified();
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SwNumPositionTabPage, StandardHdl, Button*, void)

@@ -47,16 +47,16 @@ public:
         SfxBindings* pBindings);
 
     virtual void DataChanged(
-        const DataChangedEvent& rEvent) SAL_OVERRIDE;
+        const DataChangedEvent& rEvent) override;
 
     virtual void HandleContextChange(
-        const ::sfx2::sidebar::EnumContext& rContext) SAL_OVERRIDE;
+        const ::sfx2::sidebar::EnumContext& rContext) override;
 
     virtual void NotifyItemUpdate(
         const sal_uInt16 nSId,
         const SfxItemState eState,
         const SfxPoolItem* pState,
-        const bool bIsEnabled) SAL_OVERRIDE;
+        const bool bIsEnabled) override;
 
     SfxBindings* GetBindings() { return mpBindings;}
 
@@ -66,7 +66,7 @@ public:
         const css::uno::Reference<css::frame::XFrame>& rxFrame,
         SfxBindings* pBindings);
     virtual ~AlignmentPropertyPanel();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
 private:
     //ui controls
@@ -97,10 +97,10 @@ private:
     ::sfx2::sidebar::EnumContext                maContext;
     SfxBindings*                                mpBindings;
 
-    DECL_LINK( MFLeftIndentMdyHdl, void * );
+    DECL_LINK_TYPED( MFLeftIndentMdyHdl, Edit&, void );
     DECL_LINK_TYPED( CBOXMergnCellClkHdl, Button*, void );
     DECL_LINK_TYPED( CBOXWrapTextClkHdl, Button*, void );
-    DECL_LINK( AngleModifiedHdl, void * );
+    DECL_LINK_TYPED( AngleModifiedHdl, Edit&, void );
     DECL_LINK_TYPED( ClickStackHdl, Button*, void );
     DECL_LINK_TYPED( ReferenceEdgeHdl, Button*, void );
 

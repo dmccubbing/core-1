@@ -43,9 +43,9 @@ namespace svx
     public:
         SuggestionSet( vcl::Window* pParent );
         virtual ~SuggestionSet();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void    UserDraw( const UserDrawEvent& rUDEvt ) SAL_OVERRIDE;
+        virtual void    UserDraw( const UserDrawEvent& rUDEvt ) override;
         void            ClearSet();
     };
 
@@ -54,7 +54,7 @@ namespace svx
     public:
         SuggestionDisplay( vcl::Window* pParent, WinBits nBits );
         virtual ~SuggestionDisplay();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         void DisplayListBox( bool bDisplayListBox );
 
@@ -69,18 +69,19 @@ namespace svx
         OUString GetEntry( sal_uInt16 nPos ) const;
         OUString GetSelectEntry() const;
 
-        virtual void StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
+        virtual void StateChanged( StateChangedType nStateChange ) override;
 
-        virtual void KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-        virtual void KeyUp( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-        virtual void Activate() SAL_OVERRIDE;
-        virtual void Deactivate() SAL_OVERRIDE;
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual void LoseFocus() SAL_OVERRIDE;
-        virtual void Command( const CommandEvent& rCEvt ) SAL_OVERRIDE;
+        virtual void KeyInput( const KeyEvent& rKEvt ) override;
+        virtual void KeyUp( const KeyEvent& rKEvt ) override;
+        virtual void Activate() override;
+        virtual void Deactivate() override;
+        virtual void GetFocus() override;
+        virtual void LoseFocus() override;
+        virtual void Command( const CommandEvent& rCEvt ) override;
 
-        DECL_LINK( SelectSuggestionHdl, Control* );
+        DECL_LINK_TYPED( SelectSuggestionListBoxHdl, ListBox&, void );
         DECL_LINK_TYPED( SelectSuggestionValueSetHdl, ValueSet*, void );
+        void SelectSuggestionHdl(Control*);
 
         void SetHelpIds();
 
@@ -139,7 +140,7 @@ namespace svx
                 vcl::Window* _pParent,
                 editeng::HangulHanjaConversion::ConversionDirection _ePrimaryDirection );
         virtual ~HangulHanjaConversionDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
     public:
         void    SetOptionsChangedHdl( const Link<LinkParamNone*,void>& _rHdl );
@@ -182,7 +183,7 @@ namespace svx
 
     private:
         DECL_LINK_TYPED( OnOption, Button*, void );
-        DECL_LINK( OnSuggestionModified, void* );
+        DECL_LINK_TYPED( OnSuggestionModified, Edit&, void );
         DECL_LINK_TYPED( OnSuggestionSelected, SuggestionDisplay&, void );
         DECL_LINK_TYPED( OnConversionDirectionClicked, Button*, void );
         DECL_LINK_TYPED( ClickByCharacterHdl, Button*, void );
@@ -221,7 +222,7 @@ namespace svx
     public:
                             HangulHanjaOptionsDialog( vcl::Window* _pParent );
         virtual             ~HangulHanjaOptionsDialog();
-        virtual void        dispose() SAL_OVERRIDE;
+        virtual void        dispose() override;
 
         void                AddDict( const OUString& _rName, bool _bChecked );
     };
@@ -236,11 +237,11 @@ namespace svx
         bool m_bEntered;
 
         DECL_LINK_TYPED( OKHdl, Button*, void );
-        DECL_LINK( ModifyHdl, void* );
+        DECL_LINK_TYPED( ModifyHdl, Edit&, void );
     public:
         HangulHanjaNewDictDialog( vcl::Window* _pParent );
         virtual ~HangulHanjaNewDictDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         bool GetName( OUString& _rRetName ) const;
     };
@@ -260,8 +261,8 @@ namespace svx
     public:
                             SuggestionEdit( vcl::Window* pParent, WinBits nBits );
         virtual             ~SuggestionEdit();
-        virtual void        dispose() SAL_OVERRIDE;
-        virtual bool        PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void        dispose() override;
+        virtual bool        PreNotify( NotifyEvent& rNEvt ) override;
         void init( ScrollBar* pScrollBar, SuggestionEdit* pPrev, SuggestionEdit* pNext);
     };
 
@@ -290,14 +291,14 @@ namespace svx
         bool            m_bModifiedSuggestions;
         bool            m_bModifiedOriginal;
 
-        DECL_LINK( OriginalModifyHdl, void* );
+        DECL_LINK_TYPED( OriginalModifyHdl, Edit&, void );
         DECL_LINK_TYPED( ScrollHdl, ScrollBar*, void );
-        DECL_LINK( EditModifyHdl1, Edit* );
-        DECL_LINK( EditModifyHdl2, Edit* );
-        DECL_LINK( EditModifyHdl3, Edit* );
-        DECL_LINK( EditModifyHdl4, Edit* );
+        DECL_LINK_TYPED( EditModifyHdl1, Edit&, void );
+        DECL_LINK_TYPED( EditModifyHdl2, Edit&, void );
+        DECL_LINK_TYPED( EditModifyHdl3, Edit&, void );
+        DECL_LINK_TYPED( EditModifyHdl4, Edit&, void );
 
-        DECL_LINK( BookLBSelectHdl, void* );
+        DECL_LINK_TYPED( BookLBSelectHdl, ListBox&, void );
         DECL_LINK_TYPED( NewPBPushHdl, Button*, void );
         DECL_LINK_TYPED( DeletePBPushHdl, Button*, void );
 
@@ -314,7 +315,7 @@ namespace svx
     public:
                         HangulHanjaEditDictDialog( vcl::Window* _pParent, HHDictList& _rDictList, sal_uInt32 _nSelDict );
                         virtual ~HangulHanjaEditDictDialog();
-        virtual void    dispose() SAL_OVERRIDE;
+        virtual void    dispose() override;
 
         void            UpdateScrollbar();
     };

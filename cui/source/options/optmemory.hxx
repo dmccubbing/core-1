@@ -41,7 +41,7 @@ private:
     VclPtr<VclContainer>       m_pQuickStarterFrame;
     VclPtr<CheckBox>           m_pQuickLaunchCB;
 
-    DECL_LINK(GraphicCacheConfigHdl, void *);
+    DECL_LINK_TYPED(GraphicCacheConfigHdl, Edit&, void);
 
     sal_Int32 GetNfGraphicCacheVal() const; // returns # of Bytes
     inline void         SetNfGraphicCacheVal( long nSizeInBytes );
@@ -51,17 +51,17 @@ private:
     inline void         SetNfGraphicObjectCacheMax( long nSizeInBytes );
     inline void         SetNfGraphicObjectCacheLast( long nSizeInBytes );
 protected:
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) SAL_OVERRIDE;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) override;
 
 public:
     OfaMemoryOptionsPage( vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~OfaMemoryOptionsPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rAttrSet );
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 

@@ -300,6 +300,7 @@ SvxSearchDialog::SvxSearchDialog( vcl::Window* pParent, SfxChildWindow* pChildWi
     get(m_pSearchComponent2PB, "component2");
 
     get(m_pMatchCaseCB, "matchcase");
+    get(m_pSearchFormattedCB, "searchformatted");
     get(m_pWordBtn, "wholewords");
     aCalcStr = get<FixedText>("entirecells")->GetText();
 
@@ -383,6 +384,7 @@ void SvxSearchDialog::dispose()
     m_pSearchComponent1PB.clear();
     m_pSearchComponent2PB.clear();
     m_pMatchCaseCB.clear();
+    m_pSearchFormattedCB.clear();
     m_pWordBtn.clear();
     m_pCloseBtn.clear();
     m_pIgnoreDiacritics.clear();
@@ -565,6 +567,7 @@ bool SvxSearchDialog::Close()
     aOpt.SetNotes                   ( m_pNotesBtn->IsChecked() );
     aOpt.SetIgnoreDiacritics_CTL    ( m_pIgnoreDiacritics->IsChecked() );
     aOpt.SetIgnoreKashida_CTL       ( m_pIgnoreKashida->IsChecked() );
+    aOpt.SetSearchFormatted         ( m_pSearchFormattedCB->IsChecked() );
     aOpt.Commit();
 
     const SfxPoolItem* ppArgs[] = { pSearchItem, 0 };
@@ -740,6 +743,7 @@ void SvxSearchDialog::ShowOptionalControls_Impl()
         m_pRowsBtn->Show();
         m_pColumnsBtn->Show();
         m_pAllSheetsCB->Show();
+        m_pSearchFormattedCB->Show();
     }
 }
 
@@ -808,11 +812,13 @@ void SvxSearchDialog::Init_Impl( bool bSearchPattern )
     if ( pSearchItem->GetAppFlag() == SvxSearchApp::CALC )
     {
         m_pCalcGrid->Show();
+        m_pSearchFormattedCB->Check( aOpt.IsSearchFormatted() );
         Link<Button*,void> aLink = LINK( this, SvxSearchDialog, FlagHdl_Impl );
         m_pCalcSearchInLB->SetSelectHdl( LINK( this, SvxSearchDialog, LBSelectHdl_Impl ) );
         m_pRowsBtn->SetClickHdl( aLink );
         m_pColumnsBtn->SetClickHdl( aLink );
         m_pAllSheetsCB->SetClickHdl( aLink );
+        m_pSearchFormattedCB->SetClickHdl( aLink );
 
         sal_uIntPtr nModifyFlagCheck;
         switch ( pSearchItem->GetCellType() )
@@ -854,6 +860,7 @@ void SvxSearchDialog::Init_Impl( bool bSearchPattern )
     }
     else
     {
+        m_pSearchFormattedCB->Hide();
         m_pWordBtn->SetText( aCalcStr.getToken( 1, '#' ) );
 
         if ( pSearchItem->GetAppFlag() == SvxSearchApp::DRAW )
@@ -1104,10 +1111,9 @@ void SvxSearchDialog::InitAttrList_Impl( const SfxItemSet* pSSet,
 
 
 
-IMPL_LINK( SvxSearchDialog, LBSelectHdl_Impl, Control *, pCtrl )
+IMPL_LINK_TYPED( SvxSearchDialog, LBSelectHdl_Impl, ListBox&, rCtrl, void )
 {
-    ClickHdl_Impl(pCtrl);
-    return 0;
+    ClickHdl_Impl(&rCtrl);
 }
 
 IMPL_LINK_TYPED( SvxSearchDialog, FlagHdl_Impl, Button *, pCtrl, void )
@@ -1166,7 +1172,7 @@ void SvxSearchDialog::ClickHdl_Impl(void* pCtrl)
         else
         {
             EnableControl_Impl(m_pLayoutBtn);
-            ModifyHdl_Impl(m_pSearchLB);
+            ModifyHdl_Impl(*m_pSearchLB);
         }
     }
     else
@@ -1210,14 +1216,14 @@ void SvxSearchDialog::ClickHdl_Impl(void* pCtrl)
 
             // Search-string in place? then enable Buttons
             bSet = true;
-            ModifyHdl_Impl(m_pSearchLB);
+            ModifyHdl_Impl(*m_pSearchLB);
         }
     }
 
     if (pCtrl == m_pAllSheetsCB)
     {
         bSet = true;
-        ModifyHdl_Impl(m_pSearchLB);
+        ModifyHdl_Impl(*m_pSearchLB);
     }
 
     if (pCtrl == m_pJapOptionsCB)
@@ -1294,6 +1300,7 @@ IMPL_LINK_TYPED( SvxSearchDialog, CommandHdl_Impl, Button *, pBtn, void )
 
             pSearchItem->SetRowDirection( m_pRowsBtn->IsChecked() );
             pSearchItem->SetAllTables( m_pAllSheetsCB->IsChecked() );
+            pSearchItem->SetSearchFormatted( m_pSearchFormattedCB->IsChecked() );
         }
 
         if (pBtn == m_pSearchBtn)
@@ -1316,7 +1323,7 @@ IMPL_LINK_TYPED( SvxSearchDialog, CommandHdl_Impl, Button *, pBtn, void )
         }
         nModifyFlag = 0;
         const SfxPoolItem* ppArgs[] = { pSearchItem, 0 };
-        rBindings.ExecuteSynchron( FID_SEARCH_NOW, ppArgs, 0L );
+        rBindings.ExecuteSynchron( FID_SEARCH_NOW, ppArgs );
     }
     else if ( pBtn == m_pCloseBtn )
     {
@@ -1397,17 +1404,17 @@ IMPL_LINK_TYPED( SvxSearchDialog, CommandHdl_Impl, Button *, pBtn, void )
 
 
 
-IMPL_LINK( SvxSearchDialog, ModifyHdl_Impl, ComboBox *, pEd )
+IMPL_LINK_TYPED( SvxSearchDialog, ModifyHdl_Impl, Edit&, rEd, void )
 {
     if ( !bSet )
-        SetModifyFlag_Impl( pEd );
+        SetModifyFlag_Impl( &rEd );
     else
         bSet = false;
 
     // Calc allows searching for empty cells.
     bool bAllowEmptySearch = (pSearchItem->GetAppFlag() == SvxSearchApp::CALC);
 
-    if ( pEd == m_pSearchLB || pEd == m_pReplaceLB )
+    if ( &rEd == m_pSearchLB || &rEd == m_pReplaceLB )
     {
         sal_Int32 nSrchTxtLen = m_pSearchLB->GetText().getLength();
         sal_Int32 nReplTxtLen = 0;
@@ -1434,7 +1441,6 @@ IMPL_LINK( SvxSearchDialog, ModifyHdl_Impl, ComboBox *, pEd )
             m_pReplaceAllBtn->Disable();
         }
     }
-    return 0;
 }
 
 
@@ -1722,7 +1728,7 @@ void SvxSearchDialog::EnableControl_Impl( Control* pCtrl )
     if ( m_pSearchAllBtn == pCtrl &&
          ( SearchOptionFlags::SEARCHALL & nOptions )  )
     {
-        m_pSearchAllBtn->Enable( true );
+        m_pSearchAllBtn->Enable();
         return;
     }
     if ( m_pReplaceBtn == pCtrl && ( SearchOptionFlags::REPLACE & nOptions )  )
@@ -1847,7 +1853,7 @@ IMPL_LINK_TYPED( SvxSearchDialog, FocusHdl_Impl, Control&, rControl, void )
 
     static_cast<ComboBox*>(pCtrl)->SetSelection( Selection( SELECTION_MIN, SELECTION_MAX ) );
 
-    ModifyHdl_Impl( static_cast<ComboBox*>(pCtrl) );
+    ModifyHdl_Impl( static_cast<Edit&>(*pCtrl) );
 
     if (bFormat && nTxtLen)
         m_pLayoutBtn->SetText(aLayoutStr);
@@ -2232,6 +2238,7 @@ void SvxSearchDialog::SaveToModule_Impl()
 
         pSearchItem->SetRowDirection( m_pRowsBtn->IsChecked() );
         pSearchItem->SetAllTables( m_pAllSheetsCB->IsChecked() );
+        pSearchItem->SetSearchFormatted( m_pSearchFormattedCB->IsChecked() );
     }
 
     pSearchItem->SetCommand( SvxSearchCmd::FIND );

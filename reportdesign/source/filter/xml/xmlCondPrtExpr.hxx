@@ -28,8 +28,8 @@ namespace rptxml
     class OXMLCondPrtExpr : public SvXMLImportContext
     {
         ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet >   m_xComponent;
-        OXMLCondPrtExpr(const OXMLCondPrtExpr&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLCondPrtExpr&) SAL_DELETED_FUNCTION;
+        OXMLCondPrtExpr(const OXMLCondPrtExpr&) = delete;
+        void operator =(const OXMLCondPrtExpr&) = delete;
     public:
 
         OXMLCondPrtExpr( ORptFilter& _rImport
@@ -41,7 +41,7 @@ namespace rptxml
 
         // This method is called for all characters that are contained in the
         // current element. The default is to ignore them.
-        virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+        virtual void Characters( const OUString& rChars ) override;
     };
 
 } // namespace rptxml

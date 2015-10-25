@@ -47,8 +47,8 @@ namespace dbaui
         explicit OSaveValueWrapper(T* _pSaveValue) : m_pSaveValue(_pSaveValue)
         { OSL_ENSURE(m_pSaveValue,"Illegal argument!"); }
 
-        virtual bool SaveValue() SAL_OVERRIDE { m_pSaveValue->SaveValue(); return true;} // bool return value only for stl
-        virtual bool Disable() SAL_OVERRIDE { m_pSaveValue->Disable(); return true;} // bool return value only for stl
+        virtual bool SaveValue() override { m_pSaveValue->SaveValue(); return true;} // bool return value only for stl
+        virtual bool Disable() override { m_pSaveValue->Disable(); return true;} // bool return value only for stl
     };
 
     template < class T > class ODisableWrapper : public ISaveValueWrapper
@@ -58,8 +58,8 @@ namespace dbaui
         explicit ODisableWrapper(T* _pSaveValue) : m_pSaveValue(_pSaveValue)
         { OSL_ENSURE(m_pSaveValue,"Illegal argument!"); }
 
-        virtual bool SaveValue() SAL_OVERRIDE { return true;} // bool return value only for stl
-        virtual bool Disable() SAL_OVERRIDE { m_pSaveValue->Disable(); return true;} // bool return value only for stl
+        virtual bool SaveValue() override { return true;} // bool return value only for stl
+        virtual bool Disable() override { m_pSaveValue->Disable(); return true;} // bool return value only for stl
     };
 
     // OGenericAdministrationPage
@@ -116,27 +116,27 @@ namespace dbaui
         bool getSelectedDataSource(OUString& _sReturn, OUString& _sCurr);
 
         // svt::IWizardPageController
-        virtual void initializePage() SAL_OVERRIDE;
-        virtual bool commitPage( ::svt::WizardTypes::CommitPageReason _eReason ) SAL_OVERRIDE;
-        virtual bool canAdvance() const SAL_OVERRIDE;
+        virtual void initializePage() override;
+        virtual bool commitPage( ::svt::WizardTypes::CommitPageReason _eReason ) override;
+        virtual bool canAdvance() const override;
 
         void                SetRoadmapStateValue( bool _bDoEnable ) { m_abEnableRoadmap = _bDoEnable; }
         bool                GetRoadmapStateValue() const { return m_abEnableRoadmap; }
 
     protected:
         /// default implementation: call FillItemSet, call prepareLeave,
-        virtual sfxpg DeactivatePage(SfxItemSet* pSet) SAL_OVERRIDE;
+        virtual sfxpg DeactivatePage(SfxItemSet* pSet) override;
         using SfxTabPage::DeactivatePage;
         /// default implementation: call implInitControls with the given item set and _bSaveValue = sal_False
-        virtual void Reset(const SfxItemSet* _rCoreAttrs) SAL_OVERRIDE;
+        virtual void Reset(const SfxItemSet* _rCoreAttrs) override;
         /// default implementation: call implInitControls with the given item set and _bSaveValue = sal_True
-        virtual void ActivatePage(const SfxItemSet& _rSet) SAL_OVERRIDE;
+        virtual void ActivatePage(const SfxItemSet& _rSet) override;
 
         // TabPage overridables
-        virtual void    ActivatePage() SAL_OVERRIDE;
+        virtual void    ActivatePage() override;
 
     protected:
-        void callModifiedHdl() const { if (m_aModifiedHandler.IsSet()) m_aModifiedHandler.Call(this); }
+        virtual void callModifiedHdl(void* /*pControl*/ = 0) { m_aModifiedHandler.Call(this); }
 
         /// called from within DeactivatePage. The page is allowed to be deactivated if this method returns sal_True
         virtual bool prepareLeave() { return true; }
@@ -206,16 +206,12 @@ namespace dbaui
         /** This link be used for controls where the tabpage does not need to take any special action when the control
             is modified. The implementation just calls callModifiedHdl.
         */
-        DECL_LINK(OnControlModified, Button*);
-        DECL_LINK_TYPED(OnTestConnectionClickHdl, Button*, void);
-
-        /// may be used in SetXXXHdl calls to controls, is a link to <method>OnControlModified</method>
-        virtual Link<> getControlModifiedLink() { return LINK(this, OGenericAdministrationPage, OnControlModified); }
-        // calls via getControlModifiedLink()
-        Link<Button*,void> getControlModifiedClickLink() { return LINK(this, OGenericAdministrationPage, OnControlModifiedClick); }
-        DECL_LINK_TYPED(ControlModifiedCheckBoxHdl, CheckBox&, void);
-    private:
+        DECL_LINK_TYPED(OnControlModified, void*, void);
+        DECL_LINK_TYPED(OnControlEditModifyHdl, Edit&, void);
         DECL_LINK_TYPED(OnControlModifiedClick, Button*, void);
+        DECL_LINK_TYPED(ControlModifiedCheckBoxHdl, CheckBox&, void);
+
+        DECL_LINK_TYPED(OnTestConnectionClickHdl, Button*, void);
     };
 
     // ControlRelation

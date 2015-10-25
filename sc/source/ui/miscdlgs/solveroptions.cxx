@@ -73,7 +73,7 @@ public:
     void      SetIntValue( sal_Int32 nNew ) { mbIsDouble = false; mnIntValue = nNew; }
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 void ScSolverOptionsString::Paint(const Point& rPos, SvTreeListBox& /*rDev*/, vcl::RenderContext& rRenderContext,
@@ -361,7 +361,7 @@ IMPL_LINK_NOARG_TYPED(ScSolverOptionsDialog, SettingsDoubleClickHdl, SvTreeListB
     return false;
 }
 
-IMPL_LINK_NOARG(ScSolverOptionsDialog, EngineSelectHdl)
+IMPL_LINK_NOARG_TYPED(ScSolverOptionsDialog, EngineSelectHdl, ListBox&, void)
 {
     const sal_Int32 nSelectPos = m_pLbEngine->GetSelectEntryPos();
     if ( nSelectPos < maImplNames.getLength() )
@@ -374,7 +374,6 @@ IMPL_LINK_NOARG(ScSolverOptionsDialog, EngineSelectHdl)
             FillListBox();                  // using maProperties
         }
     }
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(ScSolverOptionsDialog, SettingsSelHdl, SvTreeListBox*, void)
@@ -473,7 +472,7 @@ double ScSolverValueDialog::GetValue() const
     double fValue = rtl::math::stringToDouble( aInput,
                             pLocaleData->getNumDecimalSep()[0],
                             pLocaleData->getNumThousandSep()[0],
-                            &eStatus, NULL );
+                            &eStatus );
     return fValue;
 }
 

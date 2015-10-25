@@ -36,19 +36,17 @@ class XMLOFF_DLLPUBLIC XMLDocumentSettingsContext : public SvXMLImportContext
 
 public:
     XMLDocumentSettingsContext(SvXMLImport& rImport, sal_uInt16 nPrfx, const OUString& rLName,
-                                    const ::com::sun::star::uno::Reference<
-                                    ::com::sun::star::xml::sax::XAttributeList>& xAttrList);
+                                    const css::uno::Reference< css::xml::sax::XAttributeList>& xAttrList);
     virtual ~XMLDocumentSettingsContext();
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                                                     const OUString& rLocalName,
-                                                    const ::com::sun::star::uno::Reference<
-                                          ::com::sun::star::xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
-    virtual void EndElement() SAL_OVERRIDE;
+                                                    const css::uno::Reference< css::xml::sax::XAttributeList>& xAttrList ) override;
+    virtual void EndElement() override;
 
 private:
-    XMLDocumentSettingsContext( const XMLDocumentSettingsContext& ) SAL_DELETED_FUNCTION;
-    XMLDocumentSettingsContext& operator=( const XMLDocumentSettingsContext& ) SAL_DELETED_FUNCTION;
+    XMLDocumentSettingsContext( const XMLDocumentSettingsContext& ) = delete;
+    XMLDocumentSettingsContext& operator=( const XMLDocumentSettingsContext& ) = delete;
 };
 
 #endif

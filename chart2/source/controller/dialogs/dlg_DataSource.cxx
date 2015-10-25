@@ -49,7 +49,7 @@ public:
     virtual ~DocumentChartTypeTemplateProvider();
 
     // ____ ChartTypeTemplateProvider ____
-    virtual Reference< chart2::XChartTypeTemplate > getCurrentTemplate() const SAL_OVERRIDE;
+    virtual Reference< chart2::XChartTypeTemplate > getCurrentTemplate() const override;
 
 private:
     Reference< chart2::XChartTypeTemplate > m_xTemplate;
@@ -86,7 +86,7 @@ class DataSourceTabControl : public TabControl
 public:
     explicit DataSourceTabControl(vcl::Window* pParent);
 
-    virtual bool DeactivatePage() SAL_OVERRIDE;
+    virtual bool DeactivatePage() override;
 
     void DisableTabToggling();
     void EnableTabToggling();
@@ -217,7 +217,7 @@ void DataSourceDialog::setValidPage( TabPage * pTabPage )
 
     if( m_bRangeChooserTabIsValid && m_bDataSourceTabIsValid )
     {
-        m_pBtnOK->Enable( true );
+        m_pBtnOK->Enable();
         OSL_ASSERT( m_pTabControl );
         m_pTabControl->EnableTabToggling();
     }

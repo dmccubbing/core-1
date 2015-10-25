@@ -115,11 +115,10 @@ short CertificateChooser::Execute()
     pMe->Update();
     ImplInitialize();
     if ( pParent )
-        pParent->EnableInput( true );
+        pParent->EnableInput();
     return ModalDialog::Execute();
 }
 
-// IMPL_LINK_NOARG(CertificateChooser, Initialize)
 void CertificateChooser::ImplInitialize()
 {
     if ( !mbInitialized )

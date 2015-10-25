@@ -34,15 +34,15 @@ private:
     SAL_DLLPRIVATE void     ImplTestJavaException( void* pEnv );
 
     // Copy assignment is forbidden and not implemented.
-                            SystemChildWindow (const SystemChildWindow &) SAL_DELETED_FUNCTION;
-                            SystemChildWindow & operator= (const SystemChildWindow &) SAL_DELETED_FUNCTION;
+                            SystemChildWindow (const SystemChildWindow &) = delete;
+                            SystemChildWindow & operator= (const SystemChildWindow &) = delete;
 
 public:
     explicit                SystemChildWindow( vcl::Window* pParent, WinBits nStyle = 0 );
                             // create a SystemChildWindow using the given SystemWindowData
     explicit                SystemChildWindow( vcl::Window* pParent, WinBits nStyle, SystemWindowData *pData, bool bShow = true );
     virtual                 ~SystemChildWindow();
-    virtual void            dispose() SAL_OVERRIDE;
+    virtual void            dispose() override;
 
     const SystemEnvData*    GetSystemData() const;
 

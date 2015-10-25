@@ -58,24 +58,21 @@ private:
 
     VclPtr<CheckBox>     m_pCollectUsageInfo;
 
-    DECL_LINK( TwoFigureHdl, NumericField* );
-    DECL_LINK( TwoFigureConfigHdl, NumericField* );
+    DECL_LINK_TYPED( TwoFigureHdl, Edit&, void );
+    DECL_LINK_TYPED( TwoFigureConfigHdl, SpinField&, void );
     DECL_LINK_TYPED( TwoFigureConfigFocusHdl, Control&, void );
-#ifdef WNT
-    DECL_LINK( OnFileDlgToggled, void* );
-#endif
 protected:
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) SAL_OVERRIDE;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) override;
 
 public:
     OfaMiscTabPage( vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~OfaMiscTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rAttrSet );
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 class SvtTabAppearanceCfg;
@@ -120,12 +117,12 @@ private:
 public:
     OfaViewTabPage( vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~OfaViewTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rAttrSet );
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 struct LanguageConfig_Impl;
@@ -160,18 +157,18 @@ class OfaLanguagesTabPage : public SfxTabPage
     bool            m_bDatePatternsValid;
 
     DECL_LINK_TYPED(  SupportHdl, Button*, void ) ;
-    DECL_LINK(  LocaleSettingHdl, SvxLanguageBox* ) ;
-    DECL_LINK(  DatePatternsHdl, Edit* ) ;
+    DECL_LINK_TYPED(  LocaleSettingHdl, ListBox&, void ) ;
+    DECL_LINK_TYPED(  DatePatternsHdl, Edit&, void ) ;
 
 public:
     OfaLanguagesTabPage( vcl::Window* pParent, const SfxItemSet& rSet );
     virtual ~OfaLanguagesTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent, const SfxItemSet* rAttrSet );
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 #endif // INCLUDED_CUI_SOURCE_OPTIONS_OPTGDLG_HXX

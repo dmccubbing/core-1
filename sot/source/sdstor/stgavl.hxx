@@ -36,9 +36,9 @@ private:
     void   StgEnum( short& );
     static StgAvlNode* Rem( StgAvlNode**, StgAvlNode*, bool );
 protected:
-    short nId;                          // iterator ID
-    short nBalance;                     // indicates tree balance
-    StgAvlNode* pLeft, *pRight;         // leaves
+    short m_nId;                          // iterator ID
+    short m_nBalance;                     // indicates tree balance
+    StgAvlNode* m_pLeft, *m_pRight;         // leaves
     StgAvlNode();
 public:
     virtual ~StgAvlNode();
@@ -51,9 +51,9 @@ public:
 // The iterator class provides single stepping through an AVL tree.
 
 class StgAvlIterator {
-    StgAvlNode* pRoot;                  // root entry (parent)
-    short       nCount;                 // tree size
-    short       nCur;                   // current element
+    StgAvlNode* m_pRoot;                  // root entry (parent)
+    short       m_nCount;                 // tree size
+    short       m_nCur;                   // current element
     StgAvlNode* Find( short );
 public:
     explicit StgAvlIterator( StgAvlNode* );

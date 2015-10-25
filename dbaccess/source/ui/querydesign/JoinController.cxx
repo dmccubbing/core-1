@@ -88,12 +88,12 @@ public:
 
     // IAddTableDialogContext
     virtual css::uno::Reference< css::sdbc::XConnection >
-                    getConnection() const SAL_OVERRIDE;
-    virtual bool    allowViews() const SAL_OVERRIDE;
-    virtual bool    allowQueries() const SAL_OVERRIDE;
-    virtual bool    allowAddition() const SAL_OVERRIDE;
-    virtual void    addTableWindow( const OUString& _rQualifiedTableName, const OUString& _rAliasName ) SAL_OVERRIDE;
-    virtual void    onWindowClosing( const vcl::Window* _pWindow ) SAL_OVERRIDE;
+                    getConnection() const override;
+    virtual bool    allowViews() const override;
+    virtual bool    allowQueries() const override;
+    virtual bool    allowAddition() const override;
+    virtual void    addTableWindow( const OUString& _rQualifiedTableName, const OUString& _rAliasName ) override;
+    virtual void    onWindowClosing( const vcl::Window* _pWindow ) override;
 
 private:
     OJoinTableView* getTableView() const;
@@ -279,7 +279,7 @@ void OJoinController::Execute(sal_uInt16 _nId, const Sequence< PropertyValue >& 
                     WaitObject aWaitCursor( getView() );
                     m_pAddTableDialog->Update();
                 }
-                m_pAddTableDialog->Show( true );
+                m_pAddTableDialog->Show();
                 ::dbaui::notifySystemWindow(getView(),m_pAddTableDialog,::comphelper::mem_fun(&TaskPaneList::AddWindow));
             }
             break;

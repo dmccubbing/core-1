@@ -118,8 +118,8 @@ namespace svt
         DECL_LINK_TYPED( OnWindowEvent, VclWindowEvent&, void );
 
     private:
-        DialogController( const DialogController& ) SAL_DELETED_FUNCTION;
-        DialogController& operator=( const DialogController& ) SAL_DELETED_FUNCTION;
+        DialogController( const DialogController& ) = delete;
+        DialogController& operator=( const DialogController& ) = delete;
     };
     typedef std::shared_ptr< DialogController > PDialogController;
 
@@ -179,8 +179,8 @@ namespace svt
         void    addController( const PDialogController& _pController );
 
     private:
-        ControlDependencyManager( const ControlDependencyManager& ) SAL_DELETED_FUNCTION;
-        ControlDependencyManager& operator=( const ControlDependencyManager& ) SAL_DELETED_FUNCTION;
+        ControlDependencyManager( const ControlDependencyManager& ) = delete;
+        ControlDependencyManager& operator=( const ControlDependencyManager& ) = delete;
     };
 
 
@@ -213,7 +213,7 @@ namespace svt
         {
         }
 
-        virtual void operateOn( const VclWindowEvent& /*_rTrigger*/, vcl::Window& _rOperateOn ) const SAL_OVERRIDE
+        virtual void operateOn( const VclWindowEvent& /*_rTrigger*/, vcl::Window& _rOperateOn ) const override
         {
             _rOperateOn.Enable( m_rCheckable.IsChecked() );
         }
@@ -237,7 +237,7 @@ namespace svt
         {
         }
 
-        bool payAttentionTo( const VclWindowEvent& _rEvent ) const SAL_OVERRIDE
+        bool payAttentionTo( const VclWindowEvent& _rEvent ) const override
         {
             if  (   ( _rEvent.GetWindow() == &m_rWindow )
                 &&  (   ( _rEvent.GetId() == VCLEVENT_RADIOBUTTON_TOGGLE )

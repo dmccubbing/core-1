@@ -31,6 +31,7 @@
 #include <oox/drawingml/drawingmltypes.hxx>
 #include <com/sun/star/document/XDocumentPropertiesSupplier.hpp>
 #include <com/sun/star/document/XOOXMLDocumentPropertiesImporter.hpp>
+#include <com/sun/star/drawing/TextVerticalAdjust.hpp>
 #include <com/sun/star/table/ShadowFormat.hpp>
 #include <com/sun/star/text/HoriOrientation.hpp>
 #include <com/sun/star/text/RelOrientation.hpp>
@@ -65,7 +66,6 @@
 #include <comphelper/storagehelper.hxx>
 #include <comphelper/sequence.hxx>
 #include <filter/msfilter/util.hxx>
-#include <unotools/mediadescriptor.hxx>
 
 #include <TextEffectsHandler.hxx>
 #include <CellColorHandler.hxx>
@@ -94,12 +94,11 @@ DomainMapper::DomainMapper( const uno::Reference< uno::XComponentContext >& xCon
                             uno::Reference<lang::XComponent> const& xModel,
                             bool bRepairStorage,
                             SourceDocumentType eDocumentType,
-                            uno::Reference<text::XTextRange> const& xInsertTextRange,
                             utl::MediaDescriptor& rMediaDesc) :
     LoggedProperties("DomainMapper"),
     LoggedTable("DomainMapper"),
     LoggedStream("DomainMapper"),
-    m_pImpl( new DomainMapper_Impl( *this, xContext, xModel, eDocumentType, xInsertTextRange, !rMediaDesc.getUnpackedValueOrDefault("InsertMode", false))),
+    m_pImpl(new DomainMapper_Impl(*this, xContext, xModel, eDocumentType, rMediaDesc)),
     mbIsSplitPara(false)
 {
     // #i24363# tab stops relative to indent
@@ -1265,9 +1264,9 @@ void DomainMapper::sprmWithProps( Sprm& rSprm, PropertyMapPtr rContext )
             default:;
             }
             if( eBorderId )
-                rContext->Insert( eBorderId, uno::makeAny( pBorderHandler->getBorderLine()) , true);
+                rContext->Insert( eBorderId, uno::makeAny( pBorderHandler->getBorderLine()) );
             if(eBorderDistId)
-                rContext->Insert(eBorderDistId, uno::makeAny( pBorderHandler->getLineDistance()), true);
+                rContext->Insert(eBorderDistId, uno::makeAny( pBorderHandler->getLineDistance()));
             if (nSprmId == NS_ooxml::LN_CT_PBdr_right && pBorderHandler->getShadow())
             {
                 table::ShadowFormat aFormat = writerfilter::dmapper::PropertyMap::getShadowFromBorder(pBorderHandler->getBorderLine());
@@ -2305,7 +2304,31 @@ void DomainMapper::sprmWithProps( Sprm& rSprm, PropertyMapPtr rContext )
         rContext->Insert(PROP_MIRROR_INDENTS, uno::makeAny( nIntValue != 0 ), true, PARA_GRAB_BAG);
     break;
     case NS_ooxml::LN_EG_SectPrContents_formProt: //section protection, only form editing is enabled - unsupported
+    break;
     case NS_ooxml::LN_EG_SectPrContents_vAlign:
+    {
+        OSL_ENSURE(pSectionContext, "SectionContext unavailable!");
+        if( pSectionContext )
+        {
+            drawing::TextVerticalAdjust nVA = drawing::TextVerticalAdjust_TOP;
+            switch( nIntValue )
+            {
+                case NS_ooxml::LN_Value_ST_VerticalJc_center: //92367
+                    nVA = drawing::TextVerticalAdjust_CENTER;
+                    break;
+                case NS_ooxml::LN_Value_ST_VerticalJc_both:   //92368 - justify
+                    nVA = drawing::TextVerticalAdjust_BLOCK;
+                    break;
+                case NS_ooxml::LN_Value_ST_VerticalJc_bottom: //92369
+                    nVA = drawing::TextVerticalAdjust_BOTTOM;
+                    break;
+                default:
+                    break;
+            }
+            pSectionContext->Insert( PROP_TEXT_VERTICAL_ADJUST, uno::makeAny( nVA ), true, PARA_GRAB_BAG );
+        }
+    }
+    break;
     case NS_ooxml::LN_EG_RPrBase_fitText:
     break;
     case NS_ooxml::LN_ffdata:

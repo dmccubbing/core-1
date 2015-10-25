@@ -80,7 +80,7 @@ class NoHelpErrorBox : public MessageDialog
 public:
     explicit NoHelpErrorBox( vcl::Window* _pParent );
 
-    virtual void    RequestHelp( const HelpEvent& rHEvt ) SAL_OVERRIDE;
+    virtual void    RequestHelp( const HelpEvent& rHEvt ) override;
 };
 
 NoHelpErrorBox::NoHelpErrorBox( vcl::Window* _pParent )
@@ -279,7 +279,7 @@ OUString getCurrentModuleIdentifier_Impl()
         }
         catch (const ::com::sun::star::frame::UnknownModuleException&)
         {
-            DBG_WARNING( "SfxHelp::getCurrentModuleIdentifier_Impl(): unknown module (help in help?)" );
+            SAL_INFO( "sfx2.appl", "SfxHelp::getCurrentModuleIdentifier_Impl(): unknown module (help in help?)" );
         }
         catch (const Exception&)
         {

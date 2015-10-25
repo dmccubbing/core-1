@@ -40,19 +40,19 @@ public:
     explicit InteractionRequest(css::uno::Any const & rRequest);
 
     virtual css::uno::Any SAL_CALL getRequest()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual css::uno::Sequence< css::uno::Reference<
         css::task::XInteractionContinuation > > SAL_CALL
-    getContinuations() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    getContinuations() throw (css::uno::RuntimeException, std::exception) override;
 
     bool retry() const;
 
 private:
     class RetryContinuation;
 
-    InteractionRequest(InteractionRequest &) SAL_DELETED_FUNCTION;
-    void operator =(const InteractionRequest&) SAL_DELETED_FUNCTION;
+    InteractionRequest(InteractionRequest &) = delete;
+    void operator =(const InteractionRequest&) = delete;
 
     virtual ~InteractionRequest();
 

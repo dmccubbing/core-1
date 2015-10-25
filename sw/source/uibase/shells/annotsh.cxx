@@ -275,7 +275,7 @@ void SwAnnotationShell::Exec( SfxRequest &rReq )
         {
             if( rReq.GetArgs() )
             {
-                SFX_REQUEST_ARG( rReq, pItem, SvxUnderlineItem, SID_ATTR_CHAR_UNDERLINE , false );
+                const SvxUnderlineItem* pItem = rReq.GetArg<SvxUnderlineItem>(SID_ATTR_CHAR_UNDERLINE);
                 if (pItem)
                 {
                     aNewAttr.Put(*pItem);
@@ -470,7 +470,7 @@ void SwAnnotationShell::Exec( SfxRequest &rReq )
         case SID_CHAR_DLG:
         {
             const SfxItemSet* pArgs = rReq.GetArgs();
-            SFX_REQUEST_ARG(rReq, pItem, SfxStringItem, FN_PARAM_1, false);
+            const SfxStringItem* pItem = rReq.GetArg<SfxStringItem>(FN_PARAM_1);
 
             if( !pArgs || pItem )
             {
@@ -855,7 +855,7 @@ void SwAnnotationShell::GetState(SfxItemSet& rSet)
             rSet.Put(aEditAttr.Get(nEEWhich), nWhich);
         if(nEEWhich == EE_CHAR_KERNING)
         {
-            SfxItemState eState = aEditAttr.GetItemState( EE_CHAR_KERNING, true );
+            SfxItemState eState = aEditAttr.GetItemState( EE_CHAR_KERNING );
             if ( eState == SfxItemState::DONTCARE )
             {
                 rSet.InvalidateItem(EE_CHAR_KERNING);
@@ -1113,7 +1113,7 @@ void SwAnnotationShell::NoteExec(SfxRequest &rReq)
             break;
         case FN_DELETE_NOTE_AUTHOR:
         {
-            SFX_REQUEST_ARG( rReq, pItem, SfxStringItem, nSlot, false);
+            const SfxStringItem* pItem = rReq.GetArg<SfxStringItem>(nSlot);
             if ( pItem )
                 pPostItMgr->Delete( pItem->GetValue() );
             break;
@@ -1125,7 +1125,7 @@ void SwAnnotationShell::NoteExec(SfxRequest &rReq)
             break;
         case FN_HIDE_NOTE_AUTHOR:
         {
-            SFX_REQUEST_ARG( rReq, pItem, SfxStringItem, nSlot, false);
+            const SfxStringItem* pItem = rReq.GetArg<SfxStringItem>(nSlot);
             if ( pItem )
                 pPostItMgr->Hide( pItem->GetValue() );
         }
@@ -1222,7 +1222,7 @@ void SwAnnotationShell::ExecLingu(SfxRequest &rReq)
         case SID_THES:
         {
             OUString aReplaceText;
-            SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_THES, false );
+            const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_THES);
             if (pItem2)
                 aReplaceText = pItem2->GetValue();
             if (!aReplaceText.isEmpty())
@@ -1709,8 +1709,8 @@ void SwAnnotationShell::InsertSymbol(SfxRequest& rReq)
         sal_uInt16 nResult = pDlg->Execute();
         if( nResult == RET_OK )
         {
-            SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pCItem, SfxStringItem, SID_CHARMAP, false );
-            SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pFontItem, SvxFontItem, SID_ATTR_CHAR_FONT, false );
+            const SfxStringItem* pCItem = SfxItemSet::GetItem<SfxStringItem>(pDlg->GetOutputItemSet(), SID_CHARMAP, false);
+            const SvxFontItem* pFontItem = SfxItemSet::GetItem<SvxFontItem>(pDlg->GetOutputItemSet(), SID_ATTR_CHAR_FONT, false);
             if ( pFontItem )
             {
                 aFont.SetName( pFontItem->GetFamilyName() );

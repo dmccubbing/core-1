@@ -567,7 +567,7 @@ namespace pcr
             else
             {
                 INetURLObject aDocURL( impl_getDocumentURL_nothrow() );
-                aPropertyValue <<= URIHelper::SmartRel2Abs( aDocURL, sControlValue, Link<OUString *, bool>(), false, true, INetURLObject::WAS_ENCODED, INetURLObject::DECODE_TO_IURI );
+                aPropertyValue <<= URIHelper::SmartRel2Abs( aDocURL, sControlValue, Link<OUString *, bool>(), false, true );
             }
         }
         break;
@@ -2995,7 +2995,7 @@ namespace pcr
         class SQLCommandPropertyUI : public ISQLCommandPropertyUI
         {
         protected:
-            SQLCommandPropertyUI( const Reference< XPropertySet >& _rxObject )
+            explicit SQLCommandPropertyUI( const Reference< XPropertySet >& _rxObject )
                 : m_xObject(_rxObject)
             {
                 if ( !m_xObject.is() )
@@ -3012,16 +3012,16 @@ namespace pcr
         class FormSQLCommandUI : public SQLCommandPropertyUI
         {
         public:
-            FormSQLCommandUI( const Reference< XPropertySet >& _rxForm );
+            explicit FormSQLCommandUI( const Reference< XPropertySet >& _rxForm );
 
             // ISQLCommandAdapter
-            virtual OUString        getSQLCommand() const SAL_OVERRIDE;
-            virtual bool            getEscapeProcessing() const SAL_OVERRIDE;
-            virtual void            setSQLCommand( const OUString& _rCommand ) const SAL_OVERRIDE;
-            virtual void            setEscapeProcessing( const bool _bEscapeProcessing ) const SAL_OVERRIDE;
+            virtual OUString        getSQLCommand() const override;
+            virtual bool            getEscapeProcessing() const override;
+            virtual void            setSQLCommand( const OUString& _rCommand ) const override;
+            virtual void            setEscapeProcessing( const bool _bEscapeProcessing ) const override;
 
             // ISQLCommandPropertyUI
-            virtual OUString*    getPropertiesToDisable() SAL_OVERRIDE;
+            virtual OUString*    getPropertiesToDisable() override;
         };
 
 
@@ -3079,16 +3079,16 @@ namespace pcr
         class ValueListCommandUI : public SQLCommandPropertyUI
         {
         public:
-            ValueListCommandUI( const Reference< XPropertySet >& _rxListOrCombo );
+            explicit ValueListCommandUI( const Reference< XPropertySet >& _rxListOrCombo );
 
             // ISQLCommandAdapter
-            virtual OUString        getSQLCommand() const SAL_OVERRIDE;
-            virtual bool            getEscapeProcessing() const SAL_OVERRIDE;
-            virtual void            setSQLCommand( const OUString& _rCommand ) const SAL_OVERRIDE;
-            virtual void            setEscapeProcessing( const bool _bEscapeProcessing ) const SAL_OVERRIDE;
+            virtual OUString        getSQLCommand() const override;
+            virtual bool            getEscapeProcessing() const override;
+            virtual void            setSQLCommand( const OUString& _rCommand ) const override;
+            virtual void            setEscapeProcessing( const bool _bEscapeProcessing ) const override;
 
             // ISQLCommandPropertyUI
-            virtual OUString*    getPropertiesToDisable() SAL_OVERRIDE;
+            virtual OUString*    getPropertiesToDisable() override;
         private:
             mutable bool    m_bPropertyValueIsList;
         };

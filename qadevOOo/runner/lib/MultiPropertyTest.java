@@ -28,7 +28,10 @@ import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
 import com.sun.star.uno.UnoRuntime;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 import util.ValueChanger;
 import util.ValueComparer;
@@ -355,21 +358,7 @@ public class MultiPropertyTest extends MultiMethodTest
                     if (!compare(resValue, oldValue))
                     {
                         log.println("Read only property '" + propName + "' has changed");
-                        try
-                        {
-                            if (!util.utils.isVoid(oldValue) && oldValue instanceof Any)
-                            {
-                                oldValue = AnyConverter.toObject(new Type(((Any) oldValue).getClass()), oldValue);
-                            }
-                            log.println("result = " + toString(resValue));
-                        }
-                        catch (com.sun.star.lang.IllegalArgumentException iae)
-                        {
-                            log.println("NOTIFY: this property needs further investigations.");
-                            log.println("\t The type seems to be an Any with value of NULL.");
-                            log.println("\t Maybe the property should get its own test method.");
-                        }
-
+                        log.println("result = " + toString(resValue));
                         tRes.tested(propName, false);
                     }
                     else
@@ -386,34 +375,14 @@ public class MultiPropertyTest extends MultiMethodTest
                 {
                     // if no exception thrown
                     // check that the new value is set
-                    if ((!compare(resValue, newValue)) || (compare(resValue, oldValue)))
+                    if (!compare(resValue, newValue))
                     {
                         log.println("Value for '" + propName + "' hasn't changed as expected");
-                        try
+                        log.println("result = " + toString(resValue));
+                        if (!compare(resValue, oldValue))
                         {
-                            if (!util.utils.isVoid(oldValue) && oldValue instanceof Any)
-                            {
-                                oldValue = AnyConverter.toObject(new Type(((Any) oldValue).getClass()), oldValue);
-                            }
-                            log.println("result = " + toString(resValue));
-                        }
-                        catch (com.sun.star.lang.IllegalArgumentException iae)
-                        {
-                            log.println("NOTIFY: this property needs further investigations.");
-                            log.println("\t The type seems to be an Any with value of NULL.");
-                            log.println("\t Maybe the property should get its own test method.");
-                        }
-                        if (resValue != null)
-                        {
-                            if ((!compare(resValue, oldValue)) || (!resValue.equals(oldValue)))
-                            {
-                                log.println("But it has changed.");
-                                tRes.tested(propName, true);
-                            }
-                            else
-                            {
-                                tRes.tested(propName, false);
-                            }
+                            log.println("But it has changed.");
+                            tRes.tested(propName, true);
                         }
                         else
                         {
@@ -423,17 +392,7 @@ public class MultiPropertyTest extends MultiMethodTest
                     else
                     {
                         log.println("Property '" + propName + "' OK");
-                        try
-                        {
-                            if (!util.utils.isVoid(oldValue) && oldValue instanceof Any)
-                            {
-                                oldValue = AnyConverter.toObject(new Type(((Any) oldValue).getClass()), oldValue);
-                            }
-                            log.println("result = " + toString(resValue));
-                        }
-                        catch (com.sun.star.lang.IllegalArgumentException iae)
-                        {
-                        }
+                        log.println("result = " + toString(resValue));
                         tRes.tested(propName, true);
                     }
                 }
@@ -466,7 +425,7 @@ public class MultiPropertyTest extends MultiMethodTest
          */
         protected boolean compare(Object obj1, Object obj2)
         {
-            return callCompare(obj1, obj2);
+            return MultiPropertyTest.this.compare(obj1, obj2);
         }
 
         /**
@@ -476,7 +435,7 @@ public class MultiPropertyTest extends MultiMethodTest
          */
         protected String toString(Object obj)
         {
-            return callToString(obj);
+            return MultiPropertyTest.this.toString(obj);
         }
     }
 
@@ -557,15 +516,6 @@ public class MultiPropertyTest extends MultiMethodTest
     }
 
     /**
-     * The method just calls compare. This is a workaround to CodeWarrior's
-     * compiler bug.
-     */
-    private boolean callCompare(Object obj1, Object obj2)
-    {
-        return compare(obj1, obj2);
-    }
-
-    /**
      * Compares two object. In the implementation calls obj1.equals(obj2).
      */
     protected boolean compare(Object obj1, Object obj2)
@@ -574,20 +524,44 @@ public class MultiPropertyTest extends MultiMethodTest
     }
 
     /**
-     * The method just calls toString. This is a workaround to
-     * CodeWarrior's compiler bug.
-     */
-    private String callToString(Object obj)
-    {
-        return toString(obj);
-    }
-
-    /**
      * Gets string representation of the obj. In the implementation
      * returns obj.toString().
      */
     protected String toString(Object obj)
     {
-        return obj == null ? "null" : obj.toString();
+        if (obj == null) {
+            return "null";
+        }
+        StringBuilder s = new StringBuilder(obj.toString());
+        if (obj.getClass().isArray()) {
+            int n = Array.getLength(obj);
+            s.append('[').append(n).append("]{");
+            for (int i = 0; i != n; ++i) {
+                if (i != 0) {
+                    s.append(", ");
+                }
+                s.append(toString(Array.get(obj, i)));
+            }
+            s.append('}');
+        } else if (ValueChanger.isStructure(obj)) {
+            s.append('{');
+            Field[] fields = obj.getClass().getFields();
+            boolean first = true;
+            for (int i = 0; i != fields.length; ++i) {
+                if ((fields[i].getModifiers() & Modifier.STATIC) == 0) {
+                    if (!first) {
+                        s.append(", ");
+                    }
+                    first = false;
+                    try {
+                        s.append(toString(fields[i].get(obj)));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException("unexpected " + e, e);
+                    }
+                }
+            }
+            s.append('}');
+        }
+        return s.toString();
     }
 }

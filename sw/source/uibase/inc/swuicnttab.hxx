@@ -90,7 +90,7 @@ class SwMultiTOXTabDialog : public SfxTabDialog
     bool                bExampleCreated;
     bool                bGlobalFlag;
 
-    virtual short       Ok() SAL_OVERRIDE;
+    virtual short       Ok() override;
     SwTOXDescription*   CreateTOXDescFromTOXBase(const SwTOXBase*pCurTOX);
 
     DECL_LINK_TYPED(CreateExample_Hdl, SwOneExampleFrame&, void);
@@ -102,9 +102,9 @@ public:
                         SwTOXBase* pCurTOX, sal_uInt16 nToxType = USHRT_MAX,
                         bool bGlobal = false);
     virtual ~SwMultiTOXTabDialog();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
-    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 
     SwForm*             GetForm(CurTOXType eType);
 
@@ -202,17 +202,18 @@ class SwTOXSelectTabPage : public SfxTabPage
 
     bool            m_bWaitingInitialSettings;
 
-    DECL_LINK(TOXTypeHdl,   ListBox* );
+    DECL_LINK_TYPED(TOXTypeHdl,   ListBox&, void );
     DECL_LINK_TYPED(AddStylesHdl, Button*, void );
     DECL_LINK_TYPED(MenuEnableHdl, Menu*, bool);
     DECL_LINK_TYPED(MenuExecuteHdl, Menu*, bool);
-    DECL_LINK(LanguageHdl, ListBox*);
-
+    DECL_LINK_TYPED(LanguageListBoxHdl, ListBox&, void);
+    void LanguageHdl(ListBox*);
     DECL_LINK_TYPED(CheckBoxHdl, Button*, void );
     DECL_LINK_TYPED(RadioButtonHdl, Button*, void);
-    DECL_LINK(ModifyHdl, void*);
+    DECL_LINK_TYPED(ModifyHdl, Edit&, void);
+    DECL_LINK_TYPED(ModifyListBoxHdl, ListBox&, void);
 
-      void  ApplyTOXDescription();
+    void  ApplyTOXDescription();
     void    FillTOXDescription();
 
     using SfxTabPage::ActivatePage;
@@ -221,13 +222,13 @@ class SwTOXSelectTabPage : public SfxTabPage
 public:
     SwTOXSelectTabPage(vcl::Window* pParent, const SfxItemSet& rAttrSet);
     virtual ~SwTOXSelectTabPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
 
-    virtual void        ActivatePage( const SfxItemSet& ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual void        ActivatePage( const SfxItemSet& ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
@@ -257,9 +258,9 @@ class SwTokenWindow : public VclHBox, public VclBuilderContainer
     OUString        aButtonTexts[TOKEN_END]; // Text of the buttons
     OUString        aButtonHelpTexts[TOKEN_END]; // QuickHelpText of the buttons
     OUString        sCharStyle;
-    Link<SwFormToken&,void> aButtonSelectedHdl;
-    VclPtr<Control>         pActiveCtrl;
-    Link<>          aModifyHdl;
+    Link<SwFormToken&,void>   aButtonSelectedHdl;
+    VclPtr<Control>           pActiveCtrl;
+    Link<LinkParamNone*,void> aModifyHdl;
     OUString        accessibleName;
     OUString        sAdditionalAccnameString1;
     OUString        sAdditionalAccnameString2;
@@ -267,7 +268,7 @@ class SwTokenWindow : public VclHBox, public VclBuilderContainer
 
     VclPtr<SwTOXEntryTabPage>  m_pParent;
 
-    DECL_LINK(EditResize, Edit*);
+    DECL_LINK_TYPED( EditResize, Edit&, void );
     DECL_LINK_TYPED( NextItemHdl, SwTOXEdit&, void );
     DECL_LINK_TYPED( TbxFocusHdl, Control&, void );
     DECL_LINK_TYPED( NextItemBtnHdl, SwTOXButton&, void );
@@ -284,7 +285,7 @@ class SwTokenWindow : public VclHBox, public VclBuilderContainer
 public:
     SwTokenWindow(vcl::Window* pParent);
     virtual ~SwTokenWindow();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void SetTabPage(SwTOXEntryTabPage *pParent) { m_pParent = pParent; }
 
@@ -300,10 +301,9 @@ public:
     void        SetButtonSelectedHdl(const Link<SwFormToken&,void>& rLink)
                 { aButtonSelectedHdl = rLink;}
 
-    void        SetModifyHdl(const Link<>& rLink){aModifyHdl = rLink;}
+    void        SetModifyHdl(const Link<LinkParamNone*,void>& rLink){aModifyHdl = rLink;}
 
-    Control*    GetActiveControl()
-                    { return pActiveCtrl;}
+    Control*    GetActiveControl() { return pActiveCtrl; }
 
     void        InsertAtSelection(const OUString& rText, const SwFormToken& aToken);
     void        RemoveControl(SwTOXButton* pDel, bool bInternalCall = false);
@@ -314,8 +314,8 @@ public:
     bool        CreateQuickHelp(Control* pCtrl,
                     const SwFormToken& rToken, const HelpEvent& );
 
-    virtual void    GetFocus() SAL_OVERRIDE;
-    virtual void    setAllocation(const Size &rAllocation) SAL_OVERRIDE;
+    virtual void    GetFocus() override;
+    virtual void    setAllocation(const Size &rAllocation) override;
     void SetFocus2theAllBtn();
 private:
     sal_uInt32 GetControlIndex(FormTokenType eType) const;
@@ -327,11 +327,11 @@ class SwIdxTreeListBox : public SvTreeListBox
 {
     VclPtr<SwTOXEntryTabPage> pParent;
 
-    virtual void    RequestHelp( const HelpEvent& rHEvt ) SAL_OVERRIDE;
+    virtual void    RequestHelp( const HelpEvent& rHEvt ) override;
 public:
     SwIdxTreeListBox(vcl::Window* pPar, WinBits nStyle);
     virtual ~SwIdxTreeListBox();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void SetTabPage(SwTOXEntryTabPage* pPar) { pParent = pPar; }
 };
@@ -410,25 +410,26 @@ class SwTOXEntryTabPage : public SfxTabPage
     CurTOXType      aLastTOXType;
     bool            bInLevelHdl;
 
-    DECL_LINK(StyleSelectHdl, ListBox*);
+    DECL_LINK_TYPED(StyleSelectHdl, ListBox&, void);
     DECL_LINK_TYPED(EditStyleHdl, Button*, void);
     DECL_LINK_TYPED(InsertTokenHdl, Button*, void);
     DECL_LINK_TYPED(LevelHdl, SvTreeListBox*, void);
     DECL_LINK_TYPED(AutoRightHdl, Button*, void);
     DECL_LINK_TYPED(TokenSelectedHdl, SwFormToken&, void);
-    DECL_LINK(TabPosHdl, MetricField*);
-    DECL_LINK(FillCharHdl, ComboBox*);
+    DECL_LINK_TYPED(TabPosHdl, Edit&, void);
+    DECL_LINK_TYPED(FillCharHdl, Edit&, void);
     DECL_LINK_TYPED(RemoveInsertAuthHdl, Button*, void);
     DECL_LINK_TYPED(SortKeyHdl, Button*, void);
-    DECL_LINK(ChapterInfoHdl, ListBox*);
-    DECL_LINK(ChapterInfoOutlineHdl, NumericField*);
-    DECL_LINK(NumberFormatHdl, ListBox*);
+    DECL_LINK_TYPED(ChapterInfoHdl, ListBox&, void);
+    DECL_LINK_TYPED(ChapterInfoOutlineHdl, Edit&, void);
+    DECL_LINK_TYPED(NumberFormatHdl, ListBox&, void);
 
     DECL_LINK_TYPED(AllLevelsHdl, Button*, void);
 
     void            WriteBackLevel();
     void            UpdateDescriptor();
-    DECL_LINK(ModifyHdl, void*);
+    DECL_LINK_TYPED(ModifyHdl, LinkParamNone*, void);
+    void OnModify(void*);
     DECL_LINK_TYPED(ModifyClickHdl, Button*, void);
 
     using SfxTabPage::ActivatePage;
@@ -437,12 +438,12 @@ class SwTOXEntryTabPage : public SfxTabPage
 public:
     SwTOXEntryTabPage(vcl::Window* pParent, const SfxItemSet& rAttrSet);
     virtual ~SwTOXEntryTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        ActivatePage( const SfxItemSet& ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
+    virtual void        ActivatePage( const SfxItemSet& ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                        const SfxItemSet* rAttrSet);
@@ -452,7 +453,7 @@ public:
 
     void                PreTokenButtonRemoved(const SwFormToken& rToken);
     void SetFocus2theAllBtn();
-    virtual bool Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual bool Notify( NotifyEvent& rNEvt ) override;
 };
 
 class SwTOXStylesTabPage : public SfxTabPage
@@ -467,7 +468,7 @@ class SwTOXStylesTabPage : public SfxTabPage
 
     DECL_LINK_TYPED( EditStyleHdl, Button *, void );
     DECL_LINK_TYPED( StdHdl, Button*, void );
-    DECL_LINK(EnableSelectHdl, void *);
+    DECL_LINK_TYPED(EnableSelectHdl, ListBox&, void);
     DECL_LINK_TYPED( DoubleClickHdl, ListBox&, void );
     DECL_LINK_TYPED( AssignHdl, Button*, void );
     void Modify();
@@ -484,13 +485,13 @@ class SwTOXStylesTabPage : public SfxTabPage
 public:
     SwTOXStylesTabPage(vcl::Window* pParent, const SfxItemSet& rAttrSet);
     virtual ~SwTOXStylesTabPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
 
-    virtual void        ActivatePage( const SfxItemSet& ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual void        ActivatePage( const SfxItemSet& ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                        const SfxItemSet* rAttrSet);

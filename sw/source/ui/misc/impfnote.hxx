@@ -64,17 +64,17 @@ class SwEndNoteOptionPage : public SfxTabPage
 
     DECL_LINK_TYPED(PosPageHdl, Button*, void);
     DECL_LINK_TYPED(PosChapterHdl, Button*, void);
-    DECL_LINK(NumCountHdl, void *);
+    DECL_LINK_TYPED(NumCountHdl, ListBox&, void);
 
 public:
     SwEndNoteOptionPage( vcl::Window *pParent, bool bEndNote,
                          const SfxItemSet &rSet );
     virtual ~SwEndNoteOptionPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create(vcl::Window *pParent, const SfxItemSet *rSet);
-    virtual bool FillItemSet(SfxItemSet *rSet) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool FillItemSet(SfxItemSet *rSet) override;
+    virtual void Reset( const SfxItemSet* ) override;
 
     void SetShell( SwWrtShell &rShell );
 };

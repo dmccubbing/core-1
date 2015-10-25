@@ -201,43 +201,62 @@ bool ImplReadDIBInfoHeader(SvStream& rIStm, DIBV5Header& rHeader, bool& bTopDown
         // BITMAPCOREHEADER, BITMAPV5HEADER or unknown. Read as far as possible
         sal_Size nUsed(sizeof(rHeader.nSize));
 
+        auto readUInt16 = [&nUsed, &rHeader, &rIStm](sal_uInt16 & v) {
+            if (nUsed < rHeader.nSize) {
+                rIStm.ReadUInt16(v);
+                nUsed += sizeof(v);
+            }
+        };
+        auto readInt32 = [&nUsed, &rHeader, &rIStm](sal_Int32 & v) {
+            if (nUsed < rHeader.nSize) {
+                rIStm.ReadInt32(v);
+                nUsed += sizeof(v);
+            }
+        };
+        auto readUInt32 = [&nUsed, &rHeader, &rIStm](sal_uInt32 & v) {
+            if (nUsed < rHeader.nSize) {
+                rIStm.ReadUInt32(v);
+                nUsed += sizeof(v);
+            }
+        };
+
         // read DIBInfoHeader entries
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.nWidth ); nUsed += sizeof(rHeader.nWidth); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.nHeight ); nUsed += sizeof(rHeader.nHeight); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt16( rHeader.nPlanes ); nUsed += sizeof(rHeader.nPlanes); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt16( rHeader.nBitCount );  nUsed += sizeof(rHeader.nBitCount); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nCompression );  nUsed += sizeof(rHeader.nCompression); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nSizeImage );  nUsed += sizeof(rHeader.nSizeImage); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.nXPelsPerMeter );  nUsed += sizeof(rHeader.nXPelsPerMeter); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.nYPelsPerMeter );  nUsed += sizeof(rHeader.nYPelsPerMeter); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nColsUsed );  nUsed += sizeof(rHeader.nColsUsed); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nColsImportant );  nUsed += sizeof(rHeader.nColsImportant); }
+        readInt32( rHeader.nWidth );
+        readInt32( rHeader.nHeight );
+        readUInt16( rHeader.nPlanes );
+        readUInt16( rHeader.nBitCount );
+        readUInt32( rHeader.nCompression );
+        readUInt32( rHeader.nSizeImage );
+        readInt32( rHeader.nXPelsPerMeter );
+        readInt32( rHeader.nYPelsPerMeter );
+        readUInt32( rHeader.nColsUsed );
+        readUInt32( rHeader.nColsImportant );
 
         // read DIBV5HEADER members
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5RedMask ); nUsed += sizeof(rHeader.nV5RedMask); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5GreenMask ); nUsed += sizeof(rHeader.nV5GreenMask);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5BlueMask ); nUsed += sizeof(rHeader.nV5BlueMask);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5AlphaMask ); nUsed += sizeof(rHeader.nV5AlphaMask);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5CSType ); nUsed += sizeof(rHeader.nV5CSType);  }
+        readUInt32( rHeader.nV5RedMask );
+        readUInt32( rHeader.nV5GreenMask );
+        readUInt32( rHeader.nV5BlueMask );
+        readUInt32( rHeader.nV5AlphaMask );
+        readUInt32( rHeader.nV5CSType );
 
         // read contained CIEXYZTriple's
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzRed.aXyzX ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzRed.aXyzX); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzRed.aXyzY ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzRed.aXyzY); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzRed.aXyzZ ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzRed.aXyzZ); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzX ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzGreen.aXyzX); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzY ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzGreen.aXyzY); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzZ ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzGreen.aXyzZ); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzX ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzBlue.aXyzX); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzY ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzBlue.aXyzY); }
-        if(nUsed < rHeader.nSize) { rIStm.ReadInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzZ ); nUsed += sizeof(rHeader.aV5Endpoints.aXyzBlue.aXyzZ); }
+        readInt32( rHeader.aV5Endpoints.aXyzRed.aXyzX );
+        readInt32( rHeader.aV5Endpoints.aXyzRed.aXyzY );
+        readInt32( rHeader.aV5Endpoints.aXyzRed.aXyzZ );
+        readInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzX );
+        readInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzY );
+        readInt32( rHeader.aV5Endpoints.aXyzGreen.aXyzZ );
+        readInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzX );
+        readInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzY );
+        readInt32( rHeader.aV5Endpoints.aXyzBlue.aXyzZ );
 
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5GammaRed ); nUsed += sizeof(rHeader.nV5GammaRed);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5GammaGreen ); nUsed += sizeof(rHeader.nV5GammaGreen);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5GammaBlue ); nUsed += sizeof(rHeader.nV5GammaBlue);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5Intent ); nUsed += sizeof(rHeader.nV5Intent);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5ProfileData ); nUsed += sizeof(rHeader.nV5ProfileData);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5ProfileSize ); nUsed += sizeof(rHeader.nV5ProfileSize);  }
-        if(nUsed < rHeader.nSize) { rIStm.ReadUInt32( rHeader.nV5Reserved ); nUsed += sizeof(rHeader.nV5Reserved);  }
+        readUInt32( rHeader.nV5GammaRed );
+        readUInt32( rHeader.nV5GammaGreen );
+        readUInt32( rHeader.nV5GammaBlue );
+        readUInt32( rHeader.nV5Intent );
+        readUInt32( rHeader.nV5ProfileData );
+        readUInt32( rHeader.nV5ProfileSize );
+        readUInt32( rHeader.nV5Reserved );
 
         // seek to EndPos
         rIStm.Seek(aStartPos + rHeader.nSize);
@@ -534,17 +553,15 @@ bool ImplReadDIBBits(SvStream& rIStm, DIBV5Header& rHeader, BitmapWriteAccess& r
             {
                 case( 1 ):
                 {
-                    sal_uInt8*  pTmp;
-                    sal_uInt8   cTmp;
-
                     for( ; nCount--; nY += nI )
                     {
+                        sal_uInt8*  pTmp;
                         if (rIStm.Read( pTmp = pBuf.get(), nAlignedWidth )
                             != nAlignedWidth)
                         {
                             return false;
                         }
-                        cTmp = *pTmp++;
+                        sal_uInt8   cTmp = *pTmp++;
 
                         for( long nX = 0L, nShift = 8L; nX < nWidth; nX++ )
                         {
@@ -562,17 +579,15 @@ bool ImplReadDIBBits(SvStream& rIStm, DIBV5Header& rHeader, BitmapWriteAccess& r
 
                 case( 4 ):
                 {
-                    sal_uInt8*  pTmp;
-                    sal_uInt8   cTmp;
-
                     for( ; nCount--; nY += nI )
                     {
+                        sal_uInt8*  pTmp;
                         if (rIStm.Read( pTmp = pBuf.get(), nAlignedWidth )
                             != nAlignedWidth)
                         {
                             return false;
                         }
-                        cTmp = *pTmp++;
+                        sal_uInt8   cTmp = *pTmp++;
 
                         for( long nX = 0L, nShift = 2L; nX < nWidth; nX++ )
                         {
@@ -590,10 +605,9 @@ bool ImplReadDIBBits(SvStream& rIStm, DIBV5Header& rHeader, BitmapWriteAccess& r
 
                 case( 8 ):
                 {
-                    sal_uInt8*  pTmp;
-
                     for( ; nCount--; nY += nI )
                     {
+                        sal_uInt8*  pTmp;
                         if (rIStm.Read( pTmp = pBuf.get(), nAlignedWidth )
                             != nAlignedWidth)
                         {
@@ -620,10 +634,10 @@ bool ImplReadDIBBits(SvStream& rIStm, DIBV5Header& rHeader, BitmapWriteAccess& r
 
                     ColorMask   aMask(aRedMask, aGreenMask, aBlueMask);
                     BitmapColor aColor;
-                    sal_uInt16*     pTmp16;
 
                     for( ; nCount--; nY += nI )
                     {
+                        sal_uInt16*     pTmp16;
                         if (rIStm.Read( ( pTmp16 = reinterpret_cast<sal_uInt16*>(pBuf.get()) ), nAlignedWidth )
                             != nAlignedWidth)
                         {
@@ -642,10 +656,10 @@ bool ImplReadDIBBits(SvStream& rIStm, DIBV5Header& rHeader, BitmapWriteAccess& r
                 case( 24 ):
                 {
                     BitmapColor aPixelColor;
-                    sal_uInt8*      pTmp;
 
                     for( ; nCount--; nY += nI )
                     {
+                        sal_uInt8* pTmp;
                         if (rIStm.Read( pTmp = pBuf.get(), nAlignedWidth )
                             != nAlignedWidth)
                         {
@@ -970,14 +984,13 @@ bool ImplWriteRLE( SvStream& rOStm, BitmapReadAccess& rAcc, bool bRLE4 )
     sal_uLong       nCount;
     sal_uLong       nBufCount;
     std::unique_ptr<sal_uInt8[]> pBuf(new sal_uInt8[ ( nWidth << 1 ) + 2 ]);
-    sal_uInt8*      pTmp;
     sal_uInt8       cPix;
     sal_uInt8       cLast;
     bool        bFound;
 
     for ( long nY = nHeight - 1L; nY >= 0L; nY-- )
     {
-        pTmp = pBuf.get();
+        sal_uInt8* pTmp = pBuf.get();
         nX = nBufCount = 0UL;
 
         while( nX < nWidth )

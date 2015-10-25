@@ -576,7 +576,7 @@ ShapeExport& ShapeExport::WriteEllipseShape( Reference< XShape > xShape )
 
     // visual shape properties
     pFS->startElementNS( mnXmlNamespace, XML_spPr, FSEND );
-    WriteShapeTransformation( xShape, XML_a, false, false);
+    WriteShapeTransformation( xShape, XML_a );
     WritePresetShape( "ellipse" );
     Reference< XPropertySet > xProps( xShape, UNO_QUERY );
     if( xProps.is() )
@@ -684,7 +684,7 @@ void ShapeExport::WriteGraphicObjectShapePart( Reference< XShape > xShape, const
 
     // visual shape properties
     pFS->startElementNS( mnXmlNamespace, XML_spPr, FSEND );
-    WriteShapeTransformation( xShape, XML_a, false, false);
+    WriteShapeTransformation( xShape, XML_a );
     WritePresetShape( "rect" );
     // graphic object can come with the frame (bnc#654525)
     WriteOutline( xShapeProps );
@@ -882,6 +882,8 @@ ShapeExport& ShapeExport::WriteRectangleShape( Reference< XShape > xShape )
     {
         nRadius = MapSize( awt::Size( nRadius, 0 ) ).Width;
     }
+    //TODO: use nRadius value more precisely than just deciding whether to use
+    // "rect" or "roundRect" preset shape below
 
     // non visual shape properties
     if (GetDocumentType() == DOCUMENT_DOCX)
@@ -897,8 +899,8 @@ ShapeExport& ShapeExport::WriteRectangleShape( Reference< XShape > xShape )
 
     // visual shape properties
     pFS->startElementNS( mnXmlNamespace, XML_spPr, FSEND );
-    WriteShapeTransformation( xShape, XML_a, false, false);
-    WritePresetShape( "rect" );
+    WriteShapeTransformation( xShape, XML_a );
+    WritePresetShape( nRadius == 0 ? "rect" : "roundRect" );
     Reference< XPropertySet > xProps( xShape, UNO_QUERY );
     if( xProps.is() )
     {
@@ -996,7 +998,7 @@ ShapeExport& ShapeExport::WriteTextBox( Reference< XInterface > xIface, sal_Int3
         FSHelperPtr pFS = GetFS();
 
         pFS->startElementNS( nXmlNamespace, (GetDocumentType() != DOCUMENT_DOCX ? XML_txBody : XML_txbx), FSEND );
-        WriteText( xIface, m_presetWarp, /*bBodyPr=*/(GetDocumentType() != DOCUMENT_DOCX), /*bText=*/true );
+        WriteText( xIface, m_presetWarp, /*bBodyPr=*/(GetDocumentType() != DOCUMENT_DOCX) );
         pFS->endElementNS( nXmlNamespace, (GetDocumentType() != DOCUMENT_DOCX ? XML_txBody : XML_txbx) );
         if (GetDocumentType() == DOCUMENT_DOCX)
             WriteText( xIface, m_presetWarp, /*bBodyPr=*/true, /*bText=*/false, /*nXmlNamespace=*/nXmlNamespace );
@@ -1309,7 +1311,7 @@ ShapeExport& ShapeExport::WriteTableShape( Reference< XShape > xShape )
                           FSEND );
     pFS->endElementNS( mnXmlNamespace, XML_nvGraphicFramePr );
 
-    WriteShapeTransformation( xShape, mnXmlNamespace, false);
+    WriteShapeTransformation( xShape, mnXmlNamespace );
     WriteTable( xShape );
 
     pFS->endElementNS( mnXmlNamespace, XML_graphicFrame );
@@ -1338,7 +1340,7 @@ ShapeExport& ShapeExport::WriteTextShape( Reference< XShape > xShape )
 
     // visual shape properties
     pFS->startElementNS( mnXmlNamespace, XML_spPr, FSEND );
-    WriteShapeTransformation( xShape, XML_a, false, false);
+    WriteShapeTransformation( xShape, XML_a );
     WritePresetShape( "rect" );
     uno::Reference<beans::XPropertySet> xPropertySet(xShape, UNO_QUERY);
     WriteBlipOrNormalFill(xPropertySet, "GraphicURL");

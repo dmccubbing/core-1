@@ -119,7 +119,7 @@ static OUString lcl_GetColumnValueOf(const OUString& rColumn, Reference < contai
 
 class SwSaveWarningBox_Impl : public SwMessageAndEditDialog
 {
-    DECL_LINK( ModifyHdl, Edit*);
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void);
 public:
     SwSaveWarningBox_Impl(vcl::Window* pParent, const OUString& rFileName);
 
@@ -132,7 +132,7 @@ public:
 class SwSendQueryBox_Impl : public SwMessageAndEditDialog
 {
     bool            bIsEmptyAllowed;
-    DECL_LINK( ModifyHdl, Edit*);
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void);
 public:
     SwSendQueryBox_Impl(vcl::Window* pParent, const OUString& rID,
         const OUString& rUIXMLDescription);
@@ -140,7 +140,7 @@ public:
     void SetValue(const OUString& rSet)
     {
         m_pEdit->SetText(rSet);
-        ModifyHdl(m_pEdit);
+        ModifyHdl(*m_pEdit);
     }
 
     OUString GetValue() const
@@ -151,7 +151,7 @@ public:
     void SetIsEmptyTextAllowed(bool bSet)
     {
         bIsEmptyAllowed = bSet;
-        ModifyHdl(m_pEdit);
+        ModifyHdl(*m_pEdit);
     }
 };
 
@@ -166,13 +166,12 @@ SwSaveWarningBox_Impl::SwSaveWarningBox_Impl(vcl::Window* pParent, const OUStrin
     m_pPrimaryMessage->SetText(m_pPrimaryMessage->GetText().replaceAll("%1", aTmp.getName(
             INetURLObject::LAST_SEGMENT, true, INetURLObject::DECODE_WITH_CHARSET)));
 
-    ModifyHdl(m_pEdit);
+    ModifyHdl(*m_pEdit);
 }
 
-IMPL_LINK( SwSaveWarningBox_Impl, ModifyHdl, Edit*, pEdit)
+IMPL_LINK_TYPED( SwSaveWarningBox_Impl, ModifyHdl, Edit&, rEdit, void)
 {
-    m_pOKPB->Enable(!pEdit->GetText().isEmpty());
-    return 0;
+    m_pOKPB->Enable(!rEdit.GetText().isEmpty());
 }
 
 SwSendQueryBox_Impl::SwSendQueryBox_Impl(vcl::Window* pParent, const OUString& rID,
@@ -182,13 +181,12 @@ SwSendQueryBox_Impl::SwSendQueryBox_Impl(vcl::Window* pParent, const OUString& r
 {
     m_pImageIM->SetImage(QueryBox::GetStandardImage());
     m_pEdit->SetModifyHdl(LINK(this, SwSendQueryBox_Impl, ModifyHdl));
-    ModifyHdl(m_pEdit);
+    ModifyHdl(*m_pEdit);
 }
 
-IMPL_LINK( SwSendQueryBox_Impl, ModifyHdl, Edit*, pEdit)
+IMPL_LINK_TYPED( SwSendQueryBox_Impl, ModifyHdl, Edit&, rEdit, void)
 {
-    m_pOKPB->Enable(bIsEmptyAllowed  || !pEdit->GetText().isEmpty());
-    return 0;
+    m_pOKPB->Enable(bIsEmptyAllowed  || !rEdit.GetText().isEmpty());
 }
 
 class SwCopyToDialog : public SfxModalDialog
@@ -205,7 +203,7 @@ public:
         get(m_pBCCED, "bcc");
     }
     virtual ~SwCopyToDialog() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         m_pCCED.clear();
         m_pBCCED.clear();
@@ -434,7 +432,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, OutputTypeHdl_Impl, Button*, pButton, voi
         Control** pSaveMergeControl = aSaveMergedControls;
         do
         {
-            (*pSaveMergeControl)->Show(true);
+            (*pSaveMergeControl)->Show();
 
         } while(*(++pSaveMergeControl));
         if(!m_pFromRB->IsChecked() && !m_pSaveAsOneRB->IsChecked())
@@ -455,7 +453,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, OutputTypeHdl_Impl, Button*, pButton, voi
         Control** pPrinterControl = aPrintControls;
         do
         {
-            (*pPrinterControl)->Show(true);
+            (*pPrinterControl)->Show();
 
         } while(*(++pPrinterControl));
         if(!m_pFromRB->IsChecked())
@@ -477,7 +475,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, OutputTypeHdl_Impl, Button*, pButton, voi
         vcl::Window** pMailControl = aMailControls;
         do
         {
-            (*pMailControl)->Show(true);
+            (*pMailControl)->Show();
 
         } while(*(++pMailControl));
 
@@ -519,7 +517,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, OutputTypeHdl_Impl, Button*, pButton, voi
             m_pMailToLB->SelectEntry(sEMailColumn);
             // HTML format pre-selected
             m_pSendAsLB->SelectEntryPos(3);
-            SendTypeHdl_Impl(m_pSendAsLB);
+            SendTypeHdl_Impl(*m_pSendAsLB);
         }
     }
     m_pFromRB->GetClickHdl().Call(m_pFromRB->IsChecked() ? m_pFromRB.get() : 0);
@@ -750,7 +748,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, SaveOutputHdl_Impl, Button*, pButton, voi
             //now extract a document from the target document
             // the shell will be closed at the end, but it is more safe to use SfxObjectShellLock here
             SfxObjectShellLock xTempDocShell( new SwDocShell( SfxObjectCreateMode::STANDARD ) );
-            xTempDocShell->DoInitNew( 0 );
+            xTempDocShell->DoInitNew();
             SfxViewFrame* pTempFrame = SfxViewFrame::LoadHiddenDocument( *xTempDocShell, 0 );
             SwView* pTempView = static_cast<SwView*>( pTempFrame->GetViewShell() );
             pTargetView->GetWrtShell().StartAction();
@@ -815,14 +813,14 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, SaveOutputHdl_Impl, Button*, pButton, voi
     m_pWizard->enableButtons(WizardButtonFlags::FINISH, true);
 }
 
-IMPL_LINK(SwMailMergeOutputPage, PrinterChangeHdl_Impl, ListBox*, pBox)
+IMPL_LINK_TYPED(SwMailMergeOutputPage, PrinterChangeHdl_Impl, ListBox&, rBox, void)
 {
     SwView *const pTargetView = m_pWizard->GetConfigItem().GetTargetView();
     SfxPrinter *const pDocumentPrinter = pTargetView->GetWrtShell()
         .getIDocumentDeviceAccess().getPrinter(true);
-    if (pDocumentPrinter && pBox->GetSelectEntryPos() != LISTBOX_ENTRY_NOTFOUND)
+    if (pDocumentPrinter && rBox.GetSelectEntryPos() != LISTBOX_ENTRY_NOTFOUND)
     {
-        const QueueInfo* pInfo = Printer::GetQueueInfo( pBox->GetSelectEntry(), false );
+        const QueueInfo* pInfo = Printer::GetQueueInfo( rBox.GetSelectEntry(), false );
 
         if( pInfo )
         {
@@ -853,9 +851,7 @@ IMPL_LINK(SwMailMergeOutputPage, PrinterChangeHdl_Impl, ListBox*, pBox)
     }
     else
         m_pPrinterSettingsPB->Disable();
-    m_pWizard->GetConfigItem().SetSelectedPrinter( pBox->GetSelectEntry() );
-
-    return 0;
+    m_pWizard->GetConfigItem().SetSelectedPrinter( rBox.GetSelectEntry() );
 }
 
 IMPL_LINK_NOARG_TYPED(SwMailMergeOutputPage, PrintHdl_Impl, Button*, void)
@@ -918,14 +914,14 @@ IMPL_LINK_NOARG_TYPED(SwMailMergeOutputPage, PrintHdl_Impl, Button*, void)
 IMPL_LINK_TYPED(SwMailMergeOutputPage, PrinterSetupHdl_Impl, Button*, pButton, void)
 {
     if( !m_pTempPrinter )
-        PrinterChangeHdl_Impl(m_pPrinterLB);
+        PrinterChangeHdl_Impl(*m_pPrinterLB);
     if(m_pTempPrinter)
         m_pTempPrinter->Setup(pButton);
 }
 
-IMPL_LINK(SwMailMergeOutputPage, SendTypeHdl_Impl, ListBox*, pBox)
+IMPL_LINK_TYPED(SwMailMergeOutputPage, SendTypeHdl_Impl, ListBox&, rBox, void)
 {
-    sal_uLong nDocType = reinterpret_cast<sal_uLong>(pBox->GetSelectEntryData());
+    sal_uLong nDocType = reinterpret_cast<sal_uLong>(rBox.GetSelectEntryData());
     bool bEnable = MM_DOCTYPE_HTML != nDocType && MM_DOCTYPE_TEXT != nDocType;
     m_pSendAsPB->Enable( bEnable );
     m_pAttachmentGroup->Enable( bEnable );
@@ -946,7 +942,6 @@ IMPL_LINK(SwMailMergeOutputPage, SendTypeHdl_Impl, ListBox*, pBox)
             m_pAttachmentED->SetText(sAttach);
         }
     }
-    return 0;
 }
 
 IMPL_LINK_TYPED(SwMailMergeOutputPage, SendAsHdl_Impl, Button*, pButton, void)
@@ -1151,7 +1146,7 @@ IMPL_LINK_TYPED(SwMailMergeOutputPage, SendDocumentsHdl_Impl, Button*, pButton, 
         //now extract a document from the target document
         // the shell will be closed at the end, but it is more safe to use SfxObjectShellLock here
         SfxObjectShellLock xTempDocShell( new SwDocShell( SfxObjectCreateMode::STANDARD ) );
-        xTempDocShell->DoInitNew( 0 );
+        xTempDocShell->DoInitNew();
         SfxViewFrame* pTempFrame = SfxViewFrame::LoadHiddenDocument( *xTempDocShell, 0 );
         SwView* pTempView = static_cast<SwView*>( pTempFrame->GetViewShell() );
         pTargetView->GetWrtShell().StartAction();

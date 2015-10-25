@@ -35,11 +35,11 @@ public:
     virtual ~CancellableJob() {}
 
     // ::com::sun::star::util::XCancellable:
-    virtual void SAL_CALL cancel() throw (com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL cancel() throw (com::sun::star::uno::RuntimeException, std::exception) override;
 
 private:
-    CancellableJob( CancellableJob& ) SAL_DELETED_FUNCTION;
-    void operator =( CancellableJob& ) SAL_DELETED_FUNCTION;
+    CancellableJob( CancellableJob& ) = delete;
+    void operator =( CancellableJob& ) = delete;
 
     ::rtl::Reference< ObservableThread > mrThread;
 };

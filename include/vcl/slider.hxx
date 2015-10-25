@@ -57,8 +57,9 @@ private:
     Link<Slider*,void>   maSlideHdl;
     Link<Slider*,void>   maEndSlideHdl;
 
-    DECL_LINK(LinkedFieldModifyHdl, NumericField*);
+    DECL_LINK_TYPED(LinkedFieldModifyHdl, Edit&, void);
     DECL_LINK_TYPED(LinkedFieldLoseFocusHdl, Control&, void);
+    DECL_LINK_TYPED(LinkedFieldSpinnerHdl, SpinField&, void);
 
     using Control::ImplInitSettings;
     using Window::ImplInit;
@@ -76,22 +77,21 @@ private:
     SAL_DLLPRIVATE void ImplDoMouseAction( const Point& rPos, bool bCallAction = true );
     SAL_DLLPRIVATE long ImplDoSlide( long nNewPos );
     SAL_DLLPRIVATE long ImplDoSlideAction( ScrollType eScrollType );
-    SAL_DLLPRIVATE void ImplSetFieldLink(const Link<>& rLink);
     SAL_DLLPRIVATE void ImplUpdateLinkedField();
 
 public:
                     Slider( vcl::Window* pParent, WinBits nStyle = WB_HORZ );
     virtual         ~Slider();
-    virtual void    dispose() SAL_OVERRIDE;
-    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    MouseButtonUp( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    Tracking( const TrackingEvent& rTEvt ) SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    RequestHelp( const HelpEvent& rHEvt ) SAL_OVERRIDE;
-    virtual void    StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void    dispose() override;
+    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void    MouseButtonUp( const MouseEvent& rMEvt ) override;
+    virtual void    Tracking( const TrackingEvent& rTEvt ) override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void    Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
+    virtual void    Resize() override;
+    virtual void    RequestHelp( const HelpEvent& rHEvt ) override;
+    virtual void    StateChanged( StateChangedType nType ) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 
     void            Slide();
     void            EndSlide();

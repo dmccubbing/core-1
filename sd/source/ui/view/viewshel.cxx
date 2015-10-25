@@ -98,8 +98,8 @@ public:
     virtual SfxShell* CreateShell (
         ::sd::ShellId nId,
         vcl::Window* pParentWindow,
-        ::sd::FrameView* pFrameView) SAL_OVERRIDE;
-    virtual void ReleaseShell (SfxShell* pShell) SAL_OVERRIDE;
+        ::sd::FrameView* pFrameView) override;
+    virtual void ReleaseShell (SfxShell* pShell) override;
 private:
     ::sd::ViewShell& mrViewShell;
     /** This cache holds the already created object bars.
@@ -917,9 +917,9 @@ const SfxPoolItem* ViewShell::GetNumBulletItem(SfxItemSet& aNewAttr, sal_uInt16&
 
             aNewAttr.Put(*pItem, EE_PARA_NUMBULLET);
 
-            if(bTitle && aNewAttr.GetItemState(EE_PARA_NUMBULLET,true) == SfxItemState::SET )
+            if(bTitle && aNewAttr.GetItemState(EE_PARA_NUMBULLET) == SfxItemState::SET )
             {
-                const SvxNumBulletItem* pBulletItem = static_cast<const SvxNumBulletItem*>(aNewAttr.GetItem(EE_PARA_NUMBULLET,true));
+                const SvxNumBulletItem* pBulletItem = static_cast<const SvxNumBulletItem*>(aNewAttr.GetItem(EE_PARA_NUMBULLET));
                 SvxNumRule* pRule = pBulletItem->GetNumRule();
                 if(pRule)
                 {

@@ -39,7 +39,7 @@ public:
                       long           nFirst    = 1,
                       long           nLast     = 100 );
     virtual ~ScMetricInputDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     long GetInputValue( FieldUnit eUnit = FUNIT_TWIP ) const;
 
@@ -50,7 +50,7 @@ private:
     long            nCurrentValue;
 
     DECL_LINK_TYPED(SetDefValHdl, Button*, void);
-    DECL_LINK(ModifyHdl, void *);
+    DECL_LINK_TYPED(ModifyHdl, Edit&, void);
 };
 
 #endif // INCLUDED_SC_SOURCE_UI_INC_MTRINDLG_HXX

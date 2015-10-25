@@ -353,7 +353,7 @@ bool SvxFontItem::operator==( const SfxPoolItem& rAttr ) const
         if ( ePitch != rItem.ePitch || eTextEncoding != rItem.eTextEncoding )
         {
             bRet = false;
-            DBG_WARNING( "FontItem::operator==(): only pitch or rtl_TextEncoding different ");
+            SAL_INFO( "editeng", "FontItem::operator==(): only pitch or rtl_TextEncoding different ");
         }
     }
     return bRet;
@@ -3549,7 +3549,7 @@ void GetDefaultFonts( SvxFontItem& rLatin, SvxFontItem& rAsian, SvxFontItem& rCo
     {
         vcl::Font aFont( OutputDevice::GetDefaultFont( aOutTypeArr[ n ].nFontType,
                                                   aOutTypeArr[ n ].nLanguage,
-                                                  GetDefaultFontFlags::OnlyOne, 0 ) );
+                                                  GetDefaultFontFlags::OnlyOne ) );
         SvxFontItem* pItem = aItemArr[ n ];
         pItem->SetFamily( aFont.GetFamily() );
         pItem->SetFamilyName( aFont.GetName() );

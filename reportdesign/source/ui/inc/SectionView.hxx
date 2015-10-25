@@ -38,17 +38,17 @@ private:
     VclPtr<OReportSection>     m_pSectionWindow;
 
     void ObjectRemovedInAliveMode( const SdrObject* pObject );
-    OSectionView(const OSectionView&) SAL_DELETED_FUNCTION;
-    void operator =(const OSectionView&) SAL_DELETED_FUNCTION;
+    OSectionView(const OSectionView&) = delete;
+    void operator =(const OSectionView&) = delete;
 public:
     TYPEINFO_OVERRIDE();
 
     OSectionView( SdrModel* pModel, OReportSection* _pSectionWindow, OReportWindow* pEditor );
     virtual ~OSectionView();
 
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
-    virtual void MarkListHasChanged() SAL_OVERRIDE;
-    virtual void MakeVisible( const Rectangle& rRect, vcl::Window& rWin ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
+    virtual void MarkListHasChanged() override;
+    virtual void MakeVisible( const Rectangle& rRect, vcl::Window& rWin ) override;
 
     inline OReportSection*  getReportSection() const { return m_pSectionWindow; }
 

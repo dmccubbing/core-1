@@ -47,7 +47,7 @@ enum SfxItemKind {
 #define CONVERT_TWIPS                       0x80    // Uno conversion for measurement (for MemberId)
 
 // warning, if there is no boolean inside the any this will always return the value false
-inline bool Any2Bool( const ::com::sun::star::uno::Any&rValue )
+inline bool Any2Bool( const css::uno::Any&rValue )
 {
     bool bValue = false;
     if( rValue.hasValue() )
@@ -99,7 +99,7 @@ enum SfxItemPresentation
 
 /**
  * These values have to match the values in the
- * com::sun::star::frame::status::ItemState IDL
+ * css::frame::status::ItemState IDL
  * to be found at offapi/com/sun/star/frame/status/ItemState.idl
 */
 enum class SfxItemState {
@@ -181,8 +181,8 @@ public:
     virtual bool             ScaleMetrics( long lMult, long lDiv );
     virtual bool             HasMetrics() const;
 
-    virtual bool             QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const;
-    virtual bool             PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId );
+    virtual bool             QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const;
+    virtual bool             PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId );
 
     virtual SfxPoolItem*     Create( SvStream &, sal_uInt16 nItemVersion ) const;
     virtual SvStream&        Store( SvStream &, sal_uInt16 nItemVersion ) const;
@@ -193,7 +193,7 @@ public:
     virtual void dumpAsXml(struct _xmlTextWriter* pWriter) const;
 
 private:
-    SfxPoolItem&             operator=( const SfxPoolItem& ) SAL_DELETED_FUNCTION;
+    SfxPoolItem&             operator=( const SfxPoolItem& ) = delete;
 };
 
 inline void SfxPoolItem::SetRefCount( sal_uLong n )
@@ -250,7 +250,7 @@ inline bool IsInvalidItem(const SfxPoolItem *pItem)
 
 class SVL_DLLPUBLIC SfxVoidItem: public SfxPoolItem
 {
-    SfxVoidItem & operator=( const SfxVoidItem& ) SAL_DELETED_FUNCTION;
+    SfxVoidItem & operator=( const SfxVoidItem& ) = delete;
 public:
                             TYPEINFO_OVERRIDE();
                             explicit SfxVoidItem( sal_uInt16 nWhich );
@@ -258,23 +258,23 @@ public:
                             SfxVoidItem( const SfxVoidItem& );
                             virtual ~SfxVoidItem();
 
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
 
     virtual bool GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
                                     OUString &rText,
-                                    const IntlWrapper * = 0 ) const SAL_OVERRIDE;
+                                    const IntlWrapper * = 0 ) const override;
 
     // create a copy of itself
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
 };
 
 class SVL_DLLPUBLIC SfxSetItem: public SfxPoolItem
 {
     SfxItemSet              *pSet;
 
-    SfxSetItem & operator=( const SfxSetItem& ) SAL_DELETED_FUNCTION;
+    SfxSetItem & operator=( const SfxSetItem& ) = delete;
 
 public:
                             TYPEINFO_OVERRIDE();
@@ -283,18 +283,18 @@ public:
                             SfxSetItem( const SfxSetItem&, SfxItemPool *pPool = 0 );
                             virtual ~SfxSetItem();
 
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
 
     virtual bool GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
                                     OUString &rText,
-                                    const IntlWrapper * = 0 ) const SAL_OVERRIDE;
+                                    const IntlWrapper * = 0 ) const override;
 
     // create a copy of itself
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE = 0;
-    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16 nVersion) const SAL_OVERRIDE = 0;
-    virtual SvStream&       Store(SvStream &, sal_uInt16 nVer) const SAL_OVERRIDE;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override = 0;
+    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16 nVersion) const override = 0;
+    virtual SvStream&       Store(SvStream &, sal_uInt16 nVer) const override;
 
     const SfxItemSet&       GetItemSet() const
                             { return *pSet; }

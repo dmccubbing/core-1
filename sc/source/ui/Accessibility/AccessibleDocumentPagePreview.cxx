@@ -174,7 +174,7 @@ sal_Int32 ScNotesChildren::AddNotes(const ScPreviewLocationData& rData, const Re
                 if (bMark)
                 {
                     // Document not needed, because only the cell address, but not the tablename is needed
-                    aNote.maNoteText = aNote.maNoteCell.Format(SCA_VALID, NULL);
+                    aNote.maNoteText = aNote.maNoteCell.Format(SCA_VALID);
                 }
                 else
                 {
@@ -346,7 +346,7 @@ sal_Int32 ScNotesChildren::CheckChanges(const ScPreviewLocationData& rData,
                 if (bMark)
                 {
                     // Document not needed, because only the cell address, but not the tablename is needed
-                    aNote.maNoteText = aNote.maNoteCell.Format(SCA_VALID, NULL);
+                    aNote.maNoteText = aNote.maNoteCell.Format(SCA_VALID);
                 }
                 else
                 {
@@ -491,9 +491,9 @@ public:
 
     ///=====  IAccessibleViewForwarder  ========================================
 
-    virtual Rectangle GetVisibleArea() const SAL_OVERRIDE;
-    virtual Point LogicToPixel (const Point& rPoint) const SAL_OVERRIDE;
-    virtual Size LogicToPixel (const Size& rSize) const SAL_OVERRIDE;
+    virtual Rectangle GetVisibleArea() const override;
+    virtual Point LogicToPixel (const Point& rPoint) const override;
+    virtual Size LogicToPixel (const Size& rSize) const override;
 
 private:
     ScPreviewShell*                     mpViewShell;
@@ -625,7 +625,7 @@ public:
 
     ///=====  SfxListener  =====================================================
 
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
     ///=====  IAccessibleParent  ==============================================
 
@@ -634,7 +634,7 @@ public:
         const ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape >& _rxShape,
         const long _nIndex,
         const ::accessibility::AccessibleShapeTreeInfo& _rShapeTreeInfo
-    )   throw (::com::sun::star::uno::RuntimeException) SAL_OVERRIDE;
+    )   throw (::com::sun::star::uno::RuntimeException) override;
 
     ///=====  Internal  ========================================================
 

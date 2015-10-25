@@ -566,7 +566,7 @@ void ScDocShell::Execute( SfxRequest& rReq )
             {
                 ScDocument& rDoc = GetDocument();
                 // get argument (recorded macro)
-                SFX_REQUEST_ARG( rReq, pItem, SfxBoolItem, FID_CHG_RECORD, false );
+                const SfxBoolItem* pItem = rReq.GetArg<SfxBoolItem>(FID_CHG_RECORD);
                 bool bDo = true;
 
                 // xmlsec05/06:
@@ -2365,7 +2365,7 @@ uno::Reference< frame::XModel > ScDocShell::LoadSharedDocument()
 
         if ( GetMedium() )
         {
-            SFX_ITEMSET_ARG( GetMedium()->GetItemSet(), pPasswordItem, SfxStringItem, SID_PASSWORD, false);
+            const SfxStringItem* pPasswordItem = SfxItemSet::GetItem<SfxStringItem>(GetMedium()->GetItemSet(), SID_PASSWORD, false);
             if ( pPasswordItem && !pPasswordItem->GetValue().isEmpty() )
             {
                 aArgs.realloc( 2 );

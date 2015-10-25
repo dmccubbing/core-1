@@ -37,7 +37,7 @@ class SelectionListBox : public ListBox
 {
     bool            bCallAddSelection;
 
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
 public:
     SelectionListBox(vcl::Window* pParent, WinBits nStyle);
@@ -76,31 +76,32 @@ class SwFieldVarPage : public SwFieldPage
     sal_uLong           nOldFormat;
     bool                bInit;
 
-    DECL_LINK(TypeHdl, void *);
-    DECL_LINK( SubTypeHdl, ListBox* );
-    DECL_LINK(ModifyHdl, void * = 0);
+    DECL_LINK_TYPED( TypeHdl, ListBox&, void );
+    DECL_LINK_TYPED( SubTypeListBoxHdl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
     DECL_LINK_TYPED( TBClickHdl, ToolBox *, void );
-    DECL_LINK(ChapterHdl, void * = 0);
-    DECL_LINK(SeparatorHdl, void * = 0);
+    DECL_LINK_TYPED( ChapterHdl, ListBox&, void );
+    DECL_LINK_TYPED( SeparatorHdl, Edit&, void );
+    void SubTypeHdl(ListBox*);
 
     void                UpdateSubType();
     sal_Int32           FillFormatLB(sal_uInt16 nTypeId);
 
 protected:
-    virtual sal_uInt16      GetGroup() SAL_OVERRIDE;
+    virtual sal_uInt16      GetGroup() override;
 
 public:
                         SwFieldVarPage(vcl::Window* pParent, const SfxItemSet& rSet);
 
                         virtual ~SwFieldVarPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage>  Create(vcl::Window* pParent, const SfxItemSet* rAttrSet);
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual void        FillUserData() override;
 };
 
 #endif

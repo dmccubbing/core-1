@@ -93,20 +93,19 @@ bool XMLTransGradientStyleImport::importXML(
     aGradient.Angle = 0;
     aGradient.Border = 0;
 
+    static const SvXMLTokenMapEntry aTrGradientAttrTokenMap[] =
     {
-        static const SvXMLTokenMapEntry aTrGradientAttrTokenMap[] =
-{
-    { XML_NAMESPACE_DRAW, XML_NAME, XML_TOK_GRADIENT_NAME },
-    { XML_NAMESPACE_DRAW, XML_DISPLAY_NAME, XML_TOK_GRADIENT_DISPLAY_NAME },
-    { XML_NAMESPACE_DRAW, XML_STYLE, XML_TOK_GRADIENT_STYLE },
-    { XML_NAMESPACE_DRAW, XML_CX, XML_TOK_GRADIENT_CX },
-    { XML_NAMESPACE_DRAW, XML_CY, XML_TOK_GRADIENT_CY },
-    { XML_NAMESPACE_DRAW, XML_START, XML_TOK_GRADIENT_START },
-    { XML_NAMESPACE_DRAW, XML_END, XML_TOK_GRADIENT_END },
-    { XML_NAMESPACE_DRAW, XML_GRADIENT_ANGLE, XML_TOK_GRADIENT_ANGLE },
-    { XML_NAMESPACE_DRAW, XML_GRADIENT_BORDER, XML_TOK_GRADIENT_BORDER },
-    XML_TOKEN_MAP_END
-};
+        { XML_NAMESPACE_DRAW, XML_NAME, XML_TOK_GRADIENT_NAME },
+        { XML_NAMESPACE_DRAW, XML_DISPLAY_NAME, XML_TOK_GRADIENT_DISPLAY_NAME },
+        { XML_NAMESPACE_DRAW, XML_STYLE, XML_TOK_GRADIENT_STYLE },
+        { XML_NAMESPACE_DRAW, XML_CX, XML_TOK_GRADIENT_CX },
+        { XML_NAMESPACE_DRAW, XML_CY, XML_TOK_GRADIENT_CY },
+        { XML_NAMESPACE_DRAW, XML_START, XML_TOK_GRADIENT_START },
+        { XML_NAMESPACE_DRAW, XML_END, XML_TOK_GRADIENT_END },
+        { XML_NAMESPACE_DRAW, XML_GRADIENT_ANGLE, XML_TOK_GRADIENT_ANGLE },
+        { XML_NAMESPACE_DRAW, XML_GRADIENT_BORDER, XML_TOK_GRADIENT_BORDER },
+        XML_TOKEN_MAP_END
+    };
 
     SvXMLTokenMap aTokenMap( aTrGradientAttrTokenMap );
     SvXMLNamespaceMap& rNamespaceMap = rImport.GetNamespaceMap();
@@ -178,9 +177,9 @@ bool XMLTransGradientStyleImport::importXML(
             break;
         case XML_TOK_GRADIENT_ANGLE:
             {
-                sal_Int32 nValue;
-                ::sax::Converter::convertNumber( nValue, rStrValue, 0, 3600 );
-                aGradient.Angle = sal_Int16( nValue );
+                bool const bSuccess =
+                    ::sax::Converter::convertAngle(aGradient.Angle, rStrValue);
+                SAL_INFO_IF(!bSuccess, "xmloff.style", "failed to import draw:angle");
             }
             break;
         case XML_TOK_GRADIENT_BORDER:
@@ -203,8 +202,6 @@ bool XMLTransGradientStyleImport::importXML(
     }
 
     bRet = bHasName && bHasStyle;
-
-    }
 
     return bRet;
 }
@@ -285,8 +282,7 @@ bool XMLTransGradientStyleExport::exportXML(
                 // Angle
                 if( aGradient.Style != awt::GradientStyle_RADIAL )
                 {
-                    ::sax::Converter::convertNumber(
-                            aOut, sal_Int32(aGradient.Angle));
+                    ::sax::Converter::convertAngle(aOut, aGradient.Angle);
                     aStrValue = aOut.makeStringAndClear();
                     rExport.AddAttribute( XML_NAMESPACE_DRAW, XML_GRADIENT_ANGLE, aStrValue );
                 }

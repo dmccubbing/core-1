@@ -64,7 +64,7 @@ class CustomAnimationPane : public PanelLayout, public ICustomAnimationListContr
 public:
     CustomAnimationPane( vcl::Window* pParent, ViewShellBase& rBase, const css::uno::Reference<css::frame::XFrame>& rxFrame, const Size& rMinSize );
     virtual ~CustomAnimationPane();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     // callbacks
     void onSelectionChanged();
@@ -81,16 +81,16 @@ public:
     void remove( CustomAnimationEffectPtr& pEffect );
 
     // Control
-    virtual void StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
-    virtual void KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
+    virtual void StateChanged( StateChangedType nStateChange ) override;
+    virtual void KeyInput( const KeyEvent& rKEvt ) override;
 
     // ICustomAnimationListController
-    virtual void onSelect() SAL_OVERRIDE;
-    virtual void onDoubleClick() SAL_OVERRIDE;
-    virtual void onContextMenu( sal_uInt16 nSelectedPopupEntry ) SAL_OVERRIDE;
+    virtual void onSelect() override;
+    virtual void onDoubleClick() override;
+    virtual void onContextMenu( sal_uInt16 nSelectedPopupEntry ) override;
 
     // Window
-    virtual void DataChanged (const DataChangedEvent& rEvent) SAL_OVERRIDE;
+    virtual void DataChanged (const DataChangedEvent& rEvent) override;
 
     void addUndo();
 
@@ -116,11 +116,12 @@ private:
     bool setProperty1Value( sal_Int32 nType, CustomAnimationEffectPtr pEffect, const ::com::sun::star::uno::Any& rValue );
     void UpdateLook();
 
-    DECL_LINK( implControlHdl, Control* );
+    DECL_LINK_TYPED( implControlListBoxHdl, ListBox&, void );
     DECL_LINK_TYPED( implClickHdl, Button*, void );
-    DECL_LINK(implPropertyHdl, void *);
-    DECL_LINK_TYPED(EventMultiplexerListener, tools::EventMultiplexerEvent&, void);
-    DECL_LINK_TYPED(lateInitCallback, Timer *, void);
+    DECL_LINK_TYPED( implPropertyHdl, LinkParamNone*, void );
+    DECL_LINK_TYPED( EventMultiplexerListener, tools::EventMultiplexerEvent&, void );
+    DECL_LINK_TYPED( lateInitCallback, Timer *, void );
+    void implControlHdl(Control*);
 
 private:
     ViewShellBase& mrBase;

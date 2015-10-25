@@ -61,50 +61,50 @@ public: // XInputStream
     virtual sal_Int32 SAL_CALL readBytes(Sequence< sal_Int8 >& aData, sal_Int32 nBytesToRead)
         throw(  NotConnectedException,
                 BufferSizeExceededException,
-                RuntimeException, std::exception ) SAL_OVERRIDE;
+                RuntimeException, std::exception ) override;
     virtual sal_Int32 SAL_CALL readSomeBytes(Sequence< sal_Int8 >& aData, sal_Int32 nMaxBytesToRead)
         throw( NotConnectedException,
                BufferSizeExceededException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
     virtual void SAL_CALL skipBytes(sal_Int32 nBytesToSkip)
         throw( NotConnectedException,
                BufferSizeExceededException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
     virtual sal_Int32 SAL_CALL available()
         throw( NotConnectedException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
     virtual void SAL_CALL closeInput()
         throw( NotConnectedException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
 
 public: // XOutputStream
 
     virtual void SAL_CALL writeBytes(const Sequence< sal_Int8 >& aData)
         throw( NotConnectedException,
                BufferSizeExceededException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
     virtual void SAL_CALL flush()
         throw( NotConnectedException,
                BufferSizeExceededException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
     virtual void SAL_CALL closeOutput()
         throw( NotConnectedException,
                BufferSizeExceededException,
-               RuntimeException, std::exception ) SAL_OVERRIDE;
+               RuntimeException, std::exception ) override;
 
 public: // XConnectable
     virtual void SAL_CALL setPredecessor(const Reference< XConnectable >& aPredecessor)
-        throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual Reference< XConnectable > SAL_CALL getPredecessor() throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( RuntimeException, std::exception ) override;
+    virtual Reference< XConnectable > SAL_CALL getPredecessor() throw( RuntimeException, std::exception ) override;
     virtual void SAL_CALL setSuccessor(const Reference < XConnectable > & aSuccessor)
-        throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual Reference < XConnectable > SAL_CALL getSuccessor() throw( RuntimeException, std::exception ) SAL_OVERRIDE ;
+        throw( RuntimeException, std::exception ) override;
+    virtual Reference < XConnectable > SAL_CALL getSuccessor() throw( RuntimeException, std::exception ) override ;
 
 
 public: // XServiceInfo
-    OUString                    SAL_CALL getImplementationName() throw(std::exception  ) SAL_OVERRIDE;
-    Sequence< OUString >         SAL_CALL getSupportedServiceNames() throw(std::exception  ) SAL_OVERRIDE;
-    sal_Bool                        SAL_CALL supportsService(const OUString& ServiceName) throw(std::exception  ) SAL_OVERRIDE;
+    OUString                    SAL_CALL getImplementationName() throw(std::exception  ) override;
+    Sequence< OUString >         SAL_CALL getSupportedServiceNames() throw(std::exception  ) override;
+    sal_Bool                        SAL_CALL supportsService(const OUString& ServiceName) throw(std::exception  ) override;
 
 private:
 
@@ -117,8 +117,8 @@ private:
     bool m_bInputStreamClosed;
 
     osl::Condition m_conditionBytesAvail;
-    Mutex     m_mutexAccess;
-    I_FIFO      *m_pFIFO;
+    Mutex          m_mutexAccess;
+    MemFIFO       *m_pFIFO;
 };
 
 
@@ -303,33 +303,17 @@ void OPipeImpl::writeBytes(const Sequence< sal_Int8 >& aData)
     }
 
     // adjust buffersize if necessary
-
-    try
+    if( m_nBytesToSkip )
     {
-        if( m_nBytesToSkip )
-        {
-            Sequence< sal_Int8 > seqCopy( nLen - m_nBytesToSkip );
-            memcpy( seqCopy.getArray() , &( aData.getConstArray()[m_nBytesToSkip] ) , nLen-m_nBytesToSkip );
-            m_pFIFO->write( seqCopy );
-        }
-        else
-        {
-            m_pFIFO->write( aData );
-        }
-        m_nBytesToSkip = 0;
+        Sequence< sal_Int8 > seqCopy( nLen - m_nBytesToSkip );
+        memcpy( seqCopy.getArray() , &( aData.getConstArray()[m_nBytesToSkip] ) , nLen-m_nBytesToSkip );
+        m_pFIFO->write( seqCopy );
     }
-    catch ( I_FIFO_OutOfBoundsException & )
+    else
     {
-        throw BufferSizeExceededException(
-            "Pipe::writeBytes BufferSizeExceededException",
-            *this );
+        m_pFIFO->write( aData );
     }
-    catch ( I_FIFO_OutOfMemoryException & )
-    {
-        throw BufferSizeExceededException(
-            "Pipe::writeBytes BufferSizeExceededException",
-            *this );
-    }
+    m_nBytesToSkip = 0;
 
     // readBytes may check again if enough bytes are available
     m_conditionBytesAvail.set();

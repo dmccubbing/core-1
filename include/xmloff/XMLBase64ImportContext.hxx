@@ -30,8 +30,7 @@ namespace com { namespace sun { namespace star { namespace io {
 
 class XMLOFF_DLLPUBLIC XMLBase64ImportContext : public SvXMLImportContext
 {
-    ::com::sun::star::uno::Reference<
-        ::com::sun::star::io::XOutputStream > xOut;
+    css::uno::Reference< css::io::XOutputStream > xOut;
     OUString sBase64CharsLeft;
 
 public:
@@ -39,16 +38,14 @@ public:
 
     XMLBase64ImportContext( SvXMLImport& rImport, sal_uInt16 nPrfx,
                             const OUString& rLName,
-        const ::com::sun::star::uno::Reference<
-            ::com::sun::star::xml::sax::XAttributeList >& xAttrList,
-        const ::com::sun::star::uno::Reference<
-            ::com::sun::star::io::XOutputStream >& rOut );
+        const css::uno::Reference< css::xml::sax::XAttributeList >& xAttrList,
+        const css::uno::Reference< css::io::XOutputStream >& rOut );
 
     virtual ~XMLBase64ImportContext();
 
-    virtual void EndElement() SAL_OVERRIDE;
+    virtual void EndElement() override;
 
-    virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+    virtual void Characters( const OUString& rChars ) override;
 
 };
 

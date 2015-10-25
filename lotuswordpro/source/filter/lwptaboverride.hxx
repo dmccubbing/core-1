@@ -74,9 +74,9 @@ public:
     {
     }
 
-    virtual LwpTabOverride* clone() const SAL_OVERRIDE;
+    virtual LwpTabOverride* clone() const override;
 
-    virtual void Read(LwpObjectStream *pStrm) SAL_OVERRIDE
+    virtual void Read(LwpObjectStream *pStrm) override
     {
         if (pStrm->QuickReadBool())
         {
@@ -96,7 +96,7 @@ protected:
     LwpTabOverride(LwpTabOverride const& rOther);
 
 private:
-    LwpTabOverride& operator=(LwpTabOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpTabOverride& operator=(LwpTabOverride const& rOther) = delete;
 
 private:
     LwpObjectID m_aTabRackID;

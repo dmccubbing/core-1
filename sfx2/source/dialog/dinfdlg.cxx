@@ -180,7 +180,7 @@ OUString ConvertDateTime_Impl( const OUString& rName,
      const OUString pDelim ( ", " );
      OUString aStr( rWrapper.getDate( aD ) );
      aStr += pDelim;
-     aStr += rWrapper.getTime( aT, true );
+     aStr += rWrapper.getTime( aT );
      OUString aAuthor = comphelper::string::stripStart(rName, ' ');
      if (!aAuthor.isEmpty())
      {
@@ -712,7 +712,7 @@ void SfxDocumentDescPage::Reset(const SfxItemSet *rSet)
     m_pKeywordsEd->SetText( m_pInfoItem->getKeywords() );
     m_pCommentEd->SetText( m_pInfoItem->getDescription() );
 
-    SFX_ITEMSET_ARG( rSet, pROItem, SfxBoolItem, SID_DOC_READONLY, false );
+    const SfxBoolItem* pROItem = SfxItemSet::GetItem<SfxBoolItem>(rSet, SID_DOC_READONLY, false);
     if ( pROItem && pROItem->GetValue() )
     {
         m_pTitleEd->SetReadOnly();
@@ -919,7 +919,7 @@ void SfxDocumentPage::ImplCheckPasswordState()
         SfxItemSet* pMedSet = pShell->GetMedium()->GetItemSet();
         if (!pMedSet)
             break;
-        SFX_ITEMSET_ARG( pMedSet, pEncryptionDataItem, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false);
+        const SfxUnoAnyItem* pEncryptionDataItem = SfxItemSet::GetItem<SfxUnoAnyItem>(pMedSet, SID_ENCRYPTIONDATA, false);
         uno::Sequence< beans::NamedValue > aEncryptionData;
         if (pEncryptionDataItem)
             pEncryptionDataItem->GetValue() >>= aEncryptionData;
@@ -1154,7 +1154,7 @@ SfxDocumentInfoDialog::SfxDocumentInfoDialog( vcl::Window* pParent,
         static_cast<const SfxDocumentInfoItem &>(rItemSet.Get( SID_DOCINFO ));
 
 #ifdef DBG_UTIL
-    SFX_ITEMSET_ARG( &rItemSet, pURLItem, SfxStringItem, SID_BASEURL, false );
+    const SfxStringItem* pURLItem = rItemSet.GetItem<SfxStringItem>(SID_BASEURL, false);
     DBG_ASSERT( pURLItem, "No BaseURL provided for InternetTabPage!" );
 #endif
 
@@ -1254,7 +1254,7 @@ public:
 
     DurationDialog_Impl( vcl::Window* pParent, const util::Duration& rDuration );
     virtual ~DurationDialog_Impl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     util::Duration  GetDuration() const;
 };
 
@@ -1504,9 +1504,10 @@ void CustomPropertiesWindow::dispose()
     vcl::Window::dispose();
 }
 
-IMPL_STATIC_LINK(
-    CustomPropertiesWindow, TypeHdl, CustomPropertiesTypeBox*, pBox )
+IMPL_STATIC_LINK_TYPED(
+    CustomPropertiesWindow, TypeHdl, ListBox&, rListBox, void )
 {
+    CustomPropertiesTypeBox* pBox = static_cast<CustomPropertiesTypeBox*>(&rListBox);
     long nType = reinterpret_cast<long>( pBox->GetSelectEntryData() );
     CustomPropertyLine* pLine = pBox->GetLine();
     pLine->m_aValueEdit->Show( (CUSTOM_TYPE_TEXT == nType) || (CUSTOM_TYPE_NUMBER  == nType) );
@@ -1529,8 +1530,6 @@ IMPL_STATIC_LINK(
         pLine->m_bIsDate = false;
         pLine->m_aDateField->SetSizePixel( pLine->m_aTimeField->GetSizePixel() );
     }
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( CustomPropertiesWindow, RemoveHdl, Button*, pBtn, void )
@@ -1878,7 +1877,7 @@ void CustomPropertiesWindow::AddLine( const OUString& sName, Any& rAny )
         pNewLine->m_aTypeBox->SelectEntryPos( m_aTypeBox->GetEntryPos( reinterpret_cast<void*>(nType) ) );
     }
 
-    TypeHdl( nullptr, pNewLine->m_aTypeBox.get() );
+    TypeHdl( nullptr, *pNewLine->m_aTypeBox.get() );
     pNewLine->m_aNameBox->GrabFocus();
 }
 
@@ -2258,7 +2257,7 @@ CmisValue::CmisValue( vcl::Window* pParent, const OUString& aStr )
 {
     m_pUIBuilder = new VclBuilder( pParent, getUIRootDir(), "sfx/ui/cmisline.ui");
     get( m_aValueEdit, "value");
-    m_aValueEdit->Show( true );
+    m_aValueEdit->Show();
     m_aValueEdit->SetText( aStr );
 }
 
@@ -2267,8 +2266,8 @@ CmisDateTime::CmisDateTime( vcl::Window* pParent, const util::DateTime& aDateTim
     m_pUIBuilder = new VclBuilder( pParent, getUIRootDir(), "sfx/ui/cmisline.ui");
     get( m_aDateField, "date");
     get( m_aTimeField, "time");
-    m_aDateField->Show( true );
-    m_aTimeField->Show( true );
+    m_aDateField->Show();
+    m_aTimeField->Show();
     m_aDateField->SetDate( Date( aDateTime ) );
     m_aTimeField->SetTime( tools::Time( aDateTime ) );
 }
@@ -2278,8 +2277,8 @@ CmisYesNo::CmisYesNo( vcl::Window* pParent, bool bValue )
     m_pUIBuilder = new VclBuilder( pParent, getUIRootDir(), "sfx/ui/cmisline.ui");
     get( m_aYesButton, "yes");
     get( m_aNoButton, "no");
-    m_aYesButton->Show( true );
-    m_aNoButton->Show( true );
+    m_aYesButton->Show();
+    m_aNoButton->Show();
     if ( bValue )
         m_aYesButton->Check( );
     else
@@ -2462,9 +2461,9 @@ void CmisPropertiesWindow::AddLine( const OUString& sId, const OUString& sName,
 
     }
     pNewLine->m_aName->SetText( sName );
-    pNewLine->m_aName->Show( true );
+    pNewLine->m_aName->Show();
     pNewLine->m_aType->SetText( sType );
-    pNewLine->m_aType->Show( true );
+    pNewLine->m_aType->Show();
 
     m_aCmisPropertiesLines.push_back( pNewLine );
 }

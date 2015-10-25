@@ -28,17 +28,17 @@ namespace rptui
      */
     class OEndMarker : public OColorListener
     {
-        OEndMarker(OEndMarker&) SAL_DELETED_FUNCTION;
-        void operator =(OEndMarker&) SAL_DELETED_FUNCTION;
+        OEndMarker(OEndMarker&) = delete;
+        void operator =(OEndMarker&) = delete;
     protected:
-        virtual void ImplInitSettings() SAL_OVERRIDE;
+        virtual void ImplInitSettings() override;
     public:
         OEndMarker(vcl::Window* _pParent,const OUString& _sColorEntry);
         virtual ~OEndMarker();
 
         // windows
-        virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
-        virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
+        virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
+        virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
     };
 }
 #endif // INCLUDED_REPORTDESIGN_SOURCE_UI_INC_ENDMARKER_HXX

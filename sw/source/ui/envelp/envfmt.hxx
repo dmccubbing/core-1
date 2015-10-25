@@ -43,10 +43,10 @@ class SwEnvFormatPage : public SfxTabPage
 
     std::vector<sal_uInt16>  aIDs;
 
-    DECL_LINK( ModifyHdl, Edit * );
+    DECL_LINK_TYPED( ModifyHdl, SpinField&, void );
     DECL_LINK_TYPED( LoseFocusHdl, Control&, void );
     DECL_LINK_TYPED( EditHdl, MenuButton *, void );
-    DECL_LINK(FormatHdl, void *);
+    DECL_LINK_TYPED(FormatHdl, ListBox&, void);
 
     void SetMinMax();
 
@@ -60,15 +60,15 @@ class SwEnvFormatPage : public SfxTabPage
 public:
     SwEnvFormatPage(vcl::Window* pParent, const SfxItemSet& rSet);
     virtual ~SwEnvFormatPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create(vcl::Window* pParent, const SfxItemSet* rSet);
 
-    virtual void ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage(SfxItemSet* pSet = 0) SAL_OVERRIDE;
+    virtual void ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg DeactivatePage(SfxItemSet* pSet = 0) override;
             void FillItem(SwEnvItem& rItem);
-    virtual bool FillItemSet(SfxItemSet* rSet) SAL_OVERRIDE;
-    virtual void Reset(const SfxItemSet* rSet) SAL_OVERRIDE;
+    virtual bool FillItemSet(SfxItemSet* rSet) override;
+    virtual void Reset(const SfxItemSet* rSet) override;
 };
 
 #endif

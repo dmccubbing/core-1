@@ -191,7 +191,7 @@ static SwPrintUIOptions * lcl_GetPrintUIOptions(
     if (pSh)
     {
         SwPaM* pShellCrsr = pSh->GetCrsr();
-        nCurrentPage = pShellCrsr->GetPageNum(true, 0);
+        nCurrentPage = pShellCrsr->GetPageNum();
     }
     else if (!bSwSrcView)
     {
@@ -900,8 +900,7 @@ SwUnoCrsr* SwXTextDocument::FindAny(const Reference< util::XSearchDescriptor > &
             nResult = (sal_Int32)pUnoCrsr->Find( aSearch, !pSearch->bStyles,
                         eStart, eEnd, bCancel,
                         (FindRanges)eRanges,
-                        !pSearch->sSearchText.isEmpty() ? &aSearchOpt : 0,
-                        0 );
+                        !pSearch->sSearchText.isEmpty() ? &aSearchOpt : 0 );
         }
         else if(pSearch->bStyles)
         {
@@ -1066,7 +1065,7 @@ static OUString lcl_CreateOutlineString( size_t nIndex,
             sEntry += ".";
         }
     sEntry += rOutlineNodes[ nIndex ]->
-                    GetTextNode()->GetExpandText( 0, -1, false );
+                    GetTextNode()->GetExpandText();
     return sEntry;
 }
 
@@ -3181,6 +3180,13 @@ OUString SwXTextDocument::getPartPageRectangles()
         return OUString();
 
     return pWrtShell->getPageRectangles();
+}
+
+vcl::Window* SwXTextDocument::getWindow()
+{
+    SolarMutexGuard aGuard;
+
+    return &pDocShell->GetView()->GetEditWin();
 }
 
 int SwXTextDocument::getPart()

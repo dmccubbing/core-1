@@ -48,24 +48,24 @@ private:
 
 public:
 
-    virtual bool    FillItemSet( SfxItemSet* rOutSet ) SAL_OVERRIDE;
-    virtual void    Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool    FillItemSet( SfxItemSet* rOutSet ) override;
+    virtual void    Reset( const SfxItemSet* rSet ) override;
 
     virtual         ~SvxHFPage();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     void DisableDeleteQueryBox() { mbDisableQueryBox = true; }
 
     //UUUU
-    virtual void PageCreated(const SfxAllItemSet&) SAL_OVERRIDE;
+    virtual void PageCreated(const SfxAllItemSet&) override;
 
     void            EnableDynamicSpacing();
 
 protected:
     static const sal_uInt16 pRanges[];
 
-    virtual void    ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg   DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
+    virtual void    ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg   DeactivatePage( SfxItemSet* pSet = 0 ) override;
 
     SvxHFPage( vcl::Window* pParent, const SfxItemSet& rSet, sal_uInt16 nSetId );
 
@@ -94,16 +94,14 @@ protected:
     bool            mbEnableDrawingLayerFillStyles : 1;
 
     void            InitHandler();
-    DECL_LINK_TYPED( TurnOnHdl, Button*, void);
-    DECL_LINK(DistModify, void *);
-    DECL_LINK(HeightModify, void *);
-    DECL_LINK(BorderModify, void *);
+    DECL_LINK_TYPED(TurnOnHdl, Button*, void);
+    DECL_LINK_TYPED(DistModify, Edit&, void);
+    DECL_LINK_TYPED(HeightModify, Edit&, void);
+    DECL_LINK_TYPED(BorderModify, Edit&, void);
     DECL_LINK_TYPED(BackgroundHdl, Button*, void);
-
-    void            UpdateExample();
-    DECL_LINK(RangeHdl, void *);
     DECL_LINK_TYPED(RangeFocusHdl, Control&, void);
     void RangeHdl();
+    void            UpdateExample();
 
 private:
     SVX_DLLPRIVATE void         ResetBackground_Impl( const SfxItemSet& rSet );

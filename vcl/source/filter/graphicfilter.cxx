@@ -95,12 +95,12 @@ protected:
     SvStream&               mrStm;
 
     virtual void SAL_CALL   writeBytes( const css::uno::Sequence< sal_Int8 >& rData )
-        throw (css::io::NotConnectedException, css::io::BufferSizeExceededException, css::io::IOException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::io::NotConnectedException, css::io::BufferSizeExceededException, css::io::IOException, css::uno::RuntimeException, std::exception) override
         { mrStm.Write( rData.getConstArray(), rData.getLength() ); }
     virtual void SAL_CALL   flush()
-        throw (css::io::NotConnectedException, css::io::BufferSizeExceededException, css::io::IOException, css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::io::NotConnectedException, css::io::BufferSizeExceededException, css::io::IOException, css::uno::RuntimeException, std::exception) override
         { mrStm.Flush(); }
-    virtual void SAL_CALL   closeOutput() throw(std::exception) SAL_OVERRIDE {}
+    virtual void SAL_CALL   closeOutput() throw(std::exception) override {}
 
 public:
 
@@ -614,7 +614,6 @@ static bool ImpPeekGraphicFormat( SvStream& rStream, OUString& rFormatExtension,
     }
     else if( rFormatExtension.startsWith( "XPM" ) )
     {
-        bSomethingTested = true;
         return true;
     }
 
@@ -639,7 +638,6 @@ static bool ImpPeekGraphicFormat( SvStream& rStream, OUString& rFormatExtension,
     }
     else if( rFormatExtension.startsWith( "XBM" ) )
     {
-        bSomethingTested = true;
         return true;
     }
 
@@ -725,7 +723,6 @@ static bool ImpPeekGraphicFormat( SvStream& rStream, OUString& rFormatExtension,
     }
     else if( rFormatExtension.startsWith( "SVG" ) )
     {
-        bSomethingTested = true;
         return true;
     }
 
@@ -767,7 +764,6 @@ static bool ImpPeekGraphicFormat( SvStream& rStream, OUString& rFormatExtension,
             (sFirstBytes[ 4 ] == 'm' && sFirstBytes[ 5 ] == 'o' && sFirstBytes[ 6 ] == 'o' &&
              sFirstBytes[ 7 ] == 'v' && sFirstBytes[ 11 ] == 'l' && sFirstBytes[ 12 ] == 'm'))
         {
-            bSomethingTested=true;
             rFormatExtension = "MOV";
             return true;
         }

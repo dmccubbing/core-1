@@ -210,7 +210,7 @@ bool OutlinerView::PostKeyEvent( const KeyEvent& rKEvt, vcl::Window* pFrameWin )
                                     ESelection aTmpSel(nTemp,0,nTemp,0);
                                     pEditView->SetSelection( aTmpSel );
                                 }
-                                pEditView->ShowCursor( true );
+                                pEditView->ShowCursor();
                                 pOwner->UndoActionEnd( OLUNDO_INSERT );
                                 bKeyProcessed = true;
                             }
@@ -228,7 +228,7 @@ bool OutlinerView::PostKeyEvent( const KeyEvent& rKEvt, vcl::Window* pFrameWin )
                         // Position the cursor
                         ESelection aTmpSel(nTemp,0,nTemp,0);
                         pEditView->SetSelection( aTmpSel );
-                        pEditView->ShowCursor( true );
+                        pEditView->ShowCursor();
                         pOwner->UndoActionEnd( OLUNDO_INSERT );
                         bKeyProcessed = true;
                     }
@@ -668,7 +668,7 @@ void OutlinerView::InsertText( const OutlinerParaObject& rParaObj )
 
     pOwner->UndoActionEnd( OLUNDO_INSERT );
 
-    pEditView->ShowCursor( true );
+    pEditView->ShowCursor();
 }
 
 
@@ -678,8 +678,7 @@ void OutlinerView::Cut()
     if ( !ImpCalcSelectedPages( false ) || pOwner->ImpCanDeleteSelectedPages( this ) ) {
         pEditView->Cut();
         // Chaining handling
-        if (aEndCutPasteLink.IsSet())
-            aEndCutPasteLink.Call(NULL);
+        aEndCutPasteLink.Call(NULL);
     }
 }
 
@@ -708,12 +707,11 @@ void OutlinerView::PasteSpecial()
 
         pEditView->SetEditEngineUpdateMode( true );
         pOwner->UndoActionEnd( OLUNDO_INSERT );
-        pEditView->ShowCursor( true );
+        pEditView->ShowCursor();
 
         // Chaining handling
         // NOTE: We need to do this last because it pEditView may be deleted if a switch of box occurs
-        if (aEndCutPasteLink.IsSet())
-            aEndCutPasteLink.Call(NULL);
+        aEndCutPasteLink.Call(NULL);
     }
 }
 
@@ -1220,6 +1218,11 @@ void OutlinerView::SetVisArea( const Rectangle& rRect )
 void OutlinerView::SetSelection( const ESelection& rSel )
 {
     pEditView->SetSelection( rSel );
+}
+
+void OutlinerView::GetSelectionRectangles(std::vector<Rectangle>& rLogicRects) const
+{
+    pEditView->GetSelectionRectangles(rLogicRects);
 }
 
 void OutlinerView::SetReadOnly( bool bReadOnly )

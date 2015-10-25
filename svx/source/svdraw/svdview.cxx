@@ -822,7 +822,7 @@ bool SdrView::DoMouseEvent(const SdrViewEvent& rVEvt)
                     if (eHit==SDRHIT_TEXTEDIT)
                     {
                         bool bRet2(mpActualOutDev && OUTDEV_WINDOW == mpActualOutDev->GetOutDevType() &&
-                            SdrBeginTextEdit(rVEvt.pObj, rVEvt.pPV, const_cast<vcl::Window*>(static_cast<const vcl::Window*>(mpActualOutDev.get())), false, nullptr));
+                            SdrBeginTextEdit(rVEvt.pObj, rVEvt.pPV, const_cast<vcl::Window*>(static_cast<const vcl::Window*>(mpActualOutDev.get()))));
 
                         if(bRet2)
                         {
@@ -915,7 +915,7 @@ bool SdrView::DoMouseEvent(const SdrViewEvent& rVEvt)
             }
 
             bRet = mpActualOutDev && OUTDEV_WINDOW == mpActualOutDev->GetOutDevType()&&
-                 SdrBeginTextEdit(rVEvt.pObj, rVEvt.pPV, const_cast<vcl::Window*>(static_cast<const vcl::Window*>(mpActualOutDev.get())), false, nullptr);
+                 SdrBeginTextEdit(rVEvt.pObj, rVEvt.pPV, const_cast<vcl::Window*>(static_cast<const vcl::Window*>(mpActualOutDev.get())));
 
             if(bRet)
             {
@@ -1115,7 +1115,7 @@ Pointer SdrView::GetPreferredPointer(const Point& rMousePos, const OutputDevice*
                     }
                     bool bNo=false;
                     if (!IsMirrorAllowed(true,true)) bNo=true; // any mirroring is forbidden
-                    if (!IsMirrorAllowed(false) && !b45) bNo=true; // mirroring freely is forbidden
+                    if (!IsMirrorAllowed() && !b45) bNo=true; // mirroring freely is forbidden
                     if (!IsMirrorAllowed(true) && !b90) bNo=true;  // mirroring horizontally/vertically is allowed
                     if (bNo) return Pointer(PointerStyle::NotAllowed);
                     if (b90) {

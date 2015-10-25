@@ -67,10 +67,10 @@ private:
     sal_Int32           mnPos;
     bool                mbAreaTP;
 
-    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 
 protected:
-    virtual short       Ok() SAL_OVERRIDE;
+    virtual short       Ok() override;
     DECL_LINK_TYPED( CancelHdlImpl, Button*, void );
     void                SavePalettes();
 
@@ -143,8 +143,10 @@ class SvxTransparenceTabPage : public SvxTabPage
     DECL_LINK_TYPED(ClickTransOffHdl_Impl, Button*, void );
     DECL_LINK_TYPED(ClickTransLinearHdl_Impl, Button*, void );
     DECL_LINK_TYPED(ClickTransGradientHdl_Impl, Button*, void );
-    DECL_LINK(ModifyTransparentHdl_Impl, void*);
-    DECL_LINK(ModifiedTrgrHdl_Impl, void*);
+    DECL_LINK_TYPED(ModifyTransparentHdl_Impl, Edit&, void);
+    DECL_LINK_TYPED(ModifiedTrgrEditHdl_Impl, Edit&, void);
+    DECL_LINK_TYPED(ModifiedTrgrListBoxHdl_Impl, ListBox&, void);
+    void ModifiedTrgrHdl_Impl(void*);
 
     void ActivateLinear(bool bActivate);
     void ActivateGradient(bool bActivate);
@@ -156,21 +158,21 @@ class SvxTransparenceTabPage : public SvxTabPage
 public:
     SvxTransparenceTabPage(vcl::Window* pParent, const SfxItemSet& rInAttrs);
     virtual ~SvxTransparenceTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create(vcl::Window*, const SfxItemSet*);
     static const sal_uInt16* GetRanges() { return pTransparenceRanges; }
 
-    virtual bool FillItemSet(SfxItemSet*) SAL_OVERRIDE;
-    virtual void Reset(const SfxItemSet*) SAL_OVERRIDE;
-    virtual void ChangesApplied() SAL_OVERRIDE;
-    virtual void ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage(SfxItemSet* pSet) SAL_OVERRIDE;
-    virtual void PointChanged(vcl::Window* pWindow, RECT_POINT eRP) SAL_OVERRIDE;
+    virtual bool FillItemSet(SfxItemSet*) override;
+    virtual void Reset(const SfxItemSet*) override;
+    virtual void ChangesApplied() override;
+    virtual void ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg DeactivatePage(SfxItemSet* pSet) override;
+    virtual void PointChanged(vcl::Window* pWindow, RECT_POINT eRP) override;
 
     void SetPageType(sal_uInt16 nInType) { nPageType = nInType; }
     void SetDlgType(sal_uInt16 nInType) { nDlgType = nInType; }
-    virtual void PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 /************************************************************************/
@@ -263,20 +265,21 @@ private:
     OUString            maDirectName;
     VclPtr<PushButton>         m_pBtnImport;
 
-    DECL_LINK(SelectDialogTypeHdl_Impl, void *);
-    DECL_LINK( ModifyColorHdl_Impl, void * );
-    DECL_LINK( ModifyHatchBckgrdColorHdl_Impl, void * );
-    DECL_LINK( ModifyGradientHdl_Impl, void * );
-    DECL_LINK( ModifyHatchingHdl_Impl, void * );
+    DECL_LINK_TYPED(SelectDialogTypeHdl_Impl, ListBox&, void);
+    DECL_LINK_TYPED( ModifyColorHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyHatchBckgrdColorHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyGradientHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyHatchingHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( ToggleHatchBckgrdColorHdl_Impl, CheckBox&, void );
-    DECL_LINK( ModifyBitmapHdl_Impl, void * );
-    DECL_LINK( ModifyStepCountHdl_Impl, void* );
+    DECL_LINK_TYPED( ModifyBitmapHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyStepCountEditHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( ModifyStepCountClickHdl_Impl, Button*, void );
+    void ModifyStepCountHdl_Impl(void*);
 
     //UUUU
     DECL_LINK_TYPED( ClickImportHdl_Impl, Button*, void );
 
-    DECL_LINK( ModifyTileHdl_Impl, void * );
+    DECL_LINK_TYPED( ModifyTileHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( ModifyTileClickHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickScaleHdl_Impl, Button*, void );
     void ClickInvisibleHdl_Impl();
@@ -288,19 +291,19 @@ private:
 public:
     SvxAreaTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~SvxAreaTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() { return pAreaRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
-    virtual void ChangesApplied() SAL_OVERRIDE;
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
+    virtual void ChangesApplied() override;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetGradientList( XGradientListRef pGrdLst)
@@ -313,7 +316,7 @@ public:
     void    SetDlgType( sal_uInt16 nInType ) { m_nDlgType = nInType; }
     void    SetPos( sal_uInt16 nInPos ) { m_nPos = nInPos; }
     void    SetAreaTP( bool* pIn ) { m_pbAreaTP = pIn; }
-    virtual void PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void PageCreated(const SfxAllItemSet& aSet) override;
     void    SetColorChgd( ChangeType* pIn ) { m_pnColorListState = pIn; }
     void    SetGrdChgd( ChangeType* pIn ) { m_pnGradientListState = pIn; }
     void    SetHtchChgd( ChangeType* pIn ) { m_pnHatchingListState = pIn; }
@@ -352,29 +355,30 @@ private:
     SfxMapUnit          m_ePoolUnit;
 
     DECL_LINK_TYPED( ClickShadowHdl_Impl, Button*, void );
-    DECL_LINK( ModifyShadowHdl_Impl, void * );
+    DECL_LINK_TYPED( ModifyShadowHdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( SelectShadowHdl_Impl, ListBox&, void );
 
 public:
     SvxShadowTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxShadowTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() { return pShadowRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetPageType( sal_uInt16 nInType ) { m_nPageType = nInType; }
     void    SetDlgType( sal_uInt16 nInType ) { m_nDlgType = nInType; }
     void    SetAreaTP( bool* pIn ) { m_pbAreaTP = pIn; }
     void    SetColorChgd( ChangeType* pIn ) { m_pnColorListState = pIn; }
-    virtual void PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 /************************************************************************/
@@ -425,10 +429,12 @@ private:
     DECL_LINK_TYPED( ClickAddHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickModifyHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
-    DECL_LINK( ChangeGradientHdl_Impl, void * );
-    DECL_LINK( ModifiedHdl_Impl, void * );
+    DECL_LINK_TYPED( ChangeGradientHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifiedEditHdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( ModifiedListBoxHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( ClickLoadHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickSaveHdl_Impl, Button*, void );
+    void ModifiedHdl_Impl(void*);
 
     long CheckChanges_Impl();
     void SetControlState_Impl( css::awt::GradientStyle eXGS );
@@ -436,16 +442,16 @@ private:
 public:
     SvxGradientTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxGradientTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetGradientList( XGradientListRef pGrdLst)
@@ -500,8 +506,10 @@ private:
 
     SfxMapUnit          m_ePoolUnit;
 
-    DECL_LINK( ChangeHatchHdl_Impl, void * );
-    DECL_LINK( ModifiedHdl_Impl, void * );
+    DECL_LINK_TYPED( ChangeHatchHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ModifiedEditHdl_Impl, Edit&, void );
+    DECL_LINK_TYPED( ModifiedListBoxHdl_Impl, ListBox&, void );
+    void ModifiedHdl_Impl(void*);
     DECL_LINK_TYPED( ClickAddHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickModifyHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
@@ -513,18 +521,18 @@ private:
 public:
     SvxHatchTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxHatchTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetHatchingList( XHatchListRef pHtchLst)
@@ -538,7 +546,7 @@ public:
     void    SetHtchChgd( ChangeType* pIn ) { m_pnHatchingListState = pIn; }
     void    SetColorChgd( ChangeType* pIn ) { m_pnColorListState = pIn; }
 
-    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) override;
 };
 
 /************************************************************************/
@@ -588,9 +596,9 @@ private:
     DECL_LINK_TYPED( ClickImportHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickModifyHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
-    DECL_LINK( ChangeBitmapHdl_Impl, void * );
-    DECL_LINK( ChangePixelColorHdl_Impl, void * );
-    DECL_LINK( ChangeBackgrndColorHdl_Impl, void * );
+    DECL_LINK_TYPED( ChangeBitmapHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ChangePixelColorHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( ChangeBackgrndColorHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( ClickLoadHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickSaveHdl_Impl, Button*, void );
 
@@ -599,18 +607,18 @@ private:
 public:
     SvxBitmapTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxBitmapTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void    SetColorList( XColorListRef pColorList ) { m_pColorList = pColorList; }
     void    SetBitmapList( XBitmapListRef pBitmapList) { m_pBitmapList = pBitmapList; }
@@ -631,7 +639,7 @@ public:
             Return a label control that provides a name for the specified
             control.
     */
-    virtual vcl::Window* GetParentLabeledBy( const vcl::Window* pLabeled ) const SAL_OVERRIDE;
+    virtual vcl::Window* GetParentLabeledBy( const vcl::Window* pLabeled ) const override;
 };
 
 /************************************************************************/
@@ -721,11 +729,11 @@ private:
     DECL_LINK_TYPED( ClickDeleteHdl_Impl, Button*, void );
     DECL_LINK_TYPED( ClickWorkOnHdl_Impl, Button*, void );
 
-    DECL_LINK( SelectColorLBHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectColorLBHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( SelectValSetHdl_Impl, ValueSet*, void );
-    DECL_LINK( SelectColorModelHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectColorModelHdl_Impl, ListBox&, void );
     void ChangeColor(const Color &rNewColor);
-    DECL_LINK( ModifiedHdl_Impl, void * );
+    DECL_LINK_TYPED( ModifiedHdl_Impl, Edit&, void );
 
     long CheckChanges_Impl();
 
@@ -733,16 +741,16 @@ private:
 public:
     SvxColorTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~SvxColorTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    Construct();
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
     void             SetPropertyList( XPropertyListType t, const XPropertyListRef &xRef );
 
@@ -758,7 +766,7 @@ public:
 
     void    SetColorChgd( ChangeType* pIn ) { pnColorListState = pIn; }
 
-    virtual void FillUserData() SAL_OVERRIDE;
+    virtual void FillUserData() override;
 
     bool IsModified()
     {

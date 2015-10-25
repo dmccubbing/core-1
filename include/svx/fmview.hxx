@@ -82,16 +82,16 @@ public:
     */
     SdrObject*   CreateXFormsControl( const svx::OXFormsDescriptor &_rDesc );
 
-    virtual void MarkListHasChanged() SAL_OVERRIDE;
-    virtual void AddWindowToPaintView(OutputDevice* pNewWin, vcl::Window* pWindow) SAL_OVERRIDE;
-    virtual void DeleteWindowFromPaintView(OutputDevice* pOldWin) SAL_OVERRIDE;
+    virtual void MarkListHasChanged() override;
+    virtual void AddWindowToPaintView(OutputDevice* pNewWin, vcl::Window* pWindow) override;
+    virtual void DeleteWindowFromPaintView(OutputDevice* pOldWin) override;
 
     static void createControlLabelPair(
         OutputDevice* _pOutDev,
         sal_Int32 _nXOffsetMM,
         sal_Int32 _nYOffsetMM,
-        const ::com::sun::star::uno::Reference< ::com::sun::star::beans::XPropertySet >& _rxField,
-        const ::com::sun::star::uno::Reference< ::com::sun::star::util::XNumberFormats >& _rxNumberFormats,
+        const css::uno::Reference< css::beans::XPropertySet >& _rxField,
+        const css::uno::Reference< css::util::XNumberFormats >& _rxNumberFormats,
         sal_uInt16 _nControlObjectID,
         const OUString& _rFieldPostfix,
         sal_uInt32 _nInventor,
@@ -103,13 +103,13 @@ public:
         SdrUnoObj*& _rpControl
     );
 
-    virtual SdrPageView* ShowSdrPage(SdrPage* pPage) SAL_OVERRIDE;
-    virtual void HideSdrPage() SAL_OVERRIDE;
+    virtual SdrPageView* ShowSdrPage(SdrPage* pPage) override;
+    virtual void HideSdrPage() override;
 
     // for copying complete form structures, not only control models
-    virtual SdrModel* GetMarkedObjModel() const SAL_OVERRIDE;
+    virtual SdrModel* GetMarkedObjModel() const override;
 
-    virtual bool MouseButtonDown( const MouseEvent& _rMEvt, vcl::Window* _pWin ) SAL_OVERRIDE;
+    virtual bool MouseButtonDown( const MouseEvent& _rMEvt, vcl::Window* _pWin ) override;
 
     /** grab the focus to the first form control on the view
         @param _bForceSync
@@ -119,11 +119,11 @@ public:
 
     /** returns the form controller for a given form and a given device
     */
-    SVX_DLLPRIVATE ::com::sun::star::uno::Reference< ::com::sun::star::form::runtime::XFormController >
-            GetFormController( const ::com::sun::star::uno::Reference< ::com::sun::star::form::XForm >& _rxForm, const OutputDevice& _rDevice ) const;
+    SVX_DLLPRIVATE css::uno::Reference< css::form::runtime::XFormController >
+            GetFormController( const css::uno::Reference< css::form::XForm >& _rxForm, const OutputDevice& _rDevice ) const;
 
     // SdrView
-    bool KeyInput(const KeyEvent& rKEvt, vcl::Window* pWin) SAL_OVERRIDE;
+    bool KeyInput(const KeyEvent& rKEvt, vcl::Window* pWin) override;
 
     /// shortcut to "GetSdrPageView() ? PTR_CAST( FmFormPage, GetSdrPageView() ) : NULL"
     FmFormPage* GetCurPage();
@@ -141,14 +141,14 @@ public:
 
     struct ImplAccess { friend class FmXFormView; private: ImplAccess() { } };
     void SetMoveOutside( bool _bMoveOutside, ImplAccess ) { E3dView::SetMoveOutside( _bMoveOutside ); }
-     void InsertControlContainer(const ::com::sun::star::uno::Reference< ::com::sun::star::awt::XControlContainer >& xCC);
-     void RemoveControlContainer(const ::com::sun::star::uno::Reference< ::com::sun::star::awt::XControlContainer >& xCC);
+     void InsertControlContainer(const css::uno::Reference< css::awt::XControlContainer >& xCC);
+     void RemoveControlContainer(const css::uno::Reference< css::awt::XControlContainer >& xCC);
 
-    virtual SdrPaintWindow* BeginCompleteRedraw(OutputDevice* pOut) SAL_OVERRIDE;
-    virtual void EndCompleteRedraw(SdrPaintWindow& rPaintWindow, bool bPaintFormLayer) SAL_OVERRIDE;
+    virtual SdrPaintWindow* BeginCompleteRedraw(OutputDevice* pOut) override;
+    virtual void EndCompleteRedraw(SdrPaintWindow& rPaintWindow, bool bPaintFormLayer) override;
 
     SVX_DLLPRIVATE const OutputDevice* GetActualOutDev() const {return mpActualOutDev;}
-    SVX_DLLPRIVATE bool checkUnMarkAll(const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface >& _xSource);
+    SVX_DLLPRIVATE bool checkUnMarkAll(const css::uno::Reference< css::uno::XInterface >& _xSource);
 
 private:
     SVX_DLLPRIVATE FmFormObj* getMarkedGrid() const;

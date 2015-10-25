@@ -27,6 +27,7 @@
 #include <vcl/timer.hxx>
 #include <tools/resmgr.hxx>
 #include <unotools/bootstrap.hxx>
+#include <com/sun/star/frame/XDesktop2.hpp>
 #include <com/sun/star/task/XStatusIndicator.hpp>
 #include <com/sun/star/uno/Reference.h>
 #include <osl/mutex.hxx>
@@ -70,14 +71,14 @@ class Desktop : public Application
 
                                 Desktop();
                                 virtual ~Desktop();
-        virtual int             Main( ) SAL_OVERRIDE;
-        virtual void            Init() SAL_OVERRIDE;
-        virtual void            InitFinished() SAL_OVERRIDE;
-        virtual void            DeInit() SAL_OVERRIDE;
-        virtual bool        QueryExit() SAL_OVERRIDE;
-        virtual sal_uInt16      Exception(sal_uInt16 nError) SAL_OVERRIDE;
-        virtual void            OverrideSystemSettings( AllSettings& rSettings ) SAL_OVERRIDE;
-        virtual void            AppEvent( const ApplicationEvent& rAppEvent ) SAL_OVERRIDE;
+        virtual int             Main( ) override;
+        virtual void            Init() override;
+        virtual void            InitFinished() override;
+        virtual void            DeInit() override;
+        virtual bool        QueryExit() override;
+        virtual sal_uInt16      Exception(sal_uInt16 nError) override;
+        virtual void            OverrideSystemSettings( AllSettings& rSettings ) override;
+        virtual void            AppEvent( const ApplicationEvent& rAppEvent ) override;
 
         DECL_LINK_TYPED( OpenClients_Impl, void*, void );
 
@@ -155,6 +156,12 @@ class Desktop : public Application
             respective flag in the configuration is reset.</p>
         */
         void                    CheckFirstRun( );
+
+        /** for ui-testing provide a mechanism to pseudo-restart by closing the
+            open frames and reopen the frame that appeared post initial startup
+        */
+        static void CloseFrameAndReopen(css::uno::Reference<css::frame::XDesktop2> xDesktop);
+        static void DoExecute(css::uno::Reference<css::frame::XDesktop2> xDesktop);
 
         /// does initializations which are necessary for the first run of the office
         static void             DoFirstRunInitializations();

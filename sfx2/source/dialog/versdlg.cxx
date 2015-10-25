@@ -411,7 +411,7 @@ IMPL_LINK_TYPED( SfxVersionDialog, ButtonHdl_Impl, Button*, pButton, void )
             const SfxPoolItem* aItems[2];
             aItems[0] = &aComment;
             aItems[1] = NULL;
-            pViewFrame->GetBindings().ExecuteSynchron( SID_SAVEDOC, aItems, 0 );
+            pViewFrame->GetBindings().ExecuteSynchron( SID_SAVEDOC, aItems );
             m_pVersionBox->SetUpdateMode( false );
             m_pVersionBox->Clear();
             Init_Impl();
@@ -445,8 +445,8 @@ IMPL_LINK_TYPED( SfxVersionDialog, ButtonHdl_Impl, Button*, pButton, void )
         aSet.Put( SfxStringItem( SID_FILE_NAME, pObjShell->GetMedium()->GetName() ) );
 
         SfxItemSet* pSet = pObjShell->GetMedium()->GetItemSet();
-        SFX_ITEMSET_ARG( pSet, pFilterItem, SfxStringItem, SID_FILTER_NAME, false );
-        SFX_ITEMSET_ARG( pSet, pFilterOptItem, SfxStringItem, SID_FILE_FILTEROPTIONS, false );
+        const SfxStringItem* pFilterItem = SfxItemSet::GetItem<SfxStringItem>(pSet, SID_FILTER_NAME, false);
+        const SfxStringItem* pFilterOptItem = SfxItemSet::GetItem<SfxStringItem>(pSet, SID_FILE_FILTEROPTIONS, false);
         if ( pFilterItem )
             aSet.Put( *pFilterItem );
         if ( pFilterOptItem )

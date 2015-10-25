@@ -145,8 +145,8 @@ public:
 
                                         virtual ~BibFrameCtrl_Impl();
 
-    virtual void                        SAL_CALL frameAction(const FrameActionEvent& aEvent) throw( RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void                        SAL_CALL disposing( const lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void                        SAL_CALL frameAction(const FrameActionEvent& aEvent) throw( RuntimeException, std::exception ) override;
+    virtual void                        SAL_CALL disposing( const lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) override;
 };
 
 
@@ -517,7 +517,7 @@ void BibFrameController_Impl::dispatch(const util::URL& _rURL, const uno::Sequen
         else if( _rURL.Complete == "slot:5503" || aCommand == "CloseDoc" )
         {
             Application::PostUserEvent( LINK( this, BibFrameController_Impl,
-                                        DisposeHdl ), 0 );
+                                        DisposeHdl ) );
 
         }
         else if(aCommand == "Bib/InsertRecord")

@@ -277,24 +277,22 @@ void BibToolBar::InitListener()
 
             xTrans->parseStrict( aURL );
 
-            BibToolBarListener* pListener=NULL;
+            css::uno::Reference< css::frame::XStatusListener> xListener;
             if(nId==TBC_LB_SOURCE)
             {
-                pListener=new BibTBListBoxListener(this,aURL.Complete,nId);
+                xListener=new BibTBListBoxListener(this,aURL.Complete,nId);
             }
             else if(nId==TBC_ED_QUERY)
             {
-                pListener=new BibTBEditListener(this,aURL.Complete,nId);
+                xListener=new BibTBEditListener(this,aURL.Complete,nId);
             }
             else
             {
-                pListener=new BibToolBarListener(this,aURL.Complete,nId);
+                xListener=new BibToolBarListener(this,aURL.Complete,nId);
             }
 
-            BibToolBarListenerRef* pxInsert = new uno::Reference<frame::XStatusListener>;
-            (*pxInsert) = pListener;
-            aListenerArr.push_back( pxInsert );
-            xDisp->addStatusListener(uno::Reference< frame::XStatusListener > (pListener),aURL);
+            aListenerArr.push_back( xListener );
+            xDisp->addStatusListener(xListener,aURL);
         }
     }
 }
@@ -462,10 +460,9 @@ bool BibToolBar::PreNotify( NotifyEvent& rNEvt )
     return bResult;
 }
 
-IMPL_LINK( BibToolBar, SelHdl, ListBox*, /*pLb*/ )
+IMPL_LINK_NOARG_TYPED( BibToolBar, SelHdl, ListBox&, void )
 {
     aIdle.Start();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED( BibToolBar, SendSelHdl, Idle*, void )
@@ -520,8 +517,8 @@ void    BibToolBar::statusChanged(const frame::FeatureStateEvent& rEvent)
 {
     for(size_t i = 0; i < aListenerArr.size(); i++)
     {
-        BibToolBarListenerRef* pListener = &aListenerArr[i];
-        (*pListener)->statusChanged(rEvent);
+        css::uno::Reference< css::frame::XStatusListener>& rListener = aListenerArr[i];
+        rListener->statusChanged(rEvent);
     }
 }
 
@@ -571,7 +568,7 @@ void BibToolBar::RebuildToolbar()
 {
     ApplyImageList();
     // We have to call parent asynchronously as SetSize works also asynchronously!
-    Application::PostUserEvent( aLayoutManager, 0 );
+    Application::PostUserEvent( aLayoutManager );
 }
 
 

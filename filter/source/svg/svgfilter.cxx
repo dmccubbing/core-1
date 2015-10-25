@@ -20,6 +20,7 @@
 
 #include <cstdio>
 
+#include <comphelper/lok.hxx>
 #include <comphelper/servicedecl.hxx>
 #include <uno/environment.h>
 #include <com/sun/star/drawing/XDrawPage.hpp>
@@ -105,31 +106,36 @@ sal_Bool SAL_CALL SVGFilter::filter( const Sequence< PropertyValue >& rDescripto
 #ifndef DISABLE_EXPORT
     else if( mxSrcDoc.is() )
     {
-        // #i124608# detext selection
+        // #i124608# detect selection
         bool bSelectionOnly = false;
-        bool bGotSelection(false);
+        bool bGotSelection = false;
 
-        // #i124608# extract Single selection wanted from dialog return values
-        for ( sal_Int32 nInd = 0; nInd < rDescriptor.getLength(); nInd++ )
+        // when using LibreOfficeKit, default to exporting everything (-1)
+        bool bPageProvided = comphelper::LibreOfficeKit::isActive();
+        sal_Int32 nPageToExport = -1;
+
+        for (sal_Int32 nInd = 0; nInd < rDescriptor.getLength(); nInd++)
         {
-            if ( rDescriptor[nInd].Name == "SelectionOnly" )
+            if (rDescriptor[nInd].Name == "SelectionOnly")
             {
+                // #i124608# extract single selection wanted from dialog return values
                 rDescriptor[nInd].Value >>= bSelectionOnly;
+            }
+            else if (rDescriptor[nInd].Name == "PagePos")
+            {
+                rDescriptor[nInd].Value >>= nPageToExport;
+                bPageProvided = true;
             }
         }
 
-        uno::Reference< frame::XDesktop2 >                           xDesktop(frame::Desktop::create(mxContext));
-        uno::Reference< frame::XFrame >                              xFrame(xDesktop->getCurrentFrame(),
-                                                                            uno::UNO_QUERY_THROW);
-        uno::Reference<frame::XController >                          xController(xFrame->getController(),
-                                                                                     uno::UNO_QUERY_THROW);
+        uno::Reference<frame::XDesktop2> xDesktop(frame::Desktop::create(mxContext));
+        uno::Reference<frame::XFrame> xFrame(xDesktop->getCurrentFrame(), uno::UNO_QUERY_THROW);
+        uno::Reference<frame::XController > xController(xFrame->getController(), uno::UNO_QUERY_THROW);
 
-        if( !mSelectedPages.hasElements() )
+        if (!bPageProvided)
         {
-            uno::Reference<drawing::XDrawView >                          xDrawView(xController,
-                                                                                   uno::UNO_QUERY_THROW);
-            uno::Reference<drawing::framework::XControllerManager>       xManager(xController,
-                                                                                  uno::UNO_QUERY_THROW);
+            uno::Reference<drawing::XDrawView> xDrawView(xController, uno::UNO_QUERY_THROW);
+            uno::Reference<drawing::framework::XControllerManager> xManager(xController, uno::UNO_QUERY_THROW);
             uno::Reference<drawing::framework::XConfigurationController> xConfigController(xManager->getConfigurationController());
 
             // which view configuration are we in?
@@ -179,7 +185,7 @@ sal_Bool SAL_CALL SVGFilter::filter( const Sequence< PropertyValue >& rDescripto
 
             if( !mSelectedPages.hasElements() )
             {
-                // apparently failed to glean selection - fallback to current page
+                // apparently failed to clean selection - fallback to current page
                 mSelectedPages.realloc( 1 );
                 mSelectedPages[0] = xDrawView->getCurrentPage();
             }
@@ -190,18 +196,6 @@ sal_Bool SAL_CALL SVGFilter::filter( const Sequence< PropertyValue >& rDescripto
          */
         if( !mSelectedPages.hasElements() )
         {
-            sal_Int32            nLength = rDescriptor.getLength();
-            const PropertyValue* pValue = rDescriptor.getConstArray();
-            sal_Int32            nPageToExport = -1;
-
-            for ( sal_Int32 i = 0 ; i < nLength; ++i)
-            {
-                if ( pValue[ i ].Name == "PagePos" )
-                {
-                    pValue[ i ].Value >>= nPageToExport;
-                }
-            }
-
             uno::Reference< drawing::XMasterPagesSupplier > xMasterPagesSupplier( mxSrcDoc, uno::UNO_QUERY );
             uno::Reference< drawing::XDrawPagesSupplier >   xDrawPagesSupplier( mxSrcDoc, uno::UNO_QUERY );
 
@@ -257,30 +251,31 @@ sal_Bool SAL_CALL SVGFilter::filter( const Sequence< PropertyValue >& rDescripto
             // may be useful; it may have happened by error)
             bRet = false;
         }
-        else {
-        /*
-         *  We get all master page that are targeted by at least one draw page.
-         *  The master page are put in an unordered set.
-         */
-        ObjectSet aMasterPageTargetSet;
-        for( sal_Int32 i = 0; i < mSelectedPages.getLength(); ++i )
+        else
         {
-            uno::Reference< drawing::XMasterPageTarget > xMasterPageTarget( mSelectedPages[i], uno::UNO_QUERY );
-            if( xMasterPageTarget.is() )
+            /*
+             *  We get all master page that are targeted by at least one draw page.
+             *  The master page are put in an unordered set.
+             */
+            ObjectSet aMasterPageTargetSet;
+            for( sal_Int32 i = 0; i < mSelectedPages.getLength(); ++i )
             {
-                aMasterPageTargetSet.insert( xMasterPageTarget->getMasterPage() );
+                uno::Reference< drawing::XMasterPageTarget > xMasterPageTarget( mSelectedPages[i], uno::UNO_QUERY );
+                if( xMasterPageTarget.is() )
+                {
+                    aMasterPageTargetSet.insert( xMasterPageTarget->getMasterPage() );
+                }
             }
-        }
-        // Later we move them to a uno::Sequence so we can get them by index
-        mMasterPageTargets.realloc( aMasterPageTargetSet.size() );
-        ObjectSet::const_iterator aElem = aMasterPageTargetSet.begin();
-        for( sal_Int32 i = 0; aElem != aMasterPageTargetSet.end(); ++aElem, ++i)
-        {
-            uno::Reference< drawing::XDrawPage > xMasterPage( *aElem,  uno::UNO_QUERY );
-            mMasterPageTargets[i] = xMasterPage;
-        }
+            // Later we move them to a uno::Sequence so we can get them by index
+            mMasterPageTargets.realloc( aMasterPageTargetSet.size() );
+            ObjectSet::const_iterator aElem = aMasterPageTargetSet.begin();
+            for( sal_Int32 i = 0; aElem != aMasterPageTargetSet.end(); ++aElem, ++i)
+            {
+                uno::Reference< drawing::XDrawPage > xMasterPage( *aElem,  uno::UNO_QUERY );
+                mMasterPageTargets[i] = xMasterPage;
+            }
 
-        bRet = implExport( rDescriptor );
+            bRet = implExport( rDescriptor );
         }
     }
 #endif

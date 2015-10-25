@@ -57,16 +57,14 @@ public:
 
     SAL_DLLPRIVATE static ConfigManager & getConfigManager();
 
-    SAL_DLLPRIVATE static com::sun::star::uno::Reference<
-        com::sun::star::container::XHierarchicalNameAccess>
+    SAL_DLLPRIVATE static css::uno::Reference< css::container::XHierarchicalNameAccess>
     acquireTree(utl::ConfigItem & item);
 
     SAL_DLLPRIVATE ConfigManager();
 
     SAL_DLLPRIVATE ~ConfigManager();
 
-    SAL_DLLPRIVATE com::sun::star::uno::Reference<
-        com::sun::star::container::XHierarchicalNameAccess >
+    SAL_DLLPRIVATE css::uno::Reference< css::container::XHierarchicalNameAccess >
     addConfigItem(utl::ConfigItem & item);
 
     SAL_DLLPRIVATE void removeConfigItem(utl::ConfigItem & item);
@@ -81,8 +79,8 @@ public:
 
 private:
 
-    ConfigManager(const ConfigManager&) SAL_DELETED_FUNCTION;
-    ConfigManager& operator=(const ConfigManager&) SAL_DELETED_FUNCTION;
+    ConfigManager(const ConfigManager&) = delete;
+    ConfigManager& operator=(const ConfigManager&) = delete;
 
     void doStoreConfigItems();
 

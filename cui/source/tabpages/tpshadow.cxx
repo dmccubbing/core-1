@@ -160,8 +160,8 @@ SvxShadowTabPage::SvxShadowTabPage( vcl::Window* pParent, const SfxItemSet& rInA
     //aCtlXRectPreview.SetFillAttr( aXFillAttr );
 
     m_pTsbShowShadow->SetClickHdl( LINK( this, SvxShadowTabPage, ClickShadowHdl_Impl ) );
-    Link<> aLink = LINK( this, SvxShadowTabPage, ModifyShadowHdl_Impl );
-    m_pLbShadowColor->SetSelectHdl( aLink );
+    m_pLbShadowColor->SetSelectHdl( LINK( this, SvxShadowTabPage, SelectShadowHdl_Impl ) );
+    Link<Edit&,void> aLink = LINK( this, SvxShadowTabPage, ModifyShadowHdl_Impl );
     m_pMtrTransparent->SetModifyHdl( aLink );
     m_pMtrDistance->SetModifyHdl( aLink );
 }
@@ -201,7 +201,7 @@ void SvxShadowTabPage::ActivatePage( const SfxItemSet& rSet )
     sal_Int32 nPos;
     sal_Int32 nCount;
 
-    SFX_ITEMSET_ARG (&rSet,pPageTypeItem,SfxUInt16Item,SID_PAGE_TYPE,false);
+    const SfxUInt16Item* pPageTypeItem = rSet.GetItem<SfxUInt16Item>(SID_PAGE_TYPE, false);
     if (pPageTypeItem)
         SetPageType(pPageTypeItem->GetValue());
 
@@ -248,7 +248,7 @@ void SvxShadowTabPage::ActivatePage( const SfxItemSet& rSet )
                 rAttribs.Put( aItem );
 
                 m_pCtlXRectPreview->SetRectangleAttributes( rAttribs );
-                ModifyShadowHdl_Impl( this );
+                ModifyShadowHdl_Impl( *m_pMtrTransparent );
             }
             m_nPageType = PT_SHADOW;
         }
@@ -478,7 +478,7 @@ void SvxShadowTabPage::Reset( const SfxItemSet* rAttrs )
         m_pMtrTransparent->SaveValue();
 
         ClickShadowHdl_Impl( NULL );
-        ModifyShadowHdl_Impl( NULL );
+        ModifyShadowHdl_Impl( *m_pMtrTransparent );
     }
 }
 
@@ -504,12 +504,16 @@ IMPL_LINK_NOARG_TYPED(SvxShadowTabPage, ClickShadowHdl_Impl, Button*, void)
     }
     m_pCtlPosition->Invalidate();
 
-    ModifyShadowHdl_Impl( NULL );
+    ModifyShadowHdl_Impl( *m_pMtrTransparent );
 }
 
 
 
-IMPL_LINK_NOARG(SvxShadowTabPage, ModifyShadowHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxShadowTabPage, SelectShadowHdl_Impl, ListBox&, void)
+{
+    ModifyShadowHdl_Impl(*m_pMtrTransparent);
+}
+IMPL_LINK_NOARG_TYPED(SvxShadowTabPage, ModifyShadowHdl_Impl, Edit&, void)
 {
     if( m_pTsbShowShadow->GetState() == TRISTATE_TRUE )
         m_rXFSet.Put( XFillStyleItem( drawing::FillStyle_SOLID ) );
@@ -546,25 +550,23 @@ IMPL_LINK_NOARG(SvxShadowTabPage, ModifyShadowHdl_Impl)
     m_pCtlXRectPreview->SetShadowAttributes(m_aXFillAttr.GetItemSet());
     //aCtlXRectPreview.SetFillAttr( aXFillAttr );
     m_pCtlXRectPreview->Invalidate();
-
-    return 0L;
 }
 
 
 
-void SvxShadowTabPage::PointChanged( vcl::Window* pWindow, RECT_POINT eRcPt )
+void SvxShadowTabPage::PointChanged( vcl::Window*, RECT_POINT eRcPt )
 {
     m_eRP = eRcPt;
 
     // repaint shadow
-    ModifyShadowHdl_Impl( pWindow );
+    ModifyShadowHdl_Impl( *m_pMtrTransparent );
 }
 
 void SvxShadowTabPage::PageCreated(const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pColorListItem,SvxColorListItem,SID_COLOR_TABLE,false);
-    SFX_ITEMSET_ARG (&aSet,pPageTypeItem,SfxUInt16Item,SID_PAGE_TYPE,false);
-    SFX_ITEMSET_ARG (&aSet,pDlgTypeItem,SfxUInt16Item,SID_DLG_TYPE,false);
+    const SvxColorListItem* pColorListItem = aSet.GetItem<SvxColorListItem>(SID_COLOR_TABLE, false);
+    const SfxUInt16Item* pPageTypeItem = aSet.GetItem<SfxUInt16Item>(SID_PAGE_TYPE, false);
+    const SfxUInt16Item* pDlgTypeItem = aSet.GetItem<SfxUInt16Item>(SID_DLG_TYPE, false);
 
     if (pColorListItem)
         SetColorList(pColorListItem->GetColorList());

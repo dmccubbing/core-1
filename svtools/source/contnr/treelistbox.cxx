@@ -62,9 +62,9 @@ class MyEdit_Impl : public Edit
 public:
                  MyEdit_Impl( vcl::Window* pParent, SvInplaceEdit2* pOwner );
     virtual     ~MyEdit_Impl() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE { pOwner = NULL; Edit::dispose(); }
-    virtual void KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void LoseFocus() SAL_OVERRIDE;
+    virtual void dispose() override { pOwner = NULL; Edit::dispose(); }
+    virtual void KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void LoseFocus() override;
 };
 
 class MyMultiEdit_Impl : public MultiLineEdit
@@ -73,9 +73,9 @@ class MyMultiEdit_Impl : public MultiLineEdit
 public:
                  MyMultiEdit_Impl( vcl::Window* pParent, SvInplaceEdit2* pOwner );
     virtual     ~MyMultiEdit_Impl() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE { pOwner = NULL; MultiLineEdit::dispose(); }
-    virtual void KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void LoseFocus() SAL_OVERRIDE;
+    virtual void dispose() override { pOwner = NULL; MultiLineEdit::dispose(); }
+    virtual void KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void LoseFocus() override;
 };
 
 MyEdit_Impl::MyEdit_Impl( vcl::Window* pParent, SvInplaceEdit2* _pOwner ) :
@@ -1201,7 +1201,7 @@ sal_Int8 SvTreeListBox::AcceptDrop( const AcceptDropEvent& rEvt )
 sal_Int8 SvTreeListBox::ExecuteDrop( const ExecuteDropEvent& rEvt, SvTreeListBox* pSourceView )
 {
     DBG_ASSERT( pSourceView, "SvTreeListBox::ExecuteDrop(): no source view" );
-    pSourceView->EnableSelectionAsDropTarget( true );
+    pSourceView->EnableSelectionAsDropTarget();
 
     ImplShowTargetEmphasis( pTargetEntry, false );
     pDDTarget = this;
@@ -1312,7 +1312,7 @@ nAction
 #endif
 )
 {
-    EnableSelectionAsDropTarget( true );
+    EnableSelectionAsDropTarget();
 
 #ifndef UNX
     if( (nAction == DND_ACTION_MOVE) && ( (pDDTarget &&
@@ -2137,7 +2137,7 @@ void SvTreeListBox::KeyInput( const KeyEvent& rKEvt )
 void SvTreeListBox::RequestingChildren( SvTreeListEntry* pParent )
 {
     if( !pParent->HasChildren() )
-        InsertEntry( OUString("<dummy>"), pParent, false, TREELIST_APPEND );
+        InsertEntry( OUString("<dummy>"), pParent );
 }
 
 void SvTreeListBox::GetFocus()
@@ -2621,7 +2621,7 @@ void SvTreeListBox::ModelHasEntryInvalidated( SvTreeListEntry* pEntry )
     for( sal_uInt16 nIdx = 0; nIdx < nCount; nIdx++ )
     {
         SvLBoxItem& rItem = pEntry->GetItem( nIdx );
-        rItem.InitViewData( this, pEntry, 0 );
+        rItem.InitViewData( this, pEntry );
     }
 
     // repaint
@@ -3817,7 +3817,7 @@ std::unique_ptr<PopupMenu> SvTreeListBox::CreateContextMenu()
 
 void SvTreeListBox::ExcecuteContextMenuAction( sal_uInt16 )
 {
-    DBG_WARNING( "SvTreeListBox::ExcecuteContextMenuAction(): now there's happening nothing!" );
+    SAL_INFO( "svtools", "SvTreeListBox::ExcecuteContextMenuAction(): now there's happening nothing!" );
 }
 
 void SvTreeListBox::EnableContextMenuHandling()

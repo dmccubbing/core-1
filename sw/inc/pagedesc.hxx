@@ -26,6 +26,9 @@
 #include <frmfmt.hxx>
 #include <editeng/numitem.hxx>
 #include <editeng/borderline.hxx>
+#include <com/sun/star/drawing/TextVerticalAdjust.hpp>
+
+using namespace ::com::sun::star;
 
 class SfxPoolItem;
 class SwTextFormatColl;
@@ -143,6 +146,7 @@ class SW_DLLPUBLIC SwPageDesc : public SwModify
     SwPageDesc *m_pFollow;
     sal_uInt16  m_nRegHeight; ///< Sentence spacing and fontascent of style.
     sal_uInt16  m_nRegAscent; ///< For grid alignment (Registerhaltigkeit).
+    drawing::TextVerticalAdjust   m_nVerticalAdjustment; // doc/docx: vertically center / justify / bottom
     UseOnPage   m_eUse;
     bool        m_IsLandscape;
     bool        m_IsHidden;
@@ -159,7 +163,7 @@ class SW_DLLPUBLIC SwPageDesc : public SwModify
     SAL_DLLPRIVATE SwPageDesc(const OUString&, SwFrameFormat*, SwDoc *pDc );
 
 protected:
-   virtual void Modify( const SfxPoolItem* pOld, const SfxPoolItem *pNewValue ) SAL_OVERRIDE;
+   virtual void Modify( const SfxPoolItem* pOld, const SfxPoolItem *pNewValue ) override;
 
 public:
     OUString GetName() const { return m_StyleName; }
@@ -216,6 +220,9 @@ public:
     void SetRegHeight(sal_uInt16 const nNew) { m_nRegHeight = nNew; }
     void SetRegAscent(sal_uInt16 const nNew) { m_nRegAscent = nNew; }
 
+    drawing::TextVerticalAdjust GetVerticalAdjustment () const {return m_nVerticalAdjustment; }
+    void SetVerticalAdjustment (const drawing::TextVerticalAdjust nVA) {m_nVerticalAdjustment = nVA; }
+
     inline void SetFollow( const SwPageDesc* pNew );
     const SwPageDesc* GetFollow() const { return m_pFollow; }
           SwPageDesc* GetFollow() { return m_pFollow; }
@@ -233,7 +240,7 @@ public:
     void SetPoolHlpFileId(sal_uInt8 const nId) { m_Master.SetPoolHlpFileId(nId); }
 
     /// Query information from Client.
-    virtual bool GetInfo( SfxPoolItem& ) const SAL_OVERRIDE;
+    virtual bool GetInfo( SfxPoolItem& ) const override;
 
     const SwFrameFormat* GetPageFormatOfNode( const SwNode& rNd,
                                     bool bCheckForThisPgDc = true ) const;
@@ -336,7 +343,7 @@ public:
 };
 
 namespace sw {
-    class PageFootnoteHint SAL_FINAL : public SfxHint {};
+    class PageFootnoteHint final : public SfxHint {};
 }
 
 #endif // INCLUDED_SW_INC_PAGEDESC_HXX

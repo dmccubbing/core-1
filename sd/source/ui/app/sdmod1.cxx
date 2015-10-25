@@ -235,7 +235,7 @@ void SdModule::Execute(SfxRequest& rReq)
             {
                 ScopedVclPtrInstance<MessageDialog>::Create(nullptr, SD_RESSTR(STR_CANT_PERFORM_IN_LIVEMODE))->Execute();
 
-                SFX_REQUEST_ARG( rReq, pLinkItem, SfxLinkItem, SID_DONELINK, false );
+                const SfxLinkItem* pLinkItem = rReq.GetArg<SfxLinkItem>(SID_DONELINK);
                 if( pLinkItem )
                     pLinkItem->GetValue().Call( 0 );
             }
@@ -266,7 +266,7 @@ bool SdModule::OutlineToImpress(SfxRequest& rRequest)
             xDocShell = pDocSh = new ::sd::DrawDocShell(
                 SfxObjectCreateMode::STANDARD, false);
 
-            pDocSh->DoInitNew(NULL);
+            pDocSh->DoInitNew();
             SdDrawDocument* pDoc = pDocSh->GetDoc();
             if(pDoc)
             {
@@ -274,7 +274,7 @@ bool SdModule::OutlineToImpress(SfxRequest& rRequest)
                 pDoc->StopWorkStartupDelay();
             }
 
-            SFX_REQUEST_ARG( rRequest, pFrmItem, SfxFrameItem, SID_DOCFRAME, false);
+            const SfxFrameItem* pFrmItem = rRequest.GetArg<SfxFrameItem>(SID_DOCFRAME);
             SfxViewFrame::LoadDocumentIntoFrame( *pDocSh, pFrmItem, ::sd::OUTLINE_FACTORY_ID );
 
             ::sd::ViewShell* pViewSh = pDocSh->GetViewShell();
@@ -522,11 +522,9 @@ SfxFrame* SdModule::ExecuteNewDocument( SfxRequest& rReq )
     if ( SvtModuleOptions().IsImpress() )
     {
         Reference< XFrame > xTargetFrame;
-        SFX_REQUEST_ARG( rReq, pFrmItem, SfxUnoFrameItem, SID_FILLFRAME, false);
+        const SfxUnoFrameItem* pFrmItem = rReq.GetArg<SfxUnoFrameItem>(SID_FILLFRAME);
         if ( pFrmItem )
             xTargetFrame = pFrmItem->GetFrame();
-
-        SfxViewFrame* pViewFrame = NULL;
 
         SdOptions* pOpt = GetSdOptions(DOCUMENT_TYPE_IMPRESS);
         bool bStartWithTemplate = pOpt->IsStartWithTemplate();
@@ -636,7 +634,7 @@ SfxFrame* SdModule::ExecuteNewDocument( SfxRequest& rReq )
                     SfxObjectShell* pShell = xShell;
                     if( pShell )
                     {
-                        pViewFrame = SfxViewFrame::LoadDocumentIntoFrame( *pShell, xTargetFrame );
+                        SfxViewFrame* pViewFrame = SfxViewFrame::LoadDocumentIntoFrame( *pShell, xTargetFrame );
                         DBG_ASSERT( pViewFrame, "no ViewFrame!!" );
                         pFrame = pViewFrame ? &pViewFrame->GetFrame() : NULL;
 
@@ -720,7 +718,7 @@ SfxFrame* SdModule::CreateEmptyDocument( DocumentType eDocType, const Reference<
     SfxObjectShellLock xDocShell;
     ::sd::DrawDocShell* pNewDocSh;
     xDocShell = pNewDocSh = new ::sd::DrawDocShell(SfxObjectCreateMode::STANDARD,false,eDocType);
-    pNewDocSh->DoInitNew(NULL);
+    pNewDocSh->DoInitNew();
     SdDrawDocument* pDoc = pNewDocSh->GetDoc();
     if (pDoc)
     {

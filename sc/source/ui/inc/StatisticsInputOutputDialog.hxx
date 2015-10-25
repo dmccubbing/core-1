@@ -33,10 +33,10 @@ public:
         const OUString& rID, const OUString& rUIXMLDescription );
 
     virtual ~ScStatisticsInputOutputDialog();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
-    virtual void        SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
-    virtual void        SetActive() SAL_OVERRIDE;
+    virtual void        SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
+    virtual void        SetActive() override;
 
 protected:
     void CalculateInputAndWriteToOutput();
@@ -83,7 +83,7 @@ private:
     DECL_LINK_TYPED( OkClicked, Button*, void );
     DECL_LINK_TYPED( GetFocusHandler,  Control&, void );
     DECL_LINK_TYPED( LoseFocusHandler, Control&, void );
-    DECL_LINK( RefInputModifyHandler, void* );
+    DECL_LINK_TYPED( RefInputModifyHandler, Edit&, void );
 };
 
 #endif

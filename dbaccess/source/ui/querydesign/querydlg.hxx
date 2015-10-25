@@ -55,7 +55,7 @@ namespace dbaui
 
 
         DECL_LINK_TYPED( OKClickHdl, Button*, void );
-        DECL_LINK( LBChangeHdl, ListBox* );
+        DECL_LINK_TYPED( LBChangeHdl, ListBox&, void );
         DECL_LINK_TYPED( NaturalToggleHdl, CheckBox&, void );
 
         /** setJoinType enables and set the new join type
@@ -69,18 +69,18 @@ namespace dbaui
                     const css::uno::Reference< css::sdbc::XConnection >& _xConnection,
                     bool _bAllowTableSelect);
         virtual ~DlgQryJoin();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
         EJoinType GetJoinType() const { return eJoinType; };
 
         /** setValid set the valid inside, can be used for OK buttons
             @param  _bValid true when the using control allows an update
         */
-        virtual void setValid(bool _bValid) SAL_OVERRIDE;
+        virtual void setValid(bool _bValid) override;
 
         /** notifyConnectionChange is callback which is called when the table selection has changed and a new connection exists
             @param  _pConnectionData    the connection which exists between the new tables
         */
-        virtual void notifyConnectionChange() SAL_OVERRIDE;
+        virtual void notifyConnectionChange() override;
     };
 }
 #endif // INCLUDED_DBACCESS_SOURCE_UI_QUERYDESIGN_QUERYDLG_HXX

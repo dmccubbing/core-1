@@ -28,6 +28,7 @@
 
 class SfxObjectShell;
 struct AreaLink_Impl;
+class Dialog;
 
 class SC_DLLPUBLIC ScAreaLink : public ::sfx2::SvBaseLink, public ScRefreshTimer
 {
@@ -50,11 +51,11 @@ public:
                     const OUString& rArea, const ScRange& rDest, sal_uLong nRefresh );
     virtual ~ScAreaLink();
 
-    virtual void Closed() SAL_OVERRIDE;
+    virtual void Closed() override;
     virtual ::sfx2::SvBaseLink::UpdateResult DataChanged(
-        const OUString& rMimeType, const ::com::sun::star::uno::Any & rValue ) SAL_OVERRIDE;
+        const OUString& rMimeType, const ::com::sun::star::uno::Any & rValue ) override;
 
-    virtual void    Edit( vcl::Window*, const Link<SvBaseLink&,void>& rEndEditHdl ) SAL_OVERRIDE;
+    virtual void    Edit( vcl::Window*, const Link<SvBaseLink&,void>& rEndEditHdl ) override;
 
     bool    Refresh( const OUString& rNewFile, const OUString& rNewFilter,
                     const OUString& rNewArea, sal_uLong nNewRefresh );
@@ -75,7 +76,7 @@ public:
     const ScRange&  GetDestArea() const     { return aDestArea;     }
 
     DECL_LINK_TYPED( RefreshHdl, Timer*, void );
-    DECL_LINK( AreaEndEditHdl, void* );
+    DECL_LINK_TYPED( AreaEndEditHdl, Dialog&, void );
 };
 
 #endif

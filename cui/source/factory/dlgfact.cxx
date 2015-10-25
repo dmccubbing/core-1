@@ -149,7 +149,7 @@ VclAbstractDialog2_Impl::~VclAbstractDialog2_Impl()
 }
 
 // virtual
-void  VclAbstractDialog2_Impl::StartExecuteModal( const Link<>& rEndDialogHdl )
+void  VclAbstractDialog2_Impl::StartExecuteModal( const Link<Dialog&,void>& rEndDialogHdl )
 {
     m_aEndDlgHdl = rEndDialogHdl;
     m_pDlg->StartExecuteModal(
@@ -162,17 +162,15 @@ long VclAbstractDialog2_Impl::GetResult()
     return m_pDlg->GetResult();
 }
 
-IMPL_LINK( VclAbstractDialog2_Impl, EndDialogHdl, Dialog*, pDlg )
+IMPL_LINK_TYPED( VclAbstractDialog2_Impl, EndDialogHdl, Dialog&, rDlg, void )
 {
-    if ( pDlg != m_pDlg )
+    if ( &rDlg != m_pDlg )
     {
         SAL_WARN( "cui.factory", "VclAbstractDialog2_Impl::EndDialogHdl(): wrong dialog" );
     }
 
-    m_aEndDlgHdl.Call( this );
-    m_aEndDlgHdl = Link<>();
-
-    return 0L;
+    m_aEndDlgHdl.Call( *m_pDlg );
+    m_aEndDlgHdl = Link<Dialog&,void>();
 }
 
 
@@ -609,9 +607,7 @@ void AbstractSvxNameDialog_Impl::SetText( const OUString& rStr )
 }
 IMPL_LINK_NOARG_TYPED(AbstractSvxNameDialog_Impl, CheckNameHdl, SvxNameDialog&, bool)
 {
-    if( aCheckNameHdl.IsSet() )
-        return aCheckNameHdl.Call(*this);
-    return false;
+    return aCheckNameHdl.Call(*this);
 }
 
 void AbstractSvxObjectNameDialog_Impl::GetName(OUString& rName)
@@ -635,12 +631,7 @@ void AbstractSvxObjectNameDialog_Impl::SetCheckNameHdl(const Link<AbstractSvxObj
 
 IMPL_LINK_NOARG_TYPED(AbstractSvxObjectNameDialog_Impl, CheckNameHdl, SvxObjectNameDialog&, bool)
 {
-    if(aCheckNameHdl.IsSet())
-    {
-        return aCheckNameHdl.Call(*this);
-    }
-
-    return false;
+    return aCheckNameHdl.Call(*this);
 }
 
 void AbstractSvxObjectTitleDescDialog_Impl::GetTitle(OUString& rTitle)
@@ -797,13 +788,11 @@ void AbstractSvxPostItDialog_Impl::SetPrevHdl( const Link<AbstractSvxPostItDialo
 }
 IMPL_LINK_NOARG_TYPED(AbstractSvxPostItDialog_Impl, NextHdl, SvxPostItDialog&, void)
 {
-    if( aNextHdl.IsSet() )
-        aNextHdl.Call(*this);
+    aNextHdl.Call(*this);
 }
 IMPL_LINK_NOARG_TYPED(AbstractSvxPostItDialog_Impl, PrevHdl, SvxPostItDialog&, void)
 {
-    if( aPrevHdl.IsSet() )
-        aPrevHdl.Call(*this);
+    aPrevHdl.Call(*this);
 }
 vcl::Window * AbstractSvxPostItDialog_Impl::GetWindow()
 {
@@ -1407,7 +1396,7 @@ public:
         m_pDialog.reset( VclPtr<SvxMacroAssignDlg>::Create( _pParent, _rxDocumentFrame, m_aItems, _rxEvents, _nInitiallySelectedEvent ) );
     }
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
     virtual ~SvxMacroAssignDialog();
 
 private:

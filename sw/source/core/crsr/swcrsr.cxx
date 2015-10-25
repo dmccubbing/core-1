@@ -70,7 +70,7 @@ struct _PercentHdl
         {
             sal_uLong n = nStt; nStt = nEnd; nEnd = n;
         }
-        ::StartProgress( STR_STATSTR_SEARCH, nStt, nEnd, 0 );
+        ::StartProgress( STR_STATSTR_SEARCH, nStt, nEnd );
     }
 
     explicit _PercentHdl( const SwPaM& rPam )
@@ -1336,7 +1336,6 @@ bool SwCursor::SelectWordWT( SwViewShell* pViewShell, sal_Int16 nWordType, const
     SwCrsrSaveState aSave( *this );
 
     bool bRet = false;
-    bool bForward = true;
     DeleteMark();
     const SwRootFrm* pLayout = pViewShell->GetLayout();
     if( pPt && 0 != pLayout )
@@ -1372,6 +1371,7 @@ bool SwCursor::SelectWordWT( SwViewShell* pViewShell, sal_Int16 nWordType, const
         }
         else
         {
+            bool bForward = true;
             sal_Int32 nPtPos = GetPoint()->nContent.GetIndex();
             Boundary aBndry( g_pBreakIt->GetBreakIter()->getWordBoundary(
                                 pTextNd->GetText(), nPtPos,
@@ -1851,7 +1851,7 @@ bool SwCursor::UpDown( bool bUp, sal_uInt16 nCnt,
                 // try to position the cursor at half of the char-rect's height
                 pFrm = GetContentNode()->getLayoutFrm( GetDoc()->getIDocumentLayoutAccess().GetCurrentLayout(), &aPt, GetPoint() );
                 SwCrsrMoveState eTmpState( MV_UPDOWN );
-                eTmpState.bSetInReadOnly = bInReadOnly;
+                eTmpState.m_bSetInReadOnly = bInReadOnly;
                 SwRect aTmpRect;
                 pFrm->GetCharRect( aTmpRect, *GetPoint(), &eTmpState );
                 if ( pFrm->IsVertical() )

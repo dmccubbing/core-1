@@ -64,9 +64,9 @@ namespace
                 SwDashedLine( pParent, pColorFn ),
                 m_pWin( pWin ) {};
             virtual ~SwBreakDashedLine() { disposeOnce(); }
-            virtual void dispose() SAL_OVERRIDE { m_pWin.clear(); SwDashedLine::dispose(); }
+            virtual void dispose() override { m_pWin.clear(); SwDashedLine::dispose(); }
 
-            virtual void MouseMove( const MouseEvent& rMEvt ) SAL_OVERRIDE;
+            virtual void MouseMove( const MouseEvent& rMEvt ) override;
     };
 
     void SwBreakDashedLine::MouseMove( const MouseEvent& rMEvt )
@@ -289,7 +289,7 @@ void SwPageBreakWin::Select( )
                     aSet.Put( SwFormatPageDesc( NULL ) );
 
                     SwPaM aPaM( *pNd );
-                    pNd->GetDoc()->getIDocumentContentOperations().InsertItemSet( aPaM, aSet, SetAttrMode::DEFAULT );
+                    pNd->GetDoc()->getIDocumentContentOperations().InsertItemSet( aPaM, aSet );
 
                     pNd->GetDoc()->GetIDocumentUndoRedo( ).EndUndo( UNDO_UI_DELETE_PAGE_BREAK, NULL );
                 }

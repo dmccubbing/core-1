@@ -67,13 +67,13 @@ SwGlossaryGroupDlg::SwGlossaryGroupDlg(vcl::Window * pParent,
         0, nAppFontUnits
     };
 
-    m_pGroupTLB->SetTabs( &nTabs[0], MAP_APPFONT );
+    m_pGroupTLB->SetTabs( &nTabs[0] );
     m_pGroupTLB->SetSelectHdl(LINK(this, SwGlossaryGroupDlg, SelectHdl));
     m_pGroupTLB->GetModel()->SetSortMode(SortAscending);
     m_pNewPB->SetClickHdl(LINK(this, SwGlossaryGroupDlg, NewHdl));
     m_pDelPB->SetClickHdl(LINK(this, SwGlossaryGroupDlg, DeleteHdl));
     m_pNameED->SetModifyHdl(LINK(this, SwGlossaryGroupDlg, ModifyHdl));
-    m_pPathLB->SetSelectHdl(LINK(this, SwGlossaryGroupDlg, ModifyHdl));
+    m_pPathLB->SetSelectHdl(LINK(this, SwGlossaryGroupDlg, ModifyListBoxHdl));
     m_pRenamePB->SetClickHdl(LINK(this, SwGlossaryGroupDlg, RenameHdl));
 
     for (size_t i = 0; i < rPathArr.size(); ++i)
@@ -91,7 +91,7 @@ SwGlossaryGroupDlg::SwGlossaryGroupDlg(vcl::Window * pParent,
         m_pPathLB->SetEntryData(i, reinterpret_cast<void*>(nCaseReadonly));
     }
     m_pPathLB->SelectEntryPos(0);
-    m_pPathLB->Enable(true);
+    m_pPathLB->Enable();
 
     const size_t nCount = pHdl->GetGroupCnt();
     for( size_t i = 0; i < nCount; ++i)
@@ -320,7 +320,11 @@ IMPL_LINK_NOARG_TYPED(SwGlossaryGroupDlg, RenameHdl, Button*, void)
     m_pGroupTLB->GetModel()->Resort();
 }
 
-IMPL_LINK_NOARG(SwGlossaryGroupDlg, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(SwGlossaryGroupDlg, ModifyListBoxHdl, ListBox&, void)
+{
+    ModifyHdl(*m_pNameED);
+}
+IMPL_LINK_NOARG_TYPED(SwGlossaryGroupDlg, ModifyHdl, Edit&, void)
 {
     OUString sEntry(m_pNameED->GetText());
     bool bEnableNew = true;
@@ -369,7 +373,6 @@ IMPL_LINK_NOARG(SwGlossaryGroupDlg, ModifyHdl)
     m_pDelPB->Enable(bEnableDel);
     m_pNewPB->Enable(bEnableNew);
     m_pRenamePB->Enable(bEnableNew && pEntry);
-    return 0;
 }
 
 bool SwGlossaryGroupDlg::IsDeleteAllowed(const OUString &rGroup)

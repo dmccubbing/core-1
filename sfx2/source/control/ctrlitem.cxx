@@ -36,7 +36,7 @@ void SfxControllerItem::CheckConfigure_Impl( SfxSlotMode nType )
 
     // is the ID configurable at all in 'nType'?
     const SfxSlot *pSlot = SFX_SLOTPOOL().GetSlot(nId);
-    DBG_ASSERTWARNING( pSlot, "SfxControllerItem: binding not existing slot" );
+    SAL_WARN_IF( !pSlot, "sfx.control", "SfxControllerItem: binding not existing slot" );
     SAL_WARN_IF(
         pSlot && !pSlot->IsMode(nType), "sfx.control",
         "SfxControllerItem: slot without ...Config-flag at SID "
@@ -369,7 +369,7 @@ SfxMapUnit SfxControllerItem::GetCoreMetric() const
         }
     }
 
-    DBG_WARNING( "W1: Can not find ItemPool!" );
+    SAL_INFO( "sfx.control", "W1: Can not find ItemPool!" );
     return SFX_MAPUNIT_100TH_MM;
 }
 

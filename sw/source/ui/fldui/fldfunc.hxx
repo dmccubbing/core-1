@@ -66,13 +66,14 @@ class SwFieldFuncPage : public SwFieldPage
     sal_uLong           nOldFormat;
     bool            bDropDownLBChanged;
 
-    DECL_LINK(TypeHdl, void *);
-    DECL_LINK(SelectHdl, void *);
-    DECL_LINK_TYPED(InsertMacroHdl, ListBox&, void);
-    DECL_LINK(ModifyHdl, void *);
-    DECL_LINK_TYPED(ListModifyReturnActionHdl, ReturnActionEdit&, void);
-    DECL_LINK_TYPED(ListModifyButtonHdl, Button*, void);
-    DECL_LINK( ListEnableHdl, void*);
+    DECL_LINK_TYPED( TypeHdl, ListBox&, void );
+    DECL_LINK_TYPED( SelectHdl, ListBox&, void );
+    DECL_LINK_TYPED( InsertMacroHdl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
+    DECL_LINK_TYPED( ListModifyReturnActionHdl, ReturnActionEdit&, void );
+    DECL_LINK_TYPED( ListModifyButtonHdl, Button*, void );
+    DECL_LINK_TYPED( ListEnableHdl, Edit&, void );
+    DECL_LINK_TYPED( ListEnableListBoxHdl, ListBox&, void );
     void ListModifyHdl(Control*);
 
     // select Macro
@@ -82,20 +83,20 @@ class SwFieldFuncPage : public SwFieldPage
     static OUString     TurnMacroString(const OUString &rMacro);
 
 protected:
-    virtual sal_uInt16      GetGroup() SAL_OVERRIDE;
+    virtual sal_uInt16      GetGroup() override;
 
 public:
                         SwFieldFuncPage(vcl::Window* pParent, const SfxItemSet& rSet);
 
                         virtual ~SwFieldFuncPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage>  Create(vcl::Window* pParent, const SfxItemSet* rAttrSet);
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual void        FillUserData() override;
 };
 
 #endif

@@ -1179,7 +1179,7 @@ bool MenuSaveInData::Apply()
         uno::Reference< lang::XSingleComponentFactory > xFactory (
             m_xMenuSettings, uno::UNO_QUERY );
 
-        Apply( pRootEntry, xIndexContainer, xFactory, NULL );
+        Apply( pRootEntry, xIndexContainer, xFactory );
 
         try
         {
@@ -1327,7 +1327,7 @@ public:
     virtual ~PopupPainter() { }
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rOutDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override
     {
         SvLBoxString::Paint(rPos, rOutDev, rRenderContext, pView, rEntry);
 
@@ -1870,15 +1870,12 @@ bool SvxConfigPage::FillItemSet( SfxItemSet* )
     return result;
 }
 
-IMPL_LINK( SvxConfigPage, SelectSaveInLocation, ListBox *, pBox )
+IMPL_LINK_NOARG_TYPED( SvxConfigPage, SelectSaveInLocation, ListBox&, void )
 {
-    (void)pBox;
-
     pCurrentSaveInData = static_cast<SaveInData*>(m_pSaveInListBox->GetEntryData(
             m_pSaveInListBox->GetSelectEntryPos()));
 
     Init();
-    return 1;
 }
 
 void SvxConfigPage::ReloadTopLevelListBox( SvxConfigEntry* pToSelect )
@@ -1916,7 +1913,7 @@ void SvxConfigPage::ReloadTopLevelListBox( SvxConfigEntry* pToSelect )
         nSelectionPos : m_pTopLevelListBox->GetEntryCount() - 1;
 
     m_pTopLevelListBox->SelectEntryPos( nSelectionPos );
-    m_pTopLevelListBox->GetSelectHdl().Call( this );
+    m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
 }
 
 void SvxConfigPage::AddSubMenusToUI(
@@ -2254,7 +2251,7 @@ void SvxMenuConfigPage::Init()
     ReloadTopLevelListBox();
 
     m_pTopLevelListBox->SelectEntryPos(0);
-    m_pTopLevelListBox->GetSelectHdl().Call(this);
+    m_pTopLevelListBox->GetSelectHdl().Call(*m_pTopLevelListBox);
 }
 
 void SvxMenuConfigPage::dispose()
@@ -2388,10 +2385,8 @@ short SvxMenuConfigPage::QueryReset()
     return qbox->Execute();
 }
 
-IMPL_LINK( SvxMenuConfigPage, SelectMenu, ListBox *, pBox )
+IMPL_LINK_NOARG_TYPED( SvxMenuConfigPage, SelectMenu, ListBox&, void )
 {
-    (void)pBox;
-
     m_pContentsListBox->Clear();
 
     SvxConfigEntry* pMenuData = GetTopLevelSelection();
@@ -2414,8 +2409,6 @@ IMPL_LINK( SvxMenuConfigPage, SelectMenu, ListBox *, pBox )
     }
 
     UpdateButtonStates();
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( SvxMenuConfigPage, MenuSelectHdl, MenuButton *, pButton, void )
@@ -2680,14 +2673,12 @@ void SvxMainMenuOrganizerDialog::dispose()
     ModalDialog::dispose();
 }
 
-IMPL_LINK(SvxMainMenuOrganizerDialog, ModifyHdl, Edit*, pEdit)
+IMPL_LINK_NOARG_TYPED(SvxMainMenuOrganizerDialog, ModifyHdl, Edit&, void)
 {
-    (void)pEdit;
-
     // if the Edit control is empty do not change the name
     if (m_pMenuNameEdit->GetText().isEmpty())
     {
-        return 0;
+        return;
     }
 
     SvxConfigEntry* pNewEntryData =
@@ -2696,8 +2687,6 @@ IMPL_LINK(SvxMainMenuOrganizerDialog, ModifyHdl, Edit*, pEdit)
     pNewEntryData->SetName(m_pMenuNameEdit->GetText());
 
     m_pMenuListBox->SetEntryText( pNewMenuEntry, pNewEntryData->GetName() );
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED( SvxMainMenuOrganizerDialog, SelectHdl, SvTreeListBox*, void )
@@ -2893,8 +2882,8 @@ SvxToolbarConfigPage::SvxToolbarConfigPage(vcl::Window *pParent, const SfxItemSe
     m_pMoveDownButton->SetClickHdl ( LINK( this, SvxToolbarConfigPage, MoveHdl) );
     // Always enable Up and Down buttons
     // added for issue i53677 by shizhoubo
-    m_pMoveDownButton->Enable( true );
-    m_pMoveUpButton->Enable( true );
+    m_pMoveDownButton->Enable();
+    m_pMoveUpButton->Enable();
 
     PopupMenu* pMenu = new PopupMenu( CUI_RES( MODIFY_TOOLBAR ) );
     pMenu->SetMenuFlags(
@@ -2969,7 +2958,7 @@ void SvxToolbarConfigPage::DeleteSelectedTopLevel()
         {
             m_pTopLevelListBox->SelectEntryPos( nSelectionPos - 1 );
         }
-        m_pTopLevelListBox->GetSelectHdl().Call( this );
+        m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
 
         // and now remove the entry
         m_pTopLevelListBox->RemoveEntry( nSelectionPos );
@@ -3099,7 +3088,7 @@ IMPL_LINK_TYPED( SvxToolbarConfigPage, ToolbarSelectHdl, MenuButton *, pButton, 
 
                 pSaveInData_->RestoreToolbar( pToolbar );
 
-                m_pTopLevelListBox->GetSelectHdl().Call( this );
+                m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
             }
 
             break;
@@ -3109,7 +3098,7 @@ IMPL_LINK_TYPED( SvxToolbarConfigPage, ToolbarSelectHdl, MenuButton *, pButton, 
             pToolbar->SetStyle( 0 );
             pSaveInData->SetSystemStyle( m_xFrame, pToolbar->GetCommand(), 0 );
 
-            m_pTopLevelListBox->GetSelectHdl().Call( this );
+            m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
 
             break;
         }
@@ -3118,7 +3107,7 @@ IMPL_LINK_TYPED( SvxToolbarConfigPage, ToolbarSelectHdl, MenuButton *, pButton, 
             pToolbar->SetStyle( 1 );
             pSaveInData->SetSystemStyle( m_xFrame, pToolbar->GetCommand(), 1 );
 
-            m_pTopLevelListBox->GetSelectHdl().Call( this );
+            m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
 
             break;
         }
@@ -3127,7 +3116,7 @@ IMPL_LINK_TYPED( SvxToolbarConfigPage, ToolbarSelectHdl, MenuButton *, pButton, 
             pToolbar->SetStyle( 2 );
             pSaveInData->SetSystemStyle( m_xFrame, pToolbar->GetCommand(), 2 );
 
-            m_pTopLevelListBox->GetSelectHdl().Call( this );
+            m_pTopLevelListBox->GetSelectHdl().Call( *m_pTopLevelListBox );
 
             break;
         }
@@ -3439,7 +3428,7 @@ void SvxToolbarConfigPage::Init()
     }
 
     m_pTopLevelListBox->SelectEntryPos(nPos);
-    m_pTopLevelListBox->GetSelectHdl().Call(this);
+    m_pTopLevelListBox->GetSelectHdl().Call(*m_pTopLevelListBox);
 }
 
 SaveInData* SvxToolbarConfigPage::CreateSaveInData(
@@ -3518,7 +3507,7 @@ void ToolbarSaveInData::SetSystemStyle(
 
         if ( nStyle == 0 )
         {
-            toolbox->SetButtonType( ButtonType::SYMBOLONLY );
+            toolbox->SetButtonType();
         }
         else if ( nStyle == 1 )
         {
@@ -4319,10 +4308,8 @@ short SvxToolbarConfigPage::QueryReset()
     return qbox->Execute();
 }
 
-IMPL_LINK( SvxToolbarConfigPage, SelectToolbar, ListBox *, pBox )
+IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, SelectToolbar, ListBox&, void )
 {
-    (void)pBox;
-
     m_pContentsListBox->Clear();
 
     SvxConfigEntry* pToolbar = GetTopLevelSelection();
@@ -4332,12 +4319,12 @@ IMPL_LINK( SvxToolbarConfigPage, SelectToolbar, ListBox *, pBox )
         m_pModifyCommandButton->Enable( false );
         m_pAddCommandsButton->Enable( false );
 
-        return 0;
+        return;
     }
 
-    m_pModifyTopLevelButton->Enable( true );
-    m_pModifyCommandButton->Enable( true );
-    m_pAddCommandsButton->Enable( true );
+    m_pModifyTopLevelButton->Enable();
+    m_pModifyCommandButton->Enable();
+    m_pAddCommandsButton->Enable();
 
     PopupMenu* pPopup = m_pModifyTopLevelButton->GetPopupMenu();
 
@@ -4389,8 +4376,6 @@ IMPL_LINK( SvxToolbarConfigPage, SelectToolbar, ListBox *, pBox )
     }
 
     UpdateButtonStates();
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, NewToolbarHdl, Button *, void )
@@ -4431,7 +4416,7 @@ IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, NewToolbarHdl, Button *, void )
         if ( GetSaveInData() != pData )
         {
             m_pSaveInListBox->SelectEntryPos( nInsertPos );
-            m_pSaveInListBox->GetSelectHdl().Call(this);
+            m_pSaveInListBox->GetSelectHdl().Call(*m_pSaveInListBox);
         }
 
         SvxConfigEntry* pToolbar =
@@ -4445,7 +4430,7 @@ IMPL_LINK_NOARG_TYPED( SvxToolbarConfigPage, NewToolbarHdl, Button *, void )
         nInsertPos = m_pTopLevelListBox->InsertEntry( pToolbar->GetName() );
         m_pTopLevelListBox->SetEntryData( nInsertPos, pToolbar );
         m_pTopLevelListBox->SelectEntryPos( nInsertPos );
-        m_pTopLevelListBox->GetSelectHdl().Call(this);
+        m_pTopLevelListBox->GetSelectHdl().Call(*m_pTopLevelListBox);
 
         pData->SetModified();
     }
@@ -4982,7 +4967,7 @@ IMPL_LINK_TYPED( SvxIconSelectorDialog, SelectHdl, ToolBox *, pToolBox, void )
     OUString aSelImageText = pTbSymbol->GetItemText( nId );
     if ( m_xImportedImageManager->hasImage( GetImageType(), aSelImageText ) )
     {
-        pBtnDelete->Enable( true );
+        pBtnDelete->Enable();
     }
     else
     {

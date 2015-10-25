@@ -74,7 +74,7 @@ void IcnCursor_Impl::ImplCreate()
     {
         SvxIconChoiceCtrlEntry* pEntry = pView->aEntries[ nCur ];
         // const Rectangle& rRect = pView->GetEntryBoundRect( pEntry );
-        Rectangle rRect( pView->CalcBmpRect( pEntry,0 ) );
+        Rectangle rRect( pView->CalcBmpRect( pEntry ) );
         short nY = (short)( ((rRect.Top()+rRect.Bottom())/2) / nDeltaHeight );
         short nX = (short)( ((rRect.Left()+rRect.Right())/2) / nDeltaWidth );
 
@@ -473,12 +473,12 @@ void IcnCursor_Impl::SetDeltas()
     if( !nDeltaHeight )
     {
         nDeltaHeight = 1;
-        DBG_WARNING("SetDeltas:Bad height");
+        SAL_INFO("svtools", "SetDeltas:Bad height");
     }
     if( !nDeltaWidth )
     {
         nDeltaWidth = 1;
-        DBG_WARNING("SetDeltas:Bad width");
+        SAL_INFO("svctools", "SetDeltas:Bad width");
     }
 }
 
@@ -559,9 +559,9 @@ void IcnGridMap_Impl::Expand()
 
         size_t nNewCellCount = static_cast<size_t>(nNewGridRows) * nNewGridCols;
         bool* pNewGridMap = new bool[nNewCellCount];
-        memset(pNewGridMap, 0, nNewCellCount * sizeof(bool));
         size_t nOldCellCount = static_cast<size_t>(_nGridRows) * _nGridCols;
         memcpy(pNewGridMap, _pGridMap, nOldCellCount * sizeof(bool));
+        memset(pNewGridMap + nOldCellCount, 0, (nNewCellCount-nOldCellCount) * sizeof(bool));
         delete[] _pGridMap;
         _pGridMap = pNewGridMap;
         _nGridRows = nNewGridRows;

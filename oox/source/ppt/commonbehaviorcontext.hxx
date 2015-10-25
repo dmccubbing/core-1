@@ -40,16 +40,16 @@ namespace oox { namespace ppt {
     {
     public:
         CommonBehaviorContext( ::oox::core::FragmentHandler2& rParent,
-             const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttribs,
+             const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttribs,
              const TimeNodePtr & pNode );
         virtual ~CommonBehaviorContext( )
             throw( );
 
-        virtual void onEndElement() SAL_OVERRIDE;
+        virtual void onEndElement() override;
 
-        virtual void onCharacters( const OUString& aChars ) SAL_OVERRIDE;
+        virtual void onCharacters( const OUString& aChars ) override;
 
-        virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) SAL_OVERRIDE;
+        virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) override;
 
     private:
         bool              mbInAttrList;

@@ -88,17 +88,15 @@ IMPL_LINK_NOARG_TYPED(SwInsFootNoteDlg, NumberCharHdl, Button*, void)
     m_pOkBtn->Enable( !m_pNumberCharEdit->GetText().isEmpty() || bExtCharAvailable );
 }
 
-IMPL_LINK_NOARG(SwInsFootNoteDlg, NumberEditHdl)
+IMPL_LINK_NOARG_TYPED(SwInsFootNoteDlg, NumberEditHdl, Edit&, void)
 {
     m_pNumberCharBtn->Check();
     m_pOkBtn->Enable( !m_pNumberCharEdit->GetText().isEmpty() );
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SwInsFootNoteDlg, NumberAutoBtnHdl, Button*, void)
 {
-    m_pOkBtn->Enable( true );
+    m_pOkBtn->Enable();
 }
 
 IMPL_LINK_NOARG_TYPED(SwInsFootNoteDlg, NumberExtCharHdl, Button*, void)
@@ -118,8 +116,8 @@ IMPL_LINK_NOARG_TYPED(SwInsFootNoteDlg, NumberExtCharHdl, Button*, void)
         rSh.GetView().GetViewFrame()->GetFrame().GetFrameInterface(), RID_SVXDLG_CHARMAP ));
     if (RET_OK == pDlg->Execute())
     {
-        SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pItem, SfxStringItem, SID_CHARMAP, false );
-        SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pFontItem, SvxFontItem, SID_ATTR_CHAR_FONT, false );
+        const SfxStringItem* pItem = SfxItemSet::GetItem<SfxStringItem>(pDlg->GetOutputItemSet(), SID_CHARMAP, false);
+        const SvxFontItem* pFontItem = SfxItemSet::GetItem<SvxFontItem>(pDlg->GetOutputItemSet(), SID_ATTR_CHAR_FONT, false);
         if ( pItem )
         {
             m_pNumberCharEdit->SetText( pItem->GetValue() );

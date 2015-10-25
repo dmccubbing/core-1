@@ -20,6 +20,8 @@
 #ifndef INCLUDED_IO_SOURCE_STM_STREAMHELPER_HXX
 #define INCLUDED_IO_SOURCE_STM_STREAMHELPER_HXX
 
+#include <com/sun/star/io/BufferSizeExceededException.hpp>
+
 // Save NDEBUG state
 #ifdef NDEBUG
 #define STREAMHELPER_HXX_HAD_NDEBUG
@@ -34,85 +36,32 @@
 #define Max( a, b )     (((a)>(b)) ? (a) : (b) )
 #define Min( a, b )     (((a)<(b)) ? (a) : (b) )
 
-namespace io_stm {
-
-class I_FIFO_OutOfBoundsException :
-                public Exception
-{};
-
-class I_FIFO_OutOfMemoryException :
-                public Exception
-{};
-
-class I_FIFO
+namespace io_stm
 {
-public:
 
-
-    virtual void    write( const Sequence<sal_Int8> &) throw( I_FIFO_OutOfMemoryException,
-                                                              I_FIFO_OutOfBoundsException )=0;
-
-    virtual void    read( Sequence<sal_Int8> & , sal_Int32 nBytesToRead )
-                                                       throw( I_FIFO_OutOfBoundsException )=0;
-    virtual void    skip( sal_Int32 nBytesToSkip )
-                                                       throw( I_FIFO_OutOfBoundsException )=0;
-    virtual sal_Int32   getSize() const throw(  )  =0;
-
-    virtual ~I_FIFO() {};
-};
-
-
-class IRingBuffer_OutOfBoundsException :
-                public Exception
-{};
-
-class IRingBuffer_OutOfMemoryException :
-                public Exception
-{};
-
-class IRingBuffer
-{
-public:
-    /***
-    * overwrites data at given position. Size is automatically extended, when
-    * data is written beyond end.
-    *
-    ***/
-
-    virtual void    writeAt( sal_Int32 nPos, const Sequence<sal_Int8> &)
-        throw( IRingBuffer_OutOfMemoryException,
-               IRingBuffer_OutOfBoundsException )=0;
-    virtual void    readAt( sal_Int32 nPos, Sequence<sal_Int8> & , sal_Int32 nBytesToRead ) const
-        throw( IRingBuffer_OutOfBoundsException )=0;
-    virtual sal_Int32   getSize() const throw(  )  =0;
-    virtual void    forgetFromStart( sal_Int32 nBytesToForget ) throw(IRingBuffer_OutOfBoundsException)=0;
-    virtual void    shrink() throw() = 0;
-    virtual ~IRingBuffer() {};
-};
-
-
-class MemRingBuffer :
-        public IRingBuffer
+class MemRingBuffer
 {
 public:
     MemRingBuffer();
     virtual ~MemRingBuffer();
 
-    virtual void    writeAt( sal_Int32 nPos, const Sequence<sal_Int8> &)
-                                                    throw(  IRingBuffer_OutOfMemoryException,
-                                                                IRingBuffer_OutOfBoundsException ) SAL_OVERRIDE;
-    virtual void    readAt( sal_Int32 nPos, Sequence<sal_Int8> & , sal_Int32 nBytesToRead ) const
-                                                    throw( IRingBuffer_OutOfBoundsException ) SAL_OVERRIDE;
-    virtual sal_Int32   getSize() const throw(  ) SAL_OVERRIDE;
-    virtual void    forgetFromStart( sal_Int32 nBytesToForget ) throw(IRingBuffer_OutOfBoundsException) SAL_OVERRIDE;
+    /***
+    * overwrites data at given position. Size is automatically extended, when
+    * data is written beyond end.
+    ***/
+    void    writeAt( sal_Int32 nPos, const Sequence<sal_Int8> &)
+        throw(css::io::BufferSizeExceededException);
+    void    readAt( sal_Int32 nPos, Sequence<sal_Int8> & , sal_Int32 nBytesToRead ) const
+        throw(css::io::BufferSizeExceededException);
+    sal_Int32   getSize() const throw();
+    void    forgetFromStart(sal_Int32 nBytesToForget) throw(css::io::BufferSizeExceededException);
 
-    virtual void shrink() throw() SAL_OVERRIDE;
+    virtual void shrink() throw();
 
 private:
 
-    void resizeBuffer( sal_Int32 nMinSize ) throw( IRingBuffer_OutOfMemoryException );
-    inline void checkInvariants()
-    {
+    void resizeBuffer(sal_Int32 nMinSize) throw(css::io::BufferSizeExceededException);
+    inline void checkInvariants() {
         assert( m_nBufferLen >= 0 );
         assert( m_nOccupiedBuffer >= 0 );
         assert( m_nOccupiedBuffer <= m_nBufferLen );
@@ -129,19 +78,19 @@ private:
 
 
 class MemFIFO :
-    public  I_FIFO,
     private MemRingBuffer
 {
 public:
-    virtual void    write( const Sequence<sal_Int8> &) throw( I_FIFO_OutOfMemoryException,
-                                                              I_FIFO_OutOfBoundsException ) SAL_OVERRIDE;
-    virtual void    read( Sequence<sal_Int8> & , sal_Int32 nBytesToRead )
-                                                       throw( I_FIFO_OutOfBoundsException ) SAL_OVERRIDE;
-    virtual void    skip( sal_Int32 nBytesToSkip ) throw( I_FIFO_OutOfBoundsException ) SAL_OVERRIDE;
-    virtual sal_Int32   getSize()  const throw(  ) SAL_OVERRIDE
-                        { return MemRingBuffer::getSize(); }
-    virtual void    shrink() throw() SAL_OVERRIDE
-                        { MemRingBuffer::shrink(); }
+    void          write( const Sequence<sal_Int8> &)
+                  throw( css::io::BufferSizeExceededException );
+    void          read( Sequence<sal_Int8> & , sal_Int32 nBytesToRead )
+                  throw( css::io::BufferSizeExceededException );
+    void          skip( sal_Int32 nBytesToSkip )
+                  throw( css::io::BufferSizeExceededException );
+    sal_Int32     getSize() const throw()
+                  { return MemRingBuffer::getSize(); }
+    virtual void  shrink() throw() override
+                  { MemRingBuffer::shrink(); }
 
 };
 

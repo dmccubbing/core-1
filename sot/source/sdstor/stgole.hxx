@@ -27,11 +27,11 @@
 
 class StgInternalStream : public SvStream
 {
-    BaseStorageStream* pStrm;
-    virtual sal_uLong GetData( void* pData, sal_uLong nSize ) SAL_OVERRIDE;
-    virtual sal_uLong PutData( const void* pData, sal_uLong nSize ) SAL_OVERRIDE;
-    virtual sal_uInt64 SeekPos( sal_uInt64 nPos ) SAL_OVERRIDE;
-    virtual void      FlushData() SAL_OVERRIDE;
+    BaseStorageStream* m_pStrm;
+    virtual sal_uLong GetData( void* pData, sal_uLong nSize ) override;
+    virtual sal_uLong PutData( const void* pData, sal_uLong nSize ) override;
+    virtual sal_uInt64 SeekPos( sal_uInt64 nPos ) override;
+    virtual void      FlushData() override;
 public:
     StgInternalStream( BaseStorage&, const OUString&, bool );
    virtual ~StgInternalStream();
@@ -42,14 +42,14 @@ public:
 
 class StgCompObjStream : public StgInternalStream
 {
-    ClsId       aClsId;
-    OUString    aUserName;
-    SotClipboardFormatId nCbFormat;
+    ClsId       m_aClsId;
+    OUString    m_aUserName;
+    SotClipboardFormatId m_nCbFormat;
 public:
     StgCompObjStream( BaseStorage&, bool );
-    ClsId&     GetClsId()    { return aClsId;    }
-    OUString&  GetUserName() { return aUserName; }
-    SotClipboardFormatId& GetCbFormat() { return nCbFormat; }
+    ClsId&     GetClsId()    { return m_aClsId;    }
+    OUString&  GetUserName() { return m_aUserName; }
+    SotClipboardFormatId& GetCbFormat() { return m_nCbFormat; }
     bool       Load();
     bool       Store();
 };
@@ -58,7 +58,7 @@ public:
 
 class StgOleStream : public StgInternalStream
 {
-    sal_uInt32 nFlags;
+    sal_uInt32 m_nFlags;
 public:
     StgOleStream( BaseStorage&, bool );
     bool Store();

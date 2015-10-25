@@ -39,15 +39,15 @@ namespace cppcanvas
             explicit ImplBitmapCanvas( const css::uno::Reference< css::rendering::XBitmapCanvas >& rCanvas );
             virtual ~ImplBitmapCanvas();
 
-            virtual ::basegfx::B2ISize      getSize() const SAL_OVERRIDE;
+            virtual ::basegfx::B2ISize      getSize() const override;
 
-            virtual CanvasSharedPtr         clone() const SAL_OVERRIDE;
+            virtual CanvasSharedPtr         clone() const override;
 
             // take compiler-provided default copy constructor
             //ImplBitmapCanvas(const ImplBitmapCanvas&);
 
         private:
-            ImplBitmapCanvas& operator=( const ImplBitmapCanvas& ) SAL_DELETED_FUNCTION;
+            ImplBitmapCanvas& operator=( const ImplBitmapCanvas& ) = delete;
 
             const css::uno::Reference< css::rendering::XBitmapCanvas >    mxBitmapCanvas;
             const css::uno::Reference< css::rendering::XBitmap >          mxBitmap;

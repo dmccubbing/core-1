@@ -44,10 +44,10 @@ namespace sw { namespace sidebar {
             const sal_uInt16 nSId,
             const SfxItemState eState,
             const SfxPoolItem* pState,
-            const bool bIsEnabled) SAL_OVERRIDE;
+            const bool bIsEnabled) override;
 
         virtual ~WrapPropertyPanel();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         WrapPropertyPanel(
             vcl::Window* pParent,
@@ -98,7 +98,7 @@ namespace sw { namespace sidebar {
         DECL_LINK_TYPED(WrapTypeHdl, Button*, void);
         DECL_LINK_TYPED(EnableContourHdl, Button*, void);
         DECL_LINK_TYPED(EditContourHdl, Button*, void);
-        DECL_LINK(SpacingLBHdl, ListBox*);
+        DECL_LINK_TYPED(SpacingLBHdl, ListBox&, void);
     };
 
 } } // end of namespace ::sw::sidebar

@@ -151,16 +151,16 @@ class SvtLinguConfigItem : public utl::ConfigItem
     bool                LoadOptions( const uno::Sequence< OUString > &rProperyNames );
     bool                SaveOptions( const uno::Sequence< OUString > &rProperyNames );
 
-    SvtLinguConfigItem(const SvtLinguConfigItem&) SAL_DELETED_FUNCTION;
-    SvtLinguConfigItem& operator=(const SvtLinguConfigItem&) SAL_DELETED_FUNCTION;
-    virtual void    ImplCommit() SAL_OVERRIDE;
+    SvtLinguConfigItem(const SvtLinguConfigItem&) = delete;
+    SvtLinguConfigItem& operator=(const SvtLinguConfigItem&) = delete;
+    virtual void    ImplCommit() override;
 
 public:
     SvtLinguConfigItem();
     virtual ~SvtLinguConfigItem();
 
     // utl::ConfigItem
-    virtual void    Notify( const com::sun::star::uno::Sequence< OUString > &rPropertyNames ) SAL_OVERRIDE;
+    virtual void    Notify( const com::sun::star::uno::Sequence< OUString > &rPropertyNames ) override;
 
     // make some protected functions of utl::ConfigItem public
     using utl::ConfigItem::GetNodeNames;

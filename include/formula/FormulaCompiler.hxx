@@ -66,8 +66,8 @@ typedef std::unordered_map< OUString, OUString, OUStringHash, ::std::equal_to< O
 class FORMULA_DLLPUBLIC FormulaCompiler
 {
 private:
-    FormulaCompiler(const FormulaCompiler&) SAL_DELETED_FUNCTION;
-    FormulaCompiler& operator=(const FormulaCompiler&) SAL_DELETED_FUNCTION;
+    FormulaCompiler(const FormulaCompiler&) = delete;
+    FormulaCompiler& operator=(const FormulaCompiler&) = delete;
 public:
     FormulaCompiler();
     FormulaCompiler(FormulaTokenArray& _rArr);
@@ -85,8 +85,8 @@ public:
         bool                    mbCore      : 1;            /// If mapping was setup by core, not filters
         bool                    mbEnglish   : 1;            /// If English symbols and external names
 
-        OpCodeMap( const OpCodeMap& ) SAL_DELETED_FUNCTION;
-        OpCodeMap& operator=( const OpCodeMap& ) SAL_DELETED_FUNCTION;
+        OpCodeMap( const OpCodeMap& ) = delete;
+        OpCodeMap& operator=( const OpCodeMap& ) = delete;
 
     public:
 
@@ -167,13 +167,12 @@ public:
         void putExternalSoftly( const OUString & rSymbol, const OUString & rAddIn );
 
         /// Core implementation of XFormulaOpCodeMapper::getMappings()
-        ::com::sun::star::uno::Sequence< ::com::sun::star::sheet::FormulaToken >
+        css::uno::Sequence< css::sheet::FormulaToken >
             createSequenceOfFormulaTokens(const FormulaCompiler& _rCompiler,
-                    const ::com::sun::star::uno::Sequence< OUString >& rNames ) const;
+                    const css::uno::Sequence< OUString >& rNames ) const;
 
         /// Core implementation of XFormulaOpCodeMapper::getAvailableMappings()
-        ::com::sun::star::uno::Sequence<
-            ::com::sun::star::sheet::FormulaOpCodeMapEntry >
+        css::uno::Sequence< css::sheet::FormulaOpCodeMapEntry >
             createSequenceOfAvailableMappings( const FormulaCompiler& _rCompiler,const sal_Int32 nGroup ) const;
 
         /** The value used in createSequenceOfAvailableMappings() and thus in
@@ -195,7 +194,7 @@ public:
 
     /** Get OpCodeMap for formula language.
         @param nLanguage
-            One of ::com::sun::star::sheet::FormulaLanguage constants.
+            One of css::sheet::FormulaLanguage constants.
         @return Map for nLanguage. If nLanguage is unknown, a NULL map is returned.
      */
     OpCodeMapPtr GetOpCodeMap( const sal_Int32 nLanguage ) const;
@@ -205,8 +204,7 @@ public:
             Use English number parser / formatter instead of native.
      */
     static OpCodeMapPtr CreateOpCodeMap(
-            const ::com::sun::star::uno::Sequence<
-            const ::com::sun::star::sheet::FormulaOpCodeMapEntry > & rMapping,
+            const css::uno::Sequence< const css::sheet::FormulaOpCodeMapEntry > & rMapping,
             bool bEnglish );
 
     /** Get current OpCodeMap in effect. */
@@ -278,7 +276,7 @@ protected:
     virtual void fillFromAddInCollectionUpperName( NonConstOpCodeMapPtr xMap ) const;
     virtual void fillFromAddInMap( NonConstOpCodeMapPtr xMap, FormulaGrammar::Grammar _eGrammar ) const;
     virtual void fillFromAddInCollectionEnglishName( NonConstOpCodeMapPtr xMap ) const;
-    virtual void fillAddInToken(::std::vector< ::com::sun::star::sheet::FormulaOpCodeMapEntry >& _rVec,bool _bIsEnglish) const;
+    virtual void fillAddInToken(::std::vector< css::sheet::FormulaOpCodeMapEntry >& _rVec, bool _bIsEnglish) const;
 
     virtual void SetError(sal_uInt16 nError);
     virtual FormulaTokenRef ExtendRangeReference( FormulaToken & rTok1, FormulaToken & rTok2, bool bReuseDoubleRef );
@@ -367,8 +365,8 @@ private:
     {
         FormulaTokenRef  pPrevFac;
         FormulaCompiler* pCompiler;
-        CurrentFactor( const CurrentFactor& ) SAL_DELETED_FUNCTION;
-        CurrentFactor& operator=( const CurrentFactor& ) SAL_DELETED_FUNCTION;
+        CurrentFactor( const CurrentFactor& ) = delete;
+        CurrentFactor& operator=( const CurrentFactor& ) = delete;
     public:
         explicit CurrentFactor( FormulaCompiler* pComp )
             : pPrevFac( pComp->pCurrentFactorToken )

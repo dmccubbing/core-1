@@ -108,7 +108,7 @@ IMPL_LINK_TYPED( MacroEventListBox, HeaderEndDrag_Impl, HeaderBar*, pBar, void )
                 long _nWidth = maHeaderBar->GetItemSize( i );
                 aSz.Width() =  _nWidth + nTmpSz;
                 nTmpSz += _nWidth;
-                maListBox->SetTab( i, PixelToLogic( aSz, MapMode( MAP_APPFONT ) ).Width(), MAP_APPFONT );
+                maListBox->SetTab( i, PixelToLogic( aSz, MapMode( MAP_APPFONT ) ).Width() );
             }
         }
     }
@@ -448,7 +448,7 @@ public:
     IconLBoxString( SvTreeListEntry* pEntry, sal_uInt16 nFlags, const OUString& sText,
         Image* pMacroImg, Image* pComponentImg );
     virtual void Paint(const Point& rPos, SvTreeListBox& rOutDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 
@@ -730,7 +730,7 @@ void _SvxMacroTabPage::InitAndSetHandler( Reference< container::XNameReplace> xA
     rListBox.SetSelectHdl( LINK( this, _SvxMacroTabPage, SelectEvent_Impl ));
 
     rListBox.SetSelectionMode( SINGLE_SELECTION );
-    rListBox.SetTabs( &nTabs[0], MAP_APPFONT );
+    rListBox.SetTabs( &nTabs[0] );
     Size aSize( nTabs[ 2 ], 0 );
     rHeaderBar.InsertItem( ITEMID_EVENT, mpImpl->sStrEvent, LogicToPixel( aSize, MapMode( MAP_APPFONT ) ).Width() );
     aSize.Width() = 1764;        // don't know what, so 42^2 is best to use...
@@ -745,7 +745,7 @@ void _SvxMacroTabPage::InitAndSetHandler( Reference< container::XNameReplace> xA
         mpImpl->pEventLB->GetListBox().SetEntryHeight(
             sal::static_int_cast< short >(nMinLineHeight) );
 
-    mpImpl->pEventLB->Enable( true );
+    mpImpl->pEventLB->Enable();
 
     if(!m_xAppEvents.is())
     {

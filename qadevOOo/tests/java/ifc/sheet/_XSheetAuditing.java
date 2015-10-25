@@ -42,7 +42,6 @@ public class _XSheetAuditing extends MultiMethodTest {
     CellAddress dependentAddress = null;
     XCell xAddress = null;
     XCell xPrecedentAddress = null;
-    XCell xDependentAddress = null;
     XDrawPage xDrawPage = null;
     int elementCount = 0;
 
@@ -76,7 +75,7 @@ public class _XSheetAuditing extends MultiMethodTest {
             throw new StatusException(Status.failed("'XSheetAuditing.Spreadsheet' object relation not found."));
         try {
             xAddress = xSheet.getCellByPosition(address.Column, address.Row);
-            xDependentAddress = xSheet.getCellByPosition(dependentAddress.Column, dependentAddress.Row);
+            xSheet.getCellByPosition(dependentAddress.Column, dependentAddress.Row);
             xPrecedentAddress = xSheet.getCellByPosition(precedentAddress.Column, precedentAddress.Row);
         }
         catch(com.sun.star.lang.IndexOutOfBoundsException e) {
@@ -117,7 +116,7 @@ public class _XSheetAuditing extends MultiMethodTest {
         requiredMethod("clearArrows()");
         // construct an error: square root from -3
         xPrecedentAddress.setValue(-9);
-        String cellAddress = new String(new byte[]{(byte)(precedentAddress.Column + 65)}) + (precedentAddress.Row+1);
+        String cellAddress = "" + (char)('A' + precedentAddress.Column) + (precedentAddress.Row + 1);
         xAddress.setFormula("=SQRT(" + cellAddress + ")");
         XText xText = UnoRuntime.queryInterface(XText.class, xAddress);
         // correct error in cell:

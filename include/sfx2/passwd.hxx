@@ -76,15 +76,16 @@ private:
     SfxShowExtras  mnExtras;
 
     bool            mbAsciiOnly;
-    DECL_DLLPRIVATE_LINK(EditModifyHdl, Edit*);
+    DECL_DLLPRIVATE_LINK_TYPED(EditModifyHdl, Edit&, void);
     DECL_DLLPRIVATE_LINK_TYPED(OKHdl, Button *, void);
+    void            ModifyHdl(Edit*);
 
     void            SetPasswdText();
 
 public:
     SfxPasswordDialog(vcl::Window* pParent, const OUString* pGroupText = NULL);
     virtual ~SfxPasswordDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     OUString GetUser() const
     {
@@ -126,7 +127,7 @@ public:
 
     void ShowMinLengthText(bool bShow);
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
 };
 
 #endif // INCLUDED_SFX2_PASSWD_HXX

@@ -134,6 +134,7 @@
 #include <svx/sdr/overlay/overlaymanager.hxx>
 #include <vcl/svapp.hxx>
 #include <svx/sdr/overlay/overlayselection.hxx>
+#include <comphelper/string.hxx>
 
 #define LOK_USE_UNSTABLE_API
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
@@ -217,17 +218,17 @@ private:
     ScFilterBoxMode eMode;
 
 protected:
-    virtual void    LoseFocus() SAL_OVERRIDE;
+    virtual void    LoseFocus() override;
     void            SelectHdl();
 
 public:
                 ScFilterListBox( vcl::Window* pParent, ScGridWindow* pGrid,
                                  SCCOL nNewCol, SCROW nNewRow, ScFilterBoxMode eNewMode );
                 virtual ~ScFilterListBox();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
-    virtual void    Select() SAL_OVERRIDE;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
+    virtual void    Select() override;
 
     SCCOL           GetCol() const          { return nCol; }
     SCROW           GetRow() const          { return nRow; }
@@ -346,9 +347,9 @@ class ScFilterFloatingWindow : public FloatingWindow
 public:
     ScFilterFloatingWindow( vcl::Window* pParent, WinBits nStyle = WB_STDFLOATWIN );
     virtual ~ScFilterFloatingWindow();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     // required for System FloatingWindows that will not process KeyInput by themselves
-    virtual vcl::Window* GetPreferredKeyInputWindow() SAL_OVERRIDE;
+    virtual vcl::Window* GetPreferredKeyInputWindow() override;
 };
 
 ScFilterFloatingWindow::ScFilterFloatingWindow( vcl::Window* pParent, WinBits nStyle ) :
@@ -646,7 +647,7 @@ class AutoFilterAction : public ScMenuFloatingWindow::Action
 public:
     AutoFilterAction(ScGridWindow* p, ScGridWindow::AutoFilterMode eMode) :
         mpWindow(p), meMode(eMode) {}
-    virtual void execute() SAL_OVERRIDE
+    virtual void execute() override
     {
         mpWindow->UpdateAutoFilterFromMenu(meMode);
     }
@@ -659,7 +660,7 @@ class AutoFilterPopupEndAction : public ScMenuFloatingWindow::Action
 public:
     AutoFilterPopupEndAction(ScGridWindow* p, const ScAddress& rPos) :
         mpWindow(p), maPos(rPos) {}
-    virtual void execute() SAL_OVERRIDE
+    virtual void execute() override
     {
         mpWindow->RefreshAutoFilterButton(maPos);
     }
@@ -3419,7 +3420,7 @@ void ScGridWindow::KeyInput(const KeyEvent& rKEvt)
         pViewData->GetView()->UpdateCopySourceOverlay();
         return;
     }
-    // wenn semi-Modeless-SfxChildWindow-Dialog oben, keine KeyInputs:
+    // if semi-modeless SfxChildWindow dialog above, then no KeyInputs:
     else if( !pViewData->IsAnyFillMode() )
     {
         if (rKeyCode.GetCode() == KEY_ESCAPE)
@@ -5248,7 +5249,7 @@ void ScGridWindow::RFMouseMove( const MouseEvent& rMEvt, bool bUp )
         // only redrawing what has been changed...
         lcl_PaintRefChanged( pDocSh, aOld, aNew );
 
-        // oly redraw new frame (synchronously)
+        // only redraw new frame (synchronously)
         pDocSh->Broadcast( ScIndexHint( SC_HINT_SHOWRANGEFINDER, nRFIndex ) );
 
         Update();   // what you move, will be seen immediately
@@ -5380,7 +5381,7 @@ bool ScGridWindow::GetEditUrl( const Point& rPos,
     MapMode aEditMode = pViewData->GetLogicMode(eWhich);            // without draw scaleing
     Rectangle aLogicEdit = PixelToLogic( aEditRect, aEditMode );
     long nThisColLogic = aLogicEdit.Right() - aLogicEdit.Left() + 1;
-    Size aPaperSize = Size( 1000000, 1000000 );
+    Size aPaperSize( 1000000, 1000000 );
     if (aCell.meType == CELLTYPE_FORMULA)
     {
         long nSizeX  = 0;
@@ -5483,7 +5484,7 @@ bool ScGridWindow::IsSpellErrorAtPos( const Point& rPos, SCCOL nCol1, SCROW nRow
 
     std::shared_ptr<ScFieldEditEngine> pEngine = createEditEngine(pDocSh, *pPattern);
 
-    Size aPaperSize = Size(1000000, 1000000);
+    Size aPaperSize(1000000, 1000000);
     pEngine->SetPaperSize(aPaperSize);
 
     if (aCell.meType == CELLTYPE_EDIT)
@@ -5885,8 +5886,12 @@ void ScGridWindow::UpdateCopySourceOverlay()
         SetMapMode( aOldMode );
 }
 
-/// Turn the selection ranges rRectangles into the LibreOfficeKit selection, and call the callback.
-static void updateLibreOfficeKitSelection(ScViewData* pViewData, ScDrawLayer* pDrawLayer, const std::vector<Rectangle>& rRectangles)
+/**
+ * Turn the selection ranges rRectangles into the LibreOfficeKit selection, and call the callback.
+ *
+ * @param pLogicRects - if not 0, then don't invoke the callback, just collect the rectangles in the pointed vector.
+ */
+static void updateLibreOfficeKitSelection(ScViewData* pViewData, ScDrawLayer* pDrawLayer, const std::vector<Rectangle>& rRectangles, std::vector<Rectangle>* pLogicRects = 0)
 {
     if (!pDrawLayer->isTiledRendering())
         return;
@@ -5895,9 +5900,8 @@ static void updateLibreOfficeKitSelection(ScViewData* pViewData, ScDrawLayer* pD
     double nPPTY = pViewData->GetPPTY();
 
     Rectangle aBoundingBox;
-    std::stringstream ss;
+    std::vector<OString> aRectangles;
 
-    bool bIsFirst = true;
     for (auto aRectangle : rRectangles)
     {
         aRectangle.Right() += 1;
@@ -5905,15 +5909,16 @@ static void updateLibreOfficeKitSelection(ScViewData* pViewData, ScDrawLayer* pD
 
         aBoundingBox.Union(aRectangle);
 
-        if (bIsFirst)
-            bIsFirst = false;
-        else
-            ss << "; ";
-
         Rectangle aRect(aRectangle.Left() / nPPTX, aRectangle.Top() / nPPTY,
                 aRectangle.Right() / nPPTX, aRectangle.Bottom() / nPPTY);
-        ss << aRect.toString().getStr();
+        if (pLogicRects)
+            pLogicRects->push_back(aRect);
+        else
+            aRectangles.push_back(aRect.toString());
     }
+
+    if (pLogicRects)
+        return;
 
     // selection start handle
     Rectangle aStart(aBoundingBox.Left() / nPPTX, aBoundingBox.Top() / nPPTY,
@@ -5926,7 +5931,7 @@ static void updateLibreOfficeKitSelection(ScViewData* pViewData, ScDrawLayer* pD
     pDrawLayer->libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION_END, aEnd.toString().getStr());
 
     // the selection itself
-    pDrawLayer->libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION, ss.str().c_str());
+    pDrawLayer->libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION, comphelper::string::join("; ", aRectangles).getStr());
 }
 
 void ScGridWindow::UpdateCursorOverlay()
@@ -6098,6 +6103,13 @@ void ScGridWindow::UpdateCursorOverlay()
         SetMapMode( aOldMode );
 }
 
+void ScGridWindow::GetCellSelection(std::vector<Rectangle>& rLogicRects)
+{
+    std::vector<Rectangle> aPixelRects;
+    GetSelectionRects(aPixelRects);
+    updateLibreOfficeKitSelection(pViewData, pViewData->GetDocument()->GetDrawLayer(), aPixelRects, &rLogicRects);
+}
+
 void ScGridWindow::DeleteSelectionOverlay()
 {
     mpOOSelection.reset();
@@ -6200,7 +6212,7 @@ void ScGridWindow::UpdateAutoFillOverlay()
 
         sal_Int32 nScale = GetDPIScaleFactor();
         // Size should be even
-        Size aFillHandleSize = Size(6 * nScale, 6 * nScale);
+        Size aFillHandleSize(6 * nScale, 6 * nScale);
 
         Point aFillPos = pViewData->GetScrPos( nX, nY, eWhich, true );
         long nSizeXPix;

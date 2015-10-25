@@ -224,6 +224,14 @@ void wwSectionManager::SetCurrentSectionHasFootnote()
         maSegments.back().mbHasFootnote = true;
 }
 
+void wwSectionManager::SetCurrentSectionVerticalAdjustment(const drawing::TextVerticalAdjust nVA)
+{
+    OSL_ENSURE(!maSegments.empty(),
+        "should not be possible, must be at least one segment");
+    if ( !maSegments.empty() )
+        maSegments.back().mnVerticalAdjustment = nVA;
+}
+
 bool wwSectionManager::CurrentSectionIsVertical() const
 {
     OSL_ENSURE(!maSegments.empty(),
@@ -2367,7 +2375,7 @@ void WW8TabDesc::CreateSwTable(SvxULSpaceItem* pULSpaceItem)
     // rows of a band can be duplicated easy.
     pTable = pIo->m_rDoc.InsertTable(
             SwInsertTableOptions( tabopts::HEADLINE_NO_BORDER, 0 ),
-            *pTmpPos, nBands, nDefaultSwCols, eOri, 0, 0, false );
+            *pTmpPos, nBands, nDefaultSwCols, eOri );
 
     OSL_ENSURE(pTable && pTable->GetFrameFormat(), "insert table failed");
     if (!pTable || !pTable->GetFrameFormat())
@@ -3803,7 +3811,7 @@ bool WW8RStyle::PrepareStyle(SwWW8StyInf &rSI, ww::sti eSti, sal_uInt16 nThisSty
         }
     }
     else if( pIo->m_bNewDoc && bStyExist )
-        rSI.pFormat->SetDerivedFrom(0);
+        rSI.pFormat->SetDerivedFrom();
 
     rSI.nFollow = nNextStyle;       // remember Follow
 

@@ -44,8 +44,8 @@ private:
     /// Command URL (like .uno:Save) in case the button should handle it.
     OUString maCommand;
 
-                                    Button (const Button &) SAL_DELETED_FUNCTION;
-                                    Button & operator= (const Button &) SAL_DELETED_FUNCTION;
+                                    Button (const Button &) = delete;
+                                    Button & operator= (const Button &) = delete;
 public:
     SAL_DLLPRIVATE DrawButtonFlags  ImplGetButtonState() const;
     SAL_DLLPRIVATE DrawButtonFlags& ImplGetButtonState();
@@ -65,7 +65,7 @@ protected:
 
 public:
     virtual            ~Button();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     virtual void        Click();
 
@@ -89,7 +89,7 @@ public:
     void                SetFocusRect( const Rectangle& rFocusRect );
     bool                IsSmallSymbol() const;
     void                SetSmallSymbol(bool bSmall = true);
-    virtual bool        set_property(const OString &rKey, const OString &rValue) SAL_OVERRIDE;
+    virtual bool        set_property(const OString &rKey, const OString &rValue) override;
 
 protected:
 
@@ -150,27 +150,27 @@ public:
 protected:
     explicit        PushButton( WindowType nType );
 
-    virtual void    FillLayoutData() const SAL_OVERRIDE;
+    virtual void    FillLayoutData() const override;
     virtual const vcl::Font&
-                    GetCanonicalFont( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
+                    GetCanonicalFont( const StyleSettings& _rStyle ) const override;
     virtual const Color&
-                    GetCanonicalTextColor( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
+                    GetCanonicalTextColor( const StyleSettings& _rStyle ) const override;
 public:
     explicit        PushButton( vcl::Window* pParent, WinBits nStyle = 0 );
     explicit        PushButton( vcl::Window* pParent, const ResId& );
 
-    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    Tracking( const TrackingEvent& rTEvt ) SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    KeyUp( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
-    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) SAL_OVERRIDE;
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    GetFocus() SAL_OVERRIDE;
-    virtual void    LoseFocus() SAL_OVERRIDE;
-    virtual void    StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void    Tracking( const TrackingEvent& rTEvt ) override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void    KeyUp( const KeyEvent& rKEvt ) override;
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
+    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) override;
+    virtual void    Resize() override;
+    virtual void    GetFocus() override;
+    virtual void    LoseFocus() override;
+    virtual void    StateChanged( StateChangedType nType ) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
     void            Toggle();
 
@@ -195,10 +195,10 @@ public:
     bool            IsValueChangedFromSaved() const { return meSaveValue != GetState(); }
 
     Size            CalcMinimumSize( long nMaxWidth = 0 ) const;
-    virtual Size    GetOptimalSize() const SAL_OVERRIDE;
+    virtual Size    GetOptimalSize() const override;
 
-    virtual bool    set_property(const OString &rKey, const OString &rValue) SAL_OVERRIDE;
-    virtual void    ShowFocus(const Rectangle& rRect) SAL_OVERRIDE;
+    virtual bool    set_property(const OString &rKey, const OString &rValue) override;
+    virtual void    ShowFocus(const Rectangle& rRect) override;
 };
 
 inline void PushButton::Check( bool bCheck )
@@ -218,13 +218,13 @@ protected:
 private:
     SAL_DLLPRIVATE void            ImplInit( vcl::Window* pParent, WinBits nStyle );
 
-                                   OKButton (const OKButton &) SAL_DELETED_FUNCTION;
-                                   OKButton & operator= (const OKButton &) SAL_DELETED_FUNCTION;
+                                   OKButton (const OKButton &) = delete;
+                                   OKButton & operator= (const OKButton &) = delete;
 
 public:
     explicit        OKButton( vcl::Window* pParent, WinBits nStyle = WB_DEFBUTTON );
 
-    virtual void    Click() SAL_OVERRIDE;
+    virtual void    Click() override;
 };
 
 class VCL_DLLPUBLIC CancelButton : public PushButton
@@ -234,13 +234,13 @@ protected:
 private:
     SAL_DLLPRIVATE void ImplInit( vcl::Window* pParent, WinBits nStyle );
 
-                        CancelButton (const CancelButton &) SAL_DELETED_FUNCTION;
-                        CancelButton & operator= (const CancelButton &) SAL_DELETED_FUNCTION;
+                        CancelButton (const CancelButton &) = delete;
+                        CancelButton & operator= (const CancelButton &) = delete;
 
 public:
     explicit        CancelButton( vcl::Window* pParent, WinBits nStyle = 0 );
 
-    virtual void    Click() SAL_OVERRIDE;
+    virtual void    Click() override;
 };
 
 class VCL_DLLPUBLIC CloseButton : public CancelButton
@@ -261,13 +261,13 @@ protected:
 private:
     SAL_DLLPRIVATE void ImplInit( vcl::Window* pParent, WinBits nStyle );
 
-                        HelpButton( const HelpButton & ) SAL_DELETED_FUNCTION;
-                        HelpButton & operator= ( const HelpButton & ) SAL_DELETED_FUNCTION;
+                        HelpButton( const HelpButton & ) = delete;
+                        HelpButton & operator= ( const HelpButton & ) = delete;
 
 public:
     explicit        HelpButton( vcl::Window* pParent, WinBits nStyle = 0 );
 
-    virtual void    Click() SAL_OVERRIDE;
+    virtual void    Click() override;
 };
 
 
@@ -302,8 +302,8 @@ private:
     SAL_DLLPRIVATE Size     ImplGetRadioImageSize() const;
     SAL_DLLPRIVATE long     ImplGetImageToTextDistance() const;
 
-                            RadioButton(const RadioButton &) SAL_DELETED_FUNCTION;
-                            RadioButton& operator= (const RadioButton &) SAL_DELETED_FUNCTION;
+                            RadioButton(const RadioButton &) = delete;
+                            RadioButton& operator= (const RadioButton &) = delete;
 
 protected:
     using Control::ImplInitSettings;
@@ -316,11 +316,11 @@ public:
     SAL_DLLPRIVATE void     ImplSetMinimumNWFSize();
 
 protected:
-    virtual void    FillLayoutData() const SAL_OVERRIDE;
+    virtual void    FillLayoutData() const override;
     virtual const vcl::Font&
-                    GetCanonicalFont( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
+                    GetCanonicalFont( const StyleSettings& _rStyle ) const override;
     virtual const Color&
-                    GetCanonicalTextColor( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
+                    GetCanonicalTextColor( const StyleSettings& _rStyle ) const override;
 
     inline void     SetMouseRect( const Rectangle& _rMouseRect )    { maMouseRect = _rMouseRect; }
     inline void     SetStateRect( const Rectangle& _rStateRect )    { maStateRect = _rStateRect; }
@@ -333,20 +333,20 @@ public:
     explicit        RadioButton( vcl::Window* pParent, WinBits nWinStyle = 0 );
     explicit        RadioButton( vcl::Window* pParent, const ResId& );
     virtual         ~RadioButton();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    Tracking( const TrackingEvent& rTEvt ) SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    KeyUp( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
-    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) SAL_OVERRIDE;
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    GetFocus() SAL_OVERRIDE;
-    virtual void    LoseFocus() SAL_OVERRIDE;
-    virtual void    StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void    Tracking( const TrackingEvent& rTEvt ) override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void    KeyUp( const KeyEvent& rKEvt ) override;
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
+    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) override;
+    virtual void    Resize() override;
+    virtual void    GetFocus() override;
+    virtual void    LoseFocus() override;
+    virtual void    StateChanged( StateChangedType nType ) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
     void            Toggle();
 
@@ -369,7 +369,7 @@ public:
     static Image    GetRadioImage( const AllSettings& rSettings, DrawButtonFlags nFlags );
 
     Size            CalcMinimumSize( long nMaxWidth = 0 ) const;
-    virtual Size    GetOptimalSize() const SAL_OVERRIDE;
+    virtual Size    GetOptimalSize() const override;
 
     void            SetToggleHdl( const Link<RadioButton&,void>& rLink ) { maToggleHdl = rLink; }
 
@@ -388,13 +388,13 @@ public:
     */
     std::vector<VclPtr<RadioButton> > GetRadioButtonGroup(bool bIncludeThis = true) const;
 
-    virtual bool set_property(const OString &rKey, const OString &rValue) SAL_OVERRIDE;
+    virtual bool set_property(const OString &rKey, const OString &rValue) override;
 
     /*
      * Group this RadioButton with another
      */
     void group(RadioButton &rOther);
-    virtual void ShowFocus(const Rectangle& rRect) SAL_OVERRIDE;
+    virtual void ShowFocus(const Rectangle& rRect) override;
 };
 
 
@@ -426,17 +426,17 @@ private:
     SAL_DLLPRIVATE long         ImplGetImageToTextDistance() const;
     SAL_DLLPRIVATE Size         ImplGetCheckImageSize() const;
 
-                                CheckBox(const CheckBox &) SAL_DELETED_FUNCTION;
-                                CheckBox& operator= (const CheckBox &) SAL_DELETED_FUNCTION;
+                                CheckBox(const CheckBox &) = delete;
+                                CheckBox& operator= (const CheckBox &) = delete;
 
 protected:
     using Control::ImplInitSettings;
     using Window::ImplInit;
     SAL_DLLPRIVATE void         ImplInit( vcl::Window* pParent, WinBits nStyle );
     SAL_DLLPRIVATE void         ImplLoadRes( const ResId& rResId );
-    virtual void                FillLayoutData() const SAL_OVERRIDE;
-    virtual const vcl::Font&    GetCanonicalFont( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
-    virtual const Color&        GetCanonicalTextColor( const StyleSettings& _rStyle ) const SAL_OVERRIDE;
+    virtual void                FillLayoutData() const override;
+    virtual const vcl::Font&    GetCanonicalFont( const StyleSettings& _rStyle ) const override;
+    virtual const Color&        GetCanonicalTextColor( const StyleSettings& _rStyle ) const override;
 
     virtual void ImplDrawCheckBoxState(vcl::RenderContext& rRenderContext);
     SAL_DLLPRIVATE const Rectangle& GetStateRect() const { return maStateRect; }
@@ -449,18 +449,18 @@ public:
     explicit        CheckBox( vcl::Window* pParent, WinBits nStyle = 0 );
     explicit        CheckBox( vcl::Window* pParent, const ResId& );
 
-    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    Tracking( const TrackingEvent& rTEvt ) SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    KeyUp( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
-    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) SAL_OVERRIDE;
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    GetFocus() SAL_OVERRIDE;
-    virtual void    LoseFocus() SAL_OVERRIDE;
-    virtual void    StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void    Tracking( const TrackingEvent& rTEvt ) override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void    KeyUp( const KeyEvent& rKEvt ) override;
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
+    virtual void    Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) override;
+    virtual void    Resize() override;
+    virtual void    GetFocus() override;
+    virtual void    LoseFocus() override;
+    virtual void    StateChanged( StateChangedType nType ) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
     void            Toggle();
 
@@ -480,13 +480,13 @@ public:
     static Image    GetCheckImage( const AllSettings& rSettings, DrawButtonFlags nFlags );
 
     Size            CalcMinimumSize( long nMaxWidth = 0 ) const;
-    virtual Size    GetOptimalSize() const SAL_OVERRIDE;
+    virtual Size    GetOptimalSize() const override;
 
     void            SetToggleHdl( const Link<CheckBox&,void>& rLink ) { maToggleHdl = rLink; }
     void            SetLegacyNoTextAlign( bool bVal ) { mbLegacyNoTextAlign = bVal; }
 
-    virtual bool set_property(const OString &rKey, const OString &rValue) SAL_OVERRIDE;
-    virtual void ShowFocus(const Rectangle& rRect) SAL_OVERRIDE;
+    virtual bool set_property(const OString &rKey, const OString &rValue) override;
+    virtual void ShowFocus(const Rectangle& rRect) override;
 };
 
 inline void CheckBox::Check( bool bCheck )
@@ -510,8 +510,8 @@ protected:
 private:
     SAL_DLLPRIVATE void     ImplInitStyle();
 
-                            ImageButton( const ImageButton & ) SAL_DELETED_FUNCTION;
-                            ImageButton & operator= ( const ImageButton & ) SAL_DELETED_FUNCTION;
+                            ImageButton( const ImageButton & ) = delete;
+                            ImageButton & operator= ( const ImageButton & ) = delete;
 
 public:
                  ImageButton( vcl::Window* pParent, WinBits nStyle = 0 );
@@ -520,8 +520,8 @@ public:
 
 class VCL_DLLPUBLIC ImageRadioButton : public RadioButton
 {
-                    ImageRadioButton( const ImageRadioButton & ) SAL_DELETED_FUNCTION;
-                    ImageRadioButton & operator= ( const ImageRadioButton & ) SAL_DELETED_FUNCTION;
+                    ImageRadioButton( const ImageRadioButton & ) = delete;
+                    ImageRadioButton & operator= ( const ImageRadioButton & ) = delete;
 
 public:
     explicit        ImageRadioButton( vcl::Window* pParent, WinBits nStyle = 0 );
@@ -529,8 +529,8 @@ public:
 
 class VCL_DLLPUBLIC TriStateBox : public CheckBox
 {
-                    TriStateBox( const TriStateBox & ) SAL_DELETED_FUNCTION;
-                    TriStateBox & operator= ( const TriStateBox & ) SAL_DELETED_FUNCTION;
+                    TriStateBox( const TriStateBox & ) = delete;
+                    TriStateBox & operator= ( const TriStateBox & ) = delete;
 
 public:
     explicit        TriStateBox( vcl::Window* pParent, WinBits nStyle = 0 );
@@ -539,11 +539,11 @@ public:
 class VCL_DLLPUBLIC DisclosureButton : public CheckBox
 {
 protected:
-    SAL_DLLPRIVATE virtual void ImplDrawCheckBoxState(vcl::RenderContext& rRenderContext) SAL_OVERRIDE;
+    SAL_DLLPRIVATE virtual void ImplDrawCheckBoxState(vcl::RenderContext& rRenderContext) override;
 public:
     explicit DisclosureButton( vcl::Window* pParent, WinBits nStyle = 0 );
 
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
 };
 
 #endif // INCLUDED_VCL_BUTTON_HXX

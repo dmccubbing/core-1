@@ -45,18 +45,18 @@ public:
 
         virtual                     ~SdrMediaObj();
 
-        virtual bool                HasTextEdit() const SAL_OVERRIDE;
+        virtual bool                HasTextEdit() const override;
 
-        virtual void                TakeObjInfo(SdrObjTransformInfoRec& rInfo) const SAL_OVERRIDE;
-        virtual sal_uInt16              GetObjIdentifier() const SAL_OVERRIDE;
+        virtual void                TakeObjInfo(SdrObjTransformInfoRec& rInfo) const override;
+        virtual sal_uInt16              GetObjIdentifier() const override;
 
-        virtual OUString            TakeObjNameSingul() const SAL_OVERRIDE;
-        virtual OUString            TakeObjNamePlural() const SAL_OVERRIDE;
+        virtual OUString            TakeObjNameSingul() const override;
+        virtual OUString            TakeObjNamePlural() const override;
 
-        virtual SdrMediaObj*            Clone() const SAL_OVERRIDE;
+        virtual SdrMediaObj*            Clone() const override;
         SdrMediaObj&                operator=(const SdrMediaObj& rObj);
 
-        virtual void                AdjustToMaxRect( const Rectangle& rMaxRect, bool bShrinkOnly = false ) SAL_OVERRIDE;
+        virtual void                AdjustToMaxRect( const Rectangle& rMaxRect, bool bShrinkOnly = false ) override;
 
 public:
 
@@ -68,16 +68,16 @@ public:
 
         Size                        getPreferredSize() const;
 
-        const ::com::sun::star::uno::Reference< ::com::sun::star::graphic::XGraphic >
+        const css::uno::Reference< css::graphic::XGraphic >
                                     getSnapshot() const;
-        ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream>
+        css::uno::Reference< css::io::XInputStream>
                                     GetInputStream();
         void                        SetInputStream(css::uno::Reference<css::io::XInputStream> const&);
 
 protected:
 
         void                mediaPropertiesChanged( const ::avmedia::MediaItem& rNewState );
-        virtual sdr::contact::ViewContact* CreateObjectSpecificViewContact() SAL_OVERRIDE;
+        virtual sdr::contact::ViewContact* CreateObjectSpecificViewContact() override;
 
 private:
         struct Impl;

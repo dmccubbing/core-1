@@ -245,7 +245,7 @@ public:
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
         const OUString& rLocalName,
-        const uno::Reference<xml::sax::XAttributeList>& xAttrList ) SAL_OVERRIDE;
+        const uno::Reference<xml::sax::XAttributeList>& xAttrList ) override;
 };
 
 ScXMLDocContext_Impl::ScXMLDocContext_Impl( ScXMLImport& rImport, sal_uInt16 nPrfx,
@@ -274,7 +274,7 @@ public:
 
     virtual SvXMLImportContext *CreateChildContext(
         sal_uInt16 i_nPrefix, const OUString& i_rLocalName,
-        const uno::Reference<xml::sax::XAttributeList>& i_xAttrList) SAL_OVERRIDE;
+        const uno::Reference<xml::sax::XAttributeList>& i_xAttrList) override;
 };
 
 ScXMLFlatDocContext_Impl::ScXMLFlatDocContext_Impl( ScXMLImport& i_rImport,
@@ -318,7 +318,7 @@ public:
 
     virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
         const OUString& rLocalName,
-        const uno::Reference< xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+        const uno::Reference< xml::sax::XAttributeList > & xAttrList ) override;
 };
 
 ScXMLBodyContext_Impl::ScXMLBodyContext_Impl( ScXMLImport& rImport,
@@ -367,7 +367,7 @@ SvXMLImportContext *ScXMLDocContext_Impl::CreateChildContext( sal_uInt16 nPrefix
             xAttrList );
         break;
     case XML_TOK_DOC_META:
-        DBG_WARNING("XML_TOK_DOC_META: should not have come here, maybe document is invalid?");
+        SAL_INFO("sc", "XML_TOK_DOC_META: should not have come here, maybe document is invalid?");
         break;
     case XML_TOK_DOC_SCRIPTS:
         if (GetScImport().getImportFlags() & SvXMLImportFlags::SCRIPTS)
@@ -3171,6 +3171,22 @@ void ScXMLImport::SetSheetNamedRanges()
     }
 }
 
+void ScXMLImport::SetStringRefSyntaxIfMissing()
+{
+    if (!pDoc)
+        return;
+
+    ScCalcConfig aCalcConfig = pDoc->GetCalcConfig();
+
+    // Has any string ref syntax been imported?
+    // If not, we need to take action
+    if ( !aCalcConfig.mbHasStringRefSyntax )
+    {
+        aCalcConfig.meStringRefAddressSyntax = formula::FormulaGrammar::CONV_A1_XL_A1;
+        pDoc->SetCalcConfig(aCalcConfig);
+    }
+}
+
 void SAL_CALL ScXMLImport::endDocument()
     throw(::com::sun::star::xml::sax::SAXException,
           ::com::sun::star::uno::RuntimeException,
@@ -3217,6 +3233,7 @@ void SAL_CALL ScXMLImport::endDocument()
             SetLabelRanges();
             SetNamedRanges();
             SetSheetNamedRanges();
+            SetStringRefSyntaxIfMissing();
             if (mpPivotSources)
                 // Process pivot table sources after the named ranges have been set.
                 mpPivotSources->process();

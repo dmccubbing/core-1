@@ -232,7 +232,7 @@ OUString lcl_GetFormattedString( ScDocument* pDoc, const ScAddress& rPos )
 
             EditEngine& rEngine = pDoc->GetEditEngine();
             rEngine.SetText(*pData);
-            return rEngine.GetText(LINEEND_LF);
+            return rEngine.GetText();
         }
         break;
         default:
@@ -311,7 +311,7 @@ public:
     virtual ~ScXMLShapeExport();
 
     /** is called before a shape element for the given XShape is exported */
-    virtual void onExport( const uno::Reference < drawing::XShape >& xShape ) SAL_OVERRIDE;
+    virtual void onExport( const uno::Reference < drawing::XShape >& xShape ) override;
 };
 
 ScXMLShapeExport::~ScXMLShapeExport()
@@ -3092,7 +3092,7 @@ void ScXMLExport::WriteCell(ScMyCell& aCell, sal_Int32 nEqualCellCount)
                 OUString sFormattedString(lcl_GetFormattedString(pDoc, aCell.maCellAddress));
                 OUString sCellString = aCell.maBaseCell.getString(pDoc);
                 GetNumberFormatAttributesExportHelper()->SetNumberFormatAttributes(
-                        sCellString, sFormattedString, true, true);
+                        sCellString, sFormattedString);
                 if( getDefaultVersion() > SvtSaveOptions::ODFVER_012 )
                     GetNumberFormatAttributesExportHelper()->SetNumberFormatAttributes(
                             sCellString, sFormattedString, false, true, XML_NAMESPACE_CALC_EXT);
@@ -3584,7 +3584,7 @@ void ScXMLExport::WriteAnnotation(ScMyCell& rMyCell)
         {
             Reference<drawing::XShape> xShape( pNoteCaption->getUnoShape(), uno::UNO_QUERY );
             if (xShape.is())
-                GetShapeExport()->exportShape(xShape, SEF_DEFAULT|XMLShapeExportFlags::ANNOTATION, NULL);
+                GetShapeExport()->exportShape(xShape, SEF_DEFAULT|XMLShapeExportFlags::ANNOTATION);
         }
 
         pCurrentCell = NULL;

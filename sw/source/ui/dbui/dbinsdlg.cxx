@@ -480,7 +480,7 @@ IMPL_LINK_TYPED( SwInsertDBColAutoPilot, PageHdl, Button*, pButton, void )
     if( bShowTable )
         m_pPbTableFormat->Enable( 0 != m_pLbTableCol->GetEntryCount() );
 
-    SelectHdl( bShowTable ? m_pLbTableDbColumn : m_pLbTextDbColumn );
+    SelectHdl( bShowTable ? *m_pLbTableDbColumn : *m_pLbTextDbColumn );
 }
 
 IMPL_LINK_TYPED( SwInsertDBColAutoPilot, DBFormatHdl, Button*, pButton, void )
@@ -734,11 +734,12 @@ IMPL_LINK_TYPED( SwInsertDBColAutoPilot, TableFormatHdl, Button*, pButton, void 
                     ::GetHtmlMode( pView->GetDocShell() )));
     }
 
-    if( m_pLbTableCol->GetEntryCount() != pRep->GetAllColCount() )
+    sal_Int32 nCols = m_pLbTableCol->GetEntryCount();
+    if (nCols != pRep->GetAllColCount() && nCols > 0)
     {
         // Number of columns has changed: then the TabCols have to be adjusted
         long nWidth = pRep->GetWidth();
-        const sal_Int32 nCols = m_pLbTableCol->GetEntryCount() - 1;
+        --nCols;
         SwTabCols aTabCols( nCols );
         aTabCols.SetRight( nWidth  );
         aTabCols.SetRightMax( nWidth );
@@ -784,24 +785,24 @@ IMPL_LINK_TYPED( SwInsertDBColAutoPilot, AutoFormatHdl, Button*, pButton, void )
         pDlg->FillAutoFormatOfIndex( pTAutoFormat );
 }
 
-IMPL_LINK( SwInsertDBColAutoPilot, SelectHdl, ListBox*, pBox )
+IMPL_LINK_TYPED( SwInsertDBColAutoPilot, SelectHdl, ListBox&, rBox, void )
 {
-    ListBox* pGetBox = pBox == m_pLbDbFormatFromUsr
+    ListBox* pGetBox = &rBox == m_pLbDbFormatFromUsr
                             ? ( m_pRbAsTable->IsChecked()
                                     ? ( 0 == m_pLbTableCol->GetEntryData( 0 )
                                         ? m_pLbTableDbColumn.get()
                                         : m_pLbTableCol.get() )
                                     : m_pLbTextDbColumn.get() )
-                            : pBox;
+                            : &rBox;
 
     SwInsDBColumn aSrch( pGetBox->GetSelectEntry(), 0 );
     SwInsDBColumns::const_iterator it = aDBColumns.find( &aSrch );
 
-    if( pBox == m_pLbDbFormatFromUsr )
+    if( &rBox == m_pLbDbFormatFromUsr )
     {
         if( !aSrch.sColumn.isEmpty() )
         {
-            aOldNumFormatLnk.Call( pBox );
+            aOldNumFormatLnk.Call( rBox );
             (*it)->nUsrNumFormat = m_pLbDbFormatFromUsr->GetFormat();
         }
     }
@@ -839,10 +840,9 @@ IMPL_LINK( SwInsertDBColAutoPilot, SelectHdl, ListBox*, pBox )
 
         // to know later on, what ListBox was the "active", a Flag
         // is remembered in the 1st entry
-        void* pPtr = pBox == m_pLbTableCol ? m_pLbTableCol.get() : 0;
+        void* pPtr = &rBox == m_pLbTableCol ? m_pLbTableCol.get() : 0;
         m_pLbTableCol->SetEntryData( 0, pPtr );
     }
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwInsertDBColAutoPilot, HeaderHdl, Button*, pButton, void )
@@ -974,7 +974,7 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
     rSh.StartAllAction();
     bool bUndo = rSh.DoesUndo();
     if( bUndo )
-        rSh.StartUndo( UNDO_EMPTY );
+        rSh.StartUndo();
 
     bool bAsTable = m_pRbAsTable->IsChecked();
     SvNumberFormatter& rNumFormatr = *rSh.GetNumberFormatter();
@@ -1413,7 +1413,7 @@ void SwInsertDBColAutoPilot::DataToDoc( const Sequence<Any>& rSelection,
     {
         rSh.DoUndo();
         rSh.AppendUndoForInsertFromDB( bAsTable );
-        rSh.EndUndo( UNDO_EMPTY );
+        rSh.EndUndo();
     }
     rSh.ClearMark();
     rSh.EndAllAction();
@@ -1743,8 +1743,8 @@ void SwInsertDBColAutoPilot::Load()
                     m_pIbDbcolAllTo->Enable( false );
                     m_pIbDbcolOneTo->Enable( false );
                 }
-                m_pIbDbcolOneFrom->Enable( true );
-                m_pIbDbcolAllFrom->Enable( true );
+                m_pIbDbcolOneFrom->Enable();
+                m_pIbDbcolAllFrom->Enable();
             }
             m_pEdDbText->SetText( pNewData->sEdit );
 

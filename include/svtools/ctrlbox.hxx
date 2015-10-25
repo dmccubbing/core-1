@@ -155,9 +155,9 @@ public:
                                   WinBits nWinStyle = WB_BORDER );
                     ColorListBox( vcl::Window* pParent, const ResId& rResId );
     virtual         ~ColorListBox();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) SAL_OVERRIDE;
+    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) override;
 
     using ListBox::InsertEntry;
     sal_Int32       InsertEntry( const OUString& rStr,
@@ -194,8 +194,8 @@ public:
     }
 
 private:
-                    ColorListBox( const ColorListBox& ) SAL_DELETED_FUNCTION;
-    ColorListBox&   operator =( const ColorListBox& ) SAL_DELETED_FUNCTION;
+                    ColorListBox( const ColorListBox& ) = delete;
+    ColorListBox&   operator =( const ColorListBox& ) = delete;
 };
 
 inline void ColorListBox::SelectEntry( const Color& rColor, bool bSelect )
@@ -297,7 +297,7 @@ class SVT_DLLPUBLIC LineListBox : public ListBox
     using Window::ImplInit;
     SVT_DLLPRIVATE void         ImplInit();
     bool            UpdatePaintLineColor();       // returns sal_True if maPaintCol has changed
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 
     void            UpdateEntries( long nOldWidth );
     sal_Int32       GetStylePos( sal_Int32  nListPos, long nWidth );
@@ -308,7 +308,7 @@ public:
 
                     LineListBox( vcl::Window* pParent, WinBits nWinStyle = WB_BORDER );
     virtual         ~LineListBox();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     /** Set the width in Twips */
     void            SetWidth( long nWidth );
@@ -324,10 +324,10 @@ public:
                         ColorDistFunc pColorDistFn = &sameDistColor);
 
     using ListBox::GetEntryPos;
-    sal_Int32       GetEntryPos( sal_uInt16 nStyle = com::sun::star::table::BorderLineStyle::SOLID ) const;
+    sal_Int32       GetEntryPos( sal_uInt16 nStyle = css::table::BorderLineStyle::SOLID ) const;
     sal_uInt16      GetEntryStyle( sal_Int32  nPos ) const;
 
-    void            SelectEntry( sal_uInt16 nStyle = com::sun::star::table::BorderLineStyle::SOLID, bool bSelect = true );
+    void            SelectEntry( sal_uInt16 nStyle = css::table::BorderLineStyle::SOLID, bool bSelect = true );
     sal_uInt16      GetSelectEntryStyle( sal_Int32  nSelIndex = 0 ) const;
 
     inline void     SetUnit( FieldUnit eNewUnit ) { eUnit = eNewUnit; }
@@ -345,8 +345,8 @@ protected:
     Color   GetColorDist( sal_Int32  nPos = 0 );
 
 private:
-                    LineListBox( const LineListBox& ) SAL_DELETED_FUNCTION;
-    LineListBox&    operator =( const LineListBox& ) SAL_DELETED_FUNCTION;
+                    LineListBox( const LineListBox& ) = delete;
+    LineListBox&    operator =( const LineListBox& ) = delete;
 };
 
 inline void LineListBox::SetColor( const Color& rColor )
@@ -390,9 +390,9 @@ public:
                     FontNameBox( vcl::Window* pParent,
                                  WinBits nWinStyle = WB_SORT );
     virtual         ~FontNameBox();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) SAL_OVERRIDE;
+    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) override;
 
     void            Fill( const FontList* pList );
 
@@ -401,8 +401,8 @@ public:
 private:
     void            InitFontMRUEntriesFile();
 
-                    FontNameBox( const FontNameBox& ) SAL_DELETED_FUNCTION;
-    FontNameBox&    operator =( const FontNameBox& ) SAL_DELETED_FUNCTION;
+                    FontNameBox( const FontNameBox& ) = delete;
+    FontNameBox&    operator =( const FontNameBox& ) = delete;
 };
 
 class SVT_DLLPUBLIC FontStyleBox : public ComboBox
@@ -416,17 +416,17 @@ private:
 public:
     FontStyleBox( vcl::Window* pParent, WinBits nBits );
 
-    virtual void    Select() SAL_OVERRIDE;
-    virtual void    LoseFocus() SAL_OVERRIDE;
-    virtual void    Modify() SAL_OVERRIDE;
-    virtual Size    GetOptimalSize() const SAL_OVERRIDE;
+    virtual void    Select() override;
+    virtual void    LoseFocus() override;
+    virtual void    Modify() override;
+    virtual Size    GetOptimalSize() const override;
 
-    void            SetText( const OUString& rText ) SAL_OVERRIDE;
+    void            SetText( const OUString& rText ) override;
     void            Fill( const OUString& rName, const FontList* pList );
 
 private:
-                    FontStyleBox( const FontStyleBox& ) SAL_DELETED_FUNCTION;
-    FontStyleBox&   operator =( const FontStyleBox& ) SAL_DELETED_FUNCTION;
+                    FontStyleBox( const FontStyleBox& ) = delete;
+    FontStyleBox&   operator =( const FontStyleBox& ) = delete;
 };
 
 inline void FontStyleBox::SetText( const OUString& rText )
@@ -454,13 +454,13 @@ class SVT_DLLPUBLIC FontSizeBox : public MetricBox
     SVT_DLLPRIVATE void         ImplInit();
 
 protected:
-    virtual OUString CreateFieldText( sal_Int64 nValue ) const SAL_OVERRIDE;
+    virtual OUString CreateFieldText( sal_Int64 nValue ) const override;
 
 public:
                     FontSizeBox( vcl::Window* pParent, WinBits nWinStyle = 0 );
 
-    void            Reformat() SAL_OVERRIDE;
-    void            Modify() SAL_OVERRIDE;
+    void            Reformat() override;
+    void            Modify() override;
 
     void            Fill( const vcl::FontInfo* pInfo, const FontList* pList );
 
@@ -475,14 +475,14 @@ public:
                         { bPtRelative = bPtRel; SetRelative( true ); }
     bool            IsPtRelative() const { return bPtRelative; }
 
-    virtual void    SetValue( sal_Int64 nNewValue, FieldUnit eInUnit ) SAL_OVERRIDE;
-    virtual void    SetValue( sal_Int64 nNewValue  ) SAL_OVERRIDE;
-    virtual sal_Int64   GetValue( FieldUnit eOutUnit ) const SAL_OVERRIDE;
-    virtual sal_Int64   GetValue() const SAL_OVERRIDE;
+    virtual void    SetValue( sal_Int64 nNewValue, FieldUnit eInUnit ) override;
+    virtual void    SetValue( sal_Int64 nNewValue  ) override;
+    virtual sal_Int64   GetValue( FieldUnit eOutUnit ) const override;
+    virtual sal_Int64   GetValue() const override;
 
 private:
-                    FontSizeBox( const FontSizeBox& ) SAL_DELETED_FUNCTION;
-    FontSizeBox&    operator =( const FontSizeBox& ) SAL_DELETED_FUNCTION;
+                    FontSizeBox( const FontSizeBox& ) = delete;
+    FontSizeBox&    operator =( const FontSizeBox& ) = delete;
 };
 
 #endif // INCLUDED_SVTOOLS_CTRLBOX_HXX

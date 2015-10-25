@@ -56,13 +56,13 @@ namespace pcr
 
     protected:
         // XPropertyChangeListener
-        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL propertyChange( const css::beans::PropertyChangeEvent& evt ) throw (css::uno::RuntimeException, std::exception) override;
         // XEventListener
-        virtual void SAL_CALL disposing( const css::lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL disposing( const css::lang::EventObject& Source ) throw (css::uno::RuntimeException, std::exception) override;
 
     private:
-        PropertyEventTranslation( const PropertyEventTranslation& ) SAL_DELETED_FUNCTION;
-        PropertyEventTranslation& operator=( const PropertyEventTranslation& ) SAL_DELETED_FUNCTION;
+        PropertyEventTranslation( const PropertyEventTranslation& ) = delete;
+        PropertyEventTranslation& operator=( const PropertyEventTranslation& ) = delete;
     };
 
 

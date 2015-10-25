@@ -42,8 +42,8 @@ public:
     SwMsgPoolItem( sal_uInt16 nWhich );
 
     // "Overhead" of SfxPoolItem
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = 0 ) const override;
 };
 
 // SwPtrMsgPoolItem (old SwObjectDying!)
@@ -98,32 +98,32 @@ public:
 class SwUpdateAttr : public SwMsgPoolItem
 {
 private:
-    sal_Int32 nStart;
-    sal_Int32 nEnd;
-    sal_uInt16 nWhichAttr;
-    std::vector<sal_uInt16> aWhichFormatAttr; // attributes changed inside RES_TXTATR_AUTOFMT
+    sal_Int32 m_nStart;
+    sal_Int32 m_nEnd;
+    sal_uInt16 m_nWhichAttr;
+    std::vector<sal_uInt16> m_aWhichFormatAttr; // attributes changed inside RES_TXTATR_AUTOFMT
 
 public:
     SwUpdateAttr( sal_Int32 nS, sal_Int32 nE, sal_uInt16 nW );
 
     sal_Int32 getStart() const
     {
-        return nStart;
+        return m_nStart;
     }
 
     sal_Int32 getEnd() const
     {
-        return nEnd;
+        return m_nEnd;
     }
 
     sal_uInt16 getWhichAttr() const
     {
-        return nWhichAttr;
+        return m_nWhichAttr;
     }
 
     const std::vector<sal_uInt16>& getFormatAttr() const
     {
-        return aWhichFormatAttr;
+        return m_aWhichFormatAttr;
     }
 };
 
@@ -225,19 +225,19 @@ public:
 
 class SwVirtPageNumInfo: public SwMsgPoolItem
 {
-    const SwPageFrm *pPage;
-    const SwPageFrm *pOrigPage;
-    const SwFrm     *pFrm;
+    const SwPageFrm *m_pPage;
+    const SwPageFrm *m_pOrigPage;
+    const SwFrm     *m_pFrm;
     /** Multiple attributes can be attached to a single paragraph / table
      The frame, in the end, has to decide which attribute takes effect and which physical page it involves */
 public:
     SwVirtPageNumInfo( const SwPageFrm *pPg );
 
-    const SwPageFrm *GetPage()          { return pPage;    }
-    const SwPageFrm *GetOrigPage()      { return pOrigPage;}
-    const SwFrm *GetFrm()               { return pFrm; }
+    const SwPageFrm *GetPage()          { return m_pPage;    }
+    const SwPageFrm *GetOrigPage()      { return m_pOrigPage;}
+    const SwFrm *GetFrm()               { return m_pFrm; }
     void  SetInfo( const SwPageFrm *pPg,
-                   const SwFrm *pF )    { pFrm = pF, pPage = pPg; }
+                   const SwFrm *pF )    { m_pFrm = pF, m_pPage = pPg; }
 };
 
 class SwFindNearestNode : public SwMsgPoolItem

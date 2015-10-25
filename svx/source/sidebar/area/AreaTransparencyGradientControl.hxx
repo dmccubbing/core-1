@@ -42,7 +42,7 @@ public:
         vcl::Window* pParent,
         AreaPropertyPanelBase& rPanel);
     virtual ~AreaTransparencyGradientControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void Rearrange(XFillFloatTransparenceItem* pGradientItem);
     void InitStatus(XFillFloatTransparenceItem* pGradientItem);
@@ -67,7 +67,7 @@ private:
     Image               maRotRight;
 
     AreaPropertyPanelBase& mrAreaPropertyPanel;
-    DECL_LINK( ModifiedTrgrHdl_Impl, void* );
+    DECL_LINK_TYPED( ModifiedTrgrHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( Left_Click45_Impl, ToolBox*, void );
     DECL_LINK_TYPED( Right_Click45_Impl, ToolBox*, void );
 };

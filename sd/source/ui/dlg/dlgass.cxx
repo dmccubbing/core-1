@@ -225,22 +225,22 @@ public:
     static OUString GetUiTextForCommand (const OUString& aCommandURL);
     static Image GetUiIconForCommand (const OUString& aCommandURL);
 
-    DECL_LINK( SelectFileHdl, void * );
-    DECL_LINK( SelectRegionHdl, ListBox * );
+    DECL_LINK_TYPED( SelectFileHdl, ListBox&, void );
+    DECL_LINK_TYPED( SelectRegionHdl, ListBox&, void );
     DECL_LINK_TYPED( UpdatePreviewHdl, Idle *, void );
     DECL_LINK_TYPED( UpdatePageListHdl, Idle *, void );
     DECL_LINK_TYPED( StartTypeHdl, Button *, void );
-    DECL_LINK( SelectTemplateHdl, void * );
+    DECL_LINK_TYPED( SelectTemplateHdl, ListBox&, void);
     DECL_LINK_TYPED( NextPageHdl, Button*, void );
     DECL_LINK_TYPED( LastPageHdl, Button*, void );
     DECL_LINK_TYPED( PreviewFlagHdl, Button*, void );
     DECL_LINK_TYPED( EffectPreviewIdleHdl, Idle *, void );
     DECL_LINK_TYPED( EffectPreviewClickHdl, SdDocPreviewWin&, void );
-    DECL_LINK( SelectLayoutHdl, void * );
+    DECL_LINK_TYPED( SelectLayoutHdl, ListBox&, void );
     DECL_LINK_TYPED( PageSelectHdl, SvTreeListBox*, void );
     DECL_LINK_TYPED( PresTypeHdl, Button*, void );
-    DECL_LINK( UpdateUserDataHdl, void * );
-    DECL_LINK( SelectEffectHdl, void* );
+    DECL_LINK_TYPED( UpdateUserDataHdl, Edit&, void );
+    DECL_LINK_TYPED( SelectEffectHdl, ListBox&, void);
     DECL_LINK_TYPED( OpenButtonHdl, Button *, void );
 
     OUString            maCreateStr;
@@ -639,7 +639,7 @@ AssistentDlgImpl::AssistentDlgImpl( vcl::Window* pWindow, const Link<ListBox&,vo
             mpPage1RegionLB->SelectEntry( pStandardTemplateDir->msRegion );
             SelectTemplateRegion( pStandardTemplateDir->msRegion );
             mpPage1TemplateLB->SelectEntry( pStandardTemplateEntry->msTitle );
-            SelectTemplateHdl(mpPage1TemplateLB);
+            SelectTemplateHdl(*mpPage1TemplateLB);
         }
     }
 }
@@ -1028,7 +1028,7 @@ void AssistentDlgImpl::UpdatePage()
         {
             // Show elements on first page depending of start type
             SetStartType( GetStartType() );
-            mpPage1TemplateRB->Enable(true /*mbTemplatesReady*/);
+            mpPage1TemplateRB->Enable(/*mbTemplatesReady*/);
             break;
         }
 
@@ -1039,7 +1039,7 @@ void AssistentDlgImpl::UpdatePage()
 
             if( GetStartType() != ST_EMPTY )
             {
-                mpPage2Medium5RB->Enable( true );
+                mpPage2Medium5RB->Enable();
             }
             else
             {
@@ -1079,26 +1079,23 @@ void AssistentDlgImpl::UpdatePage()
 // UI-Handler
 // ********************************************************************
 
-IMPL_LINK( AssistentDlgImpl, SelectRegionHdl, ListBox *, pLB )
+IMPL_LINK_TYPED( AssistentDlgImpl, SelectRegionHdl, ListBox&, rLB, void )
 {
-    if( pLB == mpPage1RegionLB )
+    if( &rLB == mpPage1RegionLB )
     {
-        SelectTemplateRegion( pLB->GetSelectEntry() );
+        SelectTemplateRegion( rLB.GetSelectEntry() );
         SetStartType( ST_TEMPLATE );
         mpPage2Medium5RB->Check();
     }
     else
     {
-        SelectLayoutRegion( pLB->GetSelectEntry() );
+        SelectLayoutRegion( rLB.GetSelectEntry() );
     }
-
-    return 0;
 }
 
-IMPL_LINK_NOARG(AssistentDlgImpl, SelectEffectHdl)
+IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, SelectEffectHdl, ListBox&, void)
 {
     maEffectPrevIdle.Start();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED( AssistentDlgImpl, OpenButtonHdl, Button*, void )
@@ -1142,26 +1139,23 @@ IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, PreviewFlagHdl, Button*, void)
     }
 }
 
-IMPL_LINK_NOARG(AssistentDlgImpl, SelectTemplateHdl)
+IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, SelectTemplateHdl, ListBox&, void)
 {
     SetStartType( ST_TEMPLATE );
     mpPage2Medium5RB->Check();
     mpPage2LayoutLB->SelectEntryPos(0);
     maPrevIdle.Start();
-    return 0;
 }
 
-IMPL_LINK_NOARG(AssistentDlgImpl, SelectLayoutHdl)
+IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, SelectLayoutHdl, ListBox&, void)
 {
     maPrevIdle.Start();
-    return 0;
 }
 
-IMPL_LINK_NOARG(AssistentDlgImpl, SelectFileHdl)
+IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, SelectFileHdl, ListBox&, void)
 {
     SetStartType( ST_OPEN );
     maPrevIdle.Start();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, PageSelectHdl, SvTreeListBox*, void)
@@ -1241,7 +1235,7 @@ IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, PresTypeHdl, Button*, void)
     mpPage3LogoCB->Enable(bKiosk);
 }
 
-IMPL_LINK_NOARG(AssistentDlgImpl, UpdateUserDataHdl)
+IMPL_LINK_NOARG_TYPED(AssistentDlgImpl, UpdateUserDataHdl, Edit&, void)
 {
     mbUserDataDirty = true;
     OUString aTopic = mpPage4AskTopicEDT->GetText();
@@ -1250,8 +1244,6 @@ IMPL_LINK_NOARG(AssistentDlgImpl, UpdateUserDataHdl)
 
     if (aTopic.isEmpty() && aName.isEmpty() && aInfo.isEmpty())
         maDocFile.clear();
-
-    return 0;
 }
 
 // ********************************************************************
@@ -1274,7 +1266,7 @@ void AssistentDlgImpl::SelectTemplateRegion( const OUString& rRegion )
             if(GetStartType() == ST_TEMPLATE)
             {
                 mpPage1TemplateLB->SelectEntryPos( 0 );
-                SelectTemplateHdl(NULL);
+                SelectTemplateHdl(*mpPage1TemplateLB);
             }
             break;
         }
@@ -1414,7 +1406,7 @@ void AssistentDlgImpl::UpdatePreview( bool bDocPreview )
 
             DrawDocShell* pNewDocSh;
             xDocShell = pNewDocSh = new DrawDocShell(SfxObjectCreateMode::STANDARD, false);
-            pNewDocSh->DoInitNew(NULL);
+            pNewDocSh->DoInitNew();
             SdDrawDocument* pDoc = pNewDocSh->GetDoc();
             pDoc->CreateFirstPages();
             pDoc->StopWorkStartupDelay();
@@ -1550,7 +1542,7 @@ void AssistentDlgImpl::SavePassword( SfxObjectShellLock xDoc, const OUString& rP
         if(pMedium && pMedium->IsStorage())
         {
           SfxItemSet * pSet = pMedium->GetItemSet();
-          SFX_ITEMSET_ARG( pSet, pEncryptionDataItem, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false);
+          const SfxUnoAnyItem* pEncryptionDataItem = SfxItemSet::GetItem<SfxUnoAnyItem>(pSet, SID_ENCRYPTIONDATA, false);
           uno::Sequence < beans::NamedValue > aEncryptionData;
           if (pEncryptionDataItem)
               pEncryptionDataItem->GetValue() >>= aEncryptionData;

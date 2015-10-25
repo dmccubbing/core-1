@@ -101,11 +101,11 @@ class OColorPopup : public FloatingWindow
 public:
     OColorPopup(vcl::Window* _pParent,Condition* _pCondition);
     virtual ~OColorPopup();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     VclPtr<ValueSet>        m_aColorSet;
 
-    virtual void KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void Resize() SAL_OVERRIDE;
+    virtual void KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void Resize() override;
 
     void StartSelection();
     void SetSlotId(sal_uInt16 _nSlotId);
@@ -398,17 +398,15 @@ void Condition::GetFocus()
         m_pCondLHS->GrabFocus();
 }
 
-IMPL_LINK( Condition, OnTypeSelected, ListBox*, /*_pNotInterestedIn*/ )
+IMPL_LINK_NOARG_TYPED( Condition, OnTypeSelected, ListBox&, void )
 {
     impl_layoutOperands();
-    return 0L;
 }
 
 
-IMPL_LINK( Condition, OnOperationSelected, ListBox*, /*_pNotInterestedIn*/ )
+IMPL_LINK_NOARG_TYPED( Condition, OnOperationSelected, ListBox&, void )
 {
     impl_layoutOperands();
-    return 0L;
 }
 
 void Condition::impl_layoutOperands()

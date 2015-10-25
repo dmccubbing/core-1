@@ -66,6 +66,7 @@ OString loadShader(const OUString& rFilename)
 {
     OUString aFileURL = getShaderFolder() + rFilename +".glsl";
     osl::File aFile(aFileURL);
+    SAL_INFO("vcl.opengl", "Reading " << aFileURL);
     if(aFile.open(osl_File_OpenFlag_Read) == osl::FileBase::E_None)
     {
         sal_uInt64 nSize = 0;
@@ -83,6 +84,18 @@ OString loadShader(const OUString& rFilename)
     }
 
     return OString();
+}
+
+OString& getShaderSource(const OUString& rFilename)
+{
+    static std::unordered_map<OUString, OString, OUStringHash> aMap;
+
+    if (aMap.find(rFilename) == aMap.end())
+    {
+        aMap[rFilename] = loadShader(rFilename);
+    }
+
+    return aMap[rFilename];
 }
 
 }
@@ -189,8 +202,8 @@ namespace
                              const OString& rPreamble )
     {
         // read shaders source
-        OString aVertexShaderSource = loadShader( rVertexShaderName );
-        OString aFragmentShaderSource = loadShader( rFragmentShaderName );
+        OString aVertexShaderSource = getShaderSource( rVertexShaderName );
+        OString aFragmentShaderSource = getShaderSource( rFragmentShaderName );
 
         // get info about the graphic device
 #if defined( SAL_UNX ) && !defined( MACOSX ) && !defined( IOS )&& !defined( ANDROID )
@@ -249,7 +262,7 @@ namespace
             // to the already saved binary, since they have the same hash value
             if( eStatus == osl::FileBase::E_EXIST )
             {
-                SAL_WARN( "vcl.opengl",
+                SAL_INFO( "vcl.opengl",
                         "No binary program saved. A file with the same hash already exists: '" << rBinaryFileName << "'" );
                 return true;
             }
@@ -276,7 +289,7 @@ namespace
             sal_uInt64 nBytesRead = 0;
             aFile.read( rBinary.data(), nSize, nBytesRead );
             assert( nSize == nBytesRead );
-            SAL_WARN("vcl.opengl", "Loading file: '" << rBinaryFileName << "': success" );
+            SAL_INFO("vcl.opengl", "Loading file: '" << rBinaryFileName << "': success" );
             return true;
         }
         else
@@ -350,7 +363,7 @@ namespace
         if( !writeProgramBinary( rBinaryFileName, aBinary ) )
             SAL_WARN("vcl.opengl", "Writing binary file '" << rBinaryFileName << "': FAIL");
         else
-            SAL_WARN("vcl.opengl", "Writing binary file '" << rBinaryFileName << "': success");
+            SAL_INFO("vcl.opengl", "Writing binary file '" << rBinaryFileName << "': success");
     }
 }
 
@@ -374,8 +387,8 @@ GLint OpenGLHelper::LoadShaders(const OUString& rVertexShaderName,
     GLint ProgramID = glCreateProgram();
 
     // read shaders from file
-    OString aVertexShaderSource = loadShader(rVertexShaderName);
-    OString aFragmentShaderSource = loadShader(rFragmentShaderName);
+    OString aVertexShaderSource = getShaderSource(rVertexShaderName);
+    OString aFragmentShaderSource = getShaderSource(rFragmentShaderName);
 
     GLint bBinaryResult = GL_FALSE;
     if( GLEW_ARB_get_program_binary && !rDigest.isEmpty() )
@@ -807,7 +820,6 @@ void OpenGLWatchdogThread::execute()
                 {
                     SAL_WARN("vcl.opengl", "Watchdog gave up: aborting");
                     gbWatchdogFiring = true;
-                    nUnchanged = 0;
                     std::abort();
                 }
                 // coverity[dead_error_line] - we might have caught SIGABRT and failed to exit yet

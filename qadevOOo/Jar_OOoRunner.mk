@@ -30,7 +30,6 @@ $(eval $(call gb_Jar_use_jars,OOoRunner,\
 
 $(eval $(call gb_Jar_set_packageroot,OOoRunner,\
 	base \
-	complex \
 	complexlib \
 	convwatch \
 	graphical \
@@ -66,7 +65,6 @@ $(eval $(call gb_Jar_add_sourcefiles,OOoRunner,\
     qadevOOo/runner/helper/ConfigHelper \
     qadevOOo/runner/helper/ConfigurationRead \
     qadevOOo/runner/helper/ContextMenuInterceptor \
-    qadevOOo/runner/helper/CwsDataExchangeImpl \
     qadevOOo/runner/helper/FileTools \
     qadevOOo/runner/helper/LoggingThread \
     qadevOOo/runner/helper/OfficeProvider \
@@ -85,6 +83,7 @@ $(eval $(call gb_Jar_add_sourcefiles,OOoRunner,\
     qadevOOo/runner/lib/ExceptionStatus \
     qadevOOo/runner/lib/MultiMethodTest \
     qadevOOo/runner/lib/MultiPropertyTest \
+    qadevOOo/runner/lib/RunState \
     qadevOOo/runner/lib/SimpleStatus \
     qadevOOo/runner/lib/Status \
     qadevOOo/runner/lib/StatusException \
@@ -140,7 +139,6 @@ $(eval $(call gb_Jar_add_sourcefiles,OOoRunner,\
     qadevOOo/runner/util/XLayerImpl \
     qadevOOo/runner/util/XMLTools \
     qadevOOo/runner/util/XSchemaHandlerImpl \
-    qadevOOo/tests/java/complex/unoapi/CheckModuleAPI \
     qadevOOo/tests/java/ifc/accessibility/_XAccessible \
     qadevOOo/tests/java/ifc/accessibility/_XAccessibleAction \
     qadevOOo/tests/java/ifc/accessibility/_XAccessibleComponent \
@@ -962,7 +960,6 @@ $(eval $(call gb_Jar_add_sourcefiles,OOoRunner,\
     qadevOOo/tests/java/mod/_fwk/ModuleManager \
     qadevOOo/tests/java/mod/_fwk/ModuleUIConfigurationManager \
     qadevOOo/tests/java/mod/_fwk/ModuleUIConfigurationManagerSupplier \
-    qadevOOo/tests/java/mod/_fwk/ObjectMenuController \
     qadevOOo/tests/java/mod/_fwk/PopupMenuControllerFactory \
     qadevOOo/tests/java/mod/_fwk/ServiceHandler \
     qadevOOo/tests/java/mod/_fwk/SoundHandler \

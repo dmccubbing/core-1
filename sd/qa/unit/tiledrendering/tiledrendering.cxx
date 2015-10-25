@@ -7,6 +7,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include <test/bootstrapfixture.hxx>
+#include <unotest/macros_test.hxx>
+#include <test/xmltesttools.hxx>
+#include <boost/property_tree/json_parser.hpp>
 #define LOK_USE_UNSTABLE_API
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <com/sun/star/frame/Desktop.hpp>
@@ -19,9 +23,7 @@
 #include <editeng/outliner.hxx>
 #include <sfx2/dispatch.hxx>
 #include <sfx2/viewfrm.hxx>
-#include <test/bootstrapfixture.hxx>
-#include <test/xmltesttools.hxx>
-#include <unotest/macros_test.hxx>
+#include <svl/srchitem.hxx>
 
 #include <DrawDocShell.hxx>
 #include <ViewShell.hxx>
@@ -38,8 +40,8 @@ class SdTiledRenderingTest : public test::BootstrapFixture, public unotest::Macr
 {
 public:
     SdTiledRenderingTest();
-    virtual void setUp() SAL_OVERRIDE;
-    virtual void tearDown() SAL_OVERRIDE;
+    virtual void setUp() override;
+    virtual void tearDown() override;
 
 #if !defined(WNT) && !defined(MACOSX)
     void testRegisterCallback();
@@ -50,6 +52,8 @@ public:
     void testSetGraphicSelection();
     void testResetSelection();
     void testSearch();
+    void testSearchAll();
+    void testSearchAllSelections();
 #endif
 
     CPPUNIT_TEST_SUITE(SdTiledRenderingTest);
@@ -62,6 +66,8 @@ public:
     CPPUNIT_TEST(testSetGraphicSelection);
     CPPUNIT_TEST(testResetSelection);
     CPPUNIT_TEST(testSearch);
+    CPPUNIT_TEST(testSearchAll);
+    CPPUNIT_TEST(testSearchAllSelections);
 #endif
     CPPUNIT_TEST_SUITE_END();
 
@@ -78,6 +84,8 @@ private:
     std::vector<Rectangle> m_aSelection;
     bool m_bFound;
     sal_Int32 m_nPart;
+    std::vector<OString> m_aSearchResultSelection;
+    std::vector<int> m_aSearchResultPart;
 #endif
 };
 
@@ -180,6 +188,20 @@ void SdTiledRenderingTest::callbackImpl(int nType, const char* pPayload)
     {
         OUString aPayload = OUString::createFromAscii(pPayload);
         m_nPart = aPayload.toInt32();
+    }
+    break;
+    case LOK_CALLBACK_SEARCH_RESULT_SELECTION:
+    {
+        m_aSearchResultSelection.clear();
+        m_aSearchResultPart.clear();
+        boost::property_tree::ptree aTree;
+        std::stringstream aStream(pPayload);
+        boost::property_tree::read_json(aStream, aTree);
+        for (boost::property_tree::ptree::value_type& rValue : aTree.get_child("searchResultSelection"))
+        {
+            m_aSearchResultSelection.push_back(rValue.second.get<std::string>("rectangles").c_str());
+            m_aSearchResultPart.push_back(std::atoi(rValue.second.get<std::string>("part").c_str()));
+        }
     }
     break;
     }
@@ -354,12 +376,13 @@ void SdTiledRenderingTest::testResetSelection()
     CPPUNIT_ASSERT(!pView->GetTextEditObject());
 }
 
-static void lcl_search(const OUString& rKey)
+static void lcl_search(const OUString& rKey, bool bFindAll = false)
 {
     uno::Sequence<beans::PropertyValue> aPropertyValues(comphelper::InitPropertySequence(
     {
         {"SearchItem.SearchString", uno::makeAny(rKey)},
-        {"SearchItem.Backward", uno::makeAny(false)}
+        {"SearchItem.Backward", uno::makeAny(false)},
+        {"SearchItem.Command", uno::makeAny(static_cast<sal_uInt16>(bFindAll ? SvxSearchCmd::FIND_ALL : SvxSearchCmd::FIND))},
     }));
     comphelper::dispatchCommand(".uno:ExecuteSearch", aPropertyValues);
 }
@@ -387,11 +410,44 @@ void SdTiledRenderingTest::testSearch()
     lcl_search("bbb");
     CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(1), m_nPart);
     CPPUNIT_ASSERT_EQUAL(true, m_bFound);
+    // This was 0; should be 1 match for "find".
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(1), m_aSearchResultSelection.size());
+    // Result is on the second slide.
+    CPPUNIT_ASSERT_EQUAL(1, m_aSearchResultPart[0]);
 
     // This should trigger the not-found callback.
-    Application::EnableHeadlessMode(false);
     lcl_search("ccc");
     CPPUNIT_ASSERT_EQUAL(false, m_bFound);
+}
+
+void SdTiledRenderingTest::testSearchAll()
+{
+    SdXImpressDocument* pXImpressDocument = createDoc("search-all.odp");
+    pXImpressDocument->registerCallback(&SdTiledRenderingTest::callback, this);
+
+    lcl_search("match", /*bFindAll=*/true);
+
+    OString aUsedFormat;
+    // This was empty: find-all did not highlight the first match.
+    CPPUNIT_ASSERT_EQUAL(OString("match"), pXImpressDocument->getTextSelection("text/plain;charset=utf-8", aUsedFormat));
+
+    // We're on the first slide, search for something on the second slide and make sure we get a SET_PART.
+    m_nPart = 0;
+    lcl_search("second", /*bFindAll=*/true);
+    // This was 0: no SET_PART was emitted.
+    CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(1), m_nPart);
+}
+
+void SdTiledRenderingTest::testSearchAllSelections()
+{
+    SdXImpressDocument* pXImpressDocument = createDoc("search-all.odp");
+    pXImpressDocument->registerCallback(&SdTiledRenderingTest::callback, this);
+
+    lcl_search("third", /*bFindAll=*/true);
+    // Make sure this is found on the 3rd slide.
+    CPPUNIT_ASSERT_EQUAL(static_cast<sal_Int32>(2), m_nPart);
+    // This was 1: only the first match was highlighted.
+    CPPUNIT_ASSERT_EQUAL(static_cast<size_t>(2), m_aSelection.size());
 }
 
 #endif

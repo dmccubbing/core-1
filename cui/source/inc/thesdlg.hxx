@@ -37,20 +37,20 @@ class LookUpComboBox : public ComboBox
     Idle                        m_aModifyIdle;
     VclPtr<SvxThesaurusDialog>         m_pDialog;
 
-    LookUpComboBox( const LookUpComboBox & ) SAL_DELETED_FUNCTION;
-    LookUpComboBox& operator = ( const LookUpComboBox & ) SAL_DELETED_FUNCTION;
+    LookUpComboBox( const LookUpComboBox & ) = delete;
+    LookUpComboBox& operator = ( const LookUpComboBox & ) = delete;
 
 public:
     LookUpComboBox(vcl::Window *pParent);
     virtual ~LookUpComboBox();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     DECL_LINK_TYPED( ModifyTimer_Hdl, Idle *, void );
 
     void init(SvxThesaurusDialog *pDialog);
 
     // ComboBox
-    virtual void        Modify() SAL_OVERRIDE;
+    virtual void        Modify() override;
 };
 
 class AlternativesExtraData
@@ -78,15 +78,15 @@ class ThesaurusAlternativesCtrl
     typedef std::map< const SvTreeListEntry *, AlternativesExtraData >  UserDataMap_t;
     UserDataMap_t           m_aUserData;
 
-    ThesaurusAlternativesCtrl( const ThesaurusAlternativesCtrl & ) SAL_DELETED_FUNCTION;
-    ThesaurusAlternativesCtrl & operator = ( const ThesaurusAlternativesCtrl & ) SAL_DELETED_FUNCTION;
+    ThesaurusAlternativesCtrl( const ThesaurusAlternativesCtrl & ) = delete;
+    ThesaurusAlternativesCtrl & operator = ( const ThesaurusAlternativesCtrl & ) = delete;
 
 public:
     ThesaurusAlternativesCtrl(vcl::Window* pParent);
 
     void init(SvxThesaurusDialog *pDialog);
     virtual ~ThesaurusAlternativesCtrl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     SvTreeListEntry *   AddEntry( sal_Int32 nVal, const OUString &rText, bool bIsHeader );
 
@@ -94,28 +94,28 @@ public:
     void            SetExtraData( const SvTreeListEntry *pEntry, const AlternativesExtraData &rData );
     AlternativesExtraData * GetExtraData( const SvTreeListEntry *pEntry );
 
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual void    Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
 };
 
 class ReplaceEdit : public Edit
 {
     VclPtr<Button>       m_pBtn;
 
-    ReplaceEdit( const ReplaceEdit & ) SAL_DELETED_FUNCTION;
-    ReplaceEdit & operator = ( const ReplaceEdit & ) SAL_DELETED_FUNCTION;
+    ReplaceEdit( const ReplaceEdit & ) = delete;
+    ReplaceEdit & operator = ( const ReplaceEdit & ) = delete;
 
 public:
     ReplaceEdit(vcl::Window *pParent);
     virtual ~ReplaceEdit();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void init(Button *pBtn)  { m_pBtn = pBtn; }
 
     // Edit
-    virtual void        Modify() SAL_OVERRIDE;
-    virtual void        SetText( const OUString& rStr ) SAL_OVERRIDE;
-    virtual void        SetText( const OUString& rStr, const Selection& rNewSelection ) SAL_OVERRIDE;
+    virtual void        Modify() override;
+    virtual void        SetText( const OUString& rStr ) override;
+    virtual void        SetText( const OUString& rStr, const Selection& rNewSelection ) override;
 };
 
 class SvxThesaurusDialog : public SvxStandardDialog
@@ -136,7 +136,7 @@ class SvxThesaurusDialog : public SvxStandardDialog
 
 public:
     virtual ~SvxThesaurusDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     bool                    WordFound() const { return m_bWordFound; }
     OUString                getErrStr() const { return m_aErrStr; }
@@ -144,8 +144,8 @@ public:
     // Handler
     DECL_LINK_TYPED( ReplaceBtnHdl_Impl, Button *, void );
     DECL_LINK_TYPED( LeftBtnHdl_Impl, Button *, void );
-    DECL_LINK( LanguageHdl_Impl, ListBox * );
-    DECL_LINK( WordSelectHdl_Impl, ComboBox * );
+    DECL_LINK_TYPED( LanguageHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( WordSelectHdl_Impl, ComboBox&, void );
     DECL_LINK_TYPED( AlternativesSelectHdl_Impl, SvTreeListBox*, void );
     DECL_LINK_TYPED( AlternativesDoubleClickHdl_Impl, SvTreeListBox*, bool );
 
@@ -157,7 +157,7 @@ public:
     bool    UpdateAlternativesBox_Impl();
     void    LookUp( const OUString &rText );
     void    LookUp_Impl();
-    virtual void     Apply() SAL_OVERRIDE;
+    virtual void     Apply() override;
 
 public:
     SvxThesaurusDialog( vcl::Window* pParent,

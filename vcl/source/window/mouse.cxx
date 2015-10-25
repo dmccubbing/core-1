@@ -306,7 +306,6 @@ void Window::ImplGrabFocus( GetFocusFlags nFlags )
             {
                 // here we already switch focus as ToTop()
                 // should not give focus to another window
-                //DBG_WARNING( "Window::GrabFocus() - Frame doesn't have the focus" );
                 mpWindowImpl->mpFrame->ToTop( SAL_FRAME_TOTOP_GRABFOCUS | SAL_FRAME_TOTOP_GRABFOCUS_ONLY );
                 return;
             }
@@ -469,7 +468,7 @@ void Window::ReleaseMouse()
 
     ImplSVData* pSVData = ImplGetSVData();
 
-    DBG_ASSERTWARNING( pSVData->maWinData.mpCaptureWin.get() == this,
+    SAL_WARN_IF( pSVData->maWinData.mpCaptureWin.get() != this, "vcl",
                        "Window::ReleaseMouse(): window doesn't have the mouse capture" );
 
     if ( pSVData->maWinData.mpCaptureWin.get() == this )

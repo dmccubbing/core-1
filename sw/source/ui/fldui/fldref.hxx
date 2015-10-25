@@ -60,10 +60,11 @@ class SwFieldRefPage : public SwFieldPage
     // fallback, if previously selected text node doesn't exist anymore
     size_t mnSavedSelectedPos;
 
-    DECL_LINK(TypeHdl, void *);
-    DECL_LINK(SubTypeHdl, void * = 0);
+    DECL_LINK_TYPED(TypeHdl, ListBox&, void);
+    DECL_LINK_TYPED(SubTypeListBoxHdl, ListBox&, void);
     DECL_LINK_TYPED(SubTypeTreeListBoxHdl, SvTreeListBox*, void);
-    DECL_LINK(ModifyHdl, void * = 0);
+    DECL_LINK_TYPED(ModifyHdl, Edit&, void);
+    void SubTypeHdl();
 
     void                UpdateSubType();
     sal_Int32               FillFormatLB(sal_uInt16 nTypeId);
@@ -72,20 +73,20 @@ class SwFieldRefPage : public SwFieldPage
     void SaveSelectedTextNode();
 
 protected:
-    virtual sal_uInt16      GetGroup() SAL_OVERRIDE;
+    virtual sal_uInt16      GetGroup() override;
 
 public:
                         SwFieldRefPage(vcl::Window* pParent, const SfxItemSet& rSet);
 
                         virtual ~SwFieldRefPage();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     static VclPtr<SfxTabPage>  Create(vcl::Window* pParent, const SfxItemSet* rAttrSet);
 
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
-    virtual void        FillUserData() SAL_OVERRIDE;
+    virtual void        FillUserData() override;
 };
 
 #endif

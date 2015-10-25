@@ -1179,7 +1179,7 @@ void PrintDialog::setupOptionalUI()
     if (!maNUpPage.mpBrochureBtn->IsVisible() && maNUpPage.mpPagesBtn->IsVisible())
     {
         maNUpPage.mpPagesBoxTitleTxt->SetText( maNUpPage.mpPagesBtn->GetText() );
-        maNUpPage.mpPagesBoxTitleTxt->Show( true );
+        maNUpPage.mpPagesBoxTitleTxt->Show();
         maNUpPage.mpPagesBtn->Show( false );
     }
 
@@ -1517,30 +1517,28 @@ void PrintDialog::updateNup()
     preparePreview( true, true );
 }
 
-IMPL_LINK( PrintDialog, SelectHdl, ListBox*, pBox )
+IMPL_LINK_TYPED( PrintDialog, SelectHdl, ListBox&, rBox, void )
 {
-    if(  pBox == maJobPage.mpPrinters )
+    if(  &rBox == maJobPage.mpPrinters )
     {
-        OUString aNewPrinter( pBox->GetSelectEntry() );
+        OUString aNewPrinter( rBox.GetSelectEntry() );
         // set new printer
         maPController->setPrinter( VclPtrInstance<Printer>( aNewPrinter ) );
         maPController->resetPrinterOptions( maOptionsPage.mpToFileBox->IsChecked() );
         // update text fields
         updatePrinterText();
-        preparePreview( true );
+        preparePreview();
     }
-    else if( pBox == maNUpPage.mpNupOrientationBox || pBox == maNUpPage.mpNupOrderBox )
+    else if( &rBox == maNUpPage.mpNupOrientationBox || &rBox == maNUpPage.mpNupOrderBox )
     {
         updateNup();
     }
-    else if( pBox == maNUpPage.mpNupPagesBox )
+    else if( &rBox == maNUpPage.mpNupPagesBox )
     {
         if( !maNUpPage.mpPagesBtn->IsChecked() )
             maNUpPage.mpPagesBtn->Check();
         updateNupFromPages();
     }
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( PrintDialog, ToggleRadioHdl, RadioButton&, rButton, void )
@@ -1642,34 +1640,33 @@ IMPL_LINK_TYPED( PrintDialog, ClickHdl, Button*, pButton, void )
             maPController->setupPrinter( this );
 
             // tdf#63905 don't use cache: page size may change
-            preparePreview( true );
+            preparePreview();
         }
         checkControlDependencies();
     }
 }
 
-IMPL_LINK( PrintDialog, ModifyHdl, Edit*, pEdit )
+IMPL_LINK_TYPED( PrintDialog, ModifyHdl, Edit&, rEdit, void )
 {
     checkControlDependencies();
-    if( pEdit == maNUpPage.mpNupRowsEdt || pEdit == maNUpPage.mpNupColEdt ||
-        pEdit == maNUpPage.mpSheetMarginEdt || pEdit == maNUpPage.mpPageMarginEdt
+    if( &rEdit == maNUpPage.mpNupRowsEdt || &rEdit == maNUpPage.mpNupColEdt ||
+        &rEdit == maNUpPage.mpSheetMarginEdt || &rEdit == maNUpPage.mpPageMarginEdt
        )
     {
         updateNupFromPages();
     }
-    else if( pEdit == mpPageEdit )
+    else if( &rEdit == mpPageEdit )
     {
         mnCurPage = sal_Int32( mpPageEdit->GetValue() - 1 );
         preparePreview( true, true );
     }
-    else if( pEdit == maJobPage.mpCopyCountField )
+    else if( &rEdit == maJobPage.mpCopyCountField )
     {
         maPController->setValue( OUString( "CopyCount"  ),
                                makeAny( sal_Int32(maJobPage.mpCopyCountField->GetValue()) ) );
         maPController->setValue( OUString( "Collate"  ),
                                makeAny( isCollate() ) );
     }
-    return 0;
 }
 
 PropertyValue* PrintDialog::getValueForWindow( vcl::Window* i_pWindow ) const
@@ -1796,14 +1793,14 @@ IMPL_LINK_TYPED( PrintDialog, UIOption_RadioHdl, RadioButton&, i_rBtn, void )
     }
 }
 
-IMPL_LINK( PrintDialog, UIOption_SelectHdl, ListBox*, i_pBox )
+IMPL_LINK_TYPED( PrintDialog, UIOption_SelectHdl, ListBox&, i_rBox, void )
 {
-    PropertyValue* pVal = getValueForWindow( i_pBox );
+    PropertyValue* pVal = getValueForWindow( &i_rBox );
     if( pVal )
     {
-        makeEnabled( i_pBox );
+        makeEnabled( &i_rBox );
 
-        sal_Int32 nVal( i_pBox->GetSelectEntryPos() );
+        sal_Int32 nVal( i_rBox.GetSelectEntryPos() );
         pVal->Value <<= nVal;
 
         //If we are in impress we start in print slides mode and get a
@@ -1819,18 +1816,17 @@ IMPL_LINK( PrintDialog, UIOption_SelectHdl, ListBox*, i_pBox )
         // update preview and page settings
         preparePreview();
     }
-    return 0;
 }
 
-IMPL_LINK( PrintDialog, UIOption_ModifyHdl, Edit*, i_pBox )
+IMPL_LINK_TYPED( PrintDialog, UIOption_ModifyHdl, Edit&, i_rBox, void )
 {
-    PropertyValue* pVal = getValueForWindow( i_pBox );
+    PropertyValue* pVal = getValueForWindow( &i_rBox );
     if( pVal )
     {
-        makeEnabled( i_pBox );
+        makeEnabled( &i_rBox );
 
-        NumericField* pNum = dynamic_cast<NumericField*>(i_pBox);
-        MetricField* pMetric = dynamic_cast<MetricField*>(i_pBox);
+        NumericField* pNum = dynamic_cast<NumericField*>(&i_rBox);
+        MetricField* pMetric = dynamic_cast<MetricField*>(&i_rBox);
         if( pNum )
         {
             sal_Int64 nVal = pNum->GetValue();
@@ -1843,7 +1839,7 @@ IMPL_LINK( PrintDialog, UIOption_ModifyHdl, Edit*, i_pBox )
         }
         else
         {
-            OUString aVal( i_pBox->GetText() );
+            OUString aVal( i_rBox.GetText() );
             pVal->Value <<= aVal;
         }
 
@@ -1852,7 +1848,6 @@ IMPL_LINK( PrintDialog, UIOption_ModifyHdl, Edit*, i_pBox )
         // update preview and page settings
         preparePreview();
     }
-    return 0;
 }
 
 void PrintDialog::Command( const CommandEvent& rEvt )

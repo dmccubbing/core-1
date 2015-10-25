@@ -259,8 +259,7 @@ private:
     VCLXHeaderBar*      m_pVCLXHeaderBar;
 
 
-    ::com::sun::star::uno::Reference<
-        ::com::sun::star::accessibility::XAccessible >
+    css::uno::Reference< css::accessibility::XAccessible >
                         mxAccessible;
 
     using Window::ImplInit;
@@ -281,23 +280,23 @@ private:
     SVT_DLLPRIVATE void             ImplDrag( const Point& rPos );
     SVT_DLLPRIVATE void             ImplEndDrag( bool bCancel );
 
-    virtual void ApplySettings(vcl::RenderContext& rRenderContext) SAL_OVERRIDE;
+    virtual void ApplySettings(vcl::RenderContext& rRenderContext) override;
 
 public:
     HeaderBar( vcl::Window* pParent, WinBits nWinBits = WB_STDHEADERBAR );
     virtual ~HeaderBar();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void        MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void        MouseMove( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void        Tracking( const TrackingEvent& rTEvt ) SAL_OVERRIDE;
-    virtual void        Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) SAL_OVERRIDE;
-    virtual void        Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) SAL_OVERRIDE;
-    virtual void        Resize() SAL_OVERRIDE;
-    virtual void        Command( const CommandEvent& rCEvt ) SAL_OVERRIDE;
-    virtual void        RequestHelp( const HelpEvent& rHEvt ) SAL_OVERRIDE;
-    virtual void        StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
-    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void        MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void        MouseMove( const MouseEvent& rMEvt ) override;
+    virtual void        Tracking( const TrackingEvent& rTEvt ) override;
+    virtual void        Paint(vcl::RenderContext& rRenderContext, const Rectangle& rRect) override;
+    virtual void        Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) override;
+    virtual void        Resize() override;
+    virtual void        Command( const CommandEvent& rCEvt ) override;
+    virtual void        RequestHelp( const HelpEvent& rHEvt ) override;
+    virtual void        StateChanged( StateChangedType nStateChange ) override;
+    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) override;
 
     void                StartDrag();
     void                Drag();
@@ -349,10 +348,9 @@ public:
     inline bool         IsDragable() const                          { return mbDragable; }
 
     /** Creates and returns the accessible object of the header bar. */
-    virtual ::com::sun::star::uno::Reference<
-        ::com::sun::star::accessibility::XAccessible >  CreateAccessible() SAL_OVERRIDE;
-    void SetAccessible( ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > );
-    virtual ::com::sun::star::uno::Reference< ::com::sun::star::awt::XWindowPeer > GetComponentInterface( bool bCreate ) SAL_OVERRIDE;
+    virtual css::uno::Reference< css::accessibility::XAccessible >  CreateAccessible() override;
+    void SetAccessible( css::uno::Reference< css::accessibility::XAccessible > );
+    virtual css::uno::Reference< css::awt::XWindowPeer > GetComponentInterface( bool bCreate ) override;
 
 };
 

@@ -55,12 +55,6 @@ extern "C" {
 #endif
 #define MOZ_X11
 #include <stdio.h>
-#ifdef SYSTEM_MOZILLA
-#ifndef OJI
-#  define OJI
-#endif
-#define MOZ_X11
-#endif
 
 #if ! defined ( _NPAPI_H_) && ! defined (npapi_h_)
 extern "C" {
@@ -143,7 +137,7 @@ public:
     PluginConnector( int nSocket );
     virtual ~PluginConnector();
 
-    virtual MediatorMessage* WaitForAnswer( sal_uLong nMessageID ) SAL_OVERRIDE;
+    virtual MediatorMessage* WaitForAnswer( sal_uLong nMessageID ) override;
     MediatorMessage*    Transact( const char*, sal_uLong, ... );
     MediatorMessage*    Transact( sal_uInt32, ... );
     void                Respond( sal_uLong nID, char*, sal_uLong, ... );

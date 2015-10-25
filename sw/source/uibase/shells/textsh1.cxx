@@ -189,7 +189,7 @@ void sw_CharDialog( SwWrtShell &rWrtSh, bool bUseDialog, sal_uInt16 nSlot,const 
     }
     else if (pDlg && pReq)
     {
-        SFX_REQUEST_ARG((*pReq), pItem, SfxStringItem, FN_PARAM_1, false);
+        const SfxStringItem* pItem = (*pReq).GetArg<SfxStringItem>(FN_PARAM_1);
         if (pItem)
             pDlg->SetCurPageId(OUStringToOString(pItem->GetValue(), RTL_TEXTENCODING_UTF8));
     }
@@ -323,7 +323,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
         {
             // get the language
             OUString aNewLangText;
-            SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_LANGUAGE_STATUS , false );
+            const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_LANGUAGE_STATUS);
             if (pItem2)
                 aNewLangText = pItem2->GetValue();
 
@@ -435,7 +435,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
         {
             // replace word/selection with text from selected sub menu entry
             OUString aReplaceText;
-            SFX_REQUEST_ARG( rReq, pItem2, SfxStringItem, SID_THES , false );
+            const SfxStringItem* pItem2 = rReq.GetArg<SfxStringItem>(SID_THES);
             if (pItem2)
                 aReplaceText = pItem2->GetValue();
             if (!aReplaceText.isEmpty())
@@ -457,8 +457,8 @@ void SwTextShell::Execute(SfxRequest &rReq)
         case FN_INSERT_ENDNOTE:
         {
             OUString aStr;
-            SFX_REQUEST_ARG( rReq, pFont, SfxStringItem, FN_PARAM_1 , false );
-            SFX_REQUEST_ARG( rReq, pNameItem, SfxStringItem, nSlot , false );
+            const SfxStringItem* pFont = rReq.GetArg<SfxStringItem>(FN_PARAM_1);
+            const SfxStringItem* pNameItem = rReq.GetArg<SfxStringItem>(nSlot);
             if ( pNameItem )
                 aStr = pNameItem->GetValue();
             bool bFont = pFont && !pFont->GetValue().isEmpty();
@@ -556,9 +556,9 @@ void SwTextShell::Execute(SfxRequest &rReq)
             if ( pItem )
             {
                 nKind = static_cast<const SfxInt16Item*>(pItem)->GetValue();
-                SFX_REQUEST_ARG( rReq, pTemplate, SfxStringItem, FN_PARAM_1 , false );
-                SFX_REQUEST_ARG( rReq, pNumber, SfxUInt16Item, FN_PARAM_2 , false );
-                SFX_REQUEST_ARG( rReq, pIsNumberFilled, SfxBoolItem, FN_PARAM_3, false );
+                const SfxStringItem* pTemplate = rReq.GetArg<SfxStringItem>(FN_PARAM_1);
+                const SfxUInt16Item* pNumber = rReq.GetArg<SfxUInt16Item>(FN_PARAM_2);
+                const SfxBoolItem* pIsNumberFilled = rReq.GetArg<SfxBoolItem>(FN_PARAM_3);
                 if ( pTemplate )
                     aTemplateName = pTemplate->GetValue();
                 if ( pNumber && pIsNumberFilled && pIsNumberFilled->GetValue() )
@@ -1370,7 +1370,7 @@ void SwTextShell::Execute(SfxRequest &rReq)
                         RES_TXTATR_INETFMT,
                         RES_TXTATR_INETFMT);
         rWrtSh.GetCurAttr(aSet);
-        if(SfxItemState::SET <= aSet.GetItemState( RES_TXTATR_INETFMT, true ))
+        if(SfxItemState::SET <= aSet.GetItemState( RES_TXTATR_INETFMT ))
         {
             const SwFormatINetFormat& rINetFormat = dynamic_cast<const SwFormatINetFormat&>( aSet.Get(RES_TXTATR_INETFMT) );
             if( nSlot == FN_COPY_HYPERLINK_LOCATION )
@@ -1718,7 +1718,7 @@ void SwTextShell::GetState( SfxItemSet &rSet )
                         RES_TXTATR_INETFMT,
                         RES_TXTATR_INETFMT);
                     rSh.GetCurAttr(aSet);
-                    if(SfxItemState::SET > aSet.GetItemState( RES_TXTATR_INETFMT, true ) || rSh.HasReadonlySel())
+                    if(SfxItemState::SET > aSet.GetItemState( RES_TXTATR_INETFMT ) || rSh.HasReadonlySel())
                     {
                         rSet.DisableItem(nWhich);
                     }
@@ -1732,8 +1732,8 @@ void SwTextShell::GetState( SfxItemSet &rSet )
                 rSh.GetCurAttr(aSet);
 
                 // If a hyperlink is selected, either alone or along with other text...
-                if ((aSet.GetItemState(RES_TXTATR_INETFMT, true) < SfxItemState::SET &&
-                    aSet.GetItemState(RES_TXTATR_INETFMT, true) != SfxItemState::DONTCARE) ||
+                if ((aSet.GetItemState(RES_TXTATR_INETFMT) < SfxItemState::SET &&
+                    aSet.GetItemState(RES_TXTATR_INETFMT) != SfxItemState::DONTCARE) ||
                     rSh.HasReadonlySel())
                 {
                     rSet.DisableItem(nWhich);

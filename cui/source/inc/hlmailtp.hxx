@@ -37,7 +37,7 @@ private:
 
     DECL_STATIC_LINK_TYPED(SvxHyperlinkMailTp, ClickAdrBookHdl_Impl, Button*, void);
         ///< Button : Address book
-    DECL_LINK (ModifiedReceiverHdl_Impl, void * ); ///< Combobox "receiver" modified
+    DECL_LINK_TYPED (ModifiedReceiverHdl_Impl, Edit&, void ); ///< Combobox "receiver" modified
 
     void    SetScheme(const OUString& rScheme);
     void    RemoveImproperProtocol(const OUString& aProperScheme);
@@ -45,19 +45,19 @@ private:
     OUString  CreateAbsoluteURL() const;
 
 protected:
-    virtual void FillDlgFields(const OUString& rStrURL) SAL_OVERRIDE;
+    virtual void FillDlgFields(const OUString& rStrURL) override;
     virtual void GetCurentItemData ( OUString& rStrURL, OUString& aStrName,
                                      OUString& aStrIntName, OUString& aStrFrame,
-                                     SvxLinkInsertMode& eMode ) SAL_OVERRIDE;
+                                     SvxLinkInsertMode& eMode ) override;
 
 public:
     SvxHyperlinkMailTp ( vcl::Window *pParent, IconChoiceDialog* pDlg, const SfxItemSet& rItemSet);
     virtual ~SvxHyperlinkMailTp();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<IconChoicePage> Create( vcl::Window* pWindow, IconChoiceDialog* pDlg, const SfxItemSet& rItemSet );
 
-    virtual void        SetInitFocus() SAL_OVERRIDE;
+    virtual void        SetInitFocus() override;
 };
 
 

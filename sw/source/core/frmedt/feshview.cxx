@@ -642,7 +642,7 @@ void SwFEShell::StartCropImage()
             if( bForget )
             {
                 pView->UnmarkAll();
-                pView->MarkObj( pTmpObj, Imp()->GetPageView(), false );
+                pView->MarkObj( pTmpObj, Imp()->GetPageView() );
                 break;
             }
         }
@@ -663,7 +663,7 @@ long SwFEShell::BeginDrag( const Point* pPt, bool bIsShift)
         SdrHdl* pHdl = pView->PickHandle( *pPt );
         if (pView->BegDragObj( *pPt, 0, pHdl ))
             pView->GetDragMethod()->SetShiftPressed( bIsShift );
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
         return 1;
     }
     return 0;
@@ -677,7 +677,7 @@ long SwFEShell::Drag( const Point *pPt, bool )
         ScrollTo( *pPt );
         Imp()->GetDrawView()->MovDragObj( *pPt );
         Imp()->GetDrawView()->ShowDragAnchor();
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
         return 1;
     }
     return 0;
@@ -719,7 +719,7 @@ long SwFEShell::EndDrag( const Point *, bool )
         }
 
         GetDoc()->getIDocumentState().SetModified();
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
 
         return 1;
     }
@@ -1248,7 +1248,7 @@ namespace
         {
         }
 
-        virtual bool    includeObject( const SdrObject& i_rObject ) const SAL_OVERRIDE
+        virtual bool    includeObject( const SdrObject& i_rObject ) const override
         {
             return m_pPV && m_pPV->GetView().IsObjMarkable( const_cast< SdrObject* >( &i_rObject ), m_pPV );
         }
@@ -1510,7 +1510,7 @@ void SwFEShell::MoveCreate( const Point &rPos )
     {
         ScrollTo( rPos );
         Imp()->GetDrawView()->MovCreateObj( rPos );
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
     }
 }
 
@@ -1535,7 +1535,7 @@ bool SwFEShell::EndCreate( sal_uInt16 eSdrCreateCmd )
 
     if ( (SdrCreateCmd)eSdrCreateCmd == SDRCREATE_NEXTPOINT )
     {
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
         return true;
     }
     return ImpEndCreate();
@@ -1564,7 +1564,7 @@ bool SwFEShell::ImpEndCreate()
         // OD 2004-04-05 #i26791# - direct object positioning for group members
         rSdrObj.NbcSetRelativePos( aTmpPos - aNewAnchor );
         rSdrObj.NbcSetAnchorPos( aNewAnchor );
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
         return true;
     }
 
@@ -1868,13 +1868,11 @@ bool SwFEShell::ImpEndCreate()
             SdrObject* pMarkObj = pContact->GetDrawObjectByAnchorFrm( *pAnch );
             if ( pMarkObj )
             {
-                Imp()->GetDrawView()->MarkObj( pMarkObj, Imp()->GetPageView(),
-                                                false );
+                Imp()->GetDrawView()->MarkObj( pMarkObj, Imp()->GetPageView() );
             }
             else
             {
-                Imp()->GetDrawView()->MarkObj( &rSdrObj, Imp()->GetPageView(),
-                                                false );
+                Imp()->GetDrawView()->MarkObj( &rSdrObj, Imp()->GetPageView() );
             }
         }
     }
@@ -2042,7 +2040,7 @@ void SwFEShell::ChgAnchor( int eAnchorId, bool bSameOnly, bool bPosCorr )
 
         EndAllAction();
 
-        ::FrameNotify( this, FLY_DRAG );
+        ::FrameNotify( this );
     }
 }
 

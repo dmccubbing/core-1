@@ -263,7 +263,7 @@ public:
         const OUString& rStr ) : SvLBoxString( pEntry, nFlags, rStr ) {}
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rOutDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 void BrwStringDic_Impl::Paint(const Point& rPos, SvTreeListBox& /*rDev*/, vcl::RenderContext& rRenderContext,
@@ -363,7 +363,7 @@ public:
         }
     }
     virtual ~OptionsBreakSet() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         m_pBeforeFrame.clear();
         m_pAfterFrame.clear();
@@ -440,7 +440,7 @@ public:
         const OUString& rStr ) : SvLBoxString( pEntry, nFlags, rStr ) {}
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rOutDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 void BrwString_Impl::Paint(const Point& rPos, SvTreeListBox& /*rDev*/, vcl::RenderContext& rRenderContext,
@@ -1346,7 +1346,7 @@ void SvxLinguTabPage::AddDicBoxEntry(
     OUString aTxt( ::GetDicInfoStr( rxDic->getName(),
                         LanguageTag( rxDic->getLocale() ).getLanguageType(),
                         DictionaryType_NEGATIVE == rxDic->getDictionaryType() ) );
-    m_pLinguDicsCLB->InsertEntry( aTxt, TREELIST_APPEND );  // append at end
+    m_pLinguDicsCLB->InsertEntry( aTxt );  // append at end
     SvTreeListEntry* pEntry = m_pLinguDicsCLB->GetEntry( m_pLinguDicsCLB->GetEntryCount() - 1 );
     DBG_ASSERT( pEntry, "failed to add entry" );
     if (pEntry)
@@ -1392,7 +1392,7 @@ void SvxLinguTabPage::UpdateModulesBox_Impl()
         for (sal_uLong i = 0;  i < nDispSrvcCount;  ++i)
         {
             const ServiceInfo_Impl &rInfo = rAllDispSrvcArr[i];
-            m_pLinguModulesCLB->InsertEntry( rInfo.sDisplayName, TREELIST_APPEND );
+            m_pLinguModulesCLB->InsertEntry( rInfo.sDisplayName );
             SvTreeListEntry* pEntry = m_pLinguModulesCLB->GetEntry(i);
             pEntry->SetUserData( const_cast<ServiceInfo_Impl *>(&rInfo) );
             m_pLinguModulesCLB->CheckEntryPos( i, rInfo.bConfigured );
@@ -1540,11 +1540,10 @@ IMPL_LINK_NOARG_TYPED(SvxLinguTabPage, PostDblClickHdl_Impl, void*, void)
 
 
 
-IMPL_LINK_NOARG(SvxLinguTabPage, OpenURLHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxLinguTabPage, OpenURLHdl_Impl, FixedHyperlink&, void)
 {
     OUString sURL( m_pMoreDictsLink->GetURL() );
     lcl_OpenURL( sURL );
-    return 0;
 }
 
 
@@ -1772,7 +1771,7 @@ IMPL_LINK_TYPED( SvxLinguTabPage, SelectHdl_Impl, SvTreeListBox*, pBox, void )
             DicUserData aData( reinterpret_cast<sal_uLong>( pEntry->GetUserData() ) );
 
             // always allow to edit (i.e. at least view the content of the dictionary)
-            m_pLinguDicsEditPB->Enable( true/*aData.IsEditable()*/ );
+            m_pLinguDicsEditPB->Enable( /*aData.IsEditable()*/ );
             m_pLinguDicsDelPB->Enable( aData.IsDeletable() );
         }
     }
@@ -1901,7 +1900,7 @@ SvxEditModulesDlg::SvxEditModulesDlg(vcl::Window* pParent, SvxLinguData_Impl& rD
     if(!m_pLanguageLB->IsLanguageSelected( eSysLang ) )
         m_pLanguageLB->SelectEntryPos(0);
 
-    m_pLanguageLB->SetSelectHdl( LINK( this, SvxEditModulesDlg, LangSelectHdl_Impl ));
+    m_pLanguageLB->SetSelectHdl( LINK( this, SvxEditModulesDlg, LangSelectListBoxHdl_Impl ));
     LangSelectHdl_Impl(m_pLanguageLB);
 }
 
@@ -2010,7 +2009,12 @@ IMPL_LINK_NOARG_TYPED( SvxEditModulesDlg, BoxCheckButtonHdl_Impl, SvTreeListBox 
     }
 }
 
-IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
+IMPL_LINK_TYPED( SvxEditModulesDlg, LangSelectListBoxHdl_Impl, ListBox&, rBox, void )
+{
+    LangSelectHdl_Impl(&rBox);
+}
+
+void SvxEditModulesDlg::LangSelectHdl_Impl(ListBox* pBox)
 {
     LanguageType  eCurLanguage = m_pLanguageLB->GetSelectLanguage();
     static Locale aLastLocale;
@@ -2118,7 +2122,7 @@ IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
                 const bool bHasLang = rTable.count( eCurLanguage );
                 if (!bHasLang)
                 {
-                    DBG_WARNING( "language entry missing" );    // only relevant if all languages found should be supported
+                    SAL_INFO( "cui.dialogs", "language entry missing" );    // only relevant if all languages found should be supported
                 }
                 const bool bCheck = bHasLang && lcl_SeqGetEntryPos( rTable[ eCurLanguage ], aImplName ) >= 0;
                 lcl_SetCheckButton( pNewEntry, bCheck );
@@ -2162,7 +2166,7 @@ IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
                 const bool bHasLang = rTable.count( eCurLanguage );
                 if (!bHasLang)
                 {
-                    DBG_WARNING( "language entry missing" );    // only relevant if all languages found should be supported
+                    SAL_INFO( "cui.dialogs", "language entry missing" );    // only relevant if all languages found should be supported
                 }
                 const bool bCheck = bHasLang && lcl_SeqGetEntryPos( rTable[ eCurLanguage ], aImplName ) >= 0;
                 lcl_SetCheckButton( pNewEntry, bCheck );
@@ -2206,7 +2210,7 @@ IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
                 const bool bHasLang = rTable.count( eCurLanguage );
                 if (!bHasLang)
                 {
-                    DBG_WARNING( "language entry missing" );    // only relevant if all languages found should be supported
+                    SAL_INFO( "cui.dialogs", "language entry missing" );    // only relevant if all languages found should be supported
                 }
                 const bool bCheck = bHasLang && lcl_SeqGetEntryPos( rTable[ eCurLanguage ], aImplName ) >= 0;
                 lcl_SetCheckButton( pNewEntry, bCheck );
@@ -2250,7 +2254,7 @@ IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
                 const bool bHasLang = rTable.count( eCurLanguage );
                 if (!bHasLang)
                 {
-                    DBG_WARNING( "language entry missing" );    // only relevant if all languages found should be supported
+                    SAL_INFO( "cui.dialogs", "language entry missing" );    // only relevant if all languages found should be supported
                 }
                 const bool bCheck = bHasLang && lcl_SeqGetEntryPos( rTable[ eCurLanguage ], aImplName ) >= 0;
                 lcl_SetCheckButton( pNewEntry, bCheck );
@@ -2262,7 +2266,6 @@ IMPL_LINK( SvxEditModulesDlg, LangSelectHdl_Impl, ListBox *, pBox )
         }
     }
     aLastLocale = aCurLocale;
-    return 0;
 }
 
 IMPL_LINK_TYPED( SvxEditModulesDlg, UpDownHdl_Impl, Button *, pBtn, void )
@@ -2308,11 +2311,10 @@ IMPL_LINK_NOARG_TYPED(SvxEditModulesDlg, BackHdl_Impl, Button*, void)
 
 
 
-IMPL_LINK_NOARG(SvxEditModulesDlg, OpenURLHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxEditModulesDlg, OpenURLHdl_Impl, FixedHyperlink&, void)
 {
     OUString sURL( m_pMoreDictsLink->GetURL() );
     lcl_OpenURL( sURL );
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

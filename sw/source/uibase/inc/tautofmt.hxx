@@ -75,14 +75,14 @@ class SwAutoFormatDlg : public SfxModalDialog
     DECL_LINK_TYPED( AddHdl, Button*, void );
     DECL_LINK_TYPED( RemoveHdl, Button*, void );
     DECL_LINK_TYPED( RenameHdl, Button*, void );
-    DECL_LINK( SelFormatHdl, void * );
+    DECL_LINK_TYPED( SelFormatHdl, ListBox&, void );
 
 public:
     SwAutoFormatDlg( vcl::Window* pParent, SwWrtShell* pShell,
                         bool bSetAutoFormat = true,
                         const SwTableAutoFormat* pSelFormat = 0 );
     virtual ~SwAutoFormatDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void FillAutoFormatOfIndex( SwTableAutoFormat*& rToFill ) const;
 };

@@ -41,7 +41,6 @@ import com.sun.star.wizards.db.DatabaseObjectWizard;
 import com.sun.star.wizards.db.RecordParser;
 import com.sun.star.wizards.db.SQLQueryComposer;
 import com.sun.star.wizards.ui.CommandFieldSelection;
-import com.sun.star.wizards.ui.FieldSelection;
 import com.sun.star.wizards.ui.SortingComponent;
 import com.sun.star.wizards.ui.TitlesComponent;
 import com.sun.star.wizards.ui.UIConsts;
@@ -52,8 +51,6 @@ import java.util.Map;
 
 public class ReportWizard extends DatabaseObjectWizard implements XTextListener
 {
-
-    private FieldSelection CurGroupFieldSelection;
     private SortingComponent CurSortingComponent;
     private TitlesComponent CurTitlesComponent;
     private CommandFieldSelection CurDBCommandFieldSelection;
@@ -274,7 +271,6 @@ public class ReportWizard extends DatabaseObjectWizard implements XTextListener
                 String sCommand = (String) oCommand.getPropertySet().getPropertyValue(PropertyNames.COMMAND);
                 if (bHasEscapeProcessing)
                 {
-                    bQueryCreated = (!sCommand.equals(PropertyNames.EMPTY_STRING));
                     if (m_reportDocument instanceof ReportTextImplementation)
                     {
                         sqlQueryComposer.m_xQueryAnalyzer.setQuery(sCommand);
@@ -652,11 +648,6 @@ public class ReportWizard extends DatabaseObjectWizard implements XTextListener
                 enableWizardSteps(NewItems);
                 toggleSortingPage();
             }
-            else
-            {
-                boolean bEnabled = (CurGroupFieldSelection.getSelectedFieldNames().length > 0);
-                Helper.setUnoPropertyValue(getRoadmapItemByID(SOGROUPPAGE), PropertyNames.PROPERTY_ENABLED, bEnabled);
-            }
         }
 
         public void shiftFromRightToLeft(String[] SelItems, String[] NewItems)
@@ -666,11 +657,6 @@ public class ReportWizard extends DatabaseObjectWizard implements XTextListener
             {
                 enableWizardSteps(NewItems);
                 CurDBCommandFieldSelection.setModified(true);
-            }
-            else
-            {
-                boolean bEnabled = (CurGroupFieldSelection.getSelectedFieldNames().length > 0);
-                Helper.setUnoPropertyValue(getRoadmapItemByID(SOGROUPPAGE), PropertyNames.PROPERTY_ENABLED, bEnabled);
             }
         }
 

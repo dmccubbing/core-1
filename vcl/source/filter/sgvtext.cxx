@@ -724,10 +724,10 @@ void FormatLine(UCHAR* TBuf, sal_uInt16& Index, ObjTextType& Atr0, ObjTextType& 
 
     if (Border) { // separate and crush
         (*WErec0)=(*WErec); WEnChar0=WEnChar;
-        AbsEnd=false; c0=0;
+        c0=0;
         (*R)=(*WErec); nChars=WEnChar;
         (*TRrec)=(*R); TRnChar=nChars;
-        Border0=false; Border=false;
+        Border0=false;
         do {                // first check how many syllables fit
             UCHAR ct=ProcessChar(*vOut.get(),TBuf,*TRrec,Atr0,TRnChar,DoTrenn,Line,cLine);
             c=ProcessChar(*vOut.get(),TBuf,*R,Atr0,nChars,NoTrenn,Line,cLine);
@@ -788,7 +788,7 @@ void FormatLine(UCHAR* TBuf, sal_uInt16& Index, ObjTextType& Atr0, ObjTextType& 
         nChars++; Line[nChars]=R->ChrXP; // to assure AbsatzEnde is read
         Line[nChars+1]=R->ChrXP;         // as the width of CR or #0 is very small
         if (TBuf[R->Index-1]!=AbsatzEnd &&  TBuf[R->Index-1]!=TextEnd) {
-            c=GetTextChar(TBuf,R->Index,Atr0,R->Attrib,NoTrenn,false); // small correction needed, if 1st word read
+            GetTextChar(TBuf,R->Index,Atr0,R->Attrib,NoTrenn,false); // small correction needed, if 1st word read
         }
     }
 

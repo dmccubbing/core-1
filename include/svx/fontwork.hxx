@@ -61,7 +61,7 @@ class SvxFontWorkControllerItem : public SfxControllerItem
 
 protected:
     virtual void StateChanged(sal_uInt16 nSID, SfxItemState eState,
-                              const SfxPoolItem* pState) SAL_OVERRIDE;
+                              const SfxPoolItem* pState) override;
 
 public:
     SvxFontWorkControllerItem(sal_uInt16 nId, SvxFontWorkDialog&, SfxBindings&);
@@ -147,10 +147,10 @@ class SVX_DLLPUBLIC SAL_WARN_UNUSED SvxFontWorkDialog : public SfxDockingWindow
     DECL_LINK_TYPED( SelectAdjustHdl_Impl, ToolBox *, void );
     DECL_LINK_TYPED( SelectShadowHdl_Impl, ToolBox *, void );
 
-    DECL_LINK( ModifyInputHdl_Impl, void * );
+    DECL_LINK_TYPED( ModifyInputHdl_Impl, Edit&, void );
     DECL_LINK_TYPED( InputTimoutHdl_Impl, Idle *, void );
 
-    DECL_LINK( ColorSelectHdl_Impl, void * );
+    DECL_LINK_TYPED( ColorSelectHdl_Impl, ListBox&, void );
 
     void SetStyle_Impl(const XFormTextStyleItem*);
     void SetAdjust_Impl(const XFormTextAdjustItem*);
@@ -168,13 +168,13 @@ class SVX_DLLPUBLIC SAL_WARN_UNUSED SvxFontWorkDialog : public SfxDockingWindow
 
  protected:
     virtual SfxChildAlignment CheckAlignment( SfxChildAlignment eActAlign,
-                                              SfxChildAlignment eAlign ) SAL_OVERRIDE;
+                                              SfxChildAlignment eAlign ) override;
 
  public:
     SvxFontWorkDialog(SfxBindings *pBinding, SfxChildWindow *pCW,
                       vcl::Window* pParent);
     virtual ~SvxFontWorkDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void SetColorList(const XColorListRef &pTable);
 };

@@ -84,7 +84,7 @@ namespace dbaui
             const css::uno::Reference< css::sdbc::XConnection > & _rxConnection,
             const css::uno::Reference< css::uno::XComponentContext >& rxContext);
         virtual ~OParameterDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         css::uno::Sequence< css::beans::PropertyValue >
                     getValues() const { return m_aFinalValues; }
@@ -94,11 +94,12 @@ namespace dbaui
 
     private:
         DECL_LINK_TYPED(OnVisitedTimeout, Timer*, void);
-        DECL_LINK(OnValueModified, Control*);
-        DECL_LINK(OnEntrySelected, ListBox*);
+        DECL_LINK_TYPED(OnValueModified, Edit&, void);
+        DECL_LINK_TYPED(OnEntryListBoxSelected, ListBox&, void);
         DECL_LINK_TYPED(OnButtonClicked, Button*, void);
         DECL_LINK_TYPED(OnValueLoseFocusHdl, Control&, void);
         bool OnValueLoseFocus();
+        bool OnEntrySelected();
     };
 
 }   // namespace dbaui

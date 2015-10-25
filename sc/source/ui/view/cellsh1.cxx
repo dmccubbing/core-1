@@ -1160,7 +1160,7 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
                         ScAbstractDialogFactory* pFact = ScAbstractDialogFactory::Create();
                         OSL_ENSURE(pFact, "ScAbstractFactory create fail!");
 
-                        std::unique_ptr<AbstractScGroupDlg> pDlg(pFact->CreateAbstractScGroupDlg(pTabViewShell->GetDialogParent(), false));
+                        std::unique_ptr<AbstractScGroupDlg> pDlg(pFact->CreateAbstractScGroupDlg(pTabViewShell->GetDialogParent()));
                         OSL_ENSURE(pDlg, "Dialog create fail!");
                         if ( pDlg->Execute() == RET_OK )
                             bColumns = pDlg->GetColsChecked();
@@ -1359,11 +1359,11 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
                             }
                         }
 
-                        SFX_REQUEST_ARG( rReq, pFuncItem, SfxUInt16Item, FN_PARAM_1, false );
-                        SFX_REQUEST_ARG( rReq, pSkipItem, SfxBoolItem, FN_PARAM_2, false );
-                        SFX_REQUEST_ARG( rReq, pTransposeItem, SfxBoolItem, FN_PARAM_3, false );
-                        SFX_REQUEST_ARG( rReq, pLinkItem, SfxBoolItem, FN_PARAM_4, false );
-                        SFX_REQUEST_ARG( rReq, pMoveItem, SfxInt16Item, FN_PARAM_5, false );
+                        const SfxUInt16Item* pFuncItem = rReq.GetArg<SfxUInt16Item>(FN_PARAM_1);
+                        const SfxBoolItem* pSkipItem = rReq.GetArg<SfxBoolItem>(FN_PARAM_2);
+                        const SfxBoolItem* pTransposeItem = rReq.GetArg<SfxBoolItem>(FN_PARAM_3);
+                        const SfxBoolItem* pLinkItem = rReq.GetArg<SfxBoolItem>(FN_PARAM_4);
+                        const SfxInt16Item* pMoveItem = rReq.GetArg<SfxInt16Item>(FN_PARAM_5);
                         if ( pFuncItem )
                             nFunction = static_cast<ScPasteFunc>(pFuncItem->GetValue());
                         if ( pSkipItem )
@@ -1865,7 +1865,7 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
                 }
                 else                            // CANCEL
                 {
-                    pScMod->ActivateInputWindow( nullptr );
+                    pScMod->ActivateInputWindow();
                 }
                 rReq.Ignore();      // only SID_ENTER_STRING is recorded
             }
@@ -1926,11 +1926,11 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
                 bool        bManaged    = false;
 
                 // Get the pool item stored it by Conditional Format Manager Dialog.
-                const SfxPoolItem* pItem = nullptr;
                 sal_uInt32 nItems(pTabViewShell->GetPool().GetItemCount2( SCITEM_STRING ));
                 for( sal_uInt32 nIter = 0; nIter < nItems; ++nIter )
                 {
-                    if( nullptr != (pItem = pTabViewShell->GetPool().GetItem2( SCITEM_STRING, nIter ) ) )
+                    const SfxPoolItem* pItem = pTabViewShell->GetPool().GetItem2( SCITEM_STRING, nIter );
+                    if( pItem != nullptr )
                     {
                         if ( ScCondFormatDlg::ParseXmlString(
                                 static_cast<const SfxStringItem*>(pItem)->GetValue(),
@@ -2349,8 +2349,8 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
 
                 if ( pDlg->Execute() == RET_OK )
                 {
-                    SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pItem, SfxStringItem, SID_CHARMAP, false );
-                    SFX_ITEMSET_ARG( pDlg->GetOutputItemSet(), pFontItem, SvxFontItem, SID_ATTR_CHAR_FONT, false );
+                    const SfxStringItem* pItem = SfxItemSet::GetItem<SfxStringItem>(pDlg->GetOutputItemSet(), SID_CHARMAP, false);
+                    const SvxFontItem* pFontItem = SfxItemSet::GetItem<SvxFontItem>(pDlg->GetOutputItemSet(), SID_ATTR_CHAR_FONT, false);
 
                     if ( pItem && pFontItem )
                     {
@@ -2475,19 +2475,19 @@ void ScCellShell::ExecuteEdit( SfxRequest& rReq )
                 OUString aSource;
                 sal_uLong nRefresh=0;
 
-                SFX_REQUEST_ARG( rReq, pFile, SfxStringItem, SID_FILE_NAME, false );
-                SFX_REQUEST_ARG( rReq, pSource, SfxStringItem, FN_PARAM_1, false );
+                const SfxStringItem* pFile = rReq.GetArg<SfxStringItem>(SID_FILE_NAME);
+                const SfxStringItem* pSource = rReq.GetArg<SfxStringItem>(FN_PARAM_1);
                 if ( pFile && pSource )
                 {
                     aFile = pFile->GetValue();
                     aSource = pSource->GetValue();
-                    SFX_REQUEST_ARG( rReq, pFilter, SfxStringItem, SID_FILTER_NAME, false );
+                    const SfxStringItem* pFilter = rReq.GetArg<SfxStringItem>(SID_FILTER_NAME);
                     if ( pFilter )
                         aFilter = pFilter->GetValue();
-                    SFX_REQUEST_ARG( rReq, pOptions, SfxStringItem, SID_FILE_FILTEROPTIONS, false );
+                    const SfxStringItem* pOptions = rReq.GetArg<SfxStringItem>(SID_FILE_FILTEROPTIONS);
                     if ( pOptions )
                         aOptions = pOptions->GetValue();
-                    SFX_REQUEST_ARG( rReq, pRefresh, SfxUInt32Item, FN_PARAM_2, false );
+                    const SfxUInt32Item* pRefresh = rReq.GetArg<SfxUInt32Item>(FN_PARAM_2);
                     if ( pRefresh )
                         nRefresh = pRefresh->GetValue();
                 }
@@ -2884,7 +2884,7 @@ void ScCellShell::ExecuteFillSingleEdit()
     SC_MOD()->SetInputMode(SC_INPUT_TABLE, &aInit);
 }
 
-IMPL_LINK_NOARG(ScCellShell, DialogClosed)
+IMPL_LINK_NOARG_TYPED(ScCellShell, DialogClosed, Dialog&, void)
 {
     assert(pImpl->m_pLinkedDlg && "ScCellShell::DialogClosed(): invalid request");
     assert(pImpl->m_pRequest && "ScCellShell::DialogClosed(): invalid request");
@@ -2911,7 +2911,6 @@ IMPL_LINK_NOARG(ScCellShell, DialogClosed)
     }
 
     ExecuteExternalSource( sFile, sFilter, sOptions, sSource, nRefresh, *(pImpl->m_pRequest) );
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

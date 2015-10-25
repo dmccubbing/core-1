@@ -55,23 +55,7 @@ namespace dbaui
 
 namespace
 {
-    class IImageProvider
-    {
-    public:
-        virtual Image   getImage() const = 0;
-
-        virtual ~IImageProvider() { }
-    };
-
-    class ILabelProvider
-    {
-    public:
-        virtual OUString  getLabel() const = 0;
-
-        virtual ~ILabelProvider() { };
-    };
-
-    class ImageProvider : public IImageProvider
+    class ImageProvider
     {
     private:
         sal_uInt16  m_defaultImageID;
@@ -84,7 +68,7 @@ namespace
         {
         }
 
-        virtual Image getImage() const SAL_OVERRIDE
+        Image getImage() const
         {
             if ( !m_defaultImage )
                 m_defaultImage = Image( ModuleRes( m_defaultImageID ) );
@@ -92,7 +76,7 @@ namespace
         }
     };
 
-    class LabelProvider : public ILabelProvider
+    class LabelProvider
     {
     private:
         OUString  m_label;
@@ -102,7 +86,7 @@ namespace
         {
         }
 
-        virtual OUString  getLabel() const SAL_OVERRIDE
+        OUString  getLabel() const
         {
             return m_label;
         }
@@ -111,21 +95,21 @@ namespace
     class ProviderFactory
     {
     private:
-        mutable std::shared_ptr< IImageProvider >   m_pErrorImage;
-        mutable std::shared_ptr< IImageProvider >   m_pWarningsImage;
-        mutable std::shared_ptr< IImageProvider >   m_pInfoImage;
-        mutable std::shared_ptr< ILabelProvider >   m_pErrorLabel;
-        mutable std::shared_ptr< ILabelProvider >   m_pWarningsLabel;
-        mutable std::shared_ptr< ILabelProvider >   m_pInfoLabel;
+        mutable std::shared_ptr< ImageProvider >   m_pErrorImage;
+        mutable std::shared_ptr< ImageProvider >   m_pWarningsImage;
+        mutable std::shared_ptr< ImageProvider >   m_pInfoImage;
+        mutable std::shared_ptr< LabelProvider >   m_pErrorLabel;
+        mutable std::shared_ptr< LabelProvider >   m_pWarningsLabel;
+        mutable std::shared_ptr< LabelProvider >   m_pInfoLabel;
 
     public:
         ProviderFactory()
         {
         }
 
-        std::shared_ptr< IImageProvider >   getImageProvider( SQLExceptionInfo::TYPE _eType ) const
+        std::shared_ptr< ImageProvider >   getImageProvider( SQLExceptionInfo::TYPE _eType ) const
         {
-            std::shared_ptr< IImageProvider >* ppProvider( &m_pErrorImage );
+            std::shared_ptr< ImageProvider >* ppProvider( &m_pErrorImage );
             sal_uInt16 nNormalImageID( BMP_EXCEPTION_ERROR );
 
             switch ( _eType )
@@ -149,9 +133,9 @@ namespace
             return *ppProvider;
         }
 
-        std::shared_ptr< ILabelProvider >   getLabelProvider( SQLExceptionInfo::TYPE _eType, bool _bSubLabel ) const
+        std::shared_ptr< LabelProvider >   getLabelProvider( SQLExceptionInfo::TYPE _eType, bool _bSubLabel ) const
         {
-            std::shared_ptr< ILabelProvider >* ppProvider( &m_pErrorLabel );
+            std::shared_ptr< LabelProvider >* ppProvider( &m_pErrorLabel );
             sal_uInt16 nLabelID( STR_EXCEPTION_ERROR );
 
             switch ( _eType )
@@ -181,8 +165,8 @@ namespace
     {
         SQLExceptionInfo::TYPE                  eType;
 
-        std::shared_ptr< IImageProvider >   pImageProvider;
-        std::shared_ptr< ILabelProvider >   pLabelProvider;
+        std::shared_ptr< ImageProvider >        pImageProvider;
+        std::shared_ptr< LabelProvider >        pLabelProvider;
 
         bool                                    bSubEntry;
 
@@ -303,7 +287,7 @@ class OExceptionChainDialog : public ModalDialog
 public:
     OExceptionChainDialog( vcl::Window* pParent, const ExceptionDisplayChain& _rExceptions );
     virtual ~OExceptionChainDialog() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         m_pExceptionList.clear();
         m_pExceptionText.clear();

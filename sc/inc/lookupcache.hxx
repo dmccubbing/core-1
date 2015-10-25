@@ -74,7 +74,7 @@ public:
                 delete mpStr;
         }
 
-        QueryCriteria & operator=( const QueryCriteria & r ) SAL_DELETED_FUNCTION;
+        QueryCriteria & operator=( const QueryCriteria & r ) = delete;
 
     public:
 
@@ -110,7 +110,7 @@ public:
                             ScLookupCache( ScDocument * pDoc, const ScRange & rRange );
     virtual                 ~ScLookupCache();
     /// Remove from document structure and delete (!) cache on modify hint.
-    virtual void Notify( const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( const SfxHint& rHint ) override;
 
     /// @returns document address in o_rAddress if Result==FOUND
             Result          lookup( ScAddress & o_rResultAddress,
@@ -190,8 +190,8 @@ private:
     ScRange         maRange;
     ScDocument *    mpDoc;
 
-    ScLookupCache( const ScLookupCache & ) SAL_DELETED_FUNCTION;
-    ScLookupCache & operator=( const ScLookupCache & ) SAL_DELETED_FUNCTION;
+    ScLookupCache( const ScLookupCache & ) = delete;
+    ScLookupCache & operator=( const ScLookupCache & ) = delete;
 
 };
 

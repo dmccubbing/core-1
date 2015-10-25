@@ -21,7 +21,7 @@ public:
     }
 
 protected:
-    virtual void MouseMove( const MouseEvent& rMEvt ) SAL_OVERRIDE
+    virtual void MouseMove( const MouseEvent& rMEvt ) override
     {
         // changes the style if the control is enabled
         if ( !rMEvt.IsLeaveWindow() && IsEnabled() )
@@ -96,7 +96,7 @@ void Breadcrumb::SetRootName( const OUString& rURL )
 
         m_aLinks[i]->Hide();
         m_aSeparators[i]->Hide();
-        m_aLinks[i]->Enable( true );
+        m_aLinks[i]->Enable();
     }
 }
 
@@ -121,7 +121,7 @@ void Breadcrumb::SetURL( const OUString& rURL )
     // root field
 
     m_aLinks[0]->SetText( m_sRootName );
-    m_aLinks[0]->Enable( true );
+    m_aLinks[0]->Enable();
     m_aLinks[0]->SetURL( sRootPath );
 
     // fill the other fields
@@ -143,7 +143,7 @@ void Breadcrumb::SetURL( const OUString& rURL )
         m_aLinks[i]->SetText( sLabel );
         m_aLinks[i]->SetURL( sRootPath + OUString( sPath.getStr(), nEnd ) );
         m_aLinks[i]->Hide();
-        m_aLinks[i]->Enable( true );
+        m_aLinks[i]->Enable();
 
         m_aSeparators[i]->Hide();
 
@@ -159,7 +159,7 @@ void Breadcrumb::SetURL( const OUString& rURL )
 
         m_aLinks[i]->Hide();
         m_aSeparators[i]->Hide();
-        m_aLinks[i]->Enable( true );
+        m_aLinks[i]->Enable();
     }
 
     // show fields
@@ -273,12 +273,10 @@ bool Breadcrumb::showField( unsigned int nIndex, unsigned int nWidthMax )
     return true;
 }
 
-IMPL_LINK ( Breadcrumb, ClickLinkHdl, FixedHyperlink*, pLink )
+IMPL_LINK_TYPED( Breadcrumb, ClickLinkHdl, FixedHyperlink&, rLink, void )
 {
-    m_sClickedURL = pLink->GetURL();
+    m_sClickedURL = rLink.GetURL();
     m_aClickHdl.Call( this );
-
-    return 1;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

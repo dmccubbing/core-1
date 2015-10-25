@@ -30,7 +30,7 @@
 #include <vcl/fixed.hxx>
 #include <vcl/timer.hxx>
 #include <cppuhelper/implbase.hxx>
-#include <boost/ptr_container/ptr_vector.hpp>
+#include <vector>
 
 class BibDataManager;
 class BibToolBar;
@@ -56,11 +56,11 @@ public:
     // css::lang::XEventListener
     // we do not hold References to dispatches, so there is nothing to do on disposal
     virtual void    SAL_CALL disposing(const css::lang::EventObject& /*Source*/)
-                                            throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE {};
+                                            throw( css::uno::RuntimeException, std::exception ) override {};
 
     // css::frame::XStatusListener
     virtual void    SAL_CALL statusChanged(const css::frame::FeatureStateEvent& Event)
-                                            throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+                                            throw( css::uno::RuntimeException, std::exception ) override;
 
 };
 
@@ -72,7 +72,7 @@ public:
     virtual ~BibTBListBoxListener();
 
     virtual void    SAL_CALL statusChanged(const css::frame::FeatureStateEvent& Event)
-                                            throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+                                            throw( css::uno::RuntimeException, std::exception ) override;
 
 };
 
@@ -84,7 +84,7 @@ public:
     virtual ~BibTBEditListener();
 
     virtual void    SAL_CALL statusChanged(const css::frame::FeatureStateEvent& Event)
-                                            throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+                                            throw( css::uno::RuntimeException, std::exception ) override;
 
 };
 
@@ -96,13 +96,12 @@ public:
     virtual ~BibTBQueryMenuListener();
 
     virtual void    SAL_CALL statusChanged(const css::frame::FeatureStateEvent& Event)
-                                            throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+                                            throw( css::uno::RuntimeException, std::exception ) override;
 
 };
 
 
-typedef css::uno::Reference< css::frame::XStatusListener> BibToolBarListenerRef;
-typedef boost::ptr_vector<BibToolBarListenerRef> BibToolBarListenerArr;
+typedef std::vector< css::uno::Reference< css::frame::XStatusListener> > BibToolBarListenerArr;
 
 class BibToolBar:   public ToolBox
 {
@@ -128,7 +127,7 @@ class BibToolBar:   public ToolBox
         sal_Int16               nOutStyle;
 
         BibDataManager*         pDatMan;
-        DECL_LINK( SelHdl, ListBox* );
+        DECL_LINK_TYPED( SelHdl, ListBox&, void );
         DECL_LINK_TYPED( SendSelHdl, Idle*, void );
         DECL_LINK_TYPED( MenuHdl, ToolBox*, void );
         DECL_LINK_TYPED( OptionsChanged_Impl, LinkParamNone*, void );
@@ -139,18 +138,18 @@ class BibToolBar:   public ToolBox
 
     protected:
 
-        void                    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+        void                    DataChanged( const DataChangedEvent& rDCEvt ) override;
         void                    InitListener();
-        virtual void            Select() SAL_OVERRIDE;
-        virtual void            Click() SAL_OVERRIDE;
-        virtual bool            PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void            Select() override;
+        virtual void            Click() override;
+        virtual bool            PreNotify( NotifyEvent& rNEvt ) override;
 
 
     public:
 
         BibToolBar(vcl::Window* pParent, Link<void*,void> aLink, WinBits nStyle = WB_3DLOOK );
         virtual ~BibToolBar();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         void    SetXController(const css::uno::Reference< css::frame::XController > &);
 

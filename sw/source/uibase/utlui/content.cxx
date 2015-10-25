@@ -368,7 +368,7 @@ void SwContentType::Init(bool* pbInvalidateWindow)
         break;
         case ContentTypeId::REFERENCE:
         {
-            nMemberCount = pWrtShell->GetRefMarks( 0 );
+            nMemberCount = pWrtShell->GetRefMarks();
             bDelete = false;
         }
         break;
@@ -1802,7 +1802,7 @@ bool SwContentTree::FillTransferData( TransferDataContainer& rTransfer,
                     }
                 }
                 sEntry += pWrtShell->getIDocumentOutlineNodesAccess()->getOutlineText(nPos, false);
-                sOutlineText = pWrtShell->getIDocumentOutlineNodesAccess()->getOutlineText(nPos, true);
+                sOutlineText = pWrtShell->getIDocumentOutlineNodesAccess()->getOutlineText(nPos);
                 bIsOutlineMoveable = static_cast<SwOutlineContent*>(pCnt)->IsMoveable();
                 bOutline = true;
             }
@@ -3459,7 +3459,7 @@ public:
         const OUString& rStr ) : SvLBoxString(pEntry,nFlags,rStr) {}
 
     virtual void Paint(const Point& rPos, SvTreeListBox& rDev, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 void SwContentTree::InitEntry(SvTreeListEntry* pEntry,

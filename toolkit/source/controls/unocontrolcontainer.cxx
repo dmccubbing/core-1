@@ -367,10 +367,10 @@ public:
         : mxControlContainer( xControlContainer ) {}
 
     // XEventListener
-    virtual void SAL_CALL disposing( const  lang::EventObject& Source ) throw( uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing( const  lang::EventObject& Source ) throw( uno::RuntimeException, std::exception) override;
 
     // XPropertyChangeListener
-    virtual void SAL_CALL propertyChange( const  beans::PropertyChangeEvent& evt ) throw( uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL propertyChange( const  beans::PropertyChangeEvent& evt ) throw( uno::RuntimeException, std::exception) override;
 
 };
 
@@ -496,7 +496,7 @@ void UnoControlContainer::removeContainerListener( const uno::Reference< contain
             1
         );
 
-    return impl_addControl( xControl, NULL );
+    return impl_addControl( xControl );
 }
 
 void SAL_CALL UnoControlContainer::removeByIdentifier( ::sal_Int32 _nIdentifier ) throw (container::NoSuchElementException, lang::WrappedTargetException, uno::RuntimeException, std::exception)

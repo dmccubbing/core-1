@@ -94,7 +94,7 @@ protected:
     explicit LwpOverride(LwpOverride const& rOther);
 
 private:
-    LwpOverride& operator=(LwpOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpOverride& operator=(LwpOverride const& rOther) = delete;
 
 protected:
     sal_uInt16  m_nValues;
@@ -107,15 +107,15 @@ class LwpTextLanguageOverride : public LwpOverride
 public:
     LwpTextLanguageOverride() : m_nLanguage(0) {}
 
-    virtual LwpTextLanguageOverride* clone() const SAL_OVERRIDE;
+    virtual LwpTextLanguageOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
 protected:
     LwpTextLanguageOverride(LwpTextLanguageOverride const& rOther);
 
 private:
-    LwpTextLanguageOverride& operator=(LwpTextLanguageOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpTextLanguageOverride& operator=(LwpTextLanguageOverride const& rOther) = delete;
 
 private:
     sal_uInt16  m_nLanguage;
@@ -126,9 +126,9 @@ class LwpTextAttributeOverride : public LwpOverride
 public:
     LwpTextAttributeOverride() : m_nHideLevels(0), m_nBaseLineOffset(0) {}
 
-    virtual LwpTextAttributeOverride* clone() const SAL_OVERRIDE;
+    virtual LwpTextAttributeOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     inline sal_uInt16 GetHideLevels() const;
 
@@ -138,7 +138,7 @@ protected:
     LwpTextAttributeOverride(LwpTextAttributeOverride const& rOther);
 
 private:
-    LwpTextAttributeOverride& operator=(LwpTextAttributeOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpTextAttributeOverride& operator=(LwpTextAttributeOverride const& rOther) = delete;
 
 private:
     enum{
@@ -158,15 +158,15 @@ class LwpKinsokuOptsOverride : public LwpOverride
 public:
     LwpKinsokuOptsOverride() : m_nLevels(0) {}
 
-    virtual LwpKinsokuOptsOverride* clone() const SAL_OVERRIDE;
+    virtual LwpKinsokuOptsOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
 protected:
     LwpKinsokuOptsOverride(LwpKinsokuOptsOverride const& rOther);
 
 private:
-    LwpKinsokuOptsOverride& operator=(LwpKinsokuOptsOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpKinsokuOptsOverride& operator=(LwpKinsokuOptsOverride const& rOther) = delete;
 
 private:
     sal_uInt16  m_nLevels;
@@ -177,9 +177,9 @@ class LwpBulletOverride : public LwpOverride
 public:
     LwpBulletOverride() {m_bIsNull = true;}
 
-    virtual LwpBulletOverride* clone() const SAL_OVERRIDE;
+    virtual LwpBulletOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     inline LwpObjectID GetSilverBullet() const;
 
@@ -206,7 +206,7 @@ protected:
     LwpBulletOverride(LwpBulletOverride const& rOther);
 
 private:
-    LwpBulletOverride& operator=(LwpBulletOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpBulletOverride& operator=(LwpBulletOverride const& rOther) = delete;
 
 private:
     enum
@@ -277,9 +277,9 @@ class LwpAlignmentOverride : public LwpOverride
 public:
     LwpAlignmentOverride() : m_nAlignType(ALIGN_LEFT), m_nPosition(0), m_nAlignChar(0){}
 
-    virtual LwpAlignmentOverride* clone() const SAL_OVERRIDE;
+    virtual LwpAlignmentOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     enum AlignType
     {
@@ -301,7 +301,7 @@ protected:
     LwpAlignmentOverride(LwpAlignmentOverride const& rOther);
 
 private:
-    LwpAlignmentOverride& operator=(LwpAlignmentOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpAlignmentOverride& operator=(LwpAlignmentOverride const& rOther) = delete;
 
 private:
     enum
@@ -321,9 +321,9 @@ class LwpSpacingCommonOverride : public LwpOverride
 public:
     LwpSpacingCommonOverride() : m_nSpacingType(SPACING_NONE), m_nAmount(0), m_nMultiple(65536){}
 
-    virtual LwpSpacingCommonOverride* clone() const SAL_OVERRIDE;
+    virtual LwpSpacingCommonOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     enum SpacingType
     {
@@ -346,7 +346,7 @@ protected:
     LwpSpacingCommonOverride(LwpSpacingCommonOverride const& rOther);
 
 private:
-    LwpSpacingCommonOverride& operator=(LwpSpacingCommonOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpSpacingCommonOverride& operator=(LwpSpacingCommonOverride const& rOther) = delete;
 
 protected:
     enum
@@ -366,9 +366,9 @@ public:
     LwpSpacingOverride();
     virtual ~LwpSpacingOverride();
 
-    virtual LwpSpacingOverride* clone() const SAL_OVERRIDE;
+    virtual LwpSpacingOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     void Override(LwpSpacingOverride* other);
 
@@ -381,7 +381,7 @@ protected:
     LwpSpacingOverride(LwpSpacingOverride const& rOther);
 
 private:
-    LwpSpacingOverride& operator=(LwpSpacingOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpSpacingOverride& operator=(LwpSpacingOverride const& rOther) = delete;
 
 private:
     LwpSpacingCommonOverride*   m_pSpacing;
@@ -395,9 +395,9 @@ class LwpIndentOverride : public LwpOverride
 public:
     LwpIndentOverride() : m_nAll(0), m_nFirst(0), m_nRest(0), m_nRight(0) {}
 
-    virtual LwpIndentOverride* clone() const SAL_OVERRIDE;
+    virtual LwpIndentOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
 
     enum
     {
@@ -430,7 +430,7 @@ protected:
     LwpIndentOverride(LwpIndentOverride const& rOther);
 
 private:
-    LwpIndentOverride& operator=(LwpIndentOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpIndentOverride& operator=(LwpIndentOverride const& rOther) = delete;
 
 private:
     enum
@@ -476,9 +476,9 @@ public:
 
     virtual ~LwpAmikakeOverride();
 
-    virtual LwpAmikakeOverride* clone() const SAL_OVERRIDE;
+    virtual LwpAmikakeOverride* clone() const override;
 
-    void Read(LwpObjectStream* pStrm) SAL_OVERRIDE;
+    void Read(LwpObjectStream* pStrm) override;
     enum
     {
         AMIKAKE_NONE        = 0,
@@ -490,7 +490,7 @@ protected:
     LwpAmikakeOverride(LwpAmikakeOverride const& rOther);
 
 private:
-    LwpAmikakeOverride& operator=(LwpAmikakeOverride const& rOther) SAL_DELETED_FUNCTION;
+    LwpAmikakeOverride& operator=(LwpAmikakeOverride const& rOther) = delete;
 
 private:
     LwpBackgroundStuff* m_pBackgroundStuff;

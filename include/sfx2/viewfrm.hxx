@@ -76,7 +76,7 @@ private:
     SAL_DLLPRIVATE void Construct_Impl( SfxObjectShell *pObjSh=NULL );
 
 protected:
-    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void            Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
 
     DECL_LINK_TYPED( SwitchReadOnlyHandler, Button*, void );
     SAL_DLLPRIVATE void KillDispatcher_Impl();
@@ -100,14 +100,14 @@ public:
     static SfxViewFrame*    LoadHiddenDocument( SfxObjectShell& i_rDoc, const sal_uInt16 i_nViewId );
     static SfxViewFrame*    LoadDocument( SfxObjectShell& i_rDoc, const sal_uInt16 i_nViewId );
     static SfxViewFrame*    LoadDocumentIntoFrame( SfxObjectShell& i_rDoc, const SfxFrameItem* i_pFrameItem, const sal_uInt16 i_nViewId = 0 );
-    static SfxViewFrame*    LoadDocumentIntoFrame( SfxObjectShell& i_rDoc, const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& i_rFrameItem, const sal_uInt16 i_nViewId = 0 );
+    static SfxViewFrame*    LoadDocumentIntoFrame( SfxObjectShell& i_rDoc, const css::uno::Reference< css::frame::XFrame >& i_rFrameItem, const sal_uInt16 i_nViewId = 0 );
     static SfxViewFrame*    DisplayNewDocument( SfxObjectShell& i_rDoc, const SfxRequest& i_rCreateDocRequest, const sal_uInt16 i_nViewId = 0 );
 
     static SfxViewFrame*    Current();
     static SfxViewFrame*    GetFirst( const SfxObjectShell* pDoc = 0, bool bOnlyVisible = true );
     static SfxViewFrame*    GetNext( const SfxViewFrame& rPrev, const SfxObjectShell* pDoc = 0, bool bOnlyVisible = true );
 
-    static SfxViewFrame*    Get( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XController>& i_rController, const SfxObjectShell* i_pDoc = NULL );
+    static SfxViewFrame*    Get( const css::uno::Reference< css::frame::XController>& i_rController, const SfxObjectShell* i_pDoc = NULL );
 
             void            DoActivate(bool bMDI, SfxViewFrame *pOld=NULL);
             void            DoDeactivate(bool bMDI, SfxViewFrame *pOld=NULL);
@@ -136,19 +136,19 @@ public:
     void                    ToTop();
     void                    Enable( bool bEnable );
     bool                    Close();
-    virtual void            Activate( bool bUI ) SAL_OVERRIDE;
-    virtual void            Deactivate( bool bUI ) SAL_OVERRIDE;
+    virtual void            Activate( bool bUI ) override;
+    virtual void            Deactivate( bool bUI ) override;
 
     void                    UpdateTitle();
 
-    static void ActivateToolPanel( const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& i_rFrame, const OUString& i_rPanelURL );
+    static void ActivateToolPanel( const css::uno::Reference< css::frame::XFrame >& i_rFrame, const OUString& i_rPanelURL );
 
     // interne Handler
     SAL_DLLPRIVATE virtual bool SetBorderPixelImpl( const SfxViewShell *pSh, const SvBorder &rBorder );
     SAL_DLLPRIVATE virtual const SvBorder& GetBorderPixelImpl( const SfxViewShell *pSh ) const;
     SAL_DLLPRIVATE virtual void InvalidateBorderImpl( const SfxViewShell *pSh );
 
-    virtual SfxObjectShell* GetObjectShell() SAL_OVERRIDE;
+    virtual SfxObjectShell* GetObjectShell() override;
     sal_uInt16              GetCurViewId() const;
     SfxFrame&               GetFrame() const;
     SfxViewFrame*           GetTopViewFrame() const;
@@ -244,8 +244,8 @@ private:
     */
     SAL_DLLPRIVATE static SfxViewShell* LoadViewIntoFrame_Impl(
                             const SfxObjectShell& i_rDoc,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& i_rFrame,
-                            const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& i_rLoadArgs,
+                            const css::uno::Reference< css::frame::XFrame >& i_rFrame,
+                            const css::uno::Sequence< css::beans::PropertyValue >& i_rLoadArgs,
                             const sal_uInt16 i_nViewId,
                             const bool i_bHidden
                         );
@@ -267,7 +267,7 @@ private:
     */
     SAL_DLLPRIVATE static SfxViewFrame* LoadViewIntoFrame_Impl_NoThrow(
                             const SfxObjectShell& i_rDoc,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame >& i_rFrame,
+                            const css::uno::Reference< css::frame::XFrame >& i_rFrame,
                             const sal_uInt16 i_nViewId,
                             const bool i_bHidden
                         );
@@ -290,8 +290,8 @@ public:
                                 pFrame( pViewFrame)
                             {}
 
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
 
     SfxViewFrame*           GetFrame() const
                             { return pFrame; }
@@ -299,7 +299,7 @@ public:
 
 class SfxVerbListItem : public SfxPoolItem
 {
-    com::sun::star::uno::Sequence < com::sun::star::embed::VerbDescriptor > aVerbs;
+    css::uno::Sequence < css::embed::VerbDescriptor > aVerbs;
 
 public:
                             TYPEINFO_OVERRIDE();
@@ -307,12 +307,12 @@ public:
                                 SfxPoolItem( nWhichId )
                             {}
 
-                            SfxVerbListItem( sal_uInt16 nWhichId, const com::sun::star::uno::Sequence < com::sun::star::embed::VerbDescriptor >& );
+                            SfxVerbListItem( sal_uInt16 nWhichId, const css::uno::Sequence < css::embed::VerbDescriptor >& );
 
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
 
-    virtual bool            QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
+    virtual bool            QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
 };
 
 #endif

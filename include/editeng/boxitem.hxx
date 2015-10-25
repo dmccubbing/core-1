@@ -70,22 +70,22 @@ public:
     SvxBoxItem &operator=( const SvxBoxItem& rBox );
 
     // "pure virtual Methods" from SfxPoolItem
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual bool            QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-    virtual bool            PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual bool            QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+    virtual bool            PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
 
     virtual bool GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
-                                    OUString &rText, const IntlWrapper * = 0 ) const SAL_OVERRIDE;
+                                    OUString &rText, const IntlWrapper * = 0 ) const override;
 
-    virtual SfxPoolItem*     Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*     Create(SvStream &, sal_uInt16) const SAL_OVERRIDE;
-    virtual SvStream&        Store(SvStream &, sal_uInt16 nItemVersion ) const SAL_OVERRIDE;
-    virtual sal_uInt16           GetVersion( sal_uInt16 nFileVersion ) const SAL_OVERRIDE;
+    virtual SfxPoolItem*     Clone( SfxItemPool *pPool = 0 ) const override;
+    virtual SfxPoolItem*     Create(SvStream &, sal_uInt16) const override;
+    virtual SvStream&        Store(SvStream &, sal_uInt16 nItemVersion ) const override;
+    virtual sal_uInt16           GetVersion( sal_uInt16 nFileVersion ) const override;
 
-    virtual bool             ScaleMetrics( long nMult, long nDiv ) SAL_OVERRIDE;
-    virtual bool             HasMetrics() const SAL_OVERRIDE;
+    virtual bool             ScaleMetrics( long nMult, long nDiv ) override;
+    virtual bool             HasMetrics() const override;
 
     const   editeng::SvxBorderLine* GetTop()    const { return pTop; }
     const   editeng::SvxBorderLine* GetBottom() const { return pBottom; }
@@ -106,9 +106,9 @@ public:
     // Line width plus Space plus inward distance
     // bIgnoreLine = TRUE -> Also return distance, when no Line is set
     sal_uInt16  CalcLineSpace( SvxBoxItemLine nLine, bool bIgnoreLine = false ) const;
-    static com::sun::star::table::BorderLine2 SvxLineToLine( const editeng::SvxBorderLine* pLine, bool bConvert );
-    static bool LineToSvxLine(const ::com::sun::star::table::BorderLine& rLine, editeng::SvxBorderLine& rSvxLine, bool bConvert);
-    static bool LineToSvxLine(const ::com::sun::star::table::BorderLine2& rLine, editeng::SvxBorderLine& rSvxLine, bool bConvert);
+    static css::table::BorderLine2 SvxLineToLine( const editeng::SvxBorderLine* pLine, bool bConvert );
+    static bool LineToSvxLine(const css::table::BorderLine& rLine, editeng::SvxBorderLine& rSvxLine, bool bConvert);
+    static bool LineToSvxLine(const css::table::BorderLine2& rLine, editeng::SvxBorderLine& rSvxLine, bool bConvert);
 };
 
 inline void SvxBoxItem::SetDistance( sal_uInt16 nNew )
@@ -182,19 +182,19 @@ public:
     SvxBoxInfoItem &operator=( const SvxBoxInfoItem &rCpy );
 
     // "pure virtual Methods" from SfxPoolItem
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
     virtual bool            GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
-                                    OUString &rText, const IntlWrapper * = 0 ) const SAL_OVERRIDE;
-    virtual bool            QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-    virtual bool            PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
+                                    OUString &rText, const IntlWrapper * = 0 ) const override;
+    virtual bool            QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+    virtual bool            PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
 
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16) const SAL_OVERRIDE;
-    virtual SvStream&       Store(SvStream &, sal_uInt16 nItemVersion ) const SAL_OVERRIDE;
-    virtual bool            ScaleMetrics( long nMult, long nDiv ) SAL_OVERRIDE;
-    virtual bool            HasMetrics() const SAL_OVERRIDE;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
+    virtual SfxPoolItem*    Create(SvStream &, sal_uInt16) const override;
+    virtual SvStream&       Store(SvStream &, sal_uInt16 nItemVersion ) const override;
+    virtual bool            ScaleMetrics( long nMult, long nDiv ) override;
+    virtual bool            HasMetrics() const override;
 
     const editeng::SvxBorderLine*   GetHori() const { return pHori; }
     const editeng::SvxBorderLine*   GetVert() const { return pVert; }

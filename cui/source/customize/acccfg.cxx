@@ -625,7 +625,7 @@ public:
     virtual ~SfxAccCfgLBoxString_Impl();
 
     virtual void Paint(const Point& aPos, SvTreeListBox& rDevice, vcl::RenderContext& rRenderContext,
-                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) SAL_OVERRIDE;
+                       const SvViewDataEntry* pView, const SvTreeListEntry& rEntry) override;
 };
 
 
@@ -782,7 +782,7 @@ SfxAcceleratorConfigPage::SfxAcceleratorConfigPage( vcl::Window* pParent, const 
     // initialize Entriesbox
     m_pEntriesBox->SetStyle(m_pEntriesBox->GetStyle()|WB_HSCROLL|WB_CLIPCHILDREN);
     m_pEntriesBox->SetSelectionMode(SINGLE_SELECTION);
-    m_pEntriesBox->SetTabs(&AccCfgTabs[0], MAP_APPFONT);
+    m_pEntriesBox->SetTabs(&AccCfgTabs[0]);
     m_pEntriesBox->Resize(); // OS: Hack for right selection
     m_pEntriesBox->SetSpaceBetweenEntries(0);
     m_pEntriesBox->SetDragDropMode(DragDropMode::NONE);
@@ -1121,7 +1121,7 @@ IMPL_LINK_TYPED( SfxAcceleratorConfigPage, SelectHdl, SvTreeListBox*, pListBox, 
         if (pEntry->m_bIsConfigurable)
         {
             if (pEntry->isConfigured())
-                m_pRemoveButton->Enable( true );
+                m_pRemoveButton->Enable();
             m_pChangeButton->Enable( pEntry->m_sCommand != sPossibleNewCommand );
         }
     }
@@ -1147,7 +1147,7 @@ IMPL_LINK_TYPED( SfxAcceleratorConfigPage, SelectHdl, SvTreeListBox*, pListBox, 
             if (pEntry->m_bIsConfigurable)
             {
                 if (pEntry->isConfigured())
-                    m_pRemoveButton->Enable( true );
+                    m_pRemoveButton->Enable();
                 m_pChangeButton->Enable( pEntry->m_sCommand != sPossibleNewCommand );
             }
 
@@ -1160,7 +1160,7 @@ IMPL_LINK_TYPED( SfxAcceleratorConfigPage, SelectHdl, SvTreeListBox*, pListBox, 
                 if ( pUserData && pUserData->m_sCommand == sPossibleNewCommand )
                 {
                     TAccInfo* pU1 = new TAccInfo(-1, -1, pUserData->m_aKey);
-                    SvTreeListEntry* pE1 = m_pKeyBox->InsertEntry( pUserData->m_aKey.GetName(), 0L, true, TREELIST_APPEND );
+                    SvTreeListEntry* pE1 = m_pKeyBox->InsertEntry( pUserData->m_aKey.GetName(), 0L, true );
                     pE1->SetUserData(pU1);
                     pE1->EnableChildrenOnDemand( false );
                 }

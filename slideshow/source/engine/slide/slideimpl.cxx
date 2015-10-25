@@ -62,7 +62,6 @@
 #include "tools.hxx"
 
 #include <iterator>
-#include <algorithm>
 #include <functional>
 #include <iostream>
 
@@ -109,36 +108,36 @@ public:
     // Slide interface
 
 
-    virtual bool prefetch() SAL_OVERRIDE;
-    virtual bool show( bool ) SAL_OVERRIDE;
-    virtual void hide() SAL_OVERRIDE;
+    virtual bool prefetch() override;
+    virtual bool show( bool ) override;
+    virtual void hide() override;
 
-    virtual basegfx::B2ISize getSlideSize() const SAL_OVERRIDE;
-    virtual uno::Reference<drawing::XDrawPage > getXDrawPage() const SAL_OVERRIDE;
-    virtual uno::Reference<animations::XAnimationNode> getXAnimationNode() const SAL_OVERRIDE;
-    virtual PolyPolygonVector getPolygons() SAL_OVERRIDE;
-    virtual void drawPolygons() const SAL_OVERRIDE;
-    virtual bool isPaintOverlayActive() const SAL_OVERRIDE;
-    virtual void enablePaintOverlay() SAL_OVERRIDE;
-    virtual void disablePaintOverlay() SAL_OVERRIDE;
-    virtual void update_settings( bool bUserPaintEnabled, RGBColor const& aUserPaintColor, double dUserPaintStrokeWidth ) SAL_OVERRIDE;
+    virtual basegfx::B2ISize getSlideSize() const override;
+    virtual uno::Reference<drawing::XDrawPage > getXDrawPage() const override;
+    virtual uno::Reference<animations::XAnimationNode> getXAnimationNode() const override;
+    virtual PolyPolygonVector getPolygons() override;
+    virtual void drawPolygons() const override;
+    virtual bool isPaintOverlayActive() const override;
+    virtual void enablePaintOverlay() override;
+    virtual void disablePaintOverlay() override;
+    virtual void update_settings( bool bUserPaintEnabled, RGBColor const& aUserPaintColor, double dUserPaintStrokeWidth ) override;
 
 
     // TODO(F2): Rework SlideBitmap to no longer be based on XBitmap,
     // but on canvas-independent basegfx bitmaps
-    virtual SlideBitmapSharedPtr getCurrentSlideBitmap( const UnoViewSharedPtr& rView ) const SAL_OVERRIDE;
+    virtual SlideBitmapSharedPtr getCurrentSlideBitmap( const UnoViewSharedPtr& rView ) const override;
 
 
 private:
     // ViewEventHandler
-    virtual void viewAdded( const UnoViewSharedPtr& rView ) SAL_OVERRIDE;
-    virtual void viewRemoved( const UnoViewSharedPtr& rView ) SAL_OVERRIDE;
-    virtual void viewChanged( const UnoViewSharedPtr& rView ) SAL_OVERRIDE;
-    virtual void viewsChanged() SAL_OVERRIDE;
+    virtual void viewAdded( const UnoViewSharedPtr& rView ) override;
+    virtual void viewRemoved( const UnoViewSharedPtr& rView ) override;
+    virtual void viewChanged( const UnoViewSharedPtr& rView ) override;
+    virtual void viewsChanged() override;
 
     // CursorManager
-    virtual bool requestCursor( sal_Int16 nCursorShape ) SAL_OVERRIDE;
-    virtual void resetCursor() SAL_OVERRIDE;
+    virtual bool requestCursor( sal_Int16 nCursorShape ) override;
+    virtual void resetCursor() override;
 
     void activatePaintOverlay();
     void deactivatePaintOverlay();
@@ -280,6 +279,37 @@ private:
 
 
 
+
+
+void slideRenderer( SlideImpl* pSlide, const UnoViewSharedPtr& rView )
+{
+    // fully clear view content to background color
+    rView->clearAll();
+
+    SlideBitmapSharedPtr         pBitmap( pSlide->getCurrentSlideBitmap( rView ) );
+    ::cppcanvas::CanvasSharedPtr pCanvas( rView->getCanvas() );
+
+    const ::basegfx::B2DHomMatrix   aViewTransform( rView->getTransformation() );
+    const ::basegfx::B2DPoint       aOutPosPixel( aViewTransform * ::basegfx::B2DPoint() );
+
+    // setup a canvas with device coordinate space, the slide
+    // bitmap already has the correct dimension.
+    ::cppcanvas::CanvasSharedPtr pDevicePixelCanvas( pCanvas->clone() );
+    pDevicePixelCanvas->setTransformation( ::basegfx::B2DHomMatrix() );
+
+    // render at given output position
+    pBitmap->move( aOutPosPixel );
+
+    // clear clip (might have been changed, e.g. from comb
+    // transition)
+    pBitmap->clip( ::basegfx::B2DPolyPolygon() );
+    pBitmap->draw( pDevicePixelCanvas );
+}
+
+
+
+
+
 SlideImpl::SlideImpl( const uno::Reference< drawing::XDrawPage >&           xDrawPage,
                       const uno::Reference<drawing::XDrawPagesSupplier>&    xDrawPages,
                       const uno::Reference< animations::XAnimationNode >&   xRootNode,
@@ -414,29 +444,8 @@ bool SlideImpl::show( bool bSlideBackgoundPainted )
     // render slide to screen, if requested
     if( !bSlideBackgoundPainted )
     {
-        for( const auto& rView : maContext.mrViewContainer ) {
-            // fully clear view content to background color
-            rView->clearAll();
-
-            SlideBitmapSharedPtr          pBitmap( this->getCurrentSlideBitmap( rView ) );
-            ::cppcanvas::CanvasSharedPtr  pCanvas( rView->getCanvas() );
-
-            const ::basegfx::B2DHomMatrix aViewTransform( rView->getTransformation() );
-            const ::basegfx::B2DPoint     aOutPosPixel( aViewTransform * ::basegfx::B2DPoint() );
-
-            // setup a canvas with device coordinate space, the slide
-            // bitmap already has the correct dimension.
-            ::cppcanvas::CanvasSharedPtr pDevicePixelCanvas( pCanvas->clone() );
-            pDevicePixelCanvas->setTransformation( ::basegfx::B2DHomMatrix() );
-
-            // render at given output position
-            pBitmap->move( aOutPosPixel );
-
-            // clear clip (might have been changed, e.g. from comb
-            // transition)
-            pBitmap->clip( ::basegfx::B2DPolyPolygon() );
-            pBitmap->draw( pDevicePixelCanvas );
-        }
+        for( const auto& rContext : maContext.mrViewContainer )
+            slideRenderer( this, rContext );
 
         maContext.mrScreenUpdater.notifyUpdate();
     }

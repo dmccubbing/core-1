@@ -135,7 +135,7 @@ SvxMeasurePage::SvxMeasurePage( vcl::Window* pWindow, const SfxItemSet& rInAttrs
     m_pCtlPreview->SetBackground ( rStyles.GetWindowColor() );
     m_pCtlPreview->SetBorderStyle(WindowBorderStyle::MONO);
 
-    Link<> aLink( LINK( this, SvxMeasurePage, ChangeAttrHdl_Impl ) );
+    Link<Edit&,void> aLink( LINK( this, SvxMeasurePage, ChangeAttrEditHdl_Impl ) );
     m_pMtrFldLineDist->SetModifyHdl( aLink );
     m_pMtrFldHelplineOverhang->SetModifyHdl( aLink );
     m_pMtrFldHelplineDist->SetModifyHdl( aLink );
@@ -145,7 +145,7 @@ SvxMeasurePage::SvxMeasurePage( vcl::Window* pWindow, const SfxItemSet& rInAttrs
     m_pTsbBelowRefEdge->SetClickHdl( LINK( this, SvxMeasurePage, ChangeAttrClickHdl_Impl ) );
     m_pTsbParallel->SetClickHdl( LINK( this, SvxMeasurePage, ChangeAttrClickHdl_Impl ) );
     m_pTsbShowUnit->SetClickHdl( LINK( this, SvxMeasurePage, ChangeAttrClickHdl_Impl ) );
-    m_pLbUnit->SetSelectHdl( aLink );
+    m_pLbUnit->SetSelectHdl( LINK( this, SvxMeasurePage, ChangeAttrListBoxHdl_Impl ) );
 }
 
 SvxMeasurePage::~SvxMeasurePage()
@@ -664,9 +664,16 @@ IMPL_LINK_TYPED( SvxMeasurePage, ChangeAttrClickHdl_Impl, Button*, p, void )
 {
     ChangeAttrHdl_Impl(p);
 }
-IMPL_LINK( SvxMeasurePage, ChangeAttrHdl_Impl, void *, p )
+IMPL_LINK_TYPED( SvxMeasurePage, ChangeAttrListBoxHdl_Impl, ListBox&, rBox, void )
 {
-
+    ChangeAttrHdl_Impl(&rBox);
+}
+IMPL_LINK_TYPED( SvxMeasurePage, ChangeAttrEditHdl_Impl, Edit&, rBox, void )
+{
+    ChangeAttrHdl_Impl(&rBox);
+}
+void SvxMeasurePage::ChangeAttrHdl_Impl( void* p )
+{
     if( p == m_pMtrFldLineDist )
     {
         sal_Int32 nValue = GetCoreValue( *m_pMtrFldLineDist, eUnit );
@@ -791,8 +798,6 @@ IMPL_LINK( SvxMeasurePage, ChangeAttrHdl_Impl, void *, p )
 
     m_pCtlPreview->SetAttributes( aAttrSet );
     m_pCtlPreview->Invalidate();
-
-    return 0L;
 }
 
 void SvxMeasurePage::FillUnitLB()
@@ -815,7 +820,7 @@ void SvxMeasurePage::FillUnitLB()
 }
 void SvxMeasurePage::PageCreated(const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG (&aSet,pOfaPtrItem,OfaPtrItem,SID_OBJECT_LIST,false);
+    const OfaPtrItem* pOfaPtrItem = aSet.GetItem<OfaPtrItem>(SID_OBJECT_LIST, false);
 
     if (pOfaPtrItem)
         SetView( static_cast<SdrView *>(pOfaPtrItem->GetValue()));

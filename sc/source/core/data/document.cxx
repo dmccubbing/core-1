@@ -2651,12 +2651,12 @@ class BroadcastAction : public sc::ColumnSpanSet::ColumnAction
 public:
     BroadcastAction( ScDocument& rDoc ) : mrDoc(rDoc), mpCol(NULL) {}
 
-    virtual void startColumn( ScColumn* pCol ) SAL_OVERRIDE
+    virtual void startColumn( ScColumn* pCol ) override
     {
         mpCol = pCol;
     }
 
-    virtual void execute( SCROW nRow1, SCROW nRow2, bool bVal ) SAL_OVERRIDE
+    virtual void execute( SCROW nRow1, SCROW nRow2, bool bVal ) override
     {
         if (!bVal)
             return;
@@ -4138,7 +4138,7 @@ void ScDocument::UpdateAllRowHeights( sc::RowHeightContext& rCxt, const ScMarkDa
         if ( maTabs[nTab] && ( !pTabMark || pTabMark->GetTableSelect(nTab) ) )
         {
             maTabs[nTab]->SetOptimalHeightOnly(rCxt, 0, MAXROW, &aProgress, nProgressStart);
-            maTabs[nTab]->SetDrawPageSize(true);
+            maTabs[nTab]->SetDrawPageSize();
             nProgressStart += maTabs[nTab]->GetWeightedCount();
         }
 }
@@ -5798,10 +5798,9 @@ void ScDocument::UpdStlShtPtrsFrmNms()
     ScDocumentPool* pPool = xPoolHelper->GetDocPool();
 
     sal_uInt32 nCount = pPool->GetItemCount2(ATTR_PATTERN);
-    ScPatternAttr* pPattern;
     for (sal_uInt32 i=0; i<nCount; i++)
     {
-        pPattern = const_cast<ScPatternAttr*>(static_cast<const ScPatternAttr*>(pPool->GetItem2(ATTR_PATTERN, i)));
+        ScPatternAttr* pPattern = const_cast<ScPatternAttr*>(static_cast<const ScPatternAttr*>(pPool->GetItem2(ATTR_PATTERN, i)));
         if (pPattern)
             pPattern->UpdateStyleSheet(this);
     }
@@ -5813,10 +5812,9 @@ void ScDocument::StylesToNames()
     ScDocumentPool* pPool = xPoolHelper->GetDocPool();
 
     sal_uInt32 nCount = pPool->GetItemCount2(ATTR_PATTERN);
-    ScPatternAttr* pPattern;
     for (sal_uInt32 i=0; i<nCount; i++)
     {
-        pPattern = const_cast<ScPatternAttr*>(static_cast<const ScPatternAttr*>(pPool->GetItem2(ATTR_PATTERN, i)));
+        ScPatternAttr* pPattern = const_cast<ScPatternAttr*>(static_cast<const ScPatternAttr*>(pPool->GetItem2(ATTR_PATTERN, i)));
         if (pPattern)
             pPattern->StyleToName();
     }

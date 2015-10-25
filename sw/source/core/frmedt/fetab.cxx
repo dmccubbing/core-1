@@ -1825,7 +1825,7 @@ bool SwFEShell::SelTableRowCol( const Point& rPt, const Point* pEnd, bool bRowDr
         *pCrsr->GetPoint() = *ppPos[0];
         pCrsr->GetPtPos() = paPt[0];
 
-        if ( !pCrsr->IsInProtectTable( false ) )
+        if ( !pCrsr->IsInProtectTable() )
         {
             bool bNewSelection = true;
 
@@ -1885,7 +1885,7 @@ SwTab SwFEShell::WhichMouseTabCol( const Point &rPt ) const
     bool bSelect = false;
 
     // First try: Do we get the row/col move cursor?
-    const SwCellFrm* pFrm = static_cast<const SwCellFrm*>(GetBox( rPt, &bRow, 0 ));
+    const SwCellFrm* pFrm = static_cast<const SwCellFrm*>(GetBox( rPt, &bRow ));
 
     if ( !pFrm )
     {

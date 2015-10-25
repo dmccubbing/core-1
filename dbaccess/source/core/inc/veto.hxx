@@ -41,15 +41,15 @@ namespace dbaccess
     public:
         Veto( const OUString& _rReason, const css::uno::Any& _rDetails );
 
-        virtual OUString SAL_CALL getReason() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual css::uno::Any SAL_CALL getDetails() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual OUString SAL_CALL getReason() throw (css::uno::RuntimeException, std::exception) override;
+        virtual css::uno::Any SAL_CALL getDetails() throw (css::uno::RuntimeException, std::exception) override;
 
     protected:
         virtual ~Veto();
 
     private:
-        Veto( const Veto& ) SAL_DELETED_FUNCTION;
-        Veto& operator=( const Veto& ) SAL_DELETED_FUNCTION;
+        Veto( const Veto& ) = delete;
+        Veto& operator=( const Veto& ) = delete;
     };
 
 } // namespace dbaccess

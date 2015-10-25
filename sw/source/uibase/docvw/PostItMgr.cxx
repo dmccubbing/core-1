@@ -161,7 +161,7 @@ SwPostItMgr::SwPostItMgr(SwView* pView)
     if (!mvPostItFields.empty())
     {
         mbWaitingForCalcRects = true;
-        mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl), 0 );
+        mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl) );
     }
 }
 
@@ -262,7 +262,7 @@ void SwPostItMgr::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
             if ( !mbWaitingForCalcRects && !mvPostItFields.empty())
             {
                 mbWaitingForCalcRects = true;
-                mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl), 0 );
+                mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl) );
             }
         }
     }
@@ -288,7 +288,7 @@ void SwPostItMgr::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
                     if ( !mbWaitingForCalcRects && !mvPostItFields.empty())
                     {
                         mbWaitingForCalcRects = true;
-                        mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl), 0 );
+                        mnEventId = Application::PostUserEvent( LINK( this, SwPostItMgr, CalcHdl) );
                     }
                 }
                 break;
@@ -321,7 +321,7 @@ void SwPostItMgr::Notify( SfxBroadcaster& rBC, const SfxHint& rHint )
             {
                 if (!pField)
                 {
-                    AddPostIts(true);
+                    AddPostIts();
                     break;
                 }
                 // get field to be inserted from hint
@@ -1197,7 +1197,7 @@ public:
 class IsPostitField : public FilterFunctor
 {
 public:
-    bool operator()(const SwFormatField* pField) const SAL_OVERRIDE
+    bool operator()(const SwFormatField* pField) const override
     {
         return pField->GetField()->GetTyp()->Which() == RES_POSTITFLD;
     }
@@ -1211,7 +1211,7 @@ public:
         : m_sAuthor(rAuthor)
     {
     }
-    bool operator()(const SwFormatField* pField) const SAL_OVERRIDE
+    bool operator()(const SwFormatField* pField) const override
     {
         if (pField->GetField()->GetTyp()->Which() != RES_POSTITFLD)
             return false;
@@ -1234,7 +1234,7 @@ class FieldDocWatchingStack : public SfxListener
     SwDocShell& m_rDocShell;
     FilterFunctor& m_rFilter;
 
-    virtual void Notify(SfxBroadcaster&, const SfxHint& rHint) SAL_OVERRIDE
+    virtual void Notify(SfxBroadcaster&, const SfxHint& rHint) override
     {
         const SwFormatFieldHint* pHint = dynamic_cast<const SwFormatFieldHint*>(&rHint);
         if (pHint)

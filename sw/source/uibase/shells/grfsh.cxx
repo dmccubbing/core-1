@@ -96,7 +96,7 @@ public:
     {
     }
 
-    virtual void Update(Graphic & rGraphic) SAL_OVERRIDE
+    virtual void Update(Graphic & rGraphic) override
     {
         DBG_TESTSOLARMUTEX();
         m_pShell->Push();
@@ -442,7 +442,7 @@ void SwGrfShell::Execute(SfxRequest &rReq)
                         rSh.ReRead( URIHelper::SmartRel2Abs(
                                         aAbs, sGrfNm,
                                         URIHelper::GetMaybeFileHdl() ),
-                                     sFilterNm, 0 );
+                                     sFilterNm );
                     }
                 }
                 if ( SfxItemState::SET == pSet->GetItemState(

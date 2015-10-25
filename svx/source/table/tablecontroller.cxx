@@ -91,10 +91,10 @@ public:
         : mpController( pController ) {}
 
     // XModifyListener
-    virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL modified( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
     // XEventListener
-    virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& Source ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& Source ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
     SvxTableController* mpController;
 };
@@ -1726,7 +1726,7 @@ bool SvxTableController::executeAction( sal_uInt16 nAction, bool bSelect, vcl::W
             CellPos aNextCell( pTableObj->getNextCell( aSelectionEnd, true ) );
             if( aSelectionEnd == aNextCell )
             {
-                onInsert( SID_TABLE_INSERT_ROW, 0 );
+                onInsert( SID_TABLE_INSERT_ROW );
                 aNextCell = pTableObj->getNextCell( aSelectionEnd, true );
             }
             gotoCell( aNextCell, false, pWindow, nAction );

@@ -41,8 +41,8 @@ namespace o3tl
 
 namespace sfx2
 {
-    typedef ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface > ( SAL_CALL * SfxModelFactoryFunc ) (
-        const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >& _rxFactory,
+    typedef css::uno::Reference< css::uno::XInterface > ( SAL_CALL * SfxModelFactoryFunc ) (
+        const css::uno::Reference< css::lang::XMultiServiceFactory >& _rxFactory,
         SfxModelFlags _nCreationFlags
     );
 
@@ -56,12 +56,12 @@ namespace sfx2
         factory evaluates certain creation arguments (passed to createInstanceWithArguments)
         and passes them to the factory function of the derived class.
     */
-    ::com::sun::star::uno::Reference< ::com::sun::star::lang::XSingleServiceFactory >
+    css::uno::Reference< css::lang::XSingleServiceFactory >
         SFX2_DLLPUBLIC createSfxModelFactory(
-            const ::com::sun::star::uno::Reference< ::com::sun::star::lang::XMultiServiceFactory >& _rxServiceFactory,
+            const css::uno::Reference< css::lang::XMultiServiceFactory >& _rxServiceFactory,
             const OUString& _rImplementationName,
             const SfxModelFactoryFunc _pComponentFactoryFunc,
-            const ::com::sun::star::uno::Sequence< OUString >& _rServiceNames
+            const css::uno::Sequence< OUString >& _rServiceNames
         );
 
 

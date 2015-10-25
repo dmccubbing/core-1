@@ -55,14 +55,14 @@ public:
                     ScFilterDlg( SfxBindings* pB, SfxChildWindow* pCW, vcl::Window* pParent,
                                  const SfxItemSet&  rArgSet );
                     virtual ~ScFilterDlg();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
+    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
 
-    virtual bool    IsRefInputMode() const SAL_OVERRIDE;
-    virtual void    SetActive() SAL_OVERRIDE;
+    virtual bool    IsRefInputMode() const override;
+    virtual void    SetActive() override;
 
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    Close() override;
     void            SliderMoved();
     size_t          GetSliderPos();
     void            RefreshEditRow( size_t nOffset );
@@ -145,12 +145,12 @@ private:
     ScQueryItem*    GetOutputItem   ();
 
     // Handler:
-    DECL_LINK( LbSelectHdl,  ListBox* );
-    DECL_LINK( ValModifyHdl, ComboBox* );
+    DECL_LINK_TYPED( LbSelectHdl,  ListBox&, void );
+    DECL_LINK_TYPED( ValModifyHdl, Edit&, void );
     DECL_LINK_TYPED( CheckBoxHdl,  Button*, void );
     DECL_LINK_TYPED( EndDlgHdl,    Button*, void );
     DECL_LINK_TYPED( ScrollHdl, ScrollBar*, void );
-    DECL_LINK( MoreExpandedHdl, void* );
+    DECL_LINK_TYPED( MoreExpandedHdl, VclExpander&, void );
 
     // Hack: RefInput control
     DECL_LINK_TYPED( TimeOutHdl, Timer*, void );
@@ -162,14 +162,14 @@ public:
                     ScSpecialFilterDlg( SfxBindings* pB, SfxChildWindow* pCW, vcl::Window* pParent,
                                         const SfxItemSet&   rArgSet );
                     virtual ~ScSpecialFilterDlg();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) SAL_OVERRIDE;
+    virtual void    SetReference( const ScRange& rRef, ScDocument* pDoc ) override;
 
-    virtual bool    IsRefInputMode() const SAL_OVERRIDE;
-    virtual void    SetActive() SAL_OVERRIDE;
+    virtual bool    IsRefInputMode() const override;
+    virtual void    SetActive() override;
 
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    Close() override;
 
 private:
     VclPtr<ListBox>         pLbFilterArea;
@@ -213,8 +213,8 @@ private:
                                     const ScRange& rSource );
 
     // Handler
-    DECL_LINK( FilterAreaSelHdl, ListBox* );
-    DECL_LINK( FilterAreaModHdl, formula::RefEdit* );
+    DECL_LINK_TYPED( FilterAreaSelHdl, ListBox&, void );
+    DECL_LINK_TYPED( FilterAreaModHdl, Edit&, void );
     DECL_LINK_TYPED( EndDlgHdl,  Button*, void );
 
     // Hack: RefInput control

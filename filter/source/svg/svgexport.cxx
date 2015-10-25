@@ -29,6 +29,7 @@
 #include <com/sun/star/util/MeasureUnit.hpp>
 #include <com/sun/star/xml/sax/Writer.hpp>
 
+#include <comphelper/lok.hxx>
 #include <rtl/bootstrap.hxx>
 #include <svtools/miscopt.hxx>
 #include <svx/unopage.hxx>
@@ -145,11 +146,11 @@ class FixedTextField : public TextField
 public:
     OUString text;
 
-    virtual OUString getClassName() const SAL_OVERRIDE
+    virtual OUString getClassName() const override
     {
         return OUString( "FixedTextField" );
     }
-    virtual bool equalTo( const TextField & aTextField ) const SAL_OVERRIDE
+    virtual bool equalTo( const TextField & aTextField ) const override
     {
         if( const FixedTextField* aFixedTextField = dynamic_cast< const FixedTextField* >( &aTextField ) )
         {
@@ -157,7 +158,7 @@ public:
         }
         return false;
     }
-    virtual void elementExport( SVGExport* pSVGExport ) const SAL_OVERRIDE
+    virtual void elementExport( SVGExport* pSVGExport ) const override
     {
         TextField::elementExport( pSVGExport );
         SvXMLElementExport aExp( *pSVGExport, XML_NAMESPACE_NONE, "g", true, true );
@@ -170,11 +171,11 @@ class FixedDateTimeField : public FixedTextField
 {
 public:
     FixedDateTimeField() {}
-    virtual OUString getClassName() const SAL_OVERRIDE
+    virtual OUString getClassName() const override
     {
         return OUString( "FixedDateTimeField" );
     }
-    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const SAL_OVERRIDE
+    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const override
     {
         implGrowCharSet( aTextFieldCharSets, text, aOOOAttrDateTimeField );
     }
@@ -185,11 +186,11 @@ class FooterField : public FixedTextField
 {
 public:
     FooterField() {}
-    virtual OUString getClassName() const SAL_OVERRIDE
+    virtual OUString getClassName() const override
     {
         return OUString( "FooterField" );
     }
-    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const SAL_OVERRIDE
+    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const override
     {
         static const OUString sFieldId = aOOOAttrFooterField;
         implGrowCharSet( aTextFieldCharSets, text, sFieldId );
@@ -200,7 +201,7 @@ public:
 class VariableTextField : public TextField
 {
 public:
-    virtual OUString getClassName() const SAL_OVERRIDE
+    virtual OUString getClassName() const override
     {
         return OUString( "VariableTextField" );
     }
@@ -216,11 +217,11 @@ public:
         : format(0)
     {
     }
-    virtual OUString getClassName() const SAL_OVERRIDE
+    virtual OUString getClassName() const override
     {
         return OUString( "VariableDateTimeField" );
     }
-    virtual bool equalTo( const TextField & aTextField ) const SAL_OVERRIDE
+    virtual bool equalTo( const TextField & aTextField ) const override
     {
         if( const VariableDateTimeField* aField = dynamic_cast< const VariableDateTimeField* >( &aTextField ) )
         {
@@ -228,7 +229,7 @@ public:
         }
         return false;
     }
-    virtual void elementExport( SVGExport* pSVGExport ) const SAL_OVERRIDE
+    virtual void elementExport( SVGExport* pSVGExport ) const override
     {
         VariableTextField::elementExport( pSVGExport );
         OUString sDateFormat, sTimeFormat;
@@ -291,7 +292,7 @@ public:
         pSVGExport->AddAttribute( XML_NAMESPACE_NONE, aOOOAttrDateTimeFormat, sDateTimeFormat );
         SvXMLElementExport aExp( *pSVGExport, XML_NAMESPACE_NONE, "g", true, true );
     }
-    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const SAL_OVERRIDE
+    virtual void growCharSet( SVGFilter::UCharSetMapMap & aTextFieldCharSets ) const override
     {
         // we use the unicode char set in an improper way: we put in the date/time format
         // in order to pass it to the CalcFieldValue method
@@ -598,7 +599,7 @@ bool SVGFilter::implExport( const Sequence< PropertyValue >& rDescriptor )
 
                             if( mpSdrModel )
                             {
-                                SdrOutliner& rOutl = mpSdrModel->GetDrawOutliner(NULL);
+                                SdrOutliner& rOutl = mpSdrModel->GetDrawOutliner();
 
                                 maOldFieldHdl = rOutl.GetCalcFieldValueHdl();
                                 maNewFieldHdl = LINK(this, SVGFilter, CalcFieldHdl);
@@ -700,7 +701,7 @@ bool SVGFilter::implExportDocument()
     SvtMiscOptions aMiscOptions;
     const bool bExperimentalMode = aMiscOptions.IsExperimentalMode();
 
-    mbSinglePage = (nLastPage == 0) || !bExperimentalMode;
+    mbSinglePage = ((nLastPage == 0) || !bExperimentalMode) && !comphelper::LibreOfficeKit::isActive();
     mnVisiblePage = -1;
 
     const Reference< XPropertySet >             xDefaultPagePropertySet( mxDefaultPage, UNO_QUERY );
@@ -1025,7 +1026,6 @@ bool SVGFilter::implGenerateMetaData()
                             bool bPageNumberVisibility    = false;    // default: hidden
                             bool bDateTimeVisibility      = true;     // default: visible
                             bool bFooterVisibility        = true;     // default: visible
-                            bool bDateTimeFixed           = true;     // default: fixed
 
                             /*
                              *  Page Number Field
@@ -1042,6 +1042,7 @@ bool SVGFilter::implGenerateMetaData()
                             xPropSet->getPropertyValue( "IsDateTimeVisible" ) >>= bDateTimeVisibility;
                             if( bDateTimeVisibility ) // visibility default value: 'visible'
                             {
+                                bool bDateTimeFixed           = true;     // default: fixed
                                 xPropSet->getPropertyValue( "IsDateTimeFixed" ) >>= bDateTimeFixed;
                                 if( bDateTimeFixed ) // we are interested only in the field text not in the date/time format
                                 {
@@ -1321,7 +1322,7 @@ bool SVGFilter::implExportTextEmbeddedBitmaps()
                     // specifying the wanted position, they will result
                     // misplaced.
                     pAction->Move( -aPt.X(), -aPt.Y() );
-                    mpSVGWriter->WriteMetaFile( aTopLeft, aSize, aMtf, 0xffffffff, NULL );
+                    mpSVGWriter->WriteMetaFile( aTopLeft, aSize, aMtf, 0xffffffff );
                     // We reset to the original values so that when the <use>
                     // element is created the x, y attributes are correct.
                     pAction->Move( aPt.X(), aPt.Y() );
@@ -2420,7 +2421,7 @@ void SVGExport::writeMtf( const GDIMetaFile& rMtf )
 
         SVGActionWriter aWriter( *this, aSVGFontExport );
         aWriter.WriteMetaFile( aPoint100thmm, aSize100thmm, rMtf,
-            SVGWRITER_WRITE_FILL | SVGWRITER_WRITE_TEXT, NULL );
+            SVGWRITER_WRITE_FILL | SVGWRITER_WRITE_TEXT );
     }
 }
 

@@ -32,13 +32,13 @@ class SwNode;
 class SwNodes;
 
 /// Marks a node in the document model.
-class SW_DLLPUBLIC SwNodeIndex SAL_FINAL : public sw::Ring<SwNodeIndex>
+class SW_DLLPUBLIC SwNodeIndex final : public sw::Ring<SwNodeIndex>
 {
     SwNode * m_pNode;
 
     // These are not allowed!
-    SwNodeIndex( SwNodes& rNds, sal_uInt16 nIdx ) SAL_DELETED_FUNCTION;
-    SwNodeIndex( SwNodes& rNds, int nIdx ) SAL_DELETED_FUNCTION;
+    SwNodeIndex( SwNodes& rNds, sal_uInt16 nIdx ) = delete;
+    SwNodeIndex( SwNodes& rNds, int nIdx ) = delete;
     void RegisterIndex( SwNodes& rNodes )
     {
         if(!rNodes.vIndices)

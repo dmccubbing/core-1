@@ -336,6 +336,9 @@ OUString ChartController::GetContextName()
         case OBJECTTYPE_DIAGRAM:
             if (xChartType->getChartType() == "com.sun.star.chart2.PieChartType")
                 return OUString("ChartElements");
+        case OBJECTTYPE_DATA_CURVE:
+        case OBJECTTYPE_DATA_AVERAGE_LINE:
+            return OUString("Trendline");
         default:
         break;
     }
@@ -807,18 +810,17 @@ void SAL_CALL ChartController::dispose()
     throw(uno::RuntimeException, std::exception)
 {
     m_bDisposed = true;
-    mpSelectionChangeHandler->selectionChanged(css::lang::EventObject());
-    mpSelectionChangeHandler->Disconnect();
 
     if (getModel().is())
     {
         uno::Reference<ui::XSidebar> xSidebar = getSidebarFromModel(getModel());
-        if (xSidebar.is())
+        if (sfx2::sidebar::SidebarController* pSidebar = dynamic_cast<sfx2::sidebar::SidebarController*>(xSidebar.get()))
         {
-            sfx2::sidebar::SidebarController* pSidebar = dynamic_cast<sfx2::sidebar::SidebarController*>(xSidebar.get());
             sfx2::sidebar::SidebarController::unregisterSidebarForFrame(pSidebar, this);
         }
     }
+    mpSelectionChangeHandler->selectionChanged(css::lang::EventObject());
+    mpSelectionChangeHandler->Disconnect();
 
     try
     {

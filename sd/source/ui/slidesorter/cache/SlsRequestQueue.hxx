@@ -22,7 +22,6 @@
 
 #include "SlsRequestPriorityClass.hxx"
 #include "cache/SlsCacheContext.hxx"
-#include "taskpane/SlideSorterCacheDisplay.hxx"
 #include <drawdoc.hxx>
 #include <osl/mutex.hxx>
 #include <svx/sdrpageuser.hxx>
@@ -104,7 +103,7 @@ public:
     /** Ensure we don't hand out a page deleted before anyone got a
         chance to process it
     */
-    virtual void PageInDestruction(const SdrPage& rPage) SAL_OVERRIDE;
+    virtual void PageInDestruction(const SdrPage& rPage) override;
 
 private:
     ::osl::Mutex maMutex;

@@ -153,7 +153,7 @@ void ScColRowNameRangesDlg::Init()
     pEdAssign->GrabFocus();
     pRbAssign->Enable();
 
-    Range1SelectHdl( 0 );
+    Range1SelectHdl( *pLbRange.get() );
 }
 
 // set data range of a labeled range to default values and set the
@@ -338,9 +338,9 @@ void ScColRowNameRangesDlg::SetActive()
         GrabFocus();
 
     if( pEdActive == pEdAssign )
-        Range1DataModifyHdl( 0 );
+        Range1DataModifyHdl( *pEdAssign );
     else if( pEdActive == pEdAssign2 )
-        Range2DataModifyHdl( 0 );
+        Range2DataModifyHdl( *pEdAssign2 );
 
     RefInputDone();
 }
@@ -563,7 +563,7 @@ IMPL_LINK_NOARG_TYPED(ScColRowNameRangesDlg, AddBtnHdl, Button*, void)
             pEdAssign2->SetText( EMPTY_OUSTRING );
             theCurArea = ScRange();
             theCurData = theCurArea;
-            Range1SelectHdl( 0 );
+            Range1SelectHdl( *pLbRange.get() );
         }
         else
         {
@@ -631,13 +631,13 @@ IMPL_LINK_NOARG_TYPED(ScColRowNameRangesDlg, RemoveBtnHdl, Button*, void)
             pBtnColHead->Check();
             pBtnRowHead->Check( false );
             pEdAssign2->SetText( EMPTY_OUSTRING );
-            Range1SelectHdl( 0 );
+            Range1SelectHdl( *pLbRange.get() );
         }
     }
 }
 
 // handler called when a row in the listbox is selected, updates form input fields
-IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range1SelectHdl)
+IMPL_LINK_NOARG_TYPED(ScColRowNameRangesDlg, Range1SelectHdl, ListBox&, void)
 {
     sal_Int32 nSelectPos = pLbRange->GetSelectEntryPos();
     const sal_Int32 nCnt = pLbRange->GetEntryCount();
@@ -702,12 +702,10 @@ IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range1SelectHdl)
 
     pEdAssign->Enable();
     pRbAssign->Enable();
-
-    return 0;
 }
 
 // handler called when the label range has changed
-IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range1DataModifyHdl)
+IMPL_LINK_NOARG_TYPED(ScColRowNameRangesDlg, Range1DataModifyHdl, Edit&, void)
 {
     OUString aNewArea( pEdAssign->GetText() );
     bool bValid = false;
@@ -737,11 +735,10 @@ IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range1DataModifyHdl)
         pRbAssign2->Disable();
     }
     pBtnRemove->Disable();
-    return 0;
 }
 
 // handler called when the data range has changed
-IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range2DataModifyHdl)
+IMPL_LINK_NOARG_TYPED(ScColRowNameRangesDlg, Range2DataModifyHdl, Edit&, void)
 {
     OUString aNewData( pEdAssign2->GetText() );
     if ( !aNewData.isEmpty() )
@@ -759,7 +756,6 @@ IMPL_LINK_NOARG(ScColRowNameRangesDlg, Range2DataModifyHdl)
     {
         pBtnAdd->Disable();
     }
-    return 0;
 }
 
 // handler for the radio button for columns, adjust ranges

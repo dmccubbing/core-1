@@ -71,8 +71,8 @@ class ODateTimeDialog : public ModalDialog
     sal_Int32 getFormatKey(bool _bDate) const;
 
     DECL_LINK_TYPED( CBClickHdl, Button*, void );
-    ODateTimeDialog(const ODateTimeDialog&) SAL_DELETED_FUNCTION;
-    void operator =(const ODateTimeDialog&) SAL_DELETED_FUNCTION;
+    ODateTimeDialog(const ODateTimeDialog&) = delete;
+    void operator =(const ODateTimeDialog&) = delete;
 
     // fill methods
     void InsertEntry(sal_Int16 _nNumberFormatId);
@@ -81,8 +81,8 @@ public:
                         ,const ::com::sun::star::uno::Reference< ::com::sun::star::report::XSection>& _xHoldAlive
                         ,::rptui::OReportController* _pController);
     virtual ~ODateTimeDialog();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual short   Execute() SAL_OVERRIDE;
+    virtual void dispose() override;
+    virtual short   Execute() override;
 };
 
 } // namespace rptui

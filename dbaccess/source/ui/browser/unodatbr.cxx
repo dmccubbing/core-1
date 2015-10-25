@@ -1107,7 +1107,7 @@ namespace
 
         virtual ~FilterByEntryDataId() {}
 
-        virtual bool    includeEntry( SvTreeListEntry* _pEntry ) const SAL_OVERRIDE;
+        virtual bool    includeEntry( SvTreeListEntry* _pEntry ) const override;
     };
 
     bool FilterByEntryDataId::includeEntry( SvTreeListEntry* _pEntry ) const
@@ -2061,7 +2061,7 @@ void SbaTableQueryBrowser::implAddDatasource(const OUString& _rDbName, Image& _r
     OUString sDSDisplayName, sDataSourceId;
     getDataSourceDisplayName_isURL( _rDbName, sDSDisplayName, sDataSourceId );
 
-    SvTreeListEntry* pDatasourceEntry = m_pTreeView->getListBox().InsertEntry( sDSDisplayName, _rDbImage, _rDbImage, NULL, false );
+    SvTreeListEntry* pDatasourceEntry = m_pTreeView->getListBox().InsertEntry( sDSDisplayName, _rDbImage, _rDbImage );
     DBTreeListUserData* pDSData = new DBTreeListUserData;
     pDSData->eType = etDatasource;
     pDSData->sAccessor = sDataSourceId;

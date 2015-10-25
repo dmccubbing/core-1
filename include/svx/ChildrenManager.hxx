@@ -88,10 +88,10 @@ public:
             for new and deleted children, i.e. that holds a list of
             listeners to be informed.
     */
-    ChildrenManager (const ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible>& rxParent,
-        const ::com::sun::star::uno::Reference<
-            ::com::sun::star::drawing::XShapes>& rxShapeList,
+    ChildrenManager (const css::uno::Reference<
+            css::accessibility::XAccessible>& rxParent,
+        const css::uno::Reference<
+            css::drawing::XShapes>& rxShapeList,
         const AccessibleShapeTreeInfo& rShapeTreeInfo,
         AccessibleContextBase& rContext);
 
@@ -119,15 +119,15 @@ public:
         @raises
             Throws an IndexOutOfBoundsException if the index is not valid.
     */
-    ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible>
+    css::uno::Reference<
+            css::accessibility::XAccessible>
         GetChild (long nIndex)
-        throw (::com::sun::star::uno::RuntimeException,
-               ::com::sun::star::lang::IndexOutOfBoundsException);
-        ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible> GetChild (const ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape>& xShape) throw (::com::sun::star::uno::RuntimeException);
-        ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape> GetChildShape (long nIndex)
-            throw (::com::sun::star::lang::IndexOutOfBoundsException,
-                   ::com::sun::star::uno::RuntimeException);
+        throw (css::uno::RuntimeException,
+               css::lang::IndexOutOfBoundsException);
+        css::uno::Reference< css::accessibility::XAccessible> GetChild (const css::uno::Reference< css::drawing::XShape>& xShape) throw (css::uno::RuntimeException);
+        css::uno::Reference< css::drawing::XShape> GetChildShape (long nIndex)
+            throw (css::lang::IndexOutOfBoundsException,
+                   css::uno::RuntimeException);
 
     /** Update the child manager.  Take care of a modified set of children
         and modified visible area.  This method can optimize the update
@@ -146,8 +146,8 @@ public:
         @param xShapeList
             The new list of shapes.
     */
-    void SetShapeList (const ::com::sun::star::uno::Reference<
-        ::com::sun::star::drawing::XShapes>& xShapeList);
+    void SetShapeList (const css::uno::Reference<
+        css::drawing::XShapes>& xShapeList);
 
     /** Add an accessible shape.  The difference to the UNO shapes in the
         list passed to the constructor the specified object does not have to
@@ -191,14 +191,14 @@ public:
     void RemoveFocus();
 
     virtual void ViewForwarderChanged (ChangeType aChangeType,
-        const IAccessibleViewForwarder* pViewForwarder) SAL_OVERRIDE;
+        const IAccessibleViewForwarder* pViewForwarder) override;
 
 protected:
     ChildrenManagerImpl* mpImpl;
 
 private:
-    ChildrenManager (const ChildrenManager&) SAL_DELETED_FUNCTION;
-    ChildrenManager& operator= (const ChildrenManager&) SAL_DELETED_FUNCTION;
+    ChildrenManager (const ChildrenManager&) = delete;
+    ChildrenManager& operator= (const ChildrenManager&) = delete;
 };
 
 } // end of namespace accessibility

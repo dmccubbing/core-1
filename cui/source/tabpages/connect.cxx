@@ -120,7 +120,7 @@ SvxConnectionPage::SvxConnectionPage( vcl::Window* pWindow, const SfxItemSet& rI
     // disable 3D border
     m_pCtlPreview->SetBorderStyle(WindowBorderStyle::MONO);
 
-    Link<> aLink( LINK( this, SvxConnectionPage, ChangeAttrHdl_Impl ) );
+    Link<Edit&,void> aLink( LINK( this, SvxConnectionPage, ChangeAttrEditHdl_Impl ) );
     m_pMtrFldHorz1->SetModifyHdl( aLink );
     m_pMtrFldVert1->SetModifyHdl( aLink );
     m_pMtrFldHorz2->SetModifyHdl( aLink );
@@ -128,7 +128,7 @@ SvxConnectionPage::SvxConnectionPage( vcl::Window* pWindow, const SfxItemSet& rI
     m_pMtrFldLine1->SetModifyHdl( aLink );
     m_pMtrFldLine2->SetModifyHdl( aLink );
     m_pMtrFldLine3->SetModifyHdl( aLink );
-    m_pLbType->SetSelectHdl( aLink );
+    m_pLbType->SetSelectHdl( LINK( this, SvxConnectionPage, ChangeAttrListBoxHdl_Impl ) );
 }
 
 SvxConnectionPage::~SvxConnectionPage()
@@ -396,7 +396,15 @@ VclPtr<SfxTabPage> SvxConnectionPage::Create( vcl::Window* pWindow,
     return VclPtr<SvxConnectionPage>::Create( pWindow, *rAttrs );
 }
 
-IMPL_LINK( SvxConnectionPage, ChangeAttrHdl_Impl, void *, p )
+IMPL_LINK_TYPED( SvxConnectionPage, ChangeAttrListBoxHdl_Impl, ListBox&, r, void )
+{
+    ChangeAttrHdl_Impl(&r);
+}
+IMPL_LINK_TYPED( SvxConnectionPage, ChangeAttrEditHdl_Impl, Edit&, r, void )
+{
+    ChangeAttrHdl_Impl(&r);
+}
+void SvxConnectionPage::ChangeAttrHdl_Impl(void* p)
 {
     if( p == m_pMtrFldHorz1 )
     {
@@ -479,8 +487,6 @@ IMPL_LINK( SvxConnectionPage, ChangeAttrHdl_Impl, void *, p )
             m_pMtrFldLine1->SetEmptyFieldValue();
 
     }
-
-    return 0L;
 }
 
 void SvxConnectionPage::FillTypeLB()
@@ -506,7 +512,7 @@ void SvxConnectionPage::FillTypeLB()
 }
 void SvxConnectionPage::PageCreated(const SfxAllItemSet& aSet)
 {
-    SFX_ITEMSET_ARG(&aSet,pOfaPtrItem,OfaPtrItem,SID_OBJECT_LIST,false);
+    const OfaPtrItem* pOfaPtrItem = aSet.GetItem<OfaPtrItem>(SID_OBJECT_LIST, false);
     if (pOfaPtrItem)
         SetView( static_cast<SdrView *>(pOfaPtrItem->GetValue()) );
 

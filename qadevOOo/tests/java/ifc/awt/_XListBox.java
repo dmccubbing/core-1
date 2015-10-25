@@ -61,17 +61,11 @@ public class _XListBox extends MultiMethodTest {
     /**
     * Listener implementation which sets flags on appropriate method calls
     */
-    protected class TestActionListener implements com.sun.star.awt.XActionListener {
-        public boolean disposingCalled = false ;
-        public boolean actionPerformedCalled = false ;
+    protected static class TestActionListener implements com.sun.star.awt.XActionListener {
 
-        public void disposing(com.sun.star.lang.EventObject e) {
-            disposingCalled = true ;
-        }
+        public void disposing(com.sun.star.lang.EventObject e) {}
 
-        public void actionPerformed(com.sun.star.awt.ActionEvent e) {
-            actionPerformedCalled = true ;
-        }
+        public void actionPerformed(com.sun.star.awt.ActionEvent e) {}
 
     }
 
@@ -80,18 +74,11 @@ public class _XListBox extends MultiMethodTest {
     /**
     * Listener implementation which sets flags on appropriate method calls
     */
-    protected class TestItemListener implements com.sun.star.awt.XItemListener {
-        public boolean disposingCalled = false ;
-        public boolean itemStateChangedCalled = false ;
+    protected static class TestItemListener implements com.sun.star.awt.XItemListener {
 
-        public void disposing(com.sun.star.lang.EventObject e) {
-            disposingCalled = true ;
-        }
+        public void disposing(com.sun.star.lang.EventObject e) {}
 
-        public void itemStateChanged(com.sun.star.awt.ItemEvent e) {
-            itemStateChangedCalled = true ;
-        }
-
+        public void itemStateChanged(com.sun.star.awt.ItemEvent e) {}
     }
 
     TestItemListener itemListener = new TestItemListener() ;

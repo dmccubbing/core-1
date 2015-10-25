@@ -363,7 +363,7 @@ IMPL_LINK_TYPED( _SfxMacroTabPage, TimeOut_Impl, Idle*,, void )
     FillMacroList();
     if ( pTabDlg )
     {
-        pTabDlg->EnableInput( true );
+        pTabDlg->EnableInput();
         pTabDlg->LeaveWait();
     }
 }
@@ -383,7 +383,7 @@ void _SfxMacroTabPage::InitAndSetHandler()
     mpImpl->pMacroLB->SetSelectHdl( LINK( this, _SfxMacroTabPage, SelectMacro_Impl ));
 
     rListBox.SetSelectionMode( SINGLE_SELECTION );
-    rListBox.SetTabs( &nTabs[0], MAP_APPFONT );
+    rListBox.SetTabs( &nTabs[0] );
     Size aSize( nTabs[ 2 ], 0 );
     rHeaderBar.InsertItem( ITEMID_EVENT, mpImpl->sStrEvent, LogicToPixel( aSize, MapMode( MAP_APPFONT ) ).Width() );
     aSize.Width() = 1764;       // don't know what, so 42^2 is best to use...
@@ -393,9 +393,9 @@ void _SfxMacroTabPage::InitAndSetHandler()
     mpImpl->pEventLB->Show();
     mpImpl->pEventLB->ConnectElements();
 
-    mpImpl->pEventLB->Enable( true );
-    mpImpl->pGroupLB->Enable( true );
-    mpImpl->pMacroLB->Enable( true );
+    mpImpl->pEventLB->Enable();
+    mpImpl->pGroupLB->Enable();
+    mpImpl->pMacroLB->Enable();
 
     mpImpl->pGroupLB->SetFunctionListBox( mpImpl->pMacroLB );
 

@@ -37,10 +37,10 @@ public:
 
 protected:
     virtual void        implDumpStream(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >& rxStrm,
+                            const css::uno::Reference< css::io::XInputStream >& rxStrm,
                             const OUString& rStrgPath,
                             const OUString& rStrmName,
-                            const OUString& rSysFileName ) SAL_OVERRIDE;
+                            const OUString& rSysFileName ) override;
 };
 
 
@@ -51,12 +51,12 @@ public:
     explicit            Dumper( const ::oox::core::FilterBase& rFilter );
 
     explicit            Dumper(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& rxContext,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::io::XInputStream >& rxInStrm,
+                            const css::uno::Reference< css::uno::XComponentContext >& rxContext,
+                            const css::uno::Reference< css::io::XInputStream >& rxInStrm,
                             const OUString& rSysFileName );
 
 protected:
-    virtual void        implDump() SAL_OVERRIDE;
+    virtual void        implDump() override;
 };
 
 

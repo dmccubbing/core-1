@@ -248,8 +248,8 @@ void FuInsertFile::DoExecute( SfxRequest& rReq )
     }
     else
     {
-        SFX_REQUEST_ARG (rReq, pFileName, SfxStringItem, ID_VAL_DUMMY0, false);
-        SFX_REQUEST_ARG (rReq, pFilterName, SfxStringItem, ID_VAL_DUMMY1, false);
+        const SfxStringItem* pFileName = rReq.GetArg<SfxStringItem>(ID_VAL_DUMMY0);
+        const SfxStringItem* pFilterName = rReq.GetArg<SfxStringItem>(ID_VAL_DUMMY1);
 
         aFile = pFileName->GetValue ();
 
@@ -262,7 +262,7 @@ void FuInsertFile::DoExecute( SfxRequest& rReq )
     SfxMedium*          pMedium = new SfxMedium( aFile, StreamMode::READ | StreamMode::NOCREATE );
     const SfxFilter*    pFilter = NULL;
 
-    SfxGetpApp()->GetFilterMatcher().GuessFilter( *pMedium, &pFilter, SfxFilterFlags::IMPORT, SFX_FILTER_NOTINSTALLED );
+    SfxGetpApp()->GetFilterMatcher().GuessFilter( *pMedium, &pFilter );
 
     bool                bDrawMode = mpViewShell && dynamic_cast< const DrawViewShell *>( mpViewShell ) !=  nullptr;
     bool                bInserted = false;
@@ -351,7 +351,6 @@ bool FuInsertFile::InsSDDinDrMode(SfxMedium* pMedium)
            First, insert pages */
         std::vector<OUString> aBookmarkList = pDlg->GetList( 1 ); // pages
         bool bLink = pDlg->IsLink();
-        bool bReplace = false;
         SdPage* pPage = NULL;
         ::sd::View* pView = mpViewShell ? mpViewShell->GetView() : NULL;
 
@@ -394,6 +393,7 @@ bool FuInsertFile::InsSDDinDrMode(SfxMedium* pMedium)
                necessary.
                bNameOK is sal_False if the user has canceled. */
             bNameOK = mpView->GetExchangeList( aExchangeList, aBookmarkList, 0 );
+            bool bReplace = false;
 
             if( bNameOK )
                 bOK = mpDoc->InsertBookmarkAsPage( aBookmarkList, &aExchangeList,

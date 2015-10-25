@@ -115,7 +115,7 @@ namespace pcr
     ODateControl::ODateControl( vcl::Window* pParent, WinBits nWinStyle )
         :ODateControl_Base( PropertyControlType::DateField, pParent, nWinStyle | WB_DROPDOWN )
     {
-        WindowType* pControlWindow = getTypedControlWindow();
+        CalendarField* pControlWindow = getTypedControlWindow();
         pControlWindow->SetStrictFormat(true);
 
         pControlWindow->SetMin( ::Date( 1,1,1600 ) );
@@ -217,13 +217,13 @@ namespace pcr
     }
 
 
-    void OEditControl::modified()
+    void OEditControl::setModified()
     {
-        OEditControl_Base::modified();
+        OEditControl_Base::setModified();
 
         // for password controls, we fire a commit for every single change
         if ( m_bIsPassword )
-            m_aImplControl.notifyModifiedValue();
+            notifyModifiedValue();
     }
 
 
@@ -692,7 +692,7 @@ namespace pcr
         if ( ( nWinStyle & WB_READONLY ) != 0 )
         {
             getTypedControlWindow()->SetReadOnly();
-            getTypedControlWindow()->Enable( true );
+            getTypedControlWindow()->Enable();
         }
     }
 
@@ -781,13 +781,13 @@ namespace pcr
     }
 
 
-    void OColorControl::modified()
+    void OColorControl::setModified()
     {
-        OColorControl_Base::modified();
+        OColorControl_Base::setModified();
 
         if ( !getTypedControlWindow()->IsTravelSelect() )
             // fire a commit
-            m_aImplControl.notifyModifiedValue();
+            notifyModifiedValue();
     }
 
 
@@ -801,7 +801,7 @@ namespace pcr
         if ( ( nWinStyle & WB_READONLY ) != 0 )
         {
             getTypedControlWindow()->SetReadOnly();
-            getTypedControlWindow()->Enable( true );
+            getTypedControlWindow()->Enable();
         }
     }
 
@@ -873,13 +873,13 @@ namespace pcr
     }
 
 
-    void OListboxControl::modified()
+    void OListboxControl::setModified()
     {
-        OListboxControl_Base::modified();
+        OListboxControl_Base::setModified();
 
         if ( !getTypedControlWindow()->IsTravelSelect() )
             // fire a commit
-            m_aImplControl.notifyModifiedValue();
+            notifyModifiedValue();
     }
 
 
@@ -943,12 +943,11 @@ namespace pcr
     }
 
 
-    IMPL_LINK_NOARG( OComboboxControl, OnEntrySelected )
+    IMPL_LINK_NOARG_TYPED( OComboboxControl, OnEntrySelected, ComboBox&, void )
     {
         if ( !getTypedControlWindow()->IsTravelSelect() )
             // fire a commit
-            m_aImplControl.notifyModifiedValue();
-        return 0L;
+            notifyModifiedValue();
     }
 
 
@@ -960,16 +959,16 @@ namespace pcr
         VclPtr<MultiLineEdit>   m_aImplEdit;
 
     protected:
-        virtual void    Resize() SAL_OVERRIDE;
+        virtual void    Resize() override;
 
     public:
-                        OMultilineFloatingEdit(vcl::Window* _pParen);
+        explicit        OMultilineFloatingEdit(vcl::Window* _pParen);
         virtual         ~OMultilineFloatingEdit();
-        virtual void    dispose() SAL_OVERRIDE;
+        virtual void    dispose() override;
         MultiLineEdit&  getEdit() { return *m_aImplEdit.get(); }
 
     protected:
-        virtual bool    PreNotify(NotifyEvent& _rNEvt) SAL_OVERRIDE;
+        virtual bool    PreNotify(NotifyEvent& _rNEvt) override;
     };
 
 
@@ -1031,11 +1030,12 @@ namespace pcr
 
 
     DropDownEditControl::DropDownEditControl( vcl::Window* _pParent, WinBits _nStyle )
-        :DropDownEditControl_Base( _pParent, _nStyle )
+        :Edit( _pParent, _nStyle )
         ,m_pFloatingEdit( NULL )
         ,m_pDropdownButton( NULL )
         ,m_nOperationMode( eStringList )
-        ,m_bDropdown( false )
+        ,m_bDropdown(false)
+        ,m_pHelper(nullptr)
     {
         SetCompoundControl( true );
 
@@ -1058,13 +1058,13 @@ namespace pcr
     }
 
 
-    void DropDownEditControl::setControlHelper( ControlHelper& _rControlHelper )
+    void DropDownEditControl::setControlHelper( CommonBehaviourControlHelper& _rControlHelper )
     {
-        DropDownEditControl_Base::setControlHelper( _rControlHelper );
-        m_pFloatingEdit->getEdit().SetModifyHdl( LINK( &_rControlHelper, ControlHelper, ModifiedHdl ) );
-        m_pImplEdit->SetGetFocusHdl( LINK( &_rControlHelper, ControlHelper, GetFocusHdl ) );
-        m_pImplEdit->SetModifyHdl( LINK( &_rControlHelper, ControlHelper, ModifiedHdl ) );
-        m_pImplEdit->SetLoseFocusHdl( LINK( &_rControlHelper, ControlHelper, LoseFocusHdl ) );
+        m_pHelper = &_rControlHelper;
+        m_pFloatingEdit->getEdit().SetModifyHdl( LINK( &_rControlHelper, CommonBehaviourControlHelper, EditModifiedHdl ) );
+        m_pImplEdit->SetGetFocusHdl( LINK( &_rControlHelper, CommonBehaviourControlHelper, GetFocusHdl ) );
+        m_pImplEdit->SetModifyHdl( LINK( &_rControlHelper, CommonBehaviourControlHelper, EditModifiedHdl ) );
+        m_pImplEdit->SetLoseFocusHdl( LINK( &_rControlHelper, CommonBehaviourControlHelper, LoseFocusHdl ) );
     }
 
 
@@ -1079,7 +1079,7 @@ namespace pcr
         m_pImplEdit.disposeAndClear();
         m_pFloatingEdit.disposeAndClear();
         m_pDropdownButton.disposeAndClear();
-        DropDownEditControl_Base::dispose();
+        Edit::dispose();
     }
 
 
@@ -1127,7 +1127,7 @@ namespace pcr
                     ||  m_nOperationMode == eMultiLineText
                     )
             {
-                bResult = DropDownEditControl_Base::PreNotify( rNEvt );
+                bResult = Edit::PreNotify( rNEvt );
             }
             else if ( m_nOperationMode == eStringList )
             {
@@ -1151,7 +1151,7 @@ namespace pcr
             }
         }
         else
-            bResult = DropDownEditControl_Base::PreNotify(rNEvt);
+            bResult = Edit::PreNotify(rNEvt);
 
         return bResult;
     }
@@ -1362,6 +1362,7 @@ namespace pcr
                                    , false )
     {
         getTypedControlWindow()->setOperationMode( _eMode );
+        getTypedControlWindow()->setControlHelper( *this );
     }
 
 
@@ -1384,7 +1385,7 @@ namespace pcr
             Sequence< OUString > aStringLines;
             if ( !( _rValue >>= aStringLines ) && _rValue.hasValue() )
                 throw IllegalTypeException();
-            getTypedControlWindow()->SetStringListValue( aStringLines );
+            getTypedControlWindow()->SetStringListValue( StlSyntaxSequence<OUString>(aStringLines) );
         }
         break;
         }

@@ -76,7 +76,7 @@ static const sal_uInt64 n2power48 = SAL_CONST_UINT64( 281474976710656); // 2^48
 IMPL_FIXEDMEMPOOL_NEWDEL( ScTokenStack )
 IMPL_FIXEDMEMPOOL_NEWDEL( ScInterpreter )
 
-ScCalcConfig ScInterpreter::maGlobalConfig;
+ScCalcConfig *ScInterpreter::mpGlobalConfig = NULL;
 ScTokenStack* ScInterpreter::pGlobalStack = NULL;
 bool ScInterpreter::bGlobalStackInUse = false;
 
@@ -353,11 +353,11 @@ void ScInterpreter::ScIfError( bool bNAonly )
                     SCSIZE nC = 0, nR = 0;
                     for ( ; nC < nCols && (nC != nErrorCol || nR != nErrorRow); /*nop*/ )
                     {
-                        for ( ; nR < nRows && (nC != nErrorCol || nR != nErrorRow); ++nR)
+                        for (nR = 0 ; nR < nRows && (nC != nErrorCol || nR != nErrorRow); ++nR)
                         {
                             lcl_storeJumpMatResult(pMatPtr, pJumpMat, nC, nR);
                         }
-                        if (nC != nErrorCol || nR != nErrorRow)
+                        if (nC != nErrorCol && nR != nErrorRow)
                             ++nC;
                     }
                     // Now the mixed cases.
@@ -375,6 +375,7 @@ void ScInterpreter::ScIfError( bool bNAonly )
                                 lcl_storeJumpMatResult(pMatPtr, pJumpMat, nC, nR);
                             }
                         }
+                        nR = 0;
                     }
                     xNew = new ScJumpMatrixToken( pJumpMat );
                     GetTokenMatrixMap().insert( ScTokenMatrixMap::value_type( pCur, xNew ));
@@ -2334,7 +2335,7 @@ void ScInterpreter::ScCellExternal()
         // For SHEET, No idea what number we should set, but let's always set
         // 1 if the external sheet exists, no matter what sheet.  Excel does
         // the same.
-        if (pRefMgr->getCacheTable(nFileId, aTabName, false, NULL).get())
+        if (pRefMgr->getCacheTable(nFileId, aTabName, false).get())
             PushInt(1);
         else
             SetError(errNoName);
@@ -7877,17 +7878,17 @@ void ScInterpreter::ScFind()
     sal_uInt8 nParamCount = GetByte();
     if ( MustHaveParamCount( nParamCount, 2, 3 ) )
     {
-        double fAnz;
+        sal_Int32 nAnz;
         if (nParamCount == 3)
-            fAnz = GetDouble();
+            nAnz = GetDouble();
         else
-            fAnz = 1.0;
+            nAnz = 1;
         OUString sStr = GetString().getString();
-        if( fAnz < 1.0 || fAnz > (double) sStr.getLength() )
+        if (nAnz < 1 || nAnz > sStr.getLength())
             PushNoValue();
         else
         {
-            sal_Int32 nPos = sStr.indexOf(GetString().getString(), static_cast<sal_Int32>(fAnz - 1));
+            sal_Int32 nPos = sStr.indexOf(GetString().getString(), nAnz - 1);
             if (nPos == -1)
                 PushNoValue();
             else

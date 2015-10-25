@@ -114,7 +114,7 @@ namespace frm
 
     protected:
         // ToolBox overridables
-        virtual void        Select() SAL_OVERRIDE;
+        virtual void        Select() override;
 
     };
 
@@ -364,7 +364,7 @@ namespace frm
         }
 
         // translate them into command URLs
-        CommandURLs aCommandURLs( aFormFeatures.size() );
+        css::uno::Sequence< OUString > aCommandURLs( aFormFeatures.size() );
         for (   FormFeatures::const_iterator formFeature = aFormFeatures.begin();
                 formFeature != aFormFeatures.end();
                 ++formFeature

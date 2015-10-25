@@ -69,7 +69,7 @@ public:
               occurred while password verification. The password request loop
               will be aborted.
      */
-    virtual DocPasswordVerifierResult verifyPassword( const OUString& rPassword, ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue >& o_rEncryptionData ) = 0;
+    virtual DocPasswordVerifierResult verifyPassword( const OUString& rPassword, css::uno::Sequence< css::beans::NamedValue >& o_rEncryptionData ) = 0;
 
     /** Will be called every time an encryption data needs to be verified.
 
@@ -85,7 +85,7 @@ public:
               occurred while data verification. The password request loop
               will be aborted.
      */
-    virtual DocPasswordVerifierResult verifyEncryptionData( const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue >& o_rEncryptionData ) = 0;
+    virtual DocPasswordVerifierResult verifyEncryptionData( const css::uno::Sequence< css::beans::NamedValue >& o_rEncryptionData ) = 0;
 
 };
 
@@ -110,7 +110,7 @@ public:
             The sequence containing the hash and the algorithm-related info
       */
 
-    static ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >
+    static css::uno::Sequence< css::beans::PropertyValue >
         GenerateNewModifyPasswordInfo( const OUString& aPassword );
 
 
@@ -131,7 +131,7 @@ public:
 
     static bool IsModifyPasswordCorrect(
                 const OUString& aPassword,
-                const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& aInfo );
+                const css::uno::Sequence< css::beans::PropertyValue >& aInfo );
 
 
 
@@ -187,7 +187,7 @@ public:
             The hash represented by sequence of bytes in BigEndian form
       */
 
-    static ::com::sun::star::uno::Sequence< sal_Int8 > GetXLHashAsSequence(
+    static css::uno::Sequence< sal_Int8 > GetXLHashAsSequence(
                 const OUString& aString,
                 rtl_TextEncoding nEnc = RTL_TEXTENCODING_UTF8 );
 
@@ -197,7 +197,7 @@ public:
         requested length.
       */
 
-    static ::com::sun::star::uno::Sequence< sal_Int8 > GenerateRandomByteSequence(
+    static css::uno::Sequence< sal_Int8 > GenerateRandomByteSequence(
                 sal_Int32 nLength );
 
 
@@ -206,9 +206,9 @@ public:
         key digest value used by MSCodec_Std97 codec.
       */
 
-    static ::com::sun::star::uno::Sequence< sal_Int8 > GenerateStd97Key(
+    static css::uno::Sequence< sal_Int8 > GenerateStd97Key(
                 const OUString& aPassword,
-                const ::com::sun::star::uno::Sequence< sal_Int8 >& aDocId );
+                const css::uno::Sequence< sal_Int8 >& aDocId );
 
 
 
@@ -216,15 +216,15 @@ public:
         key digest value used by MSCodec_Std97 codec.
       */
 
-    static ::com::sun::star::uno::Sequence< sal_Int8 > GenerateStd97Key(
+    static css::uno::Sequence< sal_Int8 > GenerateStd97Key(
                 const sal_uInt16 pPassData[16],
-                const ::com::sun::star::uno::Sequence< sal_Int8 >& aDocId );
+                const css::uno::Sequence< sal_Int8 >& aDocId );
 
     /** This helper function generates a byte sequence representing the
         key digest value used by MSCodec_Std97 codec.
       */
 
-    static ::com::sun::star::uno::Sequence< sal_Int8 > GenerateStd97Key(
+    static css::uno::Sequence< sal_Int8 > GenerateStd97Key(
                 const sal_uInt16 pPassData[16],
                 const sal_uInt8 pDocId[16] );
 
@@ -259,8 +259,8 @@ public:
             The interaction handler that will be used to request a password
             from the user, e.g. by showing a password input dialog.
 
-        @param rDocumentName
-            The name of the related document that will be shown in the password
+        @param rDocumentUrl
+            The URL of the related document that will be shown in the password
             input dialog.
 
         @param eRequestType
@@ -283,13 +283,12 @@ public:
             passed password verifier. If empty, no valid password has been
             found, or the user has chossen to cancel password input.
      */
-    static ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue > requestAndVerifyDocPassword(
+    static css::uno::Sequence< css::beans::NamedValue > requestAndVerifyDocPassword(
                             IDocPasswordVerifier& rVerifier,
-                            const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::NamedValue >& rMediaEncData,
+                            const css::uno::Sequence< css::beans::NamedValue >& rMediaEncData,
                             const OUString& rMediaPassword,
-                            const ::com::sun::star::uno::Reference<
-                                ::com::sun::star::task::XInteractionHandler >& rxInteractHandler,
-                            const OUString& rDocumentName,
+                            const css::uno::Reference< css::task::XInteractionHandler >& rxInteractHandler,
+                            const OUString& rDocumentUrl,
                             DocPasswordRequestType eRequestType,
                             const ::std::vector< OUString >* pDefaultPasswords = 0,
                             bool* pbIsDefaultPassword = 0 );

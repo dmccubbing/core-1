@@ -44,9 +44,9 @@
 #include "svtools/viewdataentry.hxx"
 #include <algorithm>
 #include "dbtreelistbox.hxx"
-#include "IApplicationController.hxx"
 #include "imageprovider.hxx"
 #include "comphelper/processfactory.hxx"
+#include "AppController.hxx"
 
 using namespace ::dbaui;
 using namespace ::com::sun::star::uno;
@@ -500,7 +500,7 @@ void OTasksWindow::fillTaskEntryList( const TaskEntryList& _rList )
             SvTreeListEntry* pEntry = m_aCreation->InsertEntry( pTask->sTitle );
             pEntry->SetUserData( new TaskEntry( *pTask ) );
 
-            Image aImage = Image( *pImages );
+            Image aImage( *pImages );
             m_aCreation->SetExpandedEntryBmp(  pEntry, aImage );
             m_aCreation->SetCollapsedEntryBmp( pEntry, aImage );
         }
@@ -572,7 +572,7 @@ OApplicationDetailView::~OApplicationDetailView()
 
 void OApplicationDetailView::dispose()
 {
-    set(NULL,NULL);
+    set(NULL);
     setSplitter(NULL);
     m_aHorzSplitter.disposeAndClear();
     m_aTasks.disposeAndClear();

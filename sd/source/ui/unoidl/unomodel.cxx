@@ -118,13 +118,13 @@ class SdUnoForbiddenCharsTable : public SvxUnoForbiddenCharsTable,
                                  public SfxListener
 {
 public:
-    SdUnoForbiddenCharsTable( SdrModel* pModel );
+    explicit SdUnoForbiddenCharsTable(SdrModel* pModel);
     virtual ~SdUnoForbiddenCharsTable();
 
     // SfxListener
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) throw () SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) throw () override;
 protected:
-    virtual void onChange() SAL_OVERRIDE;
+    virtual void onChange() override;
 
 private:
     SdrModel*   mpModel;
@@ -1557,7 +1557,7 @@ public:
     // different, override the method and at least do what the method does.
     virtual drawinglayer::primitive2d::Primitive2DSequence createRedirectedPrimitive2DSequence(
         const sdr::contact::ViewObjectContact& rOriginal,
-        const sdr::contact::DisplayInfo& rDisplayInfo) SAL_OVERRIDE;
+        const sdr::contact::DisplayInfo& rDisplayInfo) override;
 };
 
 ImplRenderPaintProc::ImplRenderPaintProc( const SdrLayerAdmin& rLA, SdrPageView* pView, vcl::PDFExtOutDevData* pData )
@@ -1962,7 +1962,7 @@ void SAL_CALL SdXImpressDocument::render( sal_Int32 nRenderer, const uno::Any& r
                         SdPage* pPage = pPV ? static_cast<SdPage*>(pPV->GetPage()) : NULL;
                         if( pPage )
                         {
-                            SdrOutliner& rOutl = mpDoc->GetDrawOutliner( NULL );
+                            SdrOutliner& rOutl = mpDoc->GetDrawOutliner();
                             bool bScreenDisplay(true);
 
                             if(bScreenDisplay && pOut && OUTDEV_PRINTER == pOut->GetOutDevType())
@@ -2531,6 +2531,17 @@ void SdXImpressDocument::resetSelection()
     }
     // Reset graphic selection.
     pSdrView->UnmarkAll();
+}
+
+vcl::Window* SdXImpressDocument::getWindow()
+{
+    SolarMutexGuard aGuard;
+
+    DrawViewShell* pViewShell = GetViewShell();
+    if (!pViewShell)
+        return 0;
+
+    return pViewShell->GetActiveWindow();
 }
 
 uno::Reference< i18n::XForbiddenCharacters > SdXImpressDocument::getForbiddenCharsTable()

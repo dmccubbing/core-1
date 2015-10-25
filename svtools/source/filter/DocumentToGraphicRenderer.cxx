@@ -94,7 +94,8 @@ Size DocumentToGraphicRenderer::getDocumentSizeIn100mm(sal_Int32 aCurrentPage)
 Graphic DocumentToGraphicRenderer::renderToGraphic(
     sal_Int32 aCurrentPage,
     Size aDocumentSizePixel,
-    Size aTargetSizePixel)
+    Size aTargetSizePixel,
+    Color aPageColor)
 
 {
     if (!mxModel.is() || !mxController.is() || !mxRenderable.is())
@@ -127,6 +128,12 @@ Graphic DocumentToGraphicRenderer::renderToGraphic(
 
     aMtf.Record( pOutputDev );
 
+    if (aPageColor != Color(COL_TRANSPARENT))
+    {
+        pOutputDev->SetBackground(Wallpaper(aPageColor));
+        pOutputDev->Erase();
+    }
+
     uno::Any aSelection;
     aSelection <<= mxDocument;
     mxRenderable->render(aCurrentPage - 1, aSelection, renderProps );
@@ -141,6 +148,8 @@ Graphic DocumentToGraphicRenderer::renderToGraphic(
 sal_Int32 DocumentToGraphicRenderer::getCurrentPageWriter()
 {
     Reference<text::XTextViewCursorSupplier> xTextViewCursorSupplier(mxModel->getCurrentController(), UNO_QUERY);
+    if (!xTextViewCursorSupplier.is())
+        return 1;
     Reference<text::XPageCursor> xCursor(xTextViewCursorSupplier->getViewCursor(), UNO_QUERY);
     return xCursor->getPage();
 }

@@ -44,8 +44,8 @@ private:
 protected:
     void            CheckButtons();
     DECL_LINK_TYPED( CheckBoxHdl, Button*, void );
-    DECL_LINK( ComboBoxHighlightHdl, ComboBox * );
-    DECL_LINK( EditModifyHdl, Edit * );
+    DECL_LINK_TYPED( ComboBoxHighlightHdl, ComboBox&, void );
+    DECL_LINK_TYPED( EditModifyHdl, Edit&, void );
     DECL_LINK_TYPED( ButtonHdl, Button*, void );
     void            UpdateFields( BreakPoint* pBrk );
     BreakPoint*     GetSelectedBreakPoint();
@@ -54,7 +54,7 @@ protected:
 public:
             BreakPointDialog( vcl::Window* pParent, BreakPointList& rBrkList );
     virtual ~BreakPointDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void    SetCurrentBreakPoint( BreakPoint* pBrk );
 };

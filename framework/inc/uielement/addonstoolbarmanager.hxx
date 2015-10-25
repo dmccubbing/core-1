@@ -44,18 +44,18 @@ namespace framework
 class AddonsToolBarManager : public ToolBarManager
 {
     public:
-        AddonsToolBarManager( const com::sun::star::uno::Reference< com::sun::star::uno::XComponentContext >& rxContext,
-                              const com::sun::star::uno::Reference< com::sun::star::frame::XFrame >& rFrame,
+        AddonsToolBarManager( const css::uno::Reference< css::uno::XComponentContext >& rxContext,
+                              const css::uno::Reference< css::frame::XFrame >& rFrame,
                               const OUString& rResourceName,
                               ToolBox* pToolBar );
         virtual ~AddonsToolBarManager();
 
         // XComponent
-        void SAL_CALL dispose() throw ( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        void SAL_CALL dispose() throw ( css::uno::RuntimeException, std::exception ) override;
 
-        virtual void RefreshImages() SAL_OVERRIDE;
+        virtual void RefreshImages() override;
         using ToolBarManager::FillToolbar;
-        void FillToolbar( const com::sun::star::uno::Sequence< com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue > >& rAddonToolbar );
+        void FillToolbar( const css::uno::Sequence< css::uno::Sequence< css::beans::PropertyValue > >& rAddonToolbar );
 
     protected:
         DECL_LINK_TYPED(Click, ToolBox *, void);
@@ -64,7 +64,7 @@ class AddonsToolBarManager : public ToolBarManager
         DECL_LINK_TYPED(StateChanged, StateChangedType const *, void );
         DECL_LINK_TYPED(DataChanged, DataChangedEvent const *, void );
 
-        virtual bool MenuItemAllowed( sal_uInt16 ) const SAL_OVERRIDE;
+        virtual bool MenuItemAllowed( sal_uInt16 ) const override;
 };
 
 }

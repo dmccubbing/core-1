@@ -410,7 +410,7 @@ private:
                                 const SwFrameFormat& rSrcFormat, SwFrameFormat& rDestFormat );
     static SwFormat* FindFormatByName( const SwFormatsBase& rFormatArr, const OUString& rName );
 
-    SwDoc( const SwDoc &) SAL_DELETED_FUNCTION;
+    SwDoc( const SwDoc &) = delete;
 
     // Database fields:
     void AddUsedDBToList( std::vector<OUString>& rDBNameList,
@@ -478,9 +478,9 @@ public:
     SwNodes const& GetNodes() const { return *m_pNodes; }
 
     // IInterface
-    virtual sal_Int32 acquire() SAL_OVERRIDE;
-    virtual sal_Int32 release() SAL_OVERRIDE;
-    virtual sal_Int32 getReferenceCount() const SAL_OVERRIDE;
+    virtual sal_Int32 acquire() override;
+    virtual sal_Int32 release() override;
+    virtual sal_Int32 getReferenceCount() const override;
 
     // IDocumentSettingAccess
     IDocumentSettingAccess const & getIDocumentSettingAccess() const; //The IDocumentSettingAccess interface

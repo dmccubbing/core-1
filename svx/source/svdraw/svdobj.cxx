@@ -2616,10 +2616,8 @@ SdrObject* SdrObject::ConvertToContourObj(SdrObject* pRet, bool bForceLineDash) 
     }
     else
     {
-        if(pRet && dynamic_cast<const SdrPathObj*>( pRet) !=  nullptr)
+        if (SdrPathObj *pPathObj = dynamic_cast<SdrPathObj*>(pRet))
         {
-            SdrPathObj* pPathObj = static_cast<SdrPathObj*>(pRet);
-
             // bezier geometry got created, even for straight edges since the given
             // object is a result of DoConvertToPolyObj. For conversion to contour
             // this is not really needed and can be reduced again AFAP
@@ -2950,7 +2948,7 @@ SvxShape* SdrObject::getSvxShape()
         }
         else
         {
-            mpSvxShape = SvxDrawPage::CreateShapeByTypeAndInventor( GetObjIdentifier(), GetObjInventor(), this, NULL );
+            mpSvxShape = SvxDrawPage::CreateShapeByTypeAndInventor( GetObjIdentifier(), GetObjInventor(), this );
             maWeakUnoShape = xShape = static_cast< ::cppu::OWeakObject* >( mpSvxShape );
         }
     }

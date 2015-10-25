@@ -64,10 +64,8 @@ TextCharacterSpacingControl::TextCharacterSpacingControl (
 {
     initial();
     FreeResource();
-    Link<> aLink = LINK(this, TextCharacterSpacingControl, KerningSelectHdl);
-    maLBKerning->SetSelectHdl(aLink);
-    aLink =LINK(this, TextCharacterSpacingControl, KerningModifyHdl);
-    maEditKerning->SetModifyHdl(aLink);
+    maLBKerning->SetSelectHdl(LINK(this, TextCharacterSpacingControl, KerningSelectHdl));
+    maEditKerning->SetModifyHdl(LINK(this, TextCharacterSpacingControl, KerningModifyHdl));
 
 }
 
@@ -379,7 +377,7 @@ IMPL_LINK_TYPED(TextCharacterSpacingControl, VSSelHdl, ValueSet*, pControl, void
     }
 }
 
-IMPL_LINK(TextCharacterSpacingControl, KerningSelectHdl, ListBox*,)
+IMPL_LINK_NOARG_TYPED(TextCharacterSpacingControl, KerningSelectHdl, ListBox&, void)
 {
     if ( maLBKerning->GetSelectEntryPos() > 0 )
     {
@@ -402,11 +400,10 @@ IMPL_LINK(TextCharacterSpacingControl, KerningSelectHdl, ListBox*,)
         Invalidate();
         maVSSpacing->StartSelection();
     }
-    KerningModifyHdl( NULL );
-    return 0;
+    KerningModifyHdl( *maEditKerning );
 }
 
-IMPL_LINK(TextCharacterSpacingControl, KerningModifyHdl, MetricField*,)
+IMPL_LINK_NOARG_TYPED(TextCharacterSpacingControl, KerningModifyHdl, Edit&, void)
 {
     if ( maVSSpacing->GetSelectItemId() > 0 )
     {
@@ -453,7 +450,6 @@ IMPL_LINK(TextCharacterSpacingControl, KerningModifyHdl, MetricField*,)
     }
     SvxKerningItem aKernItem(nKern, SID_ATTR_CHAR_KERNING);
     mpBindings->GetDispatcher()->Execute(SID_ATTR_CHAR_KERNING, SfxCallMode::RECORD, &aKernItem, 0L);
-    return 0;
 }
 
 }} // end of namespace sidebar

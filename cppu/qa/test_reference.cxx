@@ -48,7 +48,7 @@ public:
     }
 
     virtual Any SAL_CALL queryInterface(const Type & _type)
-        throw (RuntimeException, std::exception) SAL_OVERRIDE
+        throw (RuntimeException, std::exception) override
     {
         Any aInterface;
         if (_type == cppu::UnoType<XInterface>::get())
@@ -65,12 +65,12 @@ public:
         return Any();
     }
 
-    virtual void SAL_CALL acquire() throw () SAL_OVERRIDE
+    virtual void SAL_CALL acquire() throw () override
     {
         osl_atomic_increment( &m_refCount );
     }
 
-    virtual void SAL_CALL release() throw () SAL_OVERRIDE
+    virtual void SAL_CALL release() throw () override
     {
         if ( 0 == osl_atomic_decrement( &m_refCount ) )
             delete this;
@@ -89,12 +89,12 @@ private:
 // intended cases:
 
 struct Base1: public css::uno::XInterface {
-    virtual ~Base1() SAL_DELETED_FUNCTION;
+    virtual ~Base1() = delete;
 };
-struct Base2: public Base1 { virtual ~Base2() SAL_DELETED_FUNCTION; };
-struct Base3: public Base1 { virtual ~Base3() SAL_DELETED_FUNCTION; };
+struct Base2: public Base1 { virtual ~Base2() = delete; };
+struct Base3: public Base1 { virtual ~Base3() = delete; };
 struct Derived: public Base2, public Base3 {
-    virtual ~Derived() SAL_DELETED_FUNCTION;
+    virtual ~Derived() = delete;
 };
 
 // The special case using the conversion operator instead:

@@ -29,7 +29,7 @@ class SVT_DLLPUBLIC SvEmbedTransferHelper : public TransferableHelper
 {
 private:
 
-    ::com::sun::star::uno::Reference< ::com::sun::star::embed::XEmbeddedObject > m_xObj;
+    css::uno::Reference< css::embed::XEmbeddedObject > m_xObj;
     Graphic* m_pGraphic;
     sal_Int64 m_nAspect;
 
@@ -37,13 +37,13 @@ private:
 
 protected:
 
-    virtual void        AddSupportedFormats() SAL_OVERRIDE;
-    virtual bool        GetData( const css::datatransfer::DataFlavor& rFlavor, const OUString& rDestDoc ) SAL_OVERRIDE;
-    virtual void        ObjectReleased() SAL_OVERRIDE;
+    virtual void        AddSupportedFormats() override;
+    virtual bool        GetData( const css::datatransfer::DataFlavor& rFlavor, const OUString& rDestDoc ) override;
+    virtual void        ObjectReleased() override;
 
 public:
     // object, replacement image, and the aspect
-    SvEmbedTransferHelper( const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XEmbeddedObject >& xObj,
+    SvEmbedTransferHelper( const css::uno::Reference< css::embed::XEmbeddedObject >& xObj,
                            const Graphic* pGraphic,
                             sal_Int64 nAspect );
     virtual ~SvEmbedTransferHelper();
@@ -51,7 +51,7 @@ public:
     void SetParentShellID( const OUString& rShellID );
 
     static void         FillTransferableObjectDescriptor( TransferableObjectDescriptor& rDesc,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::embed::XEmbeddedObject >& xObj,
+                            const css::uno::Reference< css::embed::XEmbeddedObject >& xObj,
                             const Graphic* pGraphic,
                             sal_Int64 nAspect );
 };

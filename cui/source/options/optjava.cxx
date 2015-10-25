@@ -121,7 +121,7 @@ public:
         aStaticTabs[4] = aStaticTabs[3] + nVersionWidth;
         SvSimpleTable::SetTabs(aStaticTabs, MAP_PIXEL);
     }
-    virtual void Resize() SAL_OVERRIDE
+    virtual void Resize() override
     {
         svx::SvxRadioButtonListBox::Resize();
         setColSizes();
@@ -815,7 +815,7 @@ SvxJavaParameterDlg::SvxJavaParameterDlg( vcl::Window* pParent ) :
     m_pAssignedList->SetSelectHdl( LINK( this, SvxJavaParameterDlg, SelectHdl_Impl ) );
     m_pAssignedList->SetDoubleClickHdl( LINK( this, SvxJavaParameterDlg, DblClickHdl_Impl ) );
 
-    ModifyHdl_Impl( m_pParameterEdit );
+    ModifyHdl_Impl( *m_pParameterEdit );
     EnableRemoveButton();
 }
 
@@ -834,12 +834,10 @@ void SvxJavaParameterDlg::dispose()
 }
 
 
-IMPL_LINK_NOARG(SvxJavaParameterDlg, ModifyHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxJavaParameterDlg, ModifyHdl_Impl, Edit&, void)
 {
     OUString sParam = comphelper::string::strip(m_pParameterEdit->GetText(), ' ');
     m_pAssignBtn->Enable(!sParam.isEmpty());
-
-    return 0;
 }
 
 
@@ -854,17 +852,16 @@ IMPL_LINK_NOARG_TYPED(SvxJavaParameterDlg, AssignHdl_Impl, Button*, void)
             nPos = m_pAssignedList->InsertEntry( sParam );
         m_pAssignedList->SelectEntryPos( nPos );
         m_pParameterEdit->SetText( OUString() );
-        ModifyHdl_Impl( m_pParameterEdit );
+        ModifyHdl_Impl( *m_pParameterEdit );
         EnableRemoveButton();
     }
 }
 
 
 
-IMPL_LINK_NOARG(SvxJavaParameterDlg, SelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxJavaParameterDlg, SelectHdl_Impl, ListBox&, void)
 {
     EnableRemoveButton();
-    return 0;
 }
 
 
@@ -1066,10 +1063,9 @@ IMPL_LINK_NOARG_TYPED(SvxJavaClassPathDlg, RemoveHdl_Impl, Button*, void)
 
 
 
-IMPL_LINK_NOARG(SvxJavaClassPathDlg, SelectHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxJavaClassPathDlg, SelectHdl_Impl, ListBox&, void)
 {
     EnableRemoveButton();
-    return 0;
 }
 
 
@@ -1129,7 +1125,7 @@ void SvxJavaClassPathDlg::SetClassPath( const OUString& _rPath )
     }
     // select first entry
     m_pPathList->SelectEntryPos(0);
-    SelectHdl_Impl( NULL );
+    SelectHdl_Impl( *m_pPathList );
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

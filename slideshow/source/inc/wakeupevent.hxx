@@ -24,7 +24,6 @@
 #include "event.hxx"
 #include "activitiesqueue.hxx"
 
-#include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace slideshow {
@@ -45,10 +44,10 @@ public:
         std::shared_ptr< ::canvas::tools::ElapsedTime > const& pTimeBase,
         ActivitiesQueue & rActivityQueue );
 
-    virtual void dispose() SAL_OVERRIDE;
-    virtual bool fire() SAL_OVERRIDE;
-    virtual bool isCharged() const SAL_OVERRIDE;
-    virtual double getActivationTime( double nCurrentTime ) const SAL_OVERRIDE;
+    virtual void dispose() override;
+    virtual bool fire() override;
+    virtual bool isCharged() const override;
+    virtual double getActivationTime( double nCurrentTime ) const override;
 
     /// Start the internal timer
     void start();

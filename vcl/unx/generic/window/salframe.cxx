@@ -41,9 +41,6 @@
 #include <X11/keysym.h>
 #include "FWS.hxx"
 #include <X11/extensions/shape.h>
-#if !defined(SOLARIS) && !defined(AIX)
-#include <X11/extensions/dpms.h>
-#endif
 #include <postx.h>
 
 #include "unx/salunx.h"
@@ -736,7 +733,7 @@ void X11SalFrame::Init( SalFrameStyleFlags nSalFrameStyle, SalX11Screen nXScreen
                         SalFrameStyleFlags::INTRO |
                         SalFrameStyleFlags::PARTIAL_FULLSCREEN) )
              == SalFrameStyleFlags::DEFAULT )
-            pDisplay_->getWMAdaptor()->maximizeFrame( this, true );
+            pDisplay_->getWMAdaptor()->maximizeFrame( this );
 
         if( !netwm_icon.empty() && GetDisplay()->getWMAdaptor()->getAtom( WMAdaptor::NET_WM_ICON ))
             XChangeProperty( GetXDisplay(), mhWindow,
@@ -803,7 +800,6 @@ X11SalFrame::X11SalFrame( SalFrame *pParent, SalFrameStyleFlags nSalFrameStyle,
     mbInShow                    = false;
     m_bXEmbed                   = false;
 
-    nScreenSaversTimeout_       = 0;
 
     mpInputContext              = NULL;
     mbInputFocus                = False;
@@ -2022,7 +2018,7 @@ void X11SalFrame::Maximize()
         nShowState_ = SHOWSTATE_NORMAL;
     }
 
-    pDisplay_->getWMAdaptor()->maximizeFrame( this, true );
+    pDisplay_->getWMAdaptor()->maximizeFrame( this );
 }
 
 void X11SalFrame::Restore()
@@ -2189,179 +2185,27 @@ void X11SalFrame::ShowFullScreen( bool bFullScreen, sal_Int32 nScreen )
     }
 }
 
-/* ---------------------------------------------------------------------
-   the xautolock pseudo screen saver needs special treatment since it
-   doesn't cooperate with XxxxScreenSaver settings
-   ------------------------------------------------------------------- */
-
-static Bool
-IsRunningXAutoLock( Display *p_display, ::Window a_window )
-{
-    const char *p_atomname = "XAUTOLOCK_SEMAPHORE_PID";
-    Atom        a_pidatom;
-
-    // xautolock interns this atom
-    a_pidatom    = XInternAtom( p_display, p_atomname, True );
-    if ( a_pidatom == None )
-        return False;
-
-    Atom          a_type;
-    int           n_format;
-    unsigned long n_items;
-    unsigned long n_bytes_after;
-    pid_t        *p_pid;
-    pid_t         n_pid;
-    // get pid of running xautolock
-    XGetWindowProperty (p_display, a_window, a_pidatom, 0L, 2L, False,
-            AnyPropertyType, &a_type, &n_format, &n_items, &n_bytes_after,
-            reinterpret_cast<unsigned char**>(&p_pid) );
-    n_pid = *p_pid;
-    XFree( p_pid );
-
-      if ( a_type == XA_INTEGER )
-      {
-        // check if xautolock pid points to a running process
-        if ( kill(n_pid, 0) == -1 )
-            return False;
-        else
-            return True;
-    }
-
-    return False;
-}
-
-/* definitions from xautolock.c (pl15) */
-#define XAUTOLOCK_DISABLE 1
-#define XAUTOLOCK_ENABLE  2
-
-static Bool
-MessageToXAutoLock( Display *p_display, int n_message )
-{
-    const char *p_atomname = "XAUTOLOCK_MESSAGE" ;
-    Atom        a_messageatom;
-    ::Window    a_rootwindow;
-
-    a_rootwindow = RootWindowOfScreen( ScreenOfDisplay(p_display, 0) );
-    if ( ! IsRunningXAutoLock(p_display, a_rootwindow) )
-    {
-        // remove any pending messages
-        a_messageatom = XInternAtom( p_display, p_atomname, True );
-        if ( a_messageatom != None )
-            XDeleteProperty( p_display, a_rootwindow, a_messageatom );
-        return False;
-    }
-
-    a_messageatom = XInternAtom( p_display, p_atomname, False );
-    XChangeProperty (p_display, a_rootwindow, a_messageatom, XA_INTEGER,
-            8, PropModeReplace, reinterpret_cast<unsigned char*>(&n_message), sizeof(n_message) );
-
-    return True;
-}
-
 void X11SalFrame::StartPresentation( bool bStart )
 {
+    maScreenSaverInhibitor.inhibit( bStart,
+                                    "presentation",
+                                    true, // isX11
+                                    mhWindow,
+                                    GetXDisplay() );
+
     vcl::I18NStatus::get().show( !bStart, vcl::I18NStatus::presentation );
-    if ( bStart )
-        MessageToXAutoLock( GetXDisplay(), XAUTOLOCK_DISABLE );
-    else
-        MessageToXAutoLock( GetXDisplay(), XAUTOLOCK_ENABLE );
 
     if( ! bStart && hPresentationWindow != None )
         doReparentPresentationDialogues( GetDisplay() );
     hPresentationWindow = (bStart && IsOverrideRedirect() ) ? GetWindow() : None;
 
-    // needs static here to save DPMS settings
-    int dummy;
-    static bool DPMSExtensionAvailable =
-#if !defined(SOLARIS) && !defined(AIX)
-        (DPMSQueryExtension(GetXDisplay(), &dummy, &dummy) != 0);
-    static sal_Bool DPMSEnabled = false;
-#else
-        false;
-    bool DPMSEnabled = false;
-    (void)dummy;
-#define CARD16 unsigned short
-#endif
-    static CARD16 dpms_standby_timeout=0;
-    static CARD16 dpms_suspend_timeout=0;
-    static CARD16 dpms_off_timeout=0;
-
-    if( bStart || nScreenSaversTimeout_ || DPMSEnabled)
+    if( bStart && hPresentationWindow )
     {
-        if( hPresentationWindow )
-        {
-            /*  #i10559# workaround for WindowMaker: try to restore
-             *  current focus after presentation window is gone
-             */
-            int revert_to = 0;
-            XGetInputFocus( GetXDisplay(), &hPresFocusWindow, &revert_to );
-        }
-        int timeout, interval, prefer_blanking, allow_exposures;
-        XGetScreenSaver( GetXDisplay(),
-                         &timeout,
-                         &interval,
-                         &prefer_blanking,
-                         &allow_exposures );
-
-        // get the DPMS state right before the start
-        if (DPMSExtensionAvailable)
-        {
-#if !defined(SOLARIS) && !defined(AIX)
-            CARD16 state; // card16 is defined in Xdm.h
-            DPMSInfo(   GetXDisplay(),
-                        &state,
-                        &DPMSEnabled);
-#endif
-        }
-        if( bStart ) // start show
-        {
-            if ( timeout )
-            {
-                nScreenSaversTimeout_ = timeout;
-                XResetScreenSaver( GetXDisplay() );
-                XSetScreenSaver( GetXDisplay(),
-                                 0,
-                                 interval,
-                                 prefer_blanking,
-                                 allow_exposures );
-            }
-#if !defined(SOLARIS) && !defined(AIX)
-            if( DPMSEnabled )
-            {
-                if ( DPMSExtensionAvailable )
-                {
-                    DPMSGetTimeouts(    GetXDisplay(),
-                                        &dpms_standby_timeout,
-                                        &dpms_suspend_timeout,
-                                        &dpms_off_timeout);
-                    DPMSSetTimeouts(GetXDisplay(), 0,0,0);
-                }
-            }
-#endif
-        }
-        else
-        {
-            if( nScreenSaversTimeout_ )
-            {
-                XSetScreenSaver( GetXDisplay(),
-                             nScreenSaversTimeout_,
-                             interval,
-                             prefer_blanking,
-                             allow_exposures );
-                nScreenSaversTimeout_ = 0;
-            }
-#if !defined(SOLARIS) && !defined(AIX)
-            if ( DPMSEnabled )
-            {
-                if ( DPMSExtensionAvailable )
-                {
-                // restore timeouts
-                    DPMSSetTimeouts(GetXDisplay(), dpms_standby_timeout,
-                        dpms_suspend_timeout, dpms_off_timeout);
-                }
-            }
-#endif
-        }
+        /*  #i10559# workaround for WindowMaker: try to restore
+         *  current focus after presentation window is gone
+         */
+        int revert_to = 0;
+        XGetInputFocus( GetXDisplay(), &hPresFocusWindow, &revert_to );
     }
 }
 

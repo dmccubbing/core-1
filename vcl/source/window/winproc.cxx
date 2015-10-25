@@ -859,7 +859,7 @@ static vcl::Window* ImplGetKeyInputWindow( vcl::Window* pWindow )
     // system this is often the case when a Lookup Choice Window has
     // the focus - because this windows send the KeyInput directly to
     // the window without resetting the focus
-    DBG_ASSERTWARNING( pChild == pSVData->maWinData.mpFocusWin,
+    SAL_WARN_IF( pChild != pSVData->maWinData.mpFocusWin, "vcl",
                        "ImplHandleKey: Keyboard-Input is sent to a frame without focus" );
 
     // no keyinput to disabled windows
@@ -1054,7 +1054,7 @@ static bool ImplHandleKey( vcl::Window* pWindow, MouseNotifyEvent nSVEvent,
 
             // ContextMenu
             if ( (nCode == KEY_CONTEXTMENU) || ((nCode == KEY_F10) && aKeyCode.IsShift() && !aKeyCode.IsMod1() && !aKeyCode.IsMod2() ) )
-                bRet = !ImplCallCommand( pChild, CommandEventId::ContextMenu, NULL, false );
+                bRet = !ImplCallCommand( pChild, CommandEventId::ContextMenu );
             else if ( ( (nCode == KEY_F2) && aKeyCode.IsShift() ) || ( (nCode == KEY_F1) && aKeyCode.IsMod1() ) ||
                 // #101999# no active help when focus in toolbox, simulate BallonHelp instead
                 ( (nCode == KEY_F1) && aKeyCode.IsShift() && bToolboxFocus ) )
@@ -1500,7 +1500,7 @@ public:
         m_aWheelData = CommandWheelData(rEvt.mnDelta, rEvt.mnNotchDelta, rEvt.mnScrollLines, nMode, nCode, bHorz, bPixel);
 
     }
-    virtual bool CallCommand(vcl::Window *pWindow, const Point &rMousePos) SAL_OVERRIDE
+    virtual bool CallCommand(vcl::Window *pWindow, const Point &rMousePos) override
     {
         return ImplCallWheelCommand(pWindow, rMousePos, &m_aWheelData);
     }
@@ -1569,7 +1569,7 @@ public:
     {
         m_aSwipeData = CommandSwipeData(rEvt.mnVelocityX);
     }
-    virtual bool CallCommand(vcl::Window *pWindow, const Point &/*rMousePos*/) SAL_OVERRIDE
+    virtual bool CallCommand(vcl::Window *pWindow, const Point &/*rMousePos*/) override
     {
         return ImplCallCommand(pWindow, CommandEventId::Swipe, &m_aSwipeData);
     }
@@ -1591,7 +1591,7 @@ public:
     {
         m_aLongPressData = CommandLongPressData(rEvt.mnX, rEvt.mnY);
     }
-    virtual bool CallCommand(vcl::Window *pWindow, const Point &/*rMousePos*/) SAL_OVERRIDE
+    virtual bool CallCommand(vcl::Window *pWindow, const Point &/*rMousePos*/) override
     {
         return ImplCallCommand(pWindow, CommandEventId::LongPress, &m_aLongPressData);
     }

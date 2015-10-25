@@ -120,7 +120,7 @@ namespace drawinglayer
             attribute::FontAttribute                maFontAttribute;
 
             /// The Locale for the text
-            ::com::sun::star::lang::Locale          maLocale;
+            css::lang::Locale                      maLocale;
 
             /// font color
             basegfx::BColor                         maFontColor;
@@ -132,11 +132,11 @@ namespace drawinglayer
             long                                    mnWidthToFill;      // the width to fill
 
             /// The fill color of the text
-            Color                         maTextFillColor;
+            Color                                   maTextFillColor;
 
         protected:
             /// local decomposition.
-            virtual Primitive2DSequence create2DDecomposition(const geometry::ViewInformation2D& rViewInformation) const SAL_OVERRIDE;
+            virtual Primitive2DSequence create2DDecomposition(const geometry::ViewInformation2D& rViewInformation) const override;
 
         public:
             /// constructor
@@ -147,7 +147,7 @@ namespace drawinglayer
                 sal_Int32 nTextLength,
                 const ::std::vector< double >& rDXArray,
                 const attribute::FontAttribute& rFontAttribute,
-                const ::com::sun::star::lang::Locale& rLocale,
+                const css::lang::Locale& rLocale,
                 const basegfx::BColor& rFontColor,
                 bool bFilled = false,
                 long nWidthToFill = 0,
@@ -166,24 +166,24 @@ namespace drawinglayer
             sal_Int32 getTextLength() const { return mnTextLength; }
             const ::std::vector< double >& getDXArray() const { return maDXArray; }
             const attribute::FontAttribute& getFontAttribute() const { return maFontAttribute; }
-            const ::com::sun::star::lang::Locale& getLocale() const { return  maLocale; }
+            const css::lang::Locale& getLocale() const { return  maLocale; }
             const basegfx::BColor& getFontColor() const { return maFontColor; }
             const Color& getTextFillColor() const { return maTextFillColor; }
             bool isFilled() const { return mbFilled; }
             long getWidthToFill() const { return mnWidthToFill; }
 
             /// compare operator
-            virtual bool operator==( const BasePrimitive2D& rPrimitive ) const SAL_OVERRIDE;
+            virtual bool operator==( const BasePrimitive2D& rPrimitive ) const override;
 
             /// get range
-            virtual basegfx::B2DRange getB2DRange(const geometry::ViewInformation2D& rViewInformation) const SAL_OVERRIDE;
+            virtual basegfx::B2DRange getB2DRange(const geometry::ViewInformation2D& rViewInformation) const override;
 
             /// provide unique ID
             DeclPrimitive2DIDBlock()
         };
 
         /// small helper to have a compare operator for Locale
-        bool DRAWINGLAYER_DLLPUBLIC LocalesAreEqual(const ::com::sun::star::lang::Locale& rA, const ::com::sun::star::lang::Locale& rB);
+        bool DRAWINGLAYER_DLLPUBLIC LocalesAreEqual(const css::lang::Locale& rA, const css::lang::Locale& rB);
 
     } // end of namespace primitive2d
 } // end of namespace drawinglayer

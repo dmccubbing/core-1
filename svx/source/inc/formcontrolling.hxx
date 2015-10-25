@@ -186,14 +186,14 @@ namespace svx
         virtual ~FormControllerHelper();
 
         // XFeatureInvalidation
-        virtual void SAL_CALL invalidateFeatures( const ::com::sun::star::uno::Sequence< ::sal_Int16 >& Features ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-        virtual void SAL_CALL invalidateAllFeatures() throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL invalidateFeatures( const ::com::sun::star::uno::Sequence< ::sal_Int16 >& Features ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
+        virtual void SAL_CALL invalidateAllFeatures() throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
         // XSQLErrorListener
-        virtual void SAL_CALL errorOccured( const ::com::sun::star::sdb::SQLErrorEvent& _Event ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL errorOccured( const ::com::sun::star::sdb::SQLErrorEvent& _Event ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
         // XEventListener
-        virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& Source ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& Source ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
     private:
         enum FormOperation { EXECUTE, EXECUTE_ARGS, COMMIT_CONTROL, COMMIT_RECORD };
@@ -209,8 +209,8 @@ namespace svx
         }
 
     private:
-        FormControllerHelper( const FormControllerHelper& ) SAL_DELETED_FUNCTION;
-        FormControllerHelper& operator=( const FormControllerHelper& ) SAL_DELETED_FUNCTION;
+        FormControllerHelper( const FormControllerHelper& ) = delete;
+        FormControllerHelper& operator=( const FormControllerHelper& ) = delete;
     };
 
 

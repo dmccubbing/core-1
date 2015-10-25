@@ -78,12 +78,12 @@ void FuConstructArc::DoExecute( SfxRequest& rReq )
 
     if (pArgs)
     {
-        SFX_REQUEST_ARG (rReq, pCenterX, SfxUInt32Item, ID_VAL_CENTER_X, false);
-        SFX_REQUEST_ARG (rReq, pCenterY, SfxUInt32Item, ID_VAL_CENTER_Y, false);
-        SFX_REQUEST_ARG (rReq, pAxisX, SfxUInt32Item, ID_VAL_AXIS_X, false);
-        SFX_REQUEST_ARG (rReq, pAxisY, SfxUInt32Item, ID_VAL_AXIS_Y, false);
-        SFX_REQUEST_ARG (rReq, pPhiStart, SfxUInt32Item, ID_VAL_ANGLESTART, false);
-        SFX_REQUEST_ARG (rReq, pPhiEnd, SfxUInt32Item, ID_VAL_ANGLEEND, false);
+        const SfxUInt32Item* pCenterX = rReq.GetArg<SfxUInt32Item>(ID_VAL_CENTER_X);
+        const SfxUInt32Item* pCenterY = rReq.GetArg<SfxUInt32Item>(ID_VAL_CENTER_Y);
+        const SfxUInt32Item* pAxisX = rReq.GetArg<SfxUInt32Item>(ID_VAL_AXIS_X);
+        const SfxUInt32Item* pAxisY = rReq.GetArg<SfxUInt32Item>(ID_VAL_AXIS_Y);
+        const SfxUInt32Item* pPhiStart = rReq.GetArg<SfxUInt32Item>(ID_VAL_ANGLESTART);
+        const SfxUInt32Item* pPhiEnd = rReq.GetArg<SfxUInt32Item>(ID_VAL_ANGLEEND);
 
         Rectangle   aNewRectangle (pCenterX->GetValue () - pAxisX->GetValue () / 2,
                                    pCenterY->GetValue () - pAxisY->GetValue () / 2,

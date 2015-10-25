@@ -1632,9 +1632,9 @@ sal_Int32 SwBasicEscherEx::WriteGrfBullet(const Graphic& rGrf)
         {
             aSize = OutputDevice::LogicToLogic( aSize,rGrf.GetPrefMapMode(), aMap100mm );
         }
-        Point aEmptyPoint = Point();
+        Point aEmptyPoint;
         Rectangle aRect( aEmptyPoint, aSize );
-        sal_uInt32 nBlibId = mxGlobal->GetBlibID( *(mxGlobal->QueryPictureStream()), aUniqueId,aRect, NULL, 0 );
+        sal_uInt32 nBlibId = mxGlobal->GetBlibID( *(mxGlobal->QueryPictureStream()), aUniqueId,aRect );
         if (nBlibId)
             aPropOpt.AddOpt(ESCHER_Prop_pib, nBlibId, true);
     }
@@ -1722,11 +1722,11 @@ sal_Int32 SwBasicEscherEx::WriteGrfFlyFrame(const SwFrameFormat& rFormat, sal_uI
                     aGraphic.GetPrefMapMode(), aMap100mm );
             }
 
-            Point aEmptyPoint = Point();
+            Point aEmptyPoint;
             Rectangle aRect( aEmptyPoint, aSize );
 
             sal_uInt32 nBlibId = mxGlobal->GetBlibID( *QueryPictureStream(),
-                aUniqueId, aRect, NULL, 0 );
+                aUniqueId, aRect );
             if (nBlibId)
                 aPropOpt.AddOpt(ESCHER_Prop_pib, nBlibId, true);
         }
@@ -1928,11 +1928,11 @@ void SwBasicEscherEx::WriteBrushAttr(const SvxBrushItem &rBrush,
                     rGraphic.GetPrefMapMode(), aMap100mm);
             }
 
-            Point aEmptyPoint = Point();
+            Point aEmptyPoint;
             Rectangle aRect(aEmptyPoint, aSize);
 
             sal_uInt32 nBlibId = mxGlobal->GetBlibID( *QueryPictureStream(),
-                aUniqueId, aRect, NULL, 0);
+                aUniqueId, aRect);
             if (nBlibId)
                 rPropOpt.AddOpt(ESCHER_Prop_fillBlip,nBlibId,true);
         }
@@ -2301,7 +2301,7 @@ SwEscherEx::SwEscherEx(SvStream* pStrm, WW8Export& rWW8Wrt)
 
         OpenContainer( ESCHER_DgContainer );
 
-        EnterGroup( 0 );
+        EnterGroup();
 
         sal_uLong nSecondShapeId = pSdrObjs == rWrt.m_pSdrObjs ? GenerateShapeId() : 0;
 
@@ -3057,7 +3057,7 @@ void SwBasicEscherEx::WriteOLEPicture(EscherPropertyContainer &rPropOpt,
         aRect.Right() = DrawModelToEmu(aRect.Right());
         aRect.Bottom() = DrawModelToEmu(aRect.Bottom());
         sal_uInt32 nBlibId = mxGlobal->GetBlibID( *QueryPictureStream(),
-            aId, aRect, pVisArea, 0);    // SJ: the fourth parameter (VisArea) should be set..
+            aId, aRect, pVisArea);    // SJ: the fourth parameter (VisArea) should be set..
         if (nBlibId)
             rPropOpt.AddOpt(ESCHER_Prop_pib, nBlibId, true);
     }
@@ -3192,15 +3192,13 @@ bool SwMSConvertControls::ExportControl(WW8Export &rWW8Wrt, const SdrUnoObj& rFo
 
     //Open the ObjectPool
     tools::SvRef<SotStorage> xObjPool = rWW8Wrt.GetWriter().GetStorage().OpenSotStorage(
-        OUString(SL::aObjectPool), STREAM_READWRITE |
-        StreamMode::SHARE_DENYALL);
+        OUString(SL::aObjectPool));
 
     //Create a destination storage for the microsoft control
     OUStringBuffer sStorageName;
     sal_uInt32 nObjId = GenerateObjectID();
     sStorageName.append('_').append( static_cast<sal_Int64>( nObjId ));
-    tools::SvRef<SotStorage> xOleStg = xObjPool->OpenSotStorage(sStorageName.makeStringAndClear(),
-                 STREAM_READWRITE|StreamMode::SHARE_DENYALL);
+    tools::SvRef<SotStorage> xOleStg = xObjPool->OpenSotStorage(sStorageName.makeStringAndClear());
 
     if (!xOleStg.Is())
         return false;

@@ -45,8 +45,8 @@ class FormulaListBox : public ListBox
 {
 protected:
 
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
 
 public:
                     FormulaListBox( vcl::Window* pParent, WinBits nBits );
@@ -72,7 +72,7 @@ private:
 
 
     void impl_addFunctions(const IFunctionCategory* _pCategory);
-                    DECL_LINK( SelHdl, ListBox* );
+                    DECL_LINK_TYPED( SelHdl, ListBox&, void );
                     DECL_LINK_TYPED(DblClkHdl, ListBox&, void);
 
 protected:
@@ -85,7 +85,7 @@ public:
 
                     FuncPage( vcl::Window* pParent,const IFunctionManager* _pFunctionManager);
     virtual         ~FuncPage();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
     void            SetCategory(sal_Int32  nCat);
     void            SetFunction(sal_Int32  nFunc);

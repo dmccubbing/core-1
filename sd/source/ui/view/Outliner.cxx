@@ -18,6 +18,7 @@
  */
 
 #include "Outliner.hxx"
+#include <boost/property_tree/json_parser.hpp>
 #include <vcl/wrkwin.hxx>
 #include <vcl/settings.hxx>
 
@@ -71,6 +72,7 @@
 #include <svx/svxids.hrc>
 #include <editeng/editerr.hxx>
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
+#include <comphelper/string.hxx>
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
@@ -80,6 +82,12 @@ using namespace ::com::sun::star::linguistic2;
 class SfxStyleSheetPool;
 
 namespace sd {
+
+SearchSelection::SearchSelection(int nPage, const OString& rRectangles)
+    : m_nPage(nPage),
+    m_aRectangles(rRectangles)
+{
+}
 
 class Outliner::Implementation
 {
@@ -482,7 +490,7 @@ bool Outliner::StartSearchAndReplace (const SvxSearchItem* pSearchItem)
         Initialize ( ! mpSearchItem->GetBackward());
 
         const SvxSearchCmd nCommand (mpSearchItem->GetCommand());
-        if (nCommand == SvxSearchCmd::REPLACE_ALL)
+        if (nCommand == SvxSearchCmd::FIND_ALL || nCommand == SvxSearchCmd::REPLACE_ALL)
             bEndOfSearch = SearchAndReplaceAll ();
         else
         {
@@ -490,7 +498,12 @@ bool Outliner::StartSearchAndReplace (const SvxSearchItem* pSearchItem)
             bEndOfSearch = SearchAndReplaceOnce ();
             // restore start position if nothing was found
             if(!mbStringFound)
+            {
                 RestoreStartPosition ();
+                // Nothing was changed, no need to restart the spellchecker.
+                if (nCommand == SvxSearchCmd::FIND)
+                    bEndOfSearch = false;
+            }
             mnStartPageIndex = (sal_uInt16)-1;
         }
 
@@ -580,6 +593,7 @@ void Outliner::Initialize (bool bDirectionIsForward)
 
 bool Outliner::SearchAndReplaceAll()
 {
+    bool bRet = true;
     // Save the current position to be restored after having replaced all
     // matches.
     RememberStartPosition ();
@@ -591,6 +605,7 @@ bool Outliner::SearchAndReplaceAll()
         return true;
     }
 
+    std::vector<SearchSelection> aSelections;
     if( 0 != dynamic_cast< const OutlineViewShell *>( pViewShell.get() ))
     {
         // Put the cursor to the beginning/end of the outliner.
@@ -615,18 +630,70 @@ bool Outliner::SearchAndReplaceAll()
         bool bFoundMatch;
         do
         {
-            bFoundMatch = ! SearchAndReplaceOnce();
+            bFoundMatch = ! SearchAndReplaceOnce(&aSelections);
+            if (mpSearchItem->GetCommand() == SvxSearchCmd::FIND_ALL && pViewShell->GetDoc()->isTiledRendering() && bFoundMatch && aSelections.size() == 1)
+            {
+                // Without this, RememberStartPosition() will think it already has a remembered position.
+                mnStartPageIndex = (sal_uInt16)-1;
+
+                RememberStartPosition();
+
+                // So when RestoreStartPosition() restores the first match, then spellchecker doesn't kill the selection.
+                bRet = false;
+            }
         }
         while (bFoundMatch);
+
+        if (mpSearchItem->GetCommand() == SvxSearchCmd::FIND_ALL && pViewShell->GetDoc()->isTiledRendering() && !aSelections.empty())
+        {
+            boost::property_tree::ptree aTree;
+            aTree.put("searchString", mpSearchItem->GetSearchString().toUtf8().getStr());
+
+            boost::property_tree::ptree aChildren;
+            for (const SearchSelection& rSelection : aSelections)
+            {
+                boost::property_tree::ptree aChild;
+                aChild.put("part", OString::number(rSelection.m_nPage).getStr());
+                aChild.put("rectangles", rSelection.m_aRectangles.getStr());
+                aChildren.push_back(std::make_pair("", aChild));
+            }
+            aTree.add_child("searchResultSelection", aChildren);
+
+            std::stringstream aStream;
+            boost::property_tree::write_json(aStream, aTree);
+            OString aPayload = aStream.str().c_str();
+            pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_SEARCH_RESULT_SELECTION, aPayload.getStr());
+        }
     }
 
     RestoreStartPosition ();
+
+    if (mpSearchItem->GetCommand() == SvxSearchCmd::FIND_ALL && pViewShell->GetDoc()->isTiledRendering() && !bRet)
+    {
+        // Find-all, tiled rendering and we have at least one match.
+        OString aPayload = OString::number(mnStartPageIndex);
+        pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_SET_PART, aPayload.getStr());
+
+        // Emit a selection callback here:
+        // 1) The original one is no longer valid, as we there was a SET_PART in between
+        // 2) The underlying editeng will only talk about the first match till
+        // it doesn't support multi-selection.
+        std::vector<OString> aRectangles;
+        for (const SearchSelection& rSelection : aSelections)
+        {
+            if (rSelection.m_nPage == mnStartPageIndex)
+                aRectangles.push_back(rSelection.m_aRectangles);
+        }
+        OString sRectangles = comphelper::string::join("; ", aRectangles);
+        pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION, sRectangles.getStr());
+    }
+
     mnStartPageIndex = (sal_uInt16)-1;
 
-    return true;
+    return bRet;
 }
 
-bool Outliner::SearchAndReplaceOnce()
+bool Outliner::SearchAndReplaceOnce(std::vector<SearchSelection>* pSelections)
 {
     DetectChange ();
 
@@ -714,11 +781,41 @@ bool Outliner::SearchAndReplaceOnce()
 
     mpDrawDocument->GetDocSh()->SetWaitCursor( false );
 
-    // notify LibreOfficeKit about changed page
     if (pViewShell && pViewShell->GetDoc()->isTiledRendering() && mbStringFound)
     {
-        OString aPayload = OString::number(maCurrentPosition.mnPageIndex);
-        pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_SET_PART, aPayload.getStr());
+        std::vector<Rectangle> aLogicRects;
+        pOutlinerView->GetSelectionRectangles(aLogicRects);
+
+        std::vector<OString> aLogicRectStrings;
+        std::transform(aLogicRects.begin(), aLogicRects.end(), std::back_inserter(aLogicRectStrings), [](const Rectangle& rRectangle) { return rRectangle.toString(); });
+        OString sRectangles = comphelper::string::join("; ", aLogicRectStrings);
+
+        if (!pSelections)
+        {
+            // notify LibreOfficeKit about changed page
+            OString aPayload = OString::number(maCurrentPosition.mnPageIndex);
+            pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_SET_PART, aPayload.getStr());
+
+            // also about search result selections
+            boost::property_tree::ptree aTree;
+            aTree.put("searchString", mpSearchItem->GetSearchString().toUtf8().getStr());
+
+            boost::property_tree::ptree aChildren;
+            boost::property_tree::ptree aChild;
+            aChild.put("part", OString::number(maCurrentPosition.mnPageIndex).getStr());
+            aChild.put("rectangles", sRectangles.getStr());
+            aChildren.push_back(std::make_pair("", aChild));
+            aTree.add_child("searchResultSelection", aChildren);
+
+            std::stringstream aStream;
+            boost::property_tree::write_json(aStream, aTree);
+            aPayload = aStream.str().c_str();
+            pViewShell->GetDoc()->libreOfficeKitCallback(LOK_CALLBACK_SEARCH_RESULT_SELECTION, aPayload.getStr());
+        }
+        else
+        {
+            pSelections->push_back(SearchSelection(maCurrentPosition.mnPageIndex, sRectangles));
+        }
     }
 
     return mbEndOfSearch;
@@ -896,7 +993,17 @@ void Outliner::RestoreStartPosition()
                 std::dynamic_pointer_cast<DrawViewShell>(pViewShell));
             SetViewMode (meStartViewMode);
             if (pDrawViewShell.get() != NULL)
+            {
                 SetPage (meStartEditMode, mnStartPageIndex);
+                mpObj = mpStartEditedObject;
+                if (mpObj)
+                {
+                    PutTextIntoOutliner();
+                    EnterEditMode(false);
+                    if (OutlinerView* pOutlinerView = mpImpl->GetOutlinerView())
+                        pOutlinerView->SetSelection(maStartSelection);
+                }
+            }
         }
         else if( 0 != dynamic_cast< const OutlineViewShell *>( pViewShell.get() ))
         {
@@ -951,7 +1058,11 @@ void Outliner::ProvideNextTextObject()
             // Switch to the current object only if it is a valid text object.
             if (IsValidTextObject (maCurrentPosition))
             {
-                mpObj = SetObject (maCurrentPosition);
+                // Don't set yet in case of searching: the text object may not match.
+                if (meMode != SEARCH)
+                    mpObj = SetObject(maCurrentPosition);
+                else
+                    mpObj = maCurrentPosition.mxObject.get();
             }
             ++maObjectIterator;
 
@@ -977,6 +1088,10 @@ void Outliner::ProvideNextTextObject()
         }
         else
         {
+            if (meMode == SEARCH)
+                // Instead of doing a full-blown SetObject(), which would do the same -- but would also possibly switch pages.
+                mbStringFound = false;
+
             mbEndOfSearch = true;
             EndOfSearch ();
         }
@@ -1169,6 +1284,9 @@ void Outliner::PrepareSearchAndReplace()
 {
     if (HasText( *mpSearchItem ))
     {
+        // Set the object now that we know it matches.
+        mpObj = SetObject(maCurrentPosition);
+
         mbStringFound = true;
         mbMatchMayExist = true;
 

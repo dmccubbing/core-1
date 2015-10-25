@@ -1,3 +1,11 @@
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
+/*
+ * This file is part of the LibreOffice project.
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ */
 #include <ShadowPropertyPanel.hxx>
 #include <comphelper/string.hxx>
 #include <sfx2/sidebar/ControlFactory.hxx>
@@ -118,22 +126,24 @@ void ShadowPropertyPanel::dispose()
 
 void ShadowPropertyPanel::Initialize()
 {
-    SfxObjectShell* pDocSh = SfxObjectShell::Current();
-    const SfxPoolItem* pItem = pDocSh->GetItem(SID_COLOR_TABLE);
-    pColorList = static_cast<const SvxColorListItem*>(pItem) ->GetColorList();
-    mpLBShadowColor->Fill(pColorList);
-    mpShowShadow->SetState( TRISTATE_FALSE );
-    mpShowShadow->SetClickHdl( LINK(this, ShadowPropertyPanel, ClickShadowHdl ) );
-    Link<> aLink = LINK( this, ShadowPropertyPanel, ModifyShadowColorHdl );
-    mpShadowTransMetric->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowTransMetricHdl) );
-    mpLBShadowColor->SetSelectHdl( aLink );
-    mpShadowAngle->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowDistanceHdl) );
-    mpShadowDistance->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowDistanceHdl) );
-    mpShadowTransSlider->SetRange(Range(0,100));
-    mpShadowTransSlider->SetUpdateMode(true);
-    mpShadowTransSlider->SetSlideHdl( LINK(this, ShadowPropertyPanel, ModifyShadowTransSliderHdl) );
-    InsertDistanceValues();
-    InsertAngleValues();
+    SfxObjectShell* pSh = SfxObjectShell::Current();
+
+    const SvxColorListItem* pColorListItem = static_cast<const SvxColorListItem*>(pSh ? pSh->GetItem(SID_COLOR_TABLE) : nullptr);
+    if (pColorListItem)
+    {
+        mpLBShadowColor->Fill(pColorListItem->GetColorList());
+        mpShowShadow->SetState( TRISTATE_FALSE );
+        mpShowShadow->SetClickHdl( LINK(this, ShadowPropertyPanel, ClickShadowHdl ) );
+        mpShadowTransMetric->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowTransMetricHdl) );
+        mpLBShadowColor->SetSelectHdl( LINK( this, ShadowPropertyPanel, ModifyShadowColorHdl ) );
+        mpShadowAngle->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowDistanceHdl) );
+        mpShadowDistance->SetModifyHdl( LINK(this, ShadowPropertyPanel, ModifyShadowDistanceHdl) );
+        mpShadowTransSlider->SetRange(Range(0,100));
+        mpShadowTransSlider->SetUpdateMode(true);
+        mpShadowTransSlider->SetSlideHdl( LINK(this, ShadowPropertyPanel, ModifyShadowTransSliderHdl) );
+        InsertDistanceValues();
+        InsertAngleValues();
+    }
 }
 
 IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ClickShadowHdl, Button*, void)
@@ -150,20 +160,18 @@ IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ClickShadowHdl, Button*, void)
     }
 }
 
-IMPL_LINK_NOARG(ShadowPropertyPanel, ModifyShadowColorHdl)
+IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ModifyShadowColorHdl, ListBox&, void)
 {
     XColorItem aItem(makeSdrShadowColorItem(mpLBShadowColor->GetSelectEntryColor()));
     GetBindings()->GetDispatcher()->Execute(SID_ATTR_SHADOW_COLOR, SfxCallMode::RECORD, &aItem,  0L);
-    return 0;
 }
 
-IMPL_LINK_NOARG(ShadowPropertyPanel, ModifyShadowTransMetricHdl)
+IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ModifyShadowTransMetricHdl, Edit&, void)
 {
     sal_uInt16 nVal = mpShadowTransMetric->GetValue();
     SetTransparencyValue(nVal);
     SdrPercentItem aItem( makeSdrShadowTransparenceItem(nVal) );
     GetBindings()->GetDispatcher()->Execute(SID_ATTR_SHADOW_TRANSPARENCE, SfxCallMode::RECORD, &aItem , 0L);
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ModifyShadowTransSliderHdl, Slider*, void)
@@ -174,7 +182,7 @@ IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ModifyShadowTransSliderHdl, Slider*, 
     GetBindings()->GetDispatcher()->Execute(SID_ATTR_SHADOW_TRANSPARENCE, SfxCallMode::RECORD, &aItem, 0L);
 }
 
-IMPL_LINK_NOARG(ShadowPropertyPanel, ModifyShadowDistanceHdl)
+IMPL_LINK_NOARG_TYPED(ShadowPropertyPanel, ModifyShadowDistanceHdl, Edit&, void)
 {
     OUString sAngle = mpShadowAngle->GetText();
     nXY = mpShadowDistance->GetValue(FUNIT_100TH_MM);
@@ -193,7 +201,6 @@ IMPL_LINK_NOARG(ShadowPropertyPanel, ModifyShadowDistanceHdl)
     SdrMetricItem aYItem(makeSdrShadowYDistItem(nY));
     GetBindings()->GetDispatcher()->Execute(SID_ATTR_SHADOW_XDISTANCE, SfxCallMode::RECORD, &aXItem, 0L);
     GetBindings()->GetDispatcher()->Execute(SID_ATTR_SHADOW_YDISTANCE, SfxCallMode::RECORD, &aYItem, 0L);
-    return 0;
 }
 
 void ShadowPropertyPanel::UpdateControls()
@@ -366,3 +373,5 @@ VclPtr<vcl::Window> ShadowPropertyPanel::Create (
 }
 
 }
+
+/* vim:set shiftwidth=4 softtabstop=4 expandtab: */

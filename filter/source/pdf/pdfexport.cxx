@@ -269,7 +269,7 @@ class PDFExportStreamDoc : public vcl::PDFOutputStream
     {}
     virtual ~PDFExportStreamDoc();
 
-    virtual void write( const Reference< XOutputStream >& xStream ) SAL_OVERRIDE;
+    virtual void write( const Reference< XOutputStream >& xStream ) override;
 };
 
 PDFExportStreamDoc::~PDFExportStreamDoc()
@@ -972,8 +972,8 @@ public:
     explicit PDFErrorRequest( const task::PDFExportException& i_rExc );
 
     // XInteractionRequest
-    virtual uno::Any SAL_CALL getRequest() throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual uno::Sequence< uno::Reference< task::XInteractionContinuation > > SAL_CALL getContinuations() throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual uno::Any SAL_CALL getRequest() throw (uno::RuntimeException, std::exception) override;
+    virtual uno::Sequence< uno::Reference< task::XInteractionContinuation > > SAL_CALL getContinuations() throw (uno::RuntimeException, std::exception) override;
 };
 
 PDFErrorRequest::PDFErrorRequest( const task::PDFExportException& i_rExc ) :
@@ -1081,7 +1081,7 @@ void PDFExport::ImplWriteWatermark( vcl::PDFWriter& rWriter, const Size& rPageSi
 
     // adjust font height for text to fit
     OutputDevice* pDev = rWriter.GetReferenceDevice();
-    pDev->Push( PushFlags::ALL );
+    pDev->Push();
     pDev->SetFont( aFont );
     pDev->SetMapMode( MapMode( MAP_POINT ) );
     int w = 0;
@@ -1105,7 +1105,7 @@ void PDFExport::ImplWriteWatermark( vcl::PDFWriter& rWriter, const Size& rPageSi
     nTextHeight += nTextHeight/20;
     pDev->Pop();
 
-    rWriter.Push( PushFlags::ALL );
+    rWriter.Push();
     rWriter.SetMapMode( MapMode( MAP_POINT ) );
     rWriter.SetFont( aFont );
     rWriter.SetTextColor( COL_LIGHTGREEN );

@@ -56,7 +56,7 @@ private:
     sal_uInt16          nAnchorCtrls;
     Link<SvxSwFrameValidation&,void> aValidateLink;
 
-    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) SAL_OVERRIDE;
+    virtual void        PageCreated( sal_uInt16 nId, SfxTabPage &rPage ) override;
 
 public:
 
@@ -137,31 +137,31 @@ private:
     void SetMinMaxPosition();
     void GetTopLeftPosition(double& rfX, double& rfY, const basegfx::B2DRange& rRange);
 
-    DECL_LINK( ChangeWidthHdl, void * );
-    DECL_LINK( ChangeHeightHdl, void * );
+    DECL_LINK_TYPED( ChangeWidthHdl, Edit&, void );
+    DECL_LINK_TYPED( ChangeHeightHdl, Edit&, void );
     DECL_LINK_TYPED( ClickSizeProtectHdl, Button*, void );
     DECL_LINK_TYPED( ClickAutoHdl, Button*, void );
 
 public:
     SvxPositionSizeTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxPositionSizeTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() {  return pPosSizeRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void         Construct();
     void         SetView( const SdrView* pSdrView ) { mpView = pSdrView; }
 
-    virtual void FillUserData() SAL_OVERRIDE;
+    virtual void FillUserData() override;
 
     void        DisableResize();
     void        DisableProtect();
@@ -203,18 +203,18 @@ private:
 public:
          SvxAngleTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxAngleTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16*  GetRanges() { return pAngleRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void         Construct();
     void         SetView( const SdrView* pSdrView ) { pView = pSdrView; }
@@ -237,6 +237,12 @@ private:
     VclPtr<VclFrame>            m_pFlAngle;
     VclPtr<MetricField>         m_pMtrAngle;
 
+    VclPtr<VclFrame>            m_aControlGroups[2];
+    VclPtr<VclContainer>        m_aControlGroupX[2];
+    VclPtr<MetricField>         m_aControlX[2];
+    VclPtr<VclContainer>        m_aControlGroupY[2];
+    VclPtr<MetricField>         m_aControlY[2];
+
     const SfxItemSet&   rOutAttrs;
 
     const SdrView*      pView;
@@ -250,18 +256,18 @@ private:
 public:
          SvxSlantTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
     virtual ~SvxSlantTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
     static const sal_uInt16* GetRanges() {  return pSlantRanges; }
 
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
-    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) SAL_OVERRIDE;
+    virtual void PointChanged( vcl::Window* pWindow, RECT_POINT eRP ) override;
 
     void         Construct();
     void         SetView( const SdrView* pSdrView ) { pView = pSdrView; }

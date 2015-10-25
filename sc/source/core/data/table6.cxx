@@ -45,7 +45,7 @@ bool lcl_GetTextWithBreaks( const EditTextObject& rData, ScDocument* pDoc, OUStr
 
     EditEngine& rEngine = pDoc->GetEditEngine();
     rEngine.SetText(rData);
-    rVal = rEngine.GetText( LINEEND_LF );
+    rVal = rEngine.GetText();
     return ( rEngine.GetParagraphCount() > 1 );
 }
 
@@ -60,6 +60,7 @@ bool ScTable::SearchCell(const SvxSearchItem& rSearchItem, SCCOL nCol, SCROW nRo
     bool    bFound = false;
     bool    bDoSearch = true;
     bool    bDoBack = rSearchItem.GetBackward();
+    bool    bSearchFormatted = rSearchItem.IsSearchFormatted();
 
     OUString  aString;
     ScRefCellValue aCell;
@@ -85,7 +86,10 @@ bool ScTable::SearchCell(const SvxSearchItem& rSearchItem, SCCOL nCol, SCROW nRo
                 bMultiLine = lcl_GetTextWithBreaks(*aCell.mpEditText, pDocument, aString);
             else
             {
-                aCol[nCol].GetInputString( nRow, aString );
+                if( !bSearchFormatted )
+                    aCol[nCol].GetInputString( nRow, aString );
+                else
+                    aCol[nCol].GetString( nRow, aString );
             }
         }
         break;
@@ -94,7 +98,10 @@ bool ScTable::SearchCell(const SvxSearchItem& rSearchItem, SCCOL nCol, SCROW nRo
                 bMultiLine = lcl_GetTextWithBreaks(*aCell.mpEditText, pDocument, aString);
             else
             {
-                aCol[nCol].GetInputString( nRow, aString );
+                if( !bSearchFormatted )
+                    aCol[nCol].GetInputString( nRow, aString );
+                else
+                    aCol[nCol].GetString( nRow, aString );
             }
             break;
         case SvxSearchCellType::NOTE:
@@ -265,7 +272,7 @@ void ScTable::SkipFilteredRows(SCROW& rRow, SCROW& rLastNonFilteredRow, bool bFo
             return;
 
         SCROW nFirstRow = rRow;
-        if (RowFiltered(rRow, &nFirstRow, NULL))
+        if (RowFiltered(rRow, &nFirstRow))
             // move to the first non-filtered row.
             rRow = nFirstRow - 1;
         else

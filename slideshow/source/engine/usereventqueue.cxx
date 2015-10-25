@@ -27,8 +27,6 @@
 #include <com/sun/star/awt/MouseButton.hpp>
 #include <com/sun/star/awt/MouseEvent.hpp>
 
-#include <boost/bind.hpp>
-
 #include "delayevent.hxx"
 #include "usereventqueue.hxx"
 #include "cursormanager.hxx"
@@ -61,10 +59,10 @@ typedef std::map<ShapeSharedPtr, ImpEventQueue,
 class MouseEventHandler_ : public MouseEventHandler
 {
 public:
-    virtual bool handleMousePressed( awt::MouseEvent const& /*e*/ ) SAL_OVERRIDE { return false;}
-    virtual bool handleMouseReleased( awt::MouseEvent const& /*e*/) SAL_OVERRIDE { return false;}
-    virtual bool handleMouseDragged( awt::MouseEvent const& /*e*/ ) SAL_OVERRIDE { return false;}
-    virtual bool handleMouseMoved( awt::MouseEvent const& /*e*/ ) SAL_OVERRIDE { return false; }
+    virtual bool handleMousePressed( awt::MouseEvent const& /*e*/ ) override { return false;}
+    virtual bool handleMouseReleased( awt::MouseEvent const& /*e*/) override { return false;}
+    virtual bool handleMouseDragged( awt::MouseEvent const& /*e*/ ) override { return false;}
+    virtual bool handleMouseMoved( awt::MouseEvent const& /*e*/ ) override { return false; }
 };
 
 /** @return one event has been posted
@@ -126,7 +124,7 @@ public:
         maAnimationEventMap()
     {}
 
-    virtual bool handleAnimationEvent( const AnimationNodeSharedPtr& rNode ) SAL_OVERRIDE
+    virtual bool handleAnimationEvent( const AnimationNodeSharedPtr& rNode ) override
     {
         ENSURE_OR_RETURN_FALSE(
             rNode,
@@ -193,13 +191,13 @@ public:
 private:
 
     // triggered by API calls, e.g. space bar
-    virtual bool handleEvent() SAL_OVERRIDE
+    virtual bool handleEvent() override
     {
         return handleEvent_impl();
     }
 
     // triggered by mouse release:
-    virtual bool handleMouseReleased( const awt::MouseEvent& evt ) SAL_OVERRIDE
+    virtual bool handleMouseReleased( const awt::MouseEvent& evt ) override
     {
         if(evt.Buttons != awt::MouseButton::LEFT)
             return false;
@@ -245,7 +243,7 @@ public:
     void skipEffect() { handleEvent_impl(false); }
 
 private:
-    virtual bool handleEvent_impl() SAL_OVERRIDE
+    virtual bool handleEvent_impl() override
     {
         return handleEvent_impl(true);
     }
@@ -391,14 +389,14 @@ public:
         mrCursorManager( rCursorManager )
     {}
 
-    virtual bool handleMouseReleased( const awt::MouseEvent& e ) SAL_OVERRIDE
+    virtual bool handleMouseReleased( const awt::MouseEvent& e ) override
     {
         if(e.Buttons != awt::MouseButton::LEFT)
             return false;
         return processEvent( e );
     }
 
-    virtual bool handleMouseMoved( const awt::MouseEvent& e ) SAL_OVERRIDE
+    virtual bool handleMouseMoved( const awt::MouseEvent& e ) override
     {
         // TODO(P2): Maybe buffer last shape touched
 
@@ -423,7 +421,7 @@ public:
         : MouseHandlerBase( rEventQueue ),
           mpLastShape() {}
 
-    virtual bool handleMouseMoved( const awt::MouseEvent& e ) SAL_OVERRIDE
+    virtual bool handleMouseMoved( const awt::MouseEvent& e ) override
     {
         // TODO(P2): Maybe buffer last shape touched, and
         // check against that _first_
@@ -461,7 +459,7 @@ public:
         : MouseHandlerBase( rEventQueue ),
           maLastIter() {}
 
-    virtual bool handleMouseMoved( const awt::MouseEvent& e ) SAL_OVERRIDE
+    virtual bool handleMouseMoved( const awt::MouseEvent& e ) override
     {
         // TODO(P2): Maybe buffer last shape touched, and
         // check against that _first_
@@ -636,8 +634,8 @@ void UserEventQueue::registerAnimationStartEvent(
     registerEvent( mpAnimationStartEventHandler,
                    rEvent,
                    xNode,
-                   boost::bind( &EventMultiplexer::addAnimationStartHandler,
-                                boost::ref( mrMultiplexer ), _1 ) );
+                   [this]( const AnimationEventHandlerSharedPtr& rHandler )
+                   { return this->mrMultiplexer.addAnimationStartHandler( rHandler ); } );
 }
 
 void UserEventQueue::registerAnimationEndEvent(
@@ -647,8 +645,8 @@ void UserEventQueue::registerAnimationEndEvent(
     registerEvent( mpAnimationEndEventHandler,
                    rEvent,
                    xNode,
-                   boost::bind( &EventMultiplexer::addAnimationEndHandler,
-                                boost::ref( mrMultiplexer ), _1 ) );
+                   [this]( const AnimationEventHandlerSharedPtr& rHandler )
+                   { return this->mrMultiplexer.addAnimationEndHandler( rHandler ); } );
 }
 
 void UserEventQueue::registerAudioStoppedEvent(
@@ -658,8 +656,8 @@ void UserEventQueue::registerAudioStoppedEvent(
     registerEvent( mpAudioStoppedEventHandler,
                    rEvent,
                    xNode,
-                   boost::bind( &EventMultiplexer::addAudioStoppedHandler,
-                                boost::ref( mrMultiplexer ), _1 ) );
+                   [this]( const AnimationEventHandlerSharedPtr& rHandler )
+                   { return this->mrMultiplexer.addAudioStoppedHandler( rHandler ); } );
 }
 
 void UserEventQueue::registerShapeClickEvent( const EventSharedPtr& rEvent,
@@ -783,9 +781,8 @@ void UserEventQueue::registerMouseEnterEvent( const EventSharedPtr& rEvent,
     registerEvent( mpMouseEnterHandler,
                    rEvent,
                    rShape,
-                   boost::bind( &EventMultiplexer::addMouseMoveHandler,
-                                boost::ref( mrMultiplexer ), _1,
-                                0.0 /* default prio */ ) );
+                   [this]( const MouseEventHandlerSharedPtr& rHandler )
+                   { return this->mrMultiplexer.addMouseMoveHandler( rHandler, 0.0 ); } );
 }
 
 void UserEventQueue::registerMouseLeaveEvent( const EventSharedPtr& rEvent,
@@ -794,9 +791,8 @@ void UserEventQueue::registerMouseLeaveEvent( const EventSharedPtr& rEvent,
     registerEvent( mpMouseLeaveHandler,
                    rEvent,
                    rShape,
-                   boost::bind( &EventMultiplexer::addMouseMoveHandler,
-                                boost::ref( mrMultiplexer ), _1,
-                                0.0 /* default prio */ ) );
+                   [this]( const MouseEventHandlerSharedPtr& rHandler )
+                   { return this->mrMultiplexer.addMouseMoveHandler( rHandler, 0.0 ); } );
 }
 
 void UserEventQueue::callSkipEffectEventHandler()

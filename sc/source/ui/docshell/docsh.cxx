@@ -568,7 +568,7 @@ bool ScDocShell::Load( SfxMedium& rMedium )
     {
         if (GetMedium())
         {
-            SFX_ITEMSET_ARG( rMedium.GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, false);
+            const SfxUInt16Item* pUpdateDocItem = SfxItemSet::GetItem<SfxUInt16Item>(rMedium.GetItemSet(), SID_UPDATEDOCMODE, false);
             nCanUpdate = pUpdateDocItem ? pUpdateDocItem->GetValue() : com::sun::star::document::UpdateDocMode::NO_UPDATE;
         }
 
@@ -597,7 +597,7 @@ bool ScDocShell::Load( SfxMedium& rMedium )
         aDocument.InvalidateTableArea();
 
     bIsEmpty = false;
-    FinishedLoading( SfxLoadedFlags::ALL );
+    FinishedLoading();
     return bRet;
 }
 
@@ -860,7 +860,7 @@ void ScDocShell::Notify( SfxBroadcaster&, const SfxHint& rHint )
                                             aValues[0].Name = "FilterName";
                                             aValues[0].Value <<= OUString( GetMedium()->GetFilter()->GetFilterName() );
 
-                                            SFX_ITEMSET_ARG( GetMedium()->GetItemSet(), pPasswordItem, SfxStringItem, SID_PASSWORD, false);
+                                            const SfxStringItem* pPasswordItem = SfxItemSet::GetItem<SfxStringItem>(GetMedium()->GetItemSet(), SID_PASSWORD, false);
                                             if ( pPasswordItem && !pPasswordItem->GetValue().isEmpty() )
                                             {
                                                 aValues.realloc( 2 );
@@ -983,7 +983,7 @@ bool ScDocShell::LoadFrom( SfxMedium& rMedium )
 
     if (GetMedium())
     {
-        SFX_ITEMSET_ARG( rMedium.GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, false);
+        const SfxUInt16Item* pUpdateDocItem = SfxItemSet::GetItem<SfxUInt16Item>(rMedium.GetItemSet(), SID_UPDATEDOCMODE, false);
         nCanUpdate = pUpdateDocItem ? pUpdateDocItem->GetValue() : com::sun::star::document::UpdateDocMode::NO_UPDATE;
     }
 
@@ -1052,7 +1052,7 @@ bool ScDocShell::ConvertFrom( SfxMedium& rMedium )
     //  So make sure that we transfer the whole file with CreateFileStream
     rMedium.GetPhysicalName();  //! Call CreateFileStream directly, if available
 
-    SFX_ITEMSET_ARG( rMedium.GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, false);
+    const SfxUInt16Item* pUpdateDocItem = SfxItemSet::GetItem<SfxUInt16Item>(rMedium.GetItemSet(), SID_UPDATEDOCMODE, false);
     nCanUpdate = pUpdateDocItem ? pUpdateDocItem->GetValue() : com::sun::star::document::UpdateDocMode::NO_UPDATE;
 
     const SfxFilter* pFilter = rMedium.GetFilter();
@@ -1152,6 +1152,14 @@ bool ScDocShell::ConvertFrom( SfxMedium& rMedium )
             }
             else
                 bRet = true;
+        }
+        else if (aFltName == "Gnumeric Spreadsheet")
+        {
+            ScOrcusFilters* pOrcus = ScFormatFilter::Get().GetOrcusFilters();
+            if (!pOrcus)
+                return false;
+
+            bRet = pOrcus->importGnumeric(aDocument, rMedium);
         }
         else if (aFltName == pFilterAscii)
         {
@@ -1502,7 +1510,7 @@ bool ScDocShell::ConvertFrom( SfxMedium& rMedium )
             aUpdater.update();
         }
     }
-    FinishedLoading( SfxLoadedFlags::ALL );
+    FinishedLoading();
 
     // invalidate eventually temporary table areas
     if ( bRet )
@@ -1547,7 +1555,7 @@ bool ScDocShell::LoadExternal( SfxMedium& rMed )
                 return false;
         }
 
-        FinishedLoading(SfxLoadedFlags::ALL);
+        FinishedLoading();
         return true;
     }
 
@@ -3188,7 +3196,7 @@ void ScDocShell::libreOfficeKitCallback(int nType, const char* pPayload) const
 
 bool ScDocShell::isTiledRendering() const
 {
-    return aDocument.GetDrawLayer()->isTiledRendering();
+    return aDocument.GetDrawLayer() && aDocument.GetDrawLayer()->isTiledRendering();
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

@@ -36,36 +36,24 @@ namespace pcr
     using ::com::sun::star::uno::Exception;
     using ::com::sun::star::inspection::XPropertyControl;
 
-    ControlHelper::ControlHelper( vcl::Window* _pControlWindow, sal_Int16 _nControlType, XPropertyControl& _rAntiImpl, IModifyListener* _pModifyListener )
-        :m_pControlWindow( _pControlWindow )
-        ,m_nControlType( _nControlType )
+    CommonBehaviourControlHelper::CommonBehaviourControlHelper( sal_Int16 _nControlType, XPropertyControl& _rAntiImpl )
+        :m_nControlType( _nControlType )
         ,m_rAntiImpl( _rAntiImpl )
-        ,m_pModifyListener( _pModifyListener )
         ,m_bModified( false )
     {
-        DBG_ASSERT( m_pControlWindow != nullptr, "ControlHelper::ControlHelper: invalid window!" );
     }
 
 
-    ControlHelper::~ControlHelper()
+    CommonBehaviourControlHelper::~CommonBehaviourControlHelper()
     {
     }
 
-    void SAL_CALL ControlHelper::setControlContext( const Reference< XPropertyControlContext >& _controlcontext ) throw (RuntimeException)
+    void SAL_CALL CommonBehaviourControlHelper::setControlContext( const Reference< XPropertyControlContext >& _controlcontext ) throw (RuntimeException)
     {
         m_xContext = _controlcontext;
     }
 
-
-    Reference< XWindow > SAL_CALL ControlHelper::getControlWindow() throw (RuntimeException)
-    {
-        return VCLUnoHelper::GetInterface( m_pControlWindow );
-    }
-
-
-
-
-    void SAL_CALL ControlHelper::notifyModifiedValue(  ) throw (RuntimeException)
+    void SAL_CALL CommonBehaviourControlHelper::notifyModifiedValue(  ) throw (RuntimeException)
     {
         if ( isModified() && m_xContext.is() )
         {
@@ -82,28 +70,18 @@ namespace pcr
     }
 
 
-    void SAL_CALL ControlHelper::dispose()
+    void CommonBehaviourControlHelper::autoSizeWindow()
     {
-        m_pControlWindow.disposeAndClear();
-    }
-
-
-    void ControlHelper::autoSizeWindow()
-    {
-        OSL_PRECOND( m_pControlWindow, "ControlHelper::autoSizeWindow: no window!" );
-        if ( !m_pControlWindow )
-            return;
-
-        ScopedVclPtrInstance< ComboBox > aComboBox(m_pControlWindow, WB_DROPDOWN);
+        ScopedVclPtrInstance< ComboBox > aComboBox(getVclWindow(), WB_DROPDOWN);
         aComboBox->SetPosSizePixel(Point(0,0), Size(100,100));
-        m_pControlWindow->SetSizePixel(aComboBox->GetSizePixel());
+        getVclWindow()->SetSizePixel(aComboBox->GetSizePixel());
 
         // TODO/UNOize: why do the controls this themselves? Shouldn't this be the task
         // of the browser listbox/line?
     }
 
 
-    void ControlHelper::impl_activateNextControl_nothrow() const
+    void CommonBehaviourControlHelper::activateNextControl() const
     {
         try
         {
@@ -117,15 +95,17 @@ namespace pcr
     }
 
 
-    IMPL_LINK( ControlHelper, ModifiedHdl, vcl::Window*, /*_pWin*/ )
+    IMPL_LINK_NOARG_TYPED( CommonBehaviourControlHelper, EditModifiedHdl, Edit&, void )
     {
-        if ( m_pModifyListener )
-            m_pModifyListener->modified();
-        return 0;
+        setModified();
     }
 
+    IMPL_LINK_NOARG_TYPED( CommonBehaviourControlHelper, ModifiedHdl, ListBox&, void )
+    {
+        setModified();
+    }
 
-    IMPL_LINK_NOARG_TYPED( ControlHelper, GetFocusHdl, Control&, void )
+    IMPL_LINK_NOARG_TYPED( CommonBehaviourControlHelper, GetFocusHdl, Control&, void )
     {
         try
         {
@@ -139,7 +119,7 @@ namespace pcr
     }
 
 
-    IMPL_LINK_NOARG_TYPED( ControlHelper, LoseFocusHdl, Control&, void )
+    IMPL_LINK_NOARG_TYPED( CommonBehaviourControlHelper, LoseFocusHdl, Control&, void )
     {
         // TODO/UNOize: should this be outside the default control's implementations? If somebody
         // has an own control implementation, which does *not* do this - would this be allowed?

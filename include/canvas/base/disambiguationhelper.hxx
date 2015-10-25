@@ -60,16 +60,16 @@ namespace canvas
 
         virtual void disposeThis()
         {}
-        virtual void disposeEventSource( const ::com::sun::star::lang::EventObject& ) throw (::com::sun::star::uno::RuntimeException)
+        virtual void disposeEventSource( const css::lang::EventObject& ) throw (css::uno::RuntimeException)
         {}
 
         mutable ::osl::Mutex m_aMutex;
 
     private:
-        virtual void SAL_CALL disposing() SAL_OVERRIDE
+        virtual void SAL_CALL disposing() override
         { disposeThis(); }
 
-        virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& Source ) throw (::com::sun::star::uno::RuntimeException) SAL_OVERRIDE
+        virtual void SAL_CALL disposing( const css::lang::EventObject& Source ) throw (css::uno::RuntimeException) override
         { disposeEventSource(Source); }
 
     };

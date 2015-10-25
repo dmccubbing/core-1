@@ -151,8 +151,7 @@ void SlotManager::FuTemporary (SfxRequest& rRequest)
         case SID_PAGES_PER_ROW:
             if (rRequest.GetArgs() != NULL)
             {
-                SFX_REQUEST_ARG(rRequest, pPagesPerRow, SfxUInt16Item,
-                    SID_PAGES_PER_ROW, false);
+                const SfxUInt16Item* pPagesPerRow = rRequest.GetArg<SfxUInt16Item>(SID_PAGES_PER_ROW);
                 if (pPagesPerRow != NULL)
                 {
                     sal_Int32 nColumnCount = pPagesPerRow->GetValue();
@@ -182,7 +181,7 @@ void SlotManager::FuTemporary (SfxRequest& rRequest)
             // First make sure that the sidebar is visible
             pShell->GetViewFrame()->ShowChildWindow(SID_SIDEBAR);
             ::sfx2::sidebar::Sidebar::ShowPanel(
-                OUString("SlideTransitionPanel"),
+                OUString("SdSlideTransitionPanel"),
                 pShell->GetViewFrame()->GetFrame().GetFrameInterface());
             rRequest.Ignore ();
             break;

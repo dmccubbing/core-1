@@ -450,7 +450,7 @@ public:
 
 protected:
     // SwClient
-    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) SAL_OVERRIDE;
+    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) override;
 };
 
 namespace
@@ -1180,7 +1180,7 @@ public:
 
 protected:
     // SwClient
-    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) SAL_OVERRIDE;
+    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) override;
 };
 
 namespace
@@ -2018,7 +2018,7 @@ throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception)
                 SwFormatField aFormatField( *pPostItField );
                 delete pPostItField;
                 SwPaM aEnd( *aIntPam.End(), *aIntPam.End() );
-                m_pImpl->m_pDoc->getIDocumentContentOperations().InsertPoolItem( aEnd, aFormatField, SetAttrMode::DEFAULT );
+                m_pImpl->m_pDoc->getIDocumentContentOperations().InsertPoolItem( aEnd, aFormatField );
                 // delete former annotation
                 {
                     const SwTextField* pTextField = m_pImpl->m_pFormatField->GetTextField();
@@ -2987,7 +2987,7 @@ public:
 
 protected:
     // SwClient
-    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) SAL_OVERRIDE;
+    virtual void Modify(SfxPoolItem const* pOld, SfxPoolItem const* pNew) override;
 };
 
 OUString SAL_CALL

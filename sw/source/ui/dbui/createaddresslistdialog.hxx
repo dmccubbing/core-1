@@ -68,7 +68,7 @@ class SwCreateAddressListDialog : public SfxModalDialog
     DECL_LINK_TYPED(CustomizeHdl_Impl, Button*, void);
     DECL_LINK_TYPED(OkHdl_Impl, Button*, void);
     DECL_LINK_TYPED(DBCursorHdl_Impl, Button*, void);
-    DECL_LINK(DBNumCursorHdl_Impl, void *);
+    DECL_LINK_TYPED(DBNumCursorHdl_Impl, Edit&, void);
 
     void UpdateButtons();
 
@@ -76,7 +76,7 @@ public:
     SwCreateAddressListDialog(
             vcl::Window* pParent, const OUString& rURL, SwMailMergeConfigItem& rConfig);
     virtual ~SwCreateAddressListDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     const OUString&         GetURL() const {    return m_sURL;    }
     void                    Find( const OUString& rSearch, sal_Int32 nColumn);
@@ -94,13 +94,13 @@ class SwFindEntryDialog : public ModelessDialog
     VclPtr<SwCreateAddressListDialog>  m_pParent;
 
     DECL_LINK_TYPED(FindHdl_Impl, Button*, void);
-    DECL_LINK(FindEnableHdl_Impl, void *);
+    DECL_LINK_TYPED(FindEnableHdl_Impl, Edit&, void);
     DECL_LINK_TYPED(CloseHdl_Impl, Button*, void);
 
 public:
     SwFindEntryDialog(SwCreateAddressListDialog* pParent);
     virtual ~SwFindEntryDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     ListBox& GetFieldsListBox()
     {

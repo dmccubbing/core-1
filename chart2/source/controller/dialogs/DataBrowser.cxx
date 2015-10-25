@@ -102,7 +102,7 @@ class SeriesHeaderEdit : public Edit
 {
 public:
     explicit SeriesHeaderEdit( vcl::Window * pParent );
-    virtual void MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
+    virtual void MouseButtonDown( const MouseEvent& rMEvt ) override;
 
     void setStartColumn( sal_Int32 nStartColumn );
     sal_Int32 getStartColumn() const { return m_nStartColumn;}
@@ -186,8 +186,8 @@ private:
     Link<SeriesHeaderEdit*,void> m_aChangeLink;
 
     void notifyChanges();
-    DECL_LINK( SeriesNameChanged, void * );
-    DECL_LINK( SeriesNameEdited, void * );
+    DECL_LINK_TYPED( SeriesNameChanged, Edit&, void );
+    DECL_LINK_TYPED( SeriesNameEdited, Edit&, void );
 
     static Image GetChartTypeImage(
         const Reference< chart2::XChartType > & xChartType,
@@ -226,9 +226,7 @@ SeriesHeader::~SeriesHeader()
 
 void SeriesHeader::notifyChanges()
 {
-    if( m_aChangeLink.IsSet())
-        m_aChangeLink.Call( m_spSeriesName.get());
-
+    m_aChangeLink.Call( m_spSeriesName.get());
     m_bSeriesNameChangePending = false;
 }
 
@@ -328,16 +326,14 @@ void SeriesHeader::SetEditChangedHdl( const Link<SeriesHeaderEdit*,void> & rLink
     m_aChangeLink = rLink;
 }
 
-IMPL_LINK_NOARG(SeriesHeader, SeriesNameChanged)
+IMPL_LINK_NOARG_TYPED(SeriesHeader, SeriesNameChanged, Edit&, void)
 {
     notifyChanges();
-    return 0;
 }
 
-IMPL_LINK_NOARG(SeriesHeader, SeriesNameEdited)
+IMPL_LINK_NOARG_TYPED(SeriesHeader, SeriesNameEdited, Edit&, void)
 {
     m_bSeriesNameChangePending = true;
-    return 0;
 }
 
 void SeriesHeader::SetGetFocusHdl( const Link<Control&,void>& rLink )
@@ -400,14 +396,6 @@ Image SeriesHeader::GetChartTypeImage(
 
     return aResult;
 }
-
-struct applyChangesFunctor : public ::std::unary_function< std::shared_ptr< SeriesHeader >, void >
-{
-    void operator() ( std::shared_ptr< SeriesHeader > spHeader )
-    {
-        spHeader->applyChanges();
-    }
-};
 
 } // namespace impl
 
@@ -541,7 +529,8 @@ bool DataBrowser::MaySwapColumns() const
 
 void DataBrowser::clearHeaders()
 {
-    ::std::for_each( m_aSeriesHeaders.begin(), m_aSeriesHeaders.end(), impl::applyChangesFunctor());
+    for( const auto& spHeader : m_aSeriesHeaders )
+        spHeader->applyChanges();
     m_aSeriesHeaders.clear();
 }
 
@@ -752,7 +741,7 @@ void DataBrowser::CursorMoved()
 {
     EditBrowseBox::CursorMoved();
 
-    if( GetUpdateMode() && m_aCursorMovedHdlLink.IsSet())
+    if( GetUpdateMode() )
         m_aCursorMovedHdlLink.Call( this );
 }
 
@@ -806,8 +795,7 @@ void DataBrowser::CellModified()
 {
     m_bDataValid = IsDataValid();
     SetDirty();
-    if( m_aCellModifiedLink.IsSet())
-        m_aCursorMovedHdlLink.Call( this );
+    m_aCursorMovedHdlLink.Call( this );
 }
 
 void DataBrowser::SetDataFromModel(
@@ -1183,7 +1171,8 @@ bool DataBrowser::EndEditing()
     SaveModified();
 
     // apply changes made to series headers
-    ::std::for_each( m_aSeriesHeaders.begin(), m_aSeriesHeaders.end(), impl::applyChangesFunctor());
+    for( const auto& spHeader : m_aSeriesHeaders )
+        spHeader->applyChanges();
 
     if( m_bDataValid )
         return true;

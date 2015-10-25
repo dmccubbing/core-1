@@ -82,14 +82,14 @@ public:
     SAL_DLLPRIVATE sal_uInt16 GetViewNo_Impl( const sal_uInt16 i_nViewId, const sal_uInt16 i_nFallback ) const;
 
 private:
-    SfxObjectFactory(const SfxObjectFactory&) SAL_DELETED_FUNCTION;
-    const SfxObjectFactory& operator=(const SfxObjectFactory &) SAL_DELETED_FUNCTION;
+    SfxObjectFactory(const SfxObjectFactory&) = delete;
+    const SfxObjectFactory& operator=(const SfxObjectFactory &) = delete;
 };
 
 #define SFX_DECL_OBJECTFACTORY()                                            \
 public:                                                                     \
     static SfxObjectFactory&    Factory();                                  \
-    virtual SfxObjectFactory&   GetFactory() const SAL_OVERRIDE { return Factory(); }
+    virtual SfxObjectFactory&   GetFactory() const override { return Factory(); }
 
 #define SFX_IMPL_OBJECTFACTORY(ClassName,GlobName,Flags,ShortName)          \
     SfxObjectFactory& ClassName::Factory()                                  \

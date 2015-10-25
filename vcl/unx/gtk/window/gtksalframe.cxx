@@ -87,14 +87,6 @@
 #  include <gdk/gdkkeysyms-compat.h>
 #endif
 
-#ifdef ENABLE_DBUS
-#include <dbus/dbus-glib.h>
-
-#define GSM_DBUS_SERVICE        "org.gnome.SessionManager"
-#define GSM_DBUS_PATH           "/org/gnome/SessionManager"
-#define GSM_DBUS_INTERFACE      "org.gnome.SessionManager"
-#endif
-
 #include <config_folders.h>
 
 #if GTK_CHECK_VERSION(3,0,0)
@@ -379,7 +371,7 @@ struct DamageTracker : public basebmp::IBitmapDeviceDamageTracker
 
     virtual ~DamageTracker() {}
 
-    virtual void damaged(const basegfx::B2IBox& rDamageRect) const SAL_OVERRIDE
+    virtual void damaged(const basegfx::B2IBox& rDamageRect) const override
     {
         m_rFrame.damaged(rDamageRect);
     }
@@ -669,7 +661,9 @@ gboolean ensure_dbus_setup( gpointer data )
         if(!pSessionBus)
             pSessionBus = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
         if( !pSessionBus )
+        {
             return FALSE;
+        }
 
         // Create menu model and action group attached to this frame.
         GMenuModel* pMenuModel = G_MENU_MODEL( g_lo_menu_new() );
@@ -1124,8 +1118,6 @@ void GtkSalFrame::InitCommon()
     m_bSendModChangeOnRelease = false;
     m_pIMHandler        = NULL;
     m_hBackgroundPixmap = None;
-    m_nSavedScreenSaverTimeout = 0;
-    m_nGSMCookie = 0;
     m_nExtStyle         = 0;
     m_pRegion           = NULL;
     m_ePointerStyle     = static_cast<PointerStyle>(0xffff);
@@ -1447,7 +1439,6 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
 
     InitCommon();
 
-#if !GTK_CHECK_VERSION(3,0,0)
     if( eWinType == GTK_WINDOW_TOPLEVEL )
     {
 #ifdef ENABLE_GMENU_INTEGRATION
@@ -1455,14 +1446,15 @@ void GtkSalFrame::Init( SalFrame* pParent, SalFrameStyleFlags nStyle )
         ensure_dbus_setup( this );
 #endif
 
+#if !GTK_CHECK_VERSION(3,0,0)
         guint32 nUserTime = 0;
         if( (nStyle & (SalFrameStyleFlags::OWNERDRAWDECORATION|SalFrameStyleFlags::TOOLWINDOW)) == SalFrameStyleFlags::NONE )
         {
             nUserTime = gdk_x11_get_server_time(GTK_WIDGET (m_pWindow)->window);
         }
         lcl_set_user_time(GTK_WINDOW(m_pWindow), nUserTime);
-    }
 #endif
+    }
 
     if( bDecoHandling )
     {
@@ -2545,185 +2537,21 @@ void GtkSalFrame::ShowFullScreen( bool bFullScreen, sal_Int32 nScreen )
     }
 }
 
-/* definitions from xautolock.c (pl15) */
-#define XAUTOLOCK_DISABLE 1
-#define XAUTOLOCK_ENABLE  2
-
-void GtkSalFrame::setAutoLock( bool bLock )
-{
-    if( isChild() || !getDisplay()->IsX11Display() )
-        return;
-
-    GdkScreen  *pScreen = gtk_window_get_screen( GTK_WINDOW(m_pWindow) );
-    GdkDisplay *pDisplay = gdk_screen_get_display( pScreen );
-    GdkWindow  *pRootWin = gdk_screen_get_root_window( pScreen );
-
-    Atom nAtom = XInternAtom( GDK_DISPLAY_XDISPLAY( pDisplay ),
-                              "XAUTOLOCK_MESSAGE", False );
-
-    int nMessage = bLock ? XAUTOLOCK_ENABLE : XAUTOLOCK_DISABLE;
-
-    XChangeProperty( GDK_DISPLAY_XDISPLAY( pDisplay ),
-                     GDK_WINDOW_XID( pRootWin ),
-                     nAtom, XA_INTEGER,
-                     8, PropModeReplace,
-                     reinterpret_cast<unsigned char*>(&nMessage),
-                     sizeof( nMessage ) );
-}
-
-#ifdef ENABLE_DBUS
-/** cookie is returned as an unsigned integer */
-static guint
-dbus_inhibit_gsm (const gchar *appname,
-                  const gchar *reason,
-                  guint xid)
-{
-        gboolean         res;
-        guint            cookie;
-        GError          *error = NULL;
-        DBusGProxy      *proxy = NULL;
-
-        /* get the DBUS session connection */
-        DBusGConnection *session_connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-        if (error != NULL) {
-                g_debug ("DBUS cannot connect : %s", error->message);
-                g_error_free (error);
-                return -1;
-        }
-
-        /* get the proxy with gnome-session-manager */
-        proxy = dbus_g_proxy_new_for_name (session_connection,
-                                           GSM_DBUS_SERVICE,
-                                           GSM_DBUS_PATH,
-                                           GSM_DBUS_INTERFACE);
-        if (proxy == NULL) {
-                g_debug ("Could not get DBUS proxy: %s", GSM_DBUS_SERVICE);
-                return -1;
-        }
-
-        res = dbus_g_proxy_call (proxy,
-                                 "Inhibit", &error,
-                                 G_TYPE_STRING, appname,
-                                 G_TYPE_UINT, xid,
-                                 G_TYPE_STRING, reason,
-                                 G_TYPE_UINT, 8, //Inhibit the session being marked as idle
-                                 G_TYPE_INVALID,
-                                 G_TYPE_UINT, &cookie,
-                                 G_TYPE_INVALID);
-
-        /* check the return value */
-        if (! res) {
-                cookie = -1;
-                g_debug ("Inhibit method failed");
-        }
-
-        /* check the error value */
-        if (error != NULL) {
-                g_debug ("Inhibit problem : %s", error->message);
-                g_error_free (error);
-                cookie = -1;
-        }
-
-        g_object_unref (G_OBJECT (proxy));
-        return cookie;
-}
-
-static void
-dbus_uninhibit_gsm (guint cookie)
-{
-        gboolean         res;
-        GError          *error = NULL;
-        DBusGProxy      *proxy = NULL;
-        DBusGConnection *session_connection = NULL;
-
-        if (cookie == guint(-1)) {
-                g_debug ("Invalid cookie");
-                return;
-        }
-
-        /* get the DBUS session connection */
-        session_connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-        if (error) {
-                g_debug ("DBUS cannot connect : %s", error->message);
-                g_error_free (error);
-                return;
-        }
-
-        /* get the proxy with gnome-session-manager */
-        proxy = dbus_g_proxy_new_for_name (session_connection,
-                                           GSM_DBUS_SERVICE,
-                                           GSM_DBUS_PATH,
-                                           GSM_DBUS_INTERFACE);
-        if (proxy == NULL) {
-                g_debug ("Could not get DBUS proxy: %s", GSM_DBUS_SERVICE);
-                return;
-        }
-
-        res = dbus_g_proxy_call (proxy,
-                                 "Uninhibit",
-                                 &error,
-                                 G_TYPE_UINT, cookie,
-                                 G_TYPE_INVALID,
-                                 G_TYPE_INVALID);
-
-        /* check the return value */
-        if (! res) {
-                g_debug ("Uninhibit method failed");
-        }
-
-        /* check the error value */
-        if (error != NULL) {
-                g_debug ("Uninhibit problem : %s", error->message);
-                g_error_free (error);
-                cookie = -1;
-        }
-        g_object_unref (G_OBJECT (proxy));
-}
-#endif
-
 void GtkSalFrame::StartPresentation( bool bStart )
 {
-    setAutoLock( !bStart );
-
-    if( !getDisplay()->IsX11Display() )
-        return;
-
-#if !GTK_CHECK_VERSION(3,0,0)
-    Display *pDisplay = GDK_DISPLAY_XDISPLAY( getGdkDisplay() );
-
-    int nTimeout, nInterval, bPreferBlanking, bAllowExposures;
-    XGetScreenSaver( pDisplay, &nTimeout, &nInterval,
-                     &bPreferBlanking, &bAllowExposures );
-#endif
-    if( bStart )
+    boost::optional<guint> aWindow;
+    boost::optional<Display*> aDisplay;
+    if( getDisplay()->IsX11Display() )
     {
-#if !GTK_CHECK_VERSION(3,0,0)
-        if ( nTimeout )
-        {
-            m_nSavedScreenSaverTimeout = nTimeout;
-            XResetScreenSaver( pDisplay );
-            XSetScreenSaver( pDisplay, 0, nInterval,
-                             bPreferBlanking, bAllowExposures );
-        }
-#endif
-#ifdef ENABLE_DBUS
-        m_nGSMCookie = dbus_inhibit_gsm(g_get_application_name(), "presentation",
-                    widget_get_xid(m_pWindow));
-#endif
+        aWindow = widget_get_xid(m_pWindow);
+        aDisplay = GDK_DISPLAY_XDISPLAY( getGdkDisplay() );
     }
-    else
-    {
-#if !GTK_CHECK_VERSION(3,0,0)
-        if( m_nSavedScreenSaverTimeout )
-            XSetScreenSaver( pDisplay, m_nSavedScreenSaverTimeout,
-                             nInterval, bPreferBlanking,
-                             bAllowExposures );
-#endif
-        m_nSavedScreenSaverTimeout = 0;
-#ifdef ENABLE_DBUS
-        dbus_uninhibit_gsm(m_nGSMCookie);
-#endif
-    }
+
+    m_ScreenSaverInhibitor.inhibit( bStart,
+                                    "presentation",
+                                    getDisplay()->IsX11Display(),
+                                    aWindow,
+                                    aDisplay );
 }
 
 void GtkSalFrame::SetAlwaysOnTop( bool bOnTop )
@@ -4711,9 +4539,12 @@ gboolean GtkSalFrame::IMHandler::signalIMDeleteSurrounding( GtkIMContext*, gint 
         if (nDeletePos < nPosition)
         {
             if (nDeleteEnd <= nPosition)
-                xText->setCaretPosition( nPosition-(nDeleteEnd-nDeletePos) );
+                nPosition = nPosition - (nDeleteEnd - nDeletePos);
             else
-                xText->setCaretPosition( nDeletePos );
+                nPosition = nDeletePos;
+
+            if (xText->getCharacterCount() >= nPosition)
+                xText->setCaretPosition( nPosition );
         }
         return true;
     }

@@ -31,10 +31,10 @@ class CustomShowContext : public ::oox::core::FragmentHandler2
 
 public:
     CustomShowContext( ::oox::core::FragmentHandler2& rParent,
-        const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttribs,
+        const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttribs,
             CustomShow& rCustomShow );
     virtual ~CustomShowContext( );
-    virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) SAL_OVERRIDE;
+    virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) override;
 };
 
 CustomShowContext::CustomShowContext( FragmentHandler2& rParent,

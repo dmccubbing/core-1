@@ -998,10 +998,9 @@ IMPL_LINK_NOARG_TYPED(SlideTransitionPane, PlayButtonClicked, Button*, void)
     playCurrentEffect();
 }
 
-IMPL_LINK_NOARG(SlideTransitionPane, TransitionSelected)
+IMPL_LINK_NOARG_TYPED(SlideTransitionPane, TransitionSelected, ListBox&, void)
 {
     applyToSelectedPages();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SlideTransitionPane, AdvanceSlideRadioButtonToggled, RadioButton&, void)
@@ -1010,19 +1009,17 @@ IMPL_LINK_NOARG_TYPED(SlideTransitionPane, AdvanceSlideRadioButtonToggled, Radio
     applyToSelectedPages();
 }
 
-IMPL_LINK_NOARG(SlideTransitionPane, AdvanceTimeModified)
+IMPL_LINK_NOARG_TYPED(SlideTransitionPane, AdvanceTimeModified, Edit&, void)
 {
     applyToSelectedPages();
-    return 0;
 }
 
-IMPL_LINK_NOARG(SlideTransitionPane, SpeedListBoxSelected)
+IMPL_LINK_NOARG_TYPED(SlideTransitionPane, SpeedListBoxSelected, ListBox&, void)
 {
     applyToSelectedPages();
-    return 0;
 }
 
-IMPL_LINK_NOARG(SlideTransitionPane, SoundListBoxSelected)
+IMPL_LINK_NOARG_TYPED(SlideTransitionPane, SoundListBoxSelected, ListBox&, void)
 {
     if( mpLB_SOUND->GetSelectEntryCount() )
     {
@@ -1035,7 +1032,6 @@ IMPL_LINK_NOARG(SlideTransitionPane, SoundListBoxSelected)
     }
     updateControlState();
     applyToSelectedPages();
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SlideTransitionPane, LoopSoundBoxChecked, Button*, void)

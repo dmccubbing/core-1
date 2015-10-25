@@ -45,15 +45,16 @@ public:
                 , const ::com::sun::star::uno::Reference<
                 ::com::sun::star::uno::XComponentContext >& xContext );
     virtual ~TitlesAndObjectsTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void        initializePage() SAL_OVERRIDE;
-    virtual bool        commitPage( ::svt::WizardTypes::CommitPageReason eReason ) SAL_OVERRIDE;
-    virtual bool        canAdvance() const SAL_OVERRIDE;
+    virtual void        initializePage() override;
+    virtual bool        commitPage( ::svt::WizardTypes::CommitPageReason eReason ) override;
+    virtual bool        canAdvance() const override;
 
 protected:
     void commitToModel();
-    DECL_LINK( ChangeHdl, void* );
+    DECL_LINK_TYPED( ChangeHdl, LinkParamNone*, void );
+    DECL_LINK_TYPED( ChangeEditHdl, Edit&, void );
     DECL_LINK_TYPED( ChangeCheckBoxHdl, CheckBox&, void );
 
 protected:

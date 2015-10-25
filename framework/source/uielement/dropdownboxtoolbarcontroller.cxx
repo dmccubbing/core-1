@@ -34,13 +34,13 @@
 #include <vcl/toolbox.hxx>
 
 using namespace ::com::sun::star;
-using namespace ::com::sun::star::awt;
-using namespace ::com::sun::star::uno;
-using namespace ::com::sun::star::beans;
-using namespace ::com::sun::star::lang;
-using namespace ::com::sun::star::frame;
-using namespace ::com::sun::star::frame::status;
-using namespace ::com::sun::star::util;
+using namespace css::awt;
+using namespace css::uno;
+using namespace css::beans;
+using namespace css::lang;
+using namespace css::frame;
+using namespace css::frame::status;
+using namespace css::util;
 
 namespace framework
 {
@@ -54,13 +54,13 @@ class ListBoxControl : public ListBox
     public:
         ListBoxControl( vcl::Window* pParent, WinBits nStyle, DropdownToolbarController* pListBoxListener );
         virtual ~ListBoxControl();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void Select() SAL_OVERRIDE;
-        virtual void DoubleClick() SAL_OVERRIDE;
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual void LoseFocus() SAL_OVERRIDE;
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual void Select() override;
+        virtual void DoubleClick() override;
+        virtual void GetFocus() override;
+        virtual void LoseFocus() override;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
 
     private:
         DropdownToolbarController* m_pListBoxListener;
@@ -203,7 +203,7 @@ bool DropdownToolbarController::PreNotify( NotifyEvent& /*rNEvt*/ )
     return false;
 }
 
-void DropdownToolbarController::executeControlCommand( const ::com::sun::star::frame::ControlCommand& rControlCommand )
+void DropdownToolbarController::executeControlCommand( const css::frame::ControlCommand& rControlCommand )
 {
     if ( rControlCommand.Command == "SetList" )
     {

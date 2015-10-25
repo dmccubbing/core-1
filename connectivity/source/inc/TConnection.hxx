@@ -39,8 +39,6 @@ namespace connectivity
                                                ::com::sun::star::lang::XUnoTunnel
                                            > OMetaConnection_BASE;
 
-    typedef ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >  TConditions;
-
     class OOO_DLLPUBLIC_DBTOOLS OMetaConnection : public OMetaConnection_BASE
     {
     protected:
@@ -72,10 +70,10 @@ namespace connectivity
             getConnectionInfo() const { return m_aConnectionInfo; }
 
         // OComponentHelper
-        virtual void SAL_CALL disposing() SAL_OVERRIDE;
+        virtual void SAL_CALL disposing() override;
 
         //XUnoTunnel
-        virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual sal_Int64 SAL_CALL getSomething( const ::com::sun::star::uno::Sequence< sal_Int8 >& aIdentifier ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
         static ::com::sun::star::uno::Sequence< sal_Int8 > getUnoTunnelImplementationId();
     };
 }

@@ -57,7 +57,7 @@ namespace {
         virtual ~ViewRedirector();
         virtual drawinglayer::primitive2d::Primitive2DSequence createRedirectedPrimitive2DSequence(
             const sdr::contact::ViewObjectContact& rOriginal,
-                const sdr::contact::DisplayInfo& rDisplayInfo) SAL_OVERRIDE;
+                const sdr::contact::DisplayInfo& rDisplayInfo) override;
     };
 }
 
@@ -275,7 +275,7 @@ bool PreviewRenderer::Initialize (
     }
 
     pPageView->SetApplicationDocumentColor(aApplicationDocumentColor);
-    SdrOutliner& rOutliner(pDocument->GetDrawOutliner(NULL));
+    SdrOutliner& rOutliner(pDocument->GetDrawOutliner());
     rOutliner.SetBackgroundColor(aApplicationDocumentColor);
     rOutliner.SetDefaultLanguage(pDocument->GetLanguage(EE_CHAR_LANGUAGE));
     mpPreviewDevice->SetBackground(Wallpaper(aApplicationDocumentColor));

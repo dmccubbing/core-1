@@ -92,7 +92,7 @@ struct SubstituteRule
 
     SubstituteRule( const OUString& aVarName,
                     const OUString& aValue,
-                    const com::sun::star::uno::Any& aVal,
+                    const css::uno::Any& aVal,
                     EnvironmentType aType )
         : aSubstVariable(aVarName)
         , aSubstValue(aValue)
@@ -102,8 +102,8 @@ struct SubstituteRule
 
     OUString            aSubstVariable;
     OUString            aSubstValue;
-    com::sun::star::uno::Any aEnvValue;
-    EnvironmentType          aEnvType;
+    css::uno::Any       aEnvValue;
+    EnvironmentType     aEnvType;
 };
 
 typedef std::unordered_map<OUString, SubstituteRule, OUStringHash>
@@ -123,11 +123,11 @@ class SubstitutePathVariables_Impl : public utl::ConfigItem
 
         /** is called from the ConfigManager before application ends or from the
             PropertyChangeListener if the sub tree broadcasts changes. */
-        virtual void Notify( const com::sun::star::uno::Sequence< OUString >& aPropertyNames ) SAL_OVERRIDE;
+        virtual void Notify( const css::uno::Sequence< OUString >& aPropertyNames ) override;
 
     private:
 
-        virtual void ImplCommit() SAL_OVERRIDE;
+        virtual void ImplCommit() override;
 
         // Wrapper methods for low-level functions
         const OUString&    GetYPDomainName();
@@ -137,7 +137,7 @@ class SubstitutePathVariables_Impl : public utl::ConfigItem
 
         bool  FilterRuleSet(const SubstituteRuleVector& aRuleSet, SubstituteRule& aActiveRule);
 
-        void  ReadSharePointsFromConfiguration(com::sun::star::uno::Sequence< OUString >& aSharePointsSeq);
+        void  ReadSharePointsFromConfiguration(css::uno::Sequence< OUString >& aSharePointsSeq);
         void  ReadSharePointRuleSetFromConfiguration(const OUString& aSharePointName,
                   const OUString& aSharePointNodeName,
                   SubstituteRuleVector& aRuleSet);
@@ -227,23 +227,23 @@ class SubstitutePathVariables : private cppu::BaseMutex,
 friend class SubstitutePathVariables_Impl;
 
 public:
-    SubstitutePathVariables( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& xContext );
+    SubstitutePathVariables( const css::uno::Reference< css::uno::XComponentContext >& xContext );
     virtual ~SubstitutePathVariables();
 
     virtual OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return OUString("com.sun.star.comp.framework.PathSubstitution");
     }
 
     virtual sal_Bool SAL_CALL supportsService(OUString const & ServiceName)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return cppu::supportsService(this, ServiceName);
     }
 
     virtual css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         css::uno::Sequence< OUString > aSeq(1);
         aSeq[0] = "com.sun.star.util.PathSubstitution";
@@ -252,11 +252,11 @@ public:
 
     // XStringSubstitution
     virtual OUString SAL_CALL substituteVariables( const OUString& aText, sal_Bool bSubstRequired )
-        throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::container::NoSuchElementException, css::uno::RuntimeException, std::exception) override;
     virtual OUString SAL_CALL reSubstituteVariables( const OUString& aText )
-        throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
     virtual OUString SAL_CALL getSubstituteVariableValue( const OUString& variable )
-        throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::container::NoSuchElementException, css::uno::RuntimeException, std::exception) override;
 
 protected:
     void            SetPredefinedPathVariables();
@@ -271,11 +271,11 @@ protected:
 
     // XStringSubstitution implementation methods
     OUString impl_substituteVariable( const OUString& aText, bool bSustRequired )
-        throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::uno::RuntimeException);
+        throw (css::container::NoSuchElementException, css::uno::RuntimeException);
     OUString impl_reSubstituteVariables( const OUString& aText )
-        throw (::com::sun::star::uno::RuntimeException);
+        throw (css::uno::RuntimeException);
     OUString impl_getSubstituteVariableValue( const OUString& variable )
-        throw (::com::sun::star::container::NoSuchElementException, ::com::sun::star::uno::RuntimeException);
+        throw (css::container::NoSuchElementException, css::uno::RuntimeException);
 
 private:
     typedef std::unordered_map<OUString, PreDefVariable, OUStringHash>
@@ -448,7 +448,7 @@ void SubstitutePathVariables_Impl::GetSharePointsRules( SubstituteVariables& aSu
     }
 }
 
-void SubstitutePathVariables_Impl::Notify( const com::sun::star::uno::Sequence< OUString >& /*aPropertyNames*/ )
+void SubstitutePathVariables_Impl::Notify( const css::uno::Sequence< OUString >& /*aPropertyNames*/ )
 {
     // NOT implemented yet!
 }

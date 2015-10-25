@@ -101,10 +101,10 @@ namespace dbaui
         get(m_pTestConnection, "connectionButton");
 
         m_pConnectionURL->SetModifyHdl(LINK(this, OConnectionTabPage, OnEditModified));
-        m_pJavaDriver->SetModifyHdl(getControlModifiedLink());
+        m_pJavaDriver->SetModifyHdl(LINK(this, OGenericAdministrationPage, OnControlEditModifyHdl));
         m_pJavaDriver->SetModifyHdl(LINK(this, OConnectionTabPage, OnEditModified));
-        m_pUserName->SetModifyHdl(getControlModifiedLink());
-        m_pPasswordRequired->SetClickHdl(getControlModifiedClickLink());
+        m_pUserName->SetModifyHdl(LINK(this, OGenericAdministrationPage, OnControlEditModifyHdl));
+        m_pPasswordRequired->SetClickHdl(LINK(this, OGenericAdministrationPage, OnControlModifiedClick));
 
         m_pTestConnection->SetClickHdl(LINK(this,OGenericAdministrationPage,OnTestConnectionClickHdl));
         m_pTestJavaDriver->SetClickHdl(LINK(this,OConnectionTabPage,OnTestJavaClickHdl));
@@ -210,7 +210,6 @@ namespace dbaui
                 break;
         }
 
-        ;
         AuthenticationMode eAuthMode( DataSourceMetaData::getAuthentication( m_eType ) );
         bool bShowUserAuthenfication = ( eAuthMode != AuthNone );
         bool bShowUser = ( eAuthMode == AuthUserPwd );
@@ -224,11 +223,11 @@ namespace dbaui
             m_pPasswordRequired->SetPosPixel(m_pUserNameLabel->GetPosPixel());
 
         // collect the items
-        SFX_ITEMSET_GET(_rSet, pUidItem, SfxStringItem, DSID_USER, true);
+        const SfxStringItem* pUidItem = _rSet.GetItem<SfxStringItem>(DSID_USER);
 
-        SFX_ITEMSET_GET(_rSet, pJdbcDrvItem, SfxStringItem, DSID_JDBCDRIVERCLASS, true);
-        SFX_ITEMSET_GET(_rSet, pUrlItem, SfxStringItem, DSID_CONNECTURL, true);
-        SFX_ITEMSET_GET(_rSet, pAllowEmptyPwd, SfxBoolItem, DSID_PASSWORDREQUIRED, true);
+        const SfxStringItem* pJdbcDrvItem = _rSet.GetItem<SfxStringItem>(DSID_JDBCDRIVERCLASS);
+        const SfxStringItem* pUrlItem = _rSet.GetItem<SfxStringItem>(DSID_CONNECTURL);
+        const SfxBoolItem* pAllowEmptyPwd = _rSet.GetItem<SfxBoolItem>(DSID_PASSWORDREQUIRED);
 
         // forward the values to the controls
         if ( bValid )
@@ -321,15 +320,14 @@ namespace dbaui
         m_pTestConnection->Enable(bEnableTestConnection);
         return true;
     }
-    IMPL_LINK(OConnectionTabPage, OnEditModified, Edit*, _pEdit)
+    IMPL_LINK_TYPED(OConnectionTabPage, OnEditModified, Edit&, _rEdit, void)
     {
-        if ( _pEdit == m_pJavaDriver )
+        if ( &_rEdit == m_pJavaDriver )
             m_pTestJavaDriver->Enable( !m_pJavaDriver->GetText().trim().isEmpty() );
 
         checkTestConnection();
         // tell the listener we were modified
         callModifiedHdl();
-        return 0L;
     }
 }   // namespace dbaui
 

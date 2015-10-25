@@ -35,9 +35,6 @@ import com.sun.star.sheet.XCellRangeAddressable;
 import com.sun.star.sheet.XSpreadsheet;
 import com.sun.star.sheet.XSpreadsheetDocument;
 import com.sun.star.sheet.XSpreadsheets;
-import com.sun.star.uno.Any;
-import com.sun.star.uno.AnyConverter;
-import com.sun.star.uno.Type;
 import com.sun.star.uno.UnoRuntime;
 import com.sun.star.util.XCloseable;
 
@@ -402,19 +399,9 @@ public class CalcRTL
                     System.out.println("Read only property '" + propName +
                                 "' has changed");
 
-                    try {
-                        if (!util.utils.isVoid(oldValue) &&
-                                oldValue instanceof Any) {
-                            oldValue = AnyConverter.toObject(
-                                               new Type(((Any) oldValue).getClass()),
-                                               oldValue);
-                        }
-
-                        System.out.println("old = " + toString(oldValue));
-                        System.out.println("new = " + toString(newValue));
-                        System.out.println("result = " + toString(resValue));
-                    } catch (com.sun.star.lang.IllegalArgumentException iae) {
-                    }
+                    System.out.println("old = " + toString(oldValue));
+                    System.out.println("new = " + toString(newValue));
+                    System.out.println("result = " + toString(resValue));
 
                     return false;
                 } else {
@@ -429,53 +416,26 @@ public class CalcRTL
             if (exception == null) {
                 // if no exception thrown
                 // check that the new value is set
-                if ((!ValueComparer.equalValue(resValue, newValue)) ||
-                        (ValueComparer.equalValue(resValue, oldValue))) {
+                if (!ValueComparer.equalValue(resValue, newValue)) {
                     System.out.println("Value for '" + propName +
                                 "' hasn't changed as expected");
 
-                    try {
-                        if (!util.utils.isVoid(oldValue) &&
-                                oldValue instanceof Any) {
-                            oldValue = AnyConverter.toObject(
-                                               new Type(((Any) oldValue).getClass()),
-                                               oldValue);
-                        }
+                    System.out.println("old = " + toString(oldValue));
+                    System.out.println("new = " + toString(newValue));
+                    System.out.println("result = " + toString(resValue));
 
-                        System.out.println("old = " + toString(oldValue));
-                        System.out.println("new = " + toString(newValue));
-                        System.out.println("result = " + toString(resValue));
-                    } catch (com.sun.star.lang.IllegalArgumentException iae) {
-                    }
-
-                    if (resValue != null) {
-                        if ((!ValueComparer.equalValue(resValue, oldValue)) ||
-                                (!resValue.equals(oldValue))) {
-                            System.out.println("But it has changed.");
-
-                            return true;
-                        } else {
-                            return false;
-                        }
+                    if (!ValueComparer.equalValue(resValue, oldValue)) {
+                        System.out.println("But it has changed.");
+                        return true;
                     } else {
                         return false;
                     }
                 } else {
                     System.out.println("Property '" + propName + "' OK");
 
-                    try {
-                        if (!util.utils.isVoid(oldValue) &&
-                                oldValue instanceof Any) {
-                            oldValue = AnyConverter.toObject(
-                                               new Type(((Any) oldValue).getClass()),
-                                               oldValue);
-                        }
-
-                        System.out.println("old = " + toString(oldValue));
-                        System.out.println("new = " + toString(newValue));
-                        System.out.println("result = " + toString(resValue));
-                    } catch (com.sun.star.lang.IllegalArgumentException iae) {
-                    }
+                    System.out.println("old = " + toString(oldValue));
+                    System.out.println("new = " + toString(newValue));
+                    System.out.println("result = " + toString(resValue));
 
                     return true;
                 }

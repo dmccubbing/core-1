@@ -159,7 +159,7 @@ public:
     sal_uInt32     Reference();     // reference symbol in code
 
 private:
-    SbiSymDef( const SbiSymDef& ) SAL_DELETED_FUNCTION;
+    SbiSymDef( const SbiSymDef& ) = delete;
 
 };
 
@@ -177,8 +177,8 @@ class SbiProcDef : public SbiSymDef {   // procedure definition (from basic):
 public:
     SbiProcDef( SbiParser*, const OUString&, bool bProcDecl=false );
     virtual ~SbiProcDef();
-    virtual SbiProcDef* GetProcDef() SAL_OVERRIDE;
-    virtual void SetType( SbxDataType ) SAL_OVERRIDE;
+    virtual SbiProcDef* GetProcDef() override;
+    virtual void SetType( SbxDataType ) override;
     SbiSymPool& GetParams()         { return aParams;  }
     SbiSymPool& GetLabels()         { return aLabels;  }
     SbiSymPool& GetLocals()         { return GetPool();}
@@ -202,7 +202,7 @@ public:
     void Match( SbiProcDef* pForward );
 
 private:
-    SbiProcDef( const SbiProcDef& ) SAL_DELETED_FUNCTION;
+    SbiProcDef( const SbiProcDef& ) = delete;
 
 };
 
@@ -213,7 +213,7 @@ class SbiConstDef : public SbiSymDef
 public:
     SbiConstDef( const OUString& );
     virtual ~SbiConstDef();
-    virtual SbiConstDef* GetConstDef() SAL_OVERRIDE;
+    virtual SbiConstDef* GetConstDef() override;
     void Set( double, SbxDataType );
     void Set( const OUString& );
     double GetValue()           { return nVal; }

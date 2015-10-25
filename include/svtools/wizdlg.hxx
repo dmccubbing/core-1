@@ -166,20 +166,18 @@ void MyWizardDlg::ActivatePage()
 MyWizardDlg-Prev/Next-Handler
 -----------------------------
 
-IMPL_LINK( MyWizardDlg, ImplPrevHdl, PushButton*, pBtn )
+IMPL_LINK_TYPED( MyWizardDlg, ImplPrevHdl, PushButton*, pBtn, void )
 {
     ShowPrevPage();
     if ( !GetCurLevel() )
         pBtn->Disable();
-    return 0;
 }
 
-IMPL_LINK( MyWizardDlg, ImplNextHdl, PushButton*, pBtn )
+IMPL_LINK_TYPED( MyWizardDlg, ImplNextHdl, PushButton*, pBtn, void )
 {
     ShowNextPage();
     if ( GetCurLevel() < 3 )
         pBtn->Disable();
-    return 0;
 }
 
 *************************************************************************/
@@ -241,16 +239,16 @@ public:
     WizardDialog( vcl::Window* pParent, WinBits nStyle = WB_STDTABDIALOG );
     WizardDialog( vcl::Window* pParent, const OUString& rID, const OUString& rUIXMLDescription );
     virtual ~WizardDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void        Resize() SAL_OVERRIDE;
-    virtual void        StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
-    virtual bool        Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void        Resize() override;
+    virtual void        StateChanged( StateChangedType nStateChange ) override;
+    virtual bool        Notify( NotifyEvent& rNEvt ) override;
 
     virtual void        ActivatePage();
     virtual bool        DeactivatePage();
 
-    virtual void        queue_resize(StateChangedType eReason = StateChangedType::Layout) SAL_OVERRIDE;
+    virtual void        queue_resize(StateChangedType eReason = StateChangedType::Layout) override;
 
     bool                ShowPrevPage();
     bool                ShowNextPage();

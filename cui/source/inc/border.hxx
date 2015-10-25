@@ -47,21 +47,21 @@ class SvxBorderTabPage : public SfxTabPage
 
 public:
     virtual ~SvxBorderTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
     static const sal_uInt16*      GetRanges() { return pRanges; }
 
-    virtual bool        FillItemSet( SfxItemSet* rCoreAttrs ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        ChangesApplied() SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* rCoreAttrs ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
+    virtual void        ChangesApplied() override;
 
     void                HideShadowControls();
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
     void                SetTableMode();
 protected:
-    virtual sfxpg        DeactivatePage( SfxItemSet* pSet = 0 ) SAL_OVERRIDE;
-    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual sfxpg        DeactivatePage( SfxItemSet* pSet = 0 ) override;
+    virtual void        DataChanged( const DataChangedEvent& rDCEvt ) override;
 
 private:
     SvxBorderTabPage( vcl::Window* pParent, const SfxItemSet& rCoreAttrs );
@@ -117,13 +117,13 @@ private:
     std::set<sal_Int16> maUsedBorderStyles;
 
     // Handler
-    DECL_LINK( SelStyleHdl_Impl, ListBox* );
-    DECL_LINK( SelColHdl_Impl, ListBox* );
+    DECL_LINK_TYPED( SelStyleHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( SelColHdl_Impl, ListBox&, void );
     DECL_LINK_TYPED( SelPreHdl_Impl, ValueSet*, void );
     DECL_LINK_TYPED( SelSdwHdl_Impl, ValueSet*, void );
     DECL_LINK_TYPED( LinesChanged_Impl, LinkParamNone*, void );
-    DECL_LINK( ModifyDistanceHdl_Impl, MetricField*);
-    DECL_LINK( ModifyWidthHdl_Impl, void*);
+    DECL_LINK_TYPED( ModifyDistanceHdl_Impl, Edit&, void);
+    DECL_LINK_TYPED( ModifyWidthHdl_Impl, Edit&, void);
     DECL_LINK_TYPED( SyncHdl_Impl, Button*, void);
 
     sal_uInt16              GetPresetImageId( sal_uInt16 nValueSetIdx ) const;

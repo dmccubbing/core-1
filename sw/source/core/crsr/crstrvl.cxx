@@ -372,11 +372,11 @@ bool SwCrsrShell::GotoTOXMarkBase()
         // for the actual index
         const SwTOXType* pType = aMarks[0]->GetTOXType();
         SwIterator<SwTOXBase,SwTOXType> aIter( *pType );
-        const SwSectionNode* pSectNd;
         const SwSectionFormat* pSectFormat;
 
         for( SwTOXBase* pTOX = aIter.First(); pTOX; pTOX = aIter.Next() )
         {
+            const SwSectionNode* pSectNd;
             if( dynamic_cast<const SwTOXBaseSection*>( pTOX) !=  nullptr &&
                 0 != ( pSectFormat = static_cast<SwTOXBaseSection*>(pTOX)->GetFormat() ) &&
                 0 != ( pSectNd = pSectFormat->GetSectionNode() ))
@@ -439,11 +439,12 @@ bool SwCrsrShell::GotoNxtPrvTableFormula( bool bNext, bool bOnlyErrors )
         aCurGEF.SetBodyPos( *rPos.nNode.GetNode().GetContentNode()->getLayoutFrm( GetLayout(),
                                 &aPt, &rPos, false ) );
     {
-        const SfxPoolItem* pItem;
-        const SwTableBox* pTBox;
         sal_uInt32 n, nMaxItems = GetDoc()->GetAttrPool().GetItemCount2( RES_BOXATR_FORMULA );
 
         for( n = 0; n < nMaxItems; ++n )
+        {
+            const SwTableBox* pTBox;
+            const SfxPoolItem* pItem;
             if( 0 != (pItem = GetDoc()->GetAttrPool().GetItem2(
                                         RES_BOXATR_FORMULA, n ) ) &&
                 0 != (pTBox = static_cast<const SwTableBoxFormula*>(pItem)->GetTableBox() ) &&
@@ -469,6 +470,7 @@ bool SwCrsrShell::GotoNxtPrvTableFormula( bool bNext, bool bOnlyErrors )
                     }
                 }
             }
+        }
     }
 
     if( bFnd )
@@ -1129,13 +1131,13 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
         SwContentFrm *pFrm(0);
         SwTextAttr* pTextAttr;
         SwCrsrMoveState aTmpState;
-        aTmpState.bFieldInfo = true;
-        aTmpState.bExactOnly = !( SwContentAtPos::SW_OUTLINE & rContentAtPos.eContentAtPos );
-        aTmpState.bContentCheck = (SwContentAtPos::SW_CONTENT_CHECK & rContentAtPos.eContentAtPos) != 0;
-        aTmpState.bSetInReadOnly = IsReadOnlyAvailable();
+        aTmpState.m_bFieldInfo = true;
+        aTmpState.m_bExactOnly = !( SwContentAtPos::SW_OUTLINE & rContentAtPos.eContentAtPos );
+        aTmpState.m_bContentCheck = (SwContentAtPos::SW_CONTENT_CHECK & rContentAtPos.eContentAtPos) != 0;
+        aTmpState.m_bSetInReadOnly = IsReadOnlyAvailable();
 
         SwSpecialPos aSpecialPos;
-        aTmpState.pSpecialPos = ( SwContentAtPos::SW_SMARTTAG & rContentAtPos.eContentAtPos ) ?
+        aTmpState.m_pSpecialPos = ( SwContentAtPos::SW_SMARTTAG & rContentAtPos.eContentAtPos ) ?
                                 &aSpecialPos : 0;
 
         const bool bCrsrFoundExact = GetLayout()->GetCrsrOfst( &aPos, aPt, &aTmpState );
@@ -1162,20 +1164,20 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
         else if( pTextNd
                  && SwContentAtPos::SW_NUMLABEL & rContentAtPos.eContentAtPos)
         {
-            bRet = aTmpState.bInNumPortion;
+            bRet = aTmpState.m_bInNumPortion;
             rContentAtPos.aFnd.pNode = pTextNd;
 
-            Size aSizeLogic(aTmpState.nInNumPostionOffset, 0);
+            Size aSizeLogic(aTmpState.m_nInNumPostionOffset, 0);
             Size aSizePixel = GetWin()->LogicToPixel(aSizeLogic);
             rContentAtPos.nDist = aSizePixel.Width();
         }
         else if( bCrsrFoundExact && pTextNd )
         {
-            if( !aTmpState.bPosCorr )
+            if( !aTmpState.m_bPosCorr )
             {
                 if ( !bRet
                      && SwContentAtPos::SW_SMARTTAG & rContentAtPos.eContentAtPos
-                     && !aTmpState.bFootnoteNoInfo )
+                     && !aTmpState.m_bFootnoteNoInfo )
                 {
                     const SwWrongList* pSmartTagList = pTextNd->GetSmartTags();
                     sal_Int32 nCurrent = aPos.nContent.GetIndex();
@@ -1188,7 +1190,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
                         const SwWrongList* pSubList = pSmartTagList->SubList( nIndex );
                         if ( pSubList )
                         {
-                            nCurrent = aTmpState.pSpecialPos->nCharOfst;
+                            nCurrent = aTmpState.m_pSpecialPos->nCharOfst;
 
                             if ( pSubList->InWrongWord( nCurrent, nLen ) )
                                 bRet = true;
@@ -1219,7 +1221,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
 
                 if ( !bRet
                      && ( SwContentAtPos::SW_FIELD | SwContentAtPos::SW_CLICKFIELD ) & rContentAtPos.eContentAtPos
-                     && !aTmpState.bFootnoteNoInfo )
+                     && !aTmpState.m_bFootnoteNoInfo )
                 {
                     pTextAttr = pTextNd->GetFieldTextAttrAt( aPos.nContent.GetIndex() );
                     const SwField* pField = pTextAttr != NULL
@@ -1286,7 +1288,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
 
                 if( !bRet && SwContentAtPos::SW_FTN & rContentAtPos.eContentAtPos )
                 {
-                    if( aTmpState.bFootnoteNoInfo )
+                    if( aTmpState.m_bFootnoteNoInfo )
                     {
                         // over the footnote's char
                         bRet = true;
@@ -1339,7 +1341,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
 
                 if( !bRet
                     && ( SwContentAtPos::SW_TOXMARK | SwContentAtPos::SW_REFMARK ) & rContentAtPos.eContentAtPos
-                    && !aTmpState.bFootnoteNoInfo )
+                    && !aTmpState.m_bFootnoteNoInfo )
                 {
                     pTextAttr = 0;
                     if( SwContentAtPos::SW_TOXMARK & rContentAtPos.eContentAtPos )
@@ -1405,7 +1407,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
 
                 if ( !bRet
                      && SwContentAtPos::SW_INETATTR & rContentAtPos.eContentAtPos
-                     && !aTmpState.bFootnoteNoInfo )
+                     && !aTmpState.m_bFootnoteNoInfo )
                 {
                     pTextAttr = pTextNd->GetTextAttrAt(
                             aPos.nContent.GetIndex(), RES_TXTATR_INETFMT);
@@ -1491,7 +1493,7 @@ bool SwCrsrShell::GetContentAtPos( const Point& rPt,
                             pF = pF->GetUpper();
                     }
 
-                    if( aTmpState.bPosCorr )
+                    if( aTmpState.m_bPosCorr )
                     {
                         if( pF && !pF->Frm().IsInside( aPt ))
                             pF = 0;

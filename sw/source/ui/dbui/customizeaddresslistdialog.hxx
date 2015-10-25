@@ -43,13 +43,13 @@ class SwCustomizeAddressListDialog : public SfxModalDialog
     DECL_LINK_TYPED(AddRenameHdl_Impl, Button*, void);
     DECL_LINK_TYPED(DeleteHdl_Impl, Button*, void);
     DECL_LINK_TYPED(UpDownHdl_Impl, Button*, void);
-    DECL_LINK(ListBoxSelectHdl_Impl, void *);
+    DECL_LINK_TYPED(ListBoxSelectHdl_Impl, ListBox&, void);
 
     void UpdateButtons();
 public:
     SwCustomizeAddressListDialog(vcl::Window* pParent, const SwCSVData& rOldData);
     virtual ~SwCustomizeAddressListDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     SwCSVData*    GetNewData() { return m_pNewData;}
 };
@@ -60,12 +60,12 @@ class SwAddRenameEntryDialog : public SfxModalDialog
     VclPtr<OKButton> m_pOK;
     const std::vector< OUString >& m_rCSVHeader;
 
-    DECL_LINK(ModifyHdl_Impl, Edit*);
+    DECL_LINK_TYPED(ModifyHdl_Impl, Edit&, void);
 protected:
     SwAddRenameEntryDialog(vcl::Window* pParent, const OUString& rID,
         const OUString& rUIXMLDescription, const std::vector< OUString >& rCSVHeader);
     virtual ~SwAddRenameEntryDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
 public:
     void                SetFieldName(const OUString& rName) {m_pFieldNameED->SetText(rName);}

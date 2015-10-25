@@ -1382,6 +1382,22 @@ public:
 
     ///@}
 
+    /** @name Event Testing Mode
+    */
+
+    /** Enables event testing mode.
+
+    */
+    static void                 EnableEventTestingMode();
+
+    /** Determines if event testing mode is enabled
+
+     @return True if event testing mode is enabled, false if not.
+    */
+    static bool                 IsEventTestingModeEnabled();
+
+    ///@}
+
     /** @name IME Status Window Control
     */
     ///@{
@@ -1481,6 +1497,14 @@ public:
     static css::uno::Reference< css::ui::dialogs::XFolderPicker2 >
         createFolderPicker( const css::uno::Reference< css::uno::XComponentContext >& rServiceManager );
 
+    /** Cancel all open dialogs
+    */
+    static void                 EndAllDialogs();
+
+    /** Cancel all open popups
+    */
+    static void                 EndAllPopups();
+
     ///@}
 
     // For vclbootstrapprotector:
@@ -1497,8 +1521,8 @@ private:
 class VCL_DLLPUBLIC SolarMutexGuard
 {
 private:
-    SolarMutexGuard( const SolarMutexGuard& ) SAL_DELETED_FUNCTION;
-    const SolarMutexGuard& operator = ( const SolarMutexGuard& ) SAL_DELETED_FUNCTION;
+    SolarMutexGuard( const SolarMutexGuard& ) = delete;
+    const SolarMutexGuard& operator = ( const SolarMutexGuard& ) = delete;
     comphelper::SolarMutex& m_solarMutex;
 
 public:
@@ -1517,10 +1541,10 @@ public:
     }
 };
 
-class VCL_DLLPUBLIC SolarMutexClearableGuard SAL_FINAL
+class VCL_DLLPUBLIC SolarMutexClearableGuard final
 {
-    SolarMutexClearableGuard( const SolarMutexClearableGuard& ) SAL_DELETED_FUNCTION;
-    const SolarMutexClearableGuard& operator = ( const SolarMutexClearableGuard& ) SAL_DELETED_FUNCTION;
+    SolarMutexClearableGuard( const SolarMutexClearableGuard& ) = delete;
+    const SolarMutexClearableGuard& operator = ( const SolarMutexClearableGuard& ) = delete;
     bool m_bCleared;
 public:
     /** Acquires mutex
@@ -1555,10 +1579,10 @@ protected:
     comphelper::SolarMutex& m_solarMutex;
 };
 
-class VCL_DLLPUBLIC SolarMutexResettableGuard SAL_FINAL
+class VCL_DLLPUBLIC SolarMutexResettableGuard final
 {
-    SolarMutexResettableGuard( const SolarMutexResettableGuard& ) SAL_DELETED_FUNCTION;
-    const SolarMutexResettableGuard& operator = ( const SolarMutexResettableGuard& ) SAL_DELETED_FUNCTION;
+    SolarMutexResettableGuard( const SolarMutexResettableGuard& ) = delete;
+    const SolarMutexResettableGuard& operator = ( const SolarMutexResettableGuard& ) = delete;
     bool m_bCleared;
 public:
     /** Acquires mutex
@@ -1617,8 +1641,8 @@ private:
 #endif
     comphelper::SolarMutex& m_rSolarMutex;
 
-    SolarMutexTryAndBuyGuard(const SolarMutexTryAndBuyGuard&) SAL_DELETED_FUNCTION;
-    SolarMutexTryAndBuyGuard& operator=(const SolarMutexTryAndBuyGuard&) SAL_DELETED_FUNCTION;
+    SolarMutexTryAndBuyGuard(const SolarMutexTryAndBuyGuard&) = delete;
+    SolarMutexTryAndBuyGuard& operator=(const SolarMutexTryAndBuyGuard&) = delete;
 
 public:
 

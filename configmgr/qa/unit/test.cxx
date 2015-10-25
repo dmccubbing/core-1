@@ -55,14 +55,18 @@
 #include <rtl/ustring.hxx>
 #include <sal/types.h>
 #include <comphelper/processfactory.hxx>
+#include <comphelper/configuration.hxx>
+#include <comphelper/configurationlistener.hxx>
+#include <comphelper/configurationlistener.hxx>
 #include <unotest/bootstrapfixturebase.hxx>
+#include <officecfg/Office/Math.hxx>
 
 namespace {
 
 class Test: public CppUnit::TestFixture {
 public:
-    virtual void setUp() SAL_OVERRIDE;
-    virtual void tearDown() SAL_OVERRIDE;
+    virtual void setUp() override;
+    virtual void tearDown() override;
 
     void testKeyFetch();
     void testKeySet();
@@ -70,6 +74,7 @@ public:
     void testSetSetMemberName();
     void testInsertSetMember();
     void testReadCommands();
+    void testListener();
 #if 0
     void testThreads();
 #endif
@@ -98,6 +103,7 @@ public:
     CPPUNIT_TEST(testSetSetMemberName);
     CPPUNIT_TEST(testInsertSetMember);
     CPPUNIT_TEST(testReadCommands);
+    CPPUNIT_TEST(testListener);
 #if 0
     CPPUNIT_TEST(testThreads);
 #endif
@@ -127,11 +133,11 @@ protected:
 
 private:
     virtual void SAL_CALL disposing(css::lang::EventObject const &)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual void SAL_CALL propertyChange(
         css::beans::PropertyChangeEvent const &)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     int count_;
     bool * destroyed_;
@@ -185,7 +191,7 @@ public:
     SimpleRecursiveTest(Test const & theTest, int count, bool * destroyed);
 
 private:
-    virtual void step() const SAL_OVERRIDE;
+    virtual void step() const override;
 };
 
 SimpleRecursiveTest::SimpleRecursiveTest(
@@ -356,6 +362,47 @@ void Test::testReadCommands()
         access, css::uno::UNO_QUERY_THROW)->dispose();
 }
 
+void Test::testListener()
+{
+    OUString aRandomPath = "/org.openoffice.Office.Math/View";
+
+    // test with no props.
+    {
+        rtl::Reference<comphelper::ConfigurationListener> xListener(
+            new comphelper::ConfigurationListener(aRandomPath));
+        xListener->dispose();
+    }
+
+    // test some changes
+    {
+        rtl::Reference<comphelper::ConfigurationListener> xListener(
+            new comphelper::ConfigurationListener(aRandomPath));
+
+        comphelper::ConfigurationListenerProperty<bool> aSetting(xListener, "AutoRedraw");
+        CPPUNIT_ASSERT_MESSAGE("check AutoRedraw defaults to true", aSetting.get());
+
+        // set to false
+        {
+            std::shared_ptr< comphelper::ConfigurationChanges > xChanges(
+                comphelper::ConfigurationChanges::create());
+            officecfg::Office::Math::View::AutoRedraw::set(false, xChanges);
+            xChanges->commit();
+        }
+        CPPUNIT_ASSERT_MESSAGE("listener failed to trigger", !aSetting.get());
+
+        // set to true
+        {
+            std::shared_ptr< comphelper::ConfigurationChanges > xChanges(
+                comphelper::ConfigurationChanges::create());
+            officecfg::Office::Math::View::AutoRedraw::set(true, xChanges);
+            xChanges->commit();
+        }
+        CPPUNIT_ASSERT_MESSAGE("listener failed to trigger", aSetting.get());
+
+        xListener->dispose();
+    }
+}
+
 void Test::testRecursive()
 {
     bool destroyed = false;
@@ -453,7 +500,7 @@ protected:
     virtual bool iteration() = 0;
 
 private:
-    virtual void SAL_CALL run() SAL_OVERRIDE;
+    virtual void SAL_CALL run() override;
 
     osl::Condition & stop_;
     bool success_;
@@ -489,7 +536,7 @@ public:
         OUString const & relative);
 
 private:
-    virtual bool iteration() SAL_OVERRIDE;
+    virtual bool iteration() override;
 
     Test const & test_;
     OUString path_;
@@ -533,7 +580,7 @@ public:
         OUString const & relative);
 
 private:
-    virtual bool iteration() SAL_OVERRIDE;
+    virtual bool iteration() override;
 
     Test const & test_;
     OUString path_;

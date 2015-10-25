@@ -1766,7 +1766,7 @@ bool ScDocFunc::InsertCells( const ScRange& rRange, const ScMarkData* pTabMark, 
     if ( bRecord )
     {
         pRefUndoDoc = new ScDocument( SCDOCMODE_UNDO );
-        pRefUndoDoc->InitUndo( &rDoc, 0, nTabCount-1, false );
+        pRefUndoDoc->InitUndo( &rDoc, 0, nTabCount-1 );
 
         // pRefUndoDoc is filled in InsertCol / InsertRow
 
@@ -2355,7 +2355,7 @@ bool ScDocFunc::DeleteCells( const ScRange& rRange, const ScMarkData* pTabMark, 
         }
 
         pRefUndoDoc = new ScDocument( SCDOCMODE_UNDO );
-        pRefUndoDoc->InitUndo( &rDoc, 0, nTabCount-1, false );
+        pRefUndoDoc->InitUndo( &rDoc, 0, nTabCount-1 );
 
         pUndoData = new ScRefUndoData( &rDoc );
 
@@ -2408,7 +2408,7 @@ bool ScDocFunc::DeleteCells( const ScRange& rRange, const ScMarkData* pTabMark, 
             pRefUndoDoc->DeleteAreaTab(nUndoStartCol,nUndoStartRow,nUndoEndCol,nUndoEndRow, *itr, IDF_ALL);
 
             //  alle Tabellen anlegen, damit Formeln kopiert werden koennen:
-        pUndoDoc->AddUndoTab( 0, nTabCount-1, false );
+        pUndoDoc->AddUndoTab( 0, nTabCount-1 );
 
             //  kopieren mit bColRowFlags=false (#54194#)
         pRefUndoDoc->CopyToDocument(0,0,0,MAXCOL,MAXROW,MAXTAB,IDF_FORMULA,false,pUndoDoc,NULL,false);
@@ -2605,7 +2605,7 @@ bool ScDocFunc::MoveBlock( const ScRange& rSource, const ScAddress& rDestPos,
     if ( rDoc.HasOLEObjectsInArea( rSource ) )
     {
         aDragShellRef = new ScDocShell;     // DocShell needs a Ref immediately
-        aDragShellRef->DoInitNew(NULL);
+        aDragShellRef->DoInitNew();
     }
     ScDrawLayer::SetGlobalDrawPersist(aDragShellRef);
 
@@ -3364,7 +3364,7 @@ static sal_uInt16 lcl_GetOptimalColWidth( ScDocShell& rDocShell, SCCOL nCol, SCT
     ScDocument& rDoc = rDocShell.GetDocument();
     Fraction aOne(1,1);
     sal_uInt16 nTwips = rDoc.GetOptimalColWidth( nCol, nTab, pDev, nPPTX, nPPTY, aOne, aOne,
-                                                    bFormula, NULL );
+                                                    bFormula );
 
     return nTwips;
 }

@@ -174,9 +174,9 @@ void SwFieldFuncPage::Reset(const SfxItemSet* )
     m_pListUpPB->SetClickHdl(aListModifyLk);
     m_pListDownPB->SetClickHdl(aListModifyLk);
     m_pListItemED->SetReturnActionLink(LINK(this, SwFieldFuncPage, ListModifyReturnActionHdl));
-    Link<> aListEnableLk = LINK(this, SwFieldFuncPage, ListEnableHdl);
+    Link<Edit&,void> aListEnableLk = LINK(this, SwFieldFuncPage, ListEnableHdl);
     m_pListItemED->SetModifyHdl(aListEnableLk);
-    m_pListItemsLB->SetSelectHdl(aListEnableLk);
+    m_pListItemsLB->SetSelectHdl(LINK(this, SwFieldFuncPage, ListEnableListBoxHdl));
 
     if( !IsRefresh() )
     {
@@ -196,7 +196,7 @@ void SwFieldFuncPage::Reset(const SfxItemSet* )
             }
         }
     }
-    TypeHdl(0);
+    TypeHdl(*m_pTypeLB);
 
     m_pTypeLB->SetUpdateMode(true);
 
@@ -210,7 +210,7 @@ void SwFieldFuncPage::Reset(const SfxItemSet* )
     }
 }
 
-IMPL_LINK_NOARG(SwFieldFuncPage, TypeHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, TypeHdl, ListBox&, void)
 {
     // save old ListBoxPos
     const sal_Int32 nOld = GetTypeSel();
@@ -298,7 +298,7 @@ IMPL_LINK_NOARG(SwFieldFuncPage, TypeHdl)
             m_pValueED->SetText(OUString());
         }
         if(bDropDown)
-            ListEnableHdl(0);
+            ListEnableHdl(*m_pListItemED);
 
         if (m_pNameFT->GetText() != m_sOldNameFT)
             m_pNameFT->SetText(m_sOldNameFT);
@@ -401,23 +401,19 @@ IMPL_LINK_NOARG(SwFieldFuncPage, TypeHdl)
 
         EnableInsert( bInsert );
     }
-
-    return 0;
 }
 
-IMPL_LINK_NOARG(SwFieldFuncPage, SelectHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, SelectHdl, ListBox&, void)
 {
     const sal_uInt16 nTypeId = (sal_uInt16)reinterpret_cast<sal_uLong>(m_pTypeLB->GetEntryData(GetTypeSel()));
 
     if( TYP_MACROFLD == nTypeId )
         m_pNameED->SetText( m_pSelectionLB->GetSelectEntry() );
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, InsertMacroHdl, ListBox&, void)
 {
-    SelectHdl(NULL);
+    SelectHdl(*m_pSelectionLB);
     InsertHdl(nullptr);
 }
 
@@ -472,10 +468,14 @@ void SwFieldFuncPage::ListModifyHdl(Control* pControl)
     }
     bDropDownLBChanged = true;
     m_pListItemsLB->SetUpdateMode(true);
-    ListEnableHdl(0);
+    ListEnableHdl(*m_pListItemED);
 }
 
-IMPL_LINK_NOARG(SwFieldFuncPage, ListEnableHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, ListEnableListBoxHdl, ListBox&, void)
+{
+    ListEnableHdl(*m_pListItemED);
+}
+IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, ListEnableHdl, Edit&, void)
 {
     //enable "Add" button when text is in the Edit that's not already member of the box
     m_pListAddPB->Enable(!m_pListItemED->GetText().isEmpty() &&
@@ -485,8 +485,6 @@ IMPL_LINK_NOARG(SwFieldFuncPage, ListEnableHdl)
     m_pListUpPB->Enable(bEnableButtons && (m_pListItemsLB->GetSelectEntryPos() > 0));
     m_pListDownPB->Enable(bEnableButtons &&
                 (m_pListItemsLB->GetSelectEntryPos() < (m_pListItemsLB->GetEntryCount() - 1)));
-
-    return 0;
 }
 
 // renew types in SelectionBox
@@ -602,7 +600,7 @@ bool SwFieldFuncPage::FillItemSet(SfxItemSet* )
         InsertField( nTypeId, nSubType, aName, aVal, nFormat );
     }
 
-    ModifyHdl(NULL);    // enable/disable Insert if applicable
+    ModifyHdl(*m_pNameED);    // enable/disable Insert if applicable
 
     return false;
 }
@@ -652,7 +650,7 @@ void    SwFieldFuncPage::FillUserData()
     SetUserData(USER_DATA_VERSION ";" + OUString::number( nTypeSel ));
 }
 
-IMPL_LINK_NOARG(SwFieldFuncPage, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldFuncPage, ModifyHdl, Edit&, void)
 {
     const sal_Int32 nLen = m_pNameED->GetText().getLength();
 
@@ -664,8 +662,6 @@ IMPL_LINK_NOARG(SwFieldFuncPage, ModifyHdl)
         bEnable = false;
 
     EnableInsert( bEnable );
-
-    return 0;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

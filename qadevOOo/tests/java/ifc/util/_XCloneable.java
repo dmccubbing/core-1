@@ -20,6 +20,8 @@ package ifc.util;
 
 import lib.MultiMethodTest;
 
+import java.util.Arrays;
+
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.lang.XTypeProvider;
 import com.sun.star.uno.UnoRuntime;
@@ -67,13 +69,12 @@ public class _XCloneable extends MultiMethodTest {
     }
 
     protected boolean checkImplementationID(XInterface org, XInterface clone) {
-        boolean res = getImplementationID(org).equals(
-                                            getImplementationID(clone));
+        boolean res = Arrays.equals(getImplementationID(org), getImplementationID(clone));
         if (res && getImplementationID(org).length > 0) {
             log.println("ImplementationID equals the clone has the same id as the original Object");
             log.println("------------------------------------------------------------------------");
         }
-        return !res;
+        return res;
     }
 
     protected String getImplementationName(XInterface ifc) {

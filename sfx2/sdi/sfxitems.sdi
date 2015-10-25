@@ -75,6 +75,7 @@
         UINT16      CellType        MID_SEARCH_CELLTYPE;
         BOOL        RowDirection    MID_SEARCH_ROWDIRECTION;
         BOOL        AllTables       MID_SEARCH_ALLTABLES;
+        BOOL        SearchFiltered  MID_SEARCH_SEARCHFILTERED;
         BOOL        Backward        MID_SEARCH_BACKWARD;
         BOOL        Pattern         MID_SEARCH_PATTERN;
         BOOL        Content         MID_SEARCH_CONTENT;
@@ -91,6 +92,7 @@
         INT16       Command         MID_SEARCH_COMMAND;
         INT32       SearchStartPointX MID_SEARCH_STARTPOINTX;
         INT32       SearchStartPointY MID_SEARCH_STARTPOINTY;
+        BOOL        SearchFormatted MID_SEARCH_SEARCHFORMATTED;
     };
     item SvxSearch SvxSearchItem;
 

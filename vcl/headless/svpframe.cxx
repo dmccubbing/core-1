@@ -44,7 +44,7 @@ namespace {
     struct DamageTracker : public basebmp::IBitmapDeviceDamageTracker
     {
         virtual ~DamageTracker() {}
-        virtual void damaged( const basegfx::B2IBox& ) const SAL_OVERRIDE {}
+        virtual void damaged( const basegfx::B2IBox& ) const override {}
     };
 }
 #endif
@@ -77,11 +77,11 @@ SvpSalFrame::SvpSalFrame( SvpSalInstance* pInstance,
     m_pParent( static_cast<SvpSalFrame*>(pParent) ),
     m_nStyle( nSalFrameStyle ),
     m_bVisible( false ),
-    m_bTopDown( bTopDown ),
 #ifndef IOS
+    m_bTopDown( bTopDown ),
     m_bDamageTracking( false ),
-#endif
     m_nScanlineFormat( nScanlineFormat ),
+#endif
     m_nMinWidth( 0 ),
     m_nMinHeight( 0 ),
     m_nMaxWidth( 0 ),
@@ -92,7 +92,8 @@ SvpSalFrame::SvpSalFrame( SvpSalInstance* pInstance,
     memset( static_cast<void *>(&m_aSystemChildData), 0, sizeof( SystemEnvData ) );
     m_aSystemChildData.nSize        = sizeof( SystemEnvData );
 #ifdef IOS
-    // Nothing
+    (void) bTopDown;
+    (void) nScanlineFormat;
 #elif defined ANDROID
     // Nothing
 #else

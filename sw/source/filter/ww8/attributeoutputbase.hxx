@@ -29,6 +29,7 @@
 #include <tools/solar.h>
 #include <boost/optional.hpp>
 
+#include <com/sun/star/drawing/TextVerticalAdjust.hpp>
 #include <swtypes.hxx>
 #include <wrtswtbl.hxx>
 #include <fldbas.hxx>
@@ -292,6 +293,9 @@ public:
     /// Write a section break
     /// msword::ColumnBreak or msword::PageBreak
     virtual void SectionBreak( sal_uInt8 nC, const WW8_SepInfo* pSectionInfo = NULL ) = 0;
+
+    // preserve page vertical alignment
+    virtual void TextVerticalAdjustment( const css::drawing::TextVerticalAdjust) {};
 
     /// Start of the section properties.
     virtual void StartSection() = 0;

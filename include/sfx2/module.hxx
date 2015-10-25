@@ -86,7 +86,7 @@ public:
     virtual VclPtr<SfxTabPage>  CreateTabPage( sal_uInt16 nId,
                                                vcl::Window* pParent,
                                                const SfxItemSet& rSet );
-    virtual void                Invalidate(sal_uInt16 nId = 0) SAL_OVERRIDE;
+    virtual void                Invalidate(sal_uInt16 nId = 0) override;
 
     bool                        IsChildWindowAvailable( const sal_uInt16 i_nId, const SfxViewFrame* i_pViewFrame ) const;
 
@@ -99,7 +99,7 @@ public:
 
         Failures in any of those steps are reported as assertion in non-product builds, and then FUNIT_100TH_MM is returned.
      */
-    static FieldUnit            GetModuleFieldUnit( ::com::sun::star::uno::Reference< ::com::sun::star::frame::XFrame > const & i_frame );
+    static FieldUnit            GetModuleFieldUnit( css::uno::Reference< css::frame::XFrame > const & i_frame );
     FieldUnit                   GetFieldUnit() const;
 
     SAL_DLLPRIVATE static SfxModuleArr_Impl& GetModules_Impl();

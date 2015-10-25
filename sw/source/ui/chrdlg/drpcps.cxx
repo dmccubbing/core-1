@@ -92,7 +92,7 @@ class SwDropCapsPict : public Control
     Size            maTextSize;
     Reference< css::i18n::XBreakIterator >   xBreak;
 
-    virtual void    Paint(vcl::RenderContext& /*rRenderContext*/, const Rectangle &rRect) SAL_OVERRIDE;
+    virtual void    Paint(vcl::RenderContext& /*rRenderContext*/, const Rectangle &rRect) override;
     void            CheckScript();
     Size            CalcTextSize();
     inline void     InitPrinter();
@@ -118,14 +118,14 @@ public:
     void SetDropCapsPage(SwDropCapsPage* pPage) { mpPage = pPage; }
 
     virtual ~SwDropCapsPict();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void UpdatePaintSettings();       // also invalidates control!
 
-    virtual void Resize() SAL_OVERRIDE;
-    virtual Size GetOptimalSize() const SAL_OVERRIDE;
+    virtual void Resize() override;
+    virtual Size GetOptimalSize() const override;
 
-    void SetText( const OUString& rT ) SAL_OVERRIDE;
+    void SetText( const OUString& rT ) override;
     void SetLines( sal_uInt8 nL );
     void SetDistance( sal_uInt16 nD );
     void SetValues( const OUString& rText, sal_uInt8 nLines, sal_uInt16 nDistance );
@@ -575,7 +575,7 @@ SwDropCapsPage::SwDropCapsPage(vcl::Window *pParent, const SfxItemSet &rSet)
     m_pPict->SetBorderStyle( WindowBorderStyle::MONO );
 
     // Install handler
-    Link<> aLk = LINK(this, SwDropCapsPage, ModifyHdl);
+    Link<Edit&,void> aLk = LINK(this, SwDropCapsPage, ModifyHdl);
     m_pDropCapsField->SetModifyHdl( aLk );
     m_pLinesField->SetModifyHdl( aLk );
     m_pDistanceField->SetModifyHdl( aLk );
@@ -698,7 +698,7 @@ IMPL_LINK_NOARG_TYPED(SwDropCapsPage, ClickHdl, Button*, void)
 
     if ( bChecked )
     {
-        ModifyHdl(m_pDropCapsField);
+        ModifyHdl(*m_pDropCapsField);
         m_pDropCapsField->GrabFocus();
     }
     else
@@ -712,17 +712,17 @@ IMPL_LINK_NOARG_TYPED(SwDropCapsPage, WholeWordHdl, Button*, void)
     m_pDropCapsField->Enable( !m_pWholeWordCB->IsChecked() );
     m_pSwitchText->Enable(!m_pWholeWordCB->IsChecked());
 
-    ModifyHdl(m_pDropCapsField);
+    ModifyHdl(*m_pDropCapsField);
 
     bModified = true;
 }
 
-IMPL_LINK( SwDropCapsPage, ModifyHdl, Edit *, pEdit )
+IMPL_LINK_TYPED( SwDropCapsPage, ModifyHdl, Edit&, rEdit, void )
 {
     OUString sPreview;
 
     // set text if applicable
-    if (pEdit == m_pDropCapsField)
+    if (&rEdit == m_pDropCapsField)
     {
         const sal_Int32 nVal = !m_pWholeWordCB->IsChecked()
             ? static_cast<sal_Int32>(m_pDropCapsField->GetValue())
@@ -748,7 +748,7 @@ IMPL_LINK( SwDropCapsPage, ModifyHdl, Edit *, pEdit )
         if (bSetText)
             m_pTextEdit->SetText(sPreview);
     }
-    else if (pEdit == m_pTextEdit)   // set quantity if applicable
+    else if (&rEdit == m_pTextEdit)   // set quantity if applicable
     {
         const sal_Int32 nTmp = m_pTextEdit->GetText().getLength();
         m_pDropCapsField->SetValue(std::max<sal_Int32>(1, nTmp));
@@ -756,23 +756,20 @@ IMPL_LINK( SwDropCapsPage, ModifyHdl, Edit *, pEdit )
     }
 
     // adjust image
-    if (pEdit == m_pDropCapsField || pEdit == m_pTextEdit)
+    if (&rEdit == m_pDropCapsField || &rEdit == m_pTextEdit)
         m_pPict->SetText (sPreview);
-    else if (pEdit == m_pLinesField)
+    else if (&rEdit == m_pLinesField)
         m_pPict->SetLines((sal_uInt8)m_pLinesField->GetValue());
     else
         m_pPict->SetDistance((sal_uInt16)m_pDistanceField->Denormalize(m_pDistanceField->GetValue(FUNIT_TWIP)));
 
     bModified = true;
-
-    return 0;
 }
 
-IMPL_LINK_NOARG(SwDropCapsPage, SelectHdl)
+IMPL_LINK_NOARG_TYPED(SwDropCapsPage, SelectHdl, ListBox&, void)
 {
     m_pPict->UpdatePaintSettings();
     bModified = true;
-    return 0;
 }
 
 void SwDropCapsPage::FillSet( SfxItemSet &rSet )

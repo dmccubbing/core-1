@@ -497,7 +497,7 @@ IMPL_LINK_NOARG_TYPED(AnimationWindow, ClickCreateGroupHdl, Button*, void)
         SID_ANIMATOR_CREATE, SfxCallMode::SLOT | SfxCallMode::RECORD, &aItem, 0L );
 }
 
-IMPL_LINK_NOARG(AnimationWindow, ModifyBitmapHdl)
+IMPL_LINK_NOARG_TYPED(AnimationWindow, ModifyBitmapHdl, Edit&, void)
 {
     sal_uLong nBmp = static_cast<sal_uLong>(m_pNumFldBitmap->GetValue());
 
@@ -509,19 +509,15 @@ IMPL_LINK_NOARG(AnimationWindow, ModifyBitmapHdl)
     m_nCurrentFrame = nBmp - 1;
 
     UpdateControl();
-
-    return 0L;
 }
 
-IMPL_LINK_NOARG(AnimationWindow, ModifyTimeHdl)
+IMPL_LINK_NOARG_TYPED(AnimationWindow, ModifyTimeHdl, Edit&, void)
 {
     sal_uLong nPos = static_cast<sal_uLong>(m_pNumFldBitmap->GetValue() - 1);
 
     tools::Time *const pTime = m_FrameList[nPos].second;
 
     *pTime = m_pTimeField->GetTime();
-
-    return 0L;
 }
 
 void AnimationWindow::UpdateControl(bool const bDisableCtrls)
@@ -616,8 +612,8 @@ void AnimationWindow::UpdateControl(bool const bDisableCtrls)
 
         m_pRbtBitmap->Enable();
         m_pBtnCreateGroup->Enable(!m_FrameList.empty());
-        m_pFtAdjustment->Enable( true );
-        m_pLbAdjustment->Enable( true );
+        m_pFtAdjustment->Enable();
+        m_pLbAdjustment->Enable();
     }
 
     ClickRbtHdl( NULL );

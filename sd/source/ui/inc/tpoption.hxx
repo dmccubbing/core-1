@@ -39,8 +39,8 @@ public:
             virtual ~SdTpOptionsSnap();
 
     static  VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
 };
 
@@ -58,11 +58,11 @@ private:
 public:
             SdTpOptionsContents( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
             virtual ~SdTpOptionsContents();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static  VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 };
 
 /**
@@ -117,7 +117,7 @@ private:
     static OUString        GetScale( sal_Int32 nX, sal_Int32 nY );
     static bool            SetScale( const OUString& aScale, sal_Int32& rX, sal_Int32& rY );
 
-    DECL_LINK( SelectMetricHdl_Impl, void * );
+    DECL_LINK_TYPED( SelectMetricHdl_Impl, ListBox&, void );
 
     /** Enable or disable the controls in the compatibility section of the
         'general' tab page depending on whether there is at least one
@@ -126,17 +126,17 @@ private:
     void UpdateCompatibilityControls();
 
 protected:
-    virtual void ActivatePage( const SfxItemSet& rSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) SAL_OVERRIDE;
+    virtual void ActivatePage( const SfxItemSet& rSet ) override;
+    virtual sfxpg DeactivatePage( SfxItemSet* pSet ) override;
 
 public:
             SdTpOptionsMisc( vcl::Window* pParent, const SfxItemSet& rInAttrs  );
             virtual ~SdTpOptionsMisc();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static  VclPtr<SfxTabPage> Create( vcl::Window*, const SfxItemSet* );
-    virtual bool FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet * ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* ) override;
+    virtual void Reset( const SfxItemSet * ) override;
 
     /** Hide Impress specific controls, make Draw specific controls visible
         and arrange the visible controls.  Do not call this method or the
@@ -149,7 +149,7 @@ public:
         <member>SetDrawMode()</member> method more than once.
     */
     void SetImpressMode();
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 
     using TabPage::ActivatePage;
     using TabPage::DeactivatePage;

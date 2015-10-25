@@ -240,23 +240,19 @@ public class utils {
         String settingPath = null;
         try {
             Object settings = msf.createInstance("com.sun.star.comp.framework.PathSettings");
-            XPropertySet pthSettings = null;
             try {
-                pthSettings = (XPropertySet) AnyConverter.toObject(
+                XPropertySet pthSettings = (XPropertySet) AnyConverter.toObject(
                     new Type(XPropertySet.class), settings);
+                settingPath = (String) pthSettings.getPropertyValue(setting);
             } catch (com.sun.star.lang.IllegalArgumentException iae) {
                 System.out.println("### couldn't get Office Settings");
             }
-            settingPath = (String) pthSettings.getPropertyValue(setting);
-
         } catch (Exception e) {
             System.out.println("Couldn't get string value for " + setting);
             e.printStackTrace();
         }
         return settingPath;
     }
-
-
 
     /**
      * This method returns the temp dicrectory of the user.
@@ -571,8 +567,13 @@ public class utils {
                 continue;
             }
             try {
-                new Socket("localhost", port);
+                Socket sock = new Socket("localhost", port);
                 System.out.println(" -> socket: occupied port: " + port);
+                try {
+                    sock.close();
+                } catch (IOException ex) {
+                    // ignore close exception
+                }
             } catch (IOException e) {
                 System.out.println(" -> free port");
                 return port;

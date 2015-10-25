@@ -297,12 +297,10 @@ IMPL_LINK_TYPED( ArgInput, EdFocusHdl, Control&, rControl, void )
         EdFocus();
 }
 
-IMPL_LINK( ArgInput, EdModifyHdl,ArgEdit*, pEd )
+IMPL_LINK_TYPED( ArgInput, EdModifyHdl, Edit&, rEdit, void )
 {
-    if(pEd == pEdArg)
+    if(&rEdit == pEdArg)
         EdModify();
-
-    return 0;
 }
 
 // class EditBox
@@ -484,8 +482,14 @@ void RefEdit::SetRefValid(bool bValid)
     }
     else
     {
+#if 0
+        // Setting background color has no effect here so we'd end up with
+        // white on white!
         SetControlForeground(COL_WHITE);
         SetControlBackground(0xff6563);
+#else
+        SetControlForeground( ::Color( RGB_COLORDATA( 0xf0, 0, 0)));
+#endif
     }
 }
 

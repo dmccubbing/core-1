@@ -89,7 +89,7 @@ struct SfxRequest_Impl: public SfxListener
 
 
     void                SetPool( SfxItemPool *pNewPool );
-    virtual void        Notify( SfxBroadcaster &rBC, const SfxHint &rHint ) SAL_OVERRIDE;
+    virtual void        Notify( SfxBroadcaster &rBC, const SfxHint &rHint ) override;
     void                Record( const uno::Sequence < beans::PropertyValue >& rArgs );
 };
 
@@ -425,87 +425,6 @@ void SfxRequest::RemoveItem( sal_uInt16 nID )
             DELETEZ(pArgs);
     }
 }
-
-
-
-const SfxPoolItem* SfxRequest::GetArg
-(
-    sal_uInt16  nSlotId,  // Slot-Id or Which-Id of the parameters
-    bool    bDeep,    // sal_False: do not search in the Parent-ItemSets
-    std::function<bool ( const SfxPoolItem* )> isItemType     // != 0:  check for required pool item class
-)   const
-{
-    return GetItem( pArgs, nSlotId, bDeep, isItemType );
-}
-
-
-
-const SfxPoolItem* SfxRequest::GetItem
-(
-    const SfxItemSet* pArgs,
-    sal_uInt16            nSlotId,  // Slot-Id or Which-Id of the parameters
-    bool              bDeep,    // sal_False: do not search in the Parent-ItemSets
-    std::function<bool ( const SfxPoolItem* )> isItemType     // != 0:  check for required pool item class
-)
-
-/*  [Description]
-
-    With this method the access to individual parameters in the SfxRequest is
-    simplified. In particular the type-examination (by Assertion) is performed,
-    whereby the application source code will be much clearer. In the product-
-    version is a 0 returned, if the found item is not of the specified class.
-
-    [Example]
-
-    void MyShell::Execute( SfxRequest &rReq )
-    {
-        switch ( rReq.GetSlot() )
-        {
-            case SID_MY:
-            {
-                ...
-                // An Example on not using the macros
-                const SfxInt32Item *pPosItem = (const SfxUInt32Item*)
-                    rReq.GetArg( SID_POS, sal_False, TYPE(SfxInt32Item) );
-                sal_uInt16 nPos = pPosItem ? pPosItem->GetValue() : 0;
-
-                // An Example on using the macros
-                SFX_REQUEST_ARG(rReq, pSizeItem, SfxInt32Item, SID_SIZE, sal_False);
-                sal_uInt16 nSize = pSizeItem ? pPosItem->GetValue() : 0;
-
-                ...
-            }
-
-            ...
-        }
-    }
-*/
-
-{
-    if ( pArgs )
-    {
-        // Which may be converted to ID
-        sal_uInt16 nWhich = pArgs->GetPool()->GetWhich(nSlotId);
-
-        // Is the item set or available at bDeep == sal_True?
-        const SfxPoolItem *pItem = 0;
-        if ( ( bDeep ? SfxItemState::DEFAULT : SfxItemState::SET )
-             <= pArgs->GetItemState( nWhich, bDeep, &pItem ) )
-        {
-            // Compare type
-            if ( !pItem || (!isItemType || isItemType(pItem)) )
-                return pItem;
-
-            // Item of wrong type => Programming error
-            OSL_FAIL(  "invalid argument type" );
-        }
-    }
-
-    // No Parameter, not found or wrong type
-    return 0;
-}
-
-
 
 void SfxRequest::SetReturnValue(const SfxPoolItem &rItem)
 {

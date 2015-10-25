@@ -190,8 +190,8 @@ CustomAnimationPane::CustomAnimationPane( Window* pParent, ViewShellBase& rBase,
     mpPBAddEffect->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
     mpPBChangeEffect->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
     mpPBRemoveEffect->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
-    mpLBStart->SetSelectHdl( LINK( this, CustomAnimationPane, implControlHdl ) );
-    mpCBSpeed->SetSelectHdl( LINK( this, CustomAnimationPane, implControlHdl ) );
+    mpLBStart->SetSelectHdl( LINK( this, CustomAnimationPane, implControlListBoxHdl ) );
+    mpCBSpeed->SetSelectHdl( LINK( this, CustomAnimationPane, implControlListBoxHdl ) );
     mpPBPropertyMore->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
     mpPBMoveUp->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
     mpPBMoveDown->SetClickHdl( LINK( this, CustomAnimationPane, implClickHdl ) );
@@ -606,7 +606,7 @@ void CustomAnimationPane::updateControls()
             mpCBSpeed->SelectEntryPos( nPos );
         }
 
-        mpPBPropertyMore->Enable( true );
+        mpPBPropertyMore->Enable();
     }
     else
     {
@@ -2010,19 +2010,22 @@ void CustomAnimationPane::onChangeSpeed()
 }
 
 /// this link is called when the property box is modified by the user
-IMPL_LINK_NOARG(CustomAnimationPane, implPropertyHdl)
+IMPL_LINK_NOARG_TYPED(CustomAnimationPane, implPropertyHdl, LinkParamNone*, void)
 {
     onChangeProperty();
-    return 0;
 }
 
 IMPL_LINK_TYPED( CustomAnimationPane, implClickHdl, Button*, pBtn, void )
 {
     implControlHdl(pBtn);
 }
+IMPL_LINK_TYPED( CustomAnimationPane, implControlListBoxHdl, ListBox&, rListBox, void )
+{
+    implControlHdl(&rListBox);
+}
 
 /// this link is called when one of the controls is modified
-IMPL_LINK( CustomAnimationPane, implControlHdl, Control*, pControl )
+void CustomAnimationPane::implControlHdl(Control* pControl )
 {
     if( pControl == mpPBAddEffect )
         onChange(true);
@@ -2049,8 +2052,6 @@ IMPL_LINK( CustomAnimationPane, implControlHdl, Control*, pControl )
     }
 
     updateControls();
-
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(CustomAnimationPane, lateInitCallback, Timer *, void)
@@ -2246,7 +2247,7 @@ void CustomAnimationPane::markShapesFromSelectedEffects()
                 Reference< XShape > xShape( pEffect->getTargetShape() );
                 SdrObject* pObj = GetSdrObjectFromXShape( xShape );
                 if( pObj )
-                    pView->MarkObj(pObj, pView->GetSdrPageView(), false);
+                    pView->MarkObj(pObj, pView->GetSdrPageView());
             }
         }
     }

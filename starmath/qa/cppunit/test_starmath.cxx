@@ -37,8 +37,8 @@ public:
     Test();
 
     // init
-    virtual void setUp() SAL_OVERRIDE;
-    virtual void tearDown() SAL_OVERRIDE;
+    virtual void setUp() override;
+    virtual void tearDown() override;
 
     // tests
     void editUndoRedo();
@@ -78,7 +78,7 @@ void Test::setUp()
         SfxModelFlags::EMBEDDED_OBJECT |
         SfxModelFlags::DISABLE_EMBEDDED_SCRIPTS |
         SfxModelFlags::DISABLE_DOCUMENT_RECOVERY);
-    m_xDocShRef->DoInitNew(0);
+    m_xDocShRef->DoInitNew();
 
     SfxViewFrame *pViewFrame = SfxViewFrame::LoadHiddenDocument(*m_xDocShRef, 0);
 

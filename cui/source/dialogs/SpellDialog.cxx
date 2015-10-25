@@ -122,8 +122,8 @@ public:
 
     virtual ~SpellUndoAction_Impl();
 
-    virtual void            Undo() SAL_OVERRIDE;
-    virtual sal_uInt16          GetId() const SAL_OVERRIDE;
+    virtual void            Undo() override;
+    virtual sal_uInt16          GetId() const override;
 
     void                    SetEnableChangePB(){m_bEnableChangePB = true;}
     bool                    IsEnableChangePB(){return m_bEnableChangePB;}
@@ -424,7 +424,7 @@ void SpellDialog::SpellContinue_Impl(bool bUseSavedSentence, bool bIgnoreCurrent
             sal_Int32 nIdx = 0;
             do
             {
-                aControls[nIdx]->Enable(true);
+                aControls[nIdx]->Enable();
             }
             while(aControls[++nIdx]);
 
@@ -783,7 +783,7 @@ LanguageType SpellDialog::GetSelectedLang_Impl() const
 }
 
 
-IMPL_LINK(SpellDialog, LanguageSelectHdl, SvxLanguageBox*, pBox)
+IMPL_LINK_TYPED(SpellDialog, LanguageSelectHdl, ListBox&, rBox, void)
 {
     //If selected language changes, then add->list should be regenerated to
     //match
@@ -795,7 +795,7 @@ IMPL_LINK(SpellDialog, LanguageSelectHdl, SvxLanguageBox*, pBox)
     m_pSuggestionLB->Clear();
     if(!sError.isEmpty())
     {
-        LanguageType eLanguage = pBox->GetSelectLanguage();
+        LanguageType eLanguage = static_cast<SvxLanguageBox*>(&rBox)->GetSelectLanguage();
         Reference <XSpellAlternatives> xAlt = xSpell->spell( sError, eLanguage,
                                             Sequence< PropertyValue >() );
         if( xAlt.is() )
@@ -809,7 +809,6 @@ IMPL_LINK(SpellDialog, LanguageSelectHdl, SvxLanguageBox*, pBox)
          m_pSentenceED->AddUndoAction(new SpellUndoAction_Impl(SPELLUNDO_CHANGE_LANGUAGE, aDialogUndoLink));
     }
     SpellDialog::UpdateBoxes_Impl();
-    return 0;
 }
 
 
@@ -955,9 +954,9 @@ int SpellDialog::AddToDictionaryExecute( sal_uInt16 nItemId, PopupMenu *pMenu )
 }
 
 
-IMPL_LINK(SpellDialog, ModifyHdl, SentenceEditWindow_Impl*, pEd)
+IMPL_LINK_TYPED(SpellDialog, ModifyHdl, Edit&, rEd, void)
 {
-    if (m_pSentenceED == pEd)
+    if (m_pSentenceED == &rEd)
     {
         bModified = true;
         m_pSuggestionLB->SetNoSelection();
@@ -977,7 +976,6 @@ IMPL_LINK(SpellDialog, ModifyHdl, SentenceEditWindow_Impl*, pEd)
         }
         m_pSentenceED->AddUndoAction(pSpellAction);
     }
-    return 0;
 };
 
 
@@ -2018,13 +2016,13 @@ void  SentenceEditWindow_Impl::SetUndoEditMode(bool bSet)
     pSpellDialog->m_pChangePB->Enable();
 }
 
-IMPL_LINK( SpellDialog, HandleHyperlink, FixedHyperlink*, pHyperlink )
+IMPL_LINK_TYPED( SpellDialog, HandleHyperlink, FixedHyperlink&, rHyperlink, void )
 {
-    OUString sURL=pHyperlink->GetURL();
+    OUString sURL=rHyperlink.GetURL();
     OUString sTitle=GetText();
 
     if ( sURL.isEmpty() ) // Nothing to do, when the URL is empty
-        return 1;
+        return;
     try
     {
         uno::Reference< css::system::XSystemShellExecute > xSystemShellExecute(
@@ -2040,8 +2038,6 @@ IMPL_LINK( SpellDialog, HandleHyperlink, FixedHyperlink*, pHyperlink )
         aErrorBox->SetText(sTitle);
         aErrorBox->Execute();
     }
-
-    return 1;
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

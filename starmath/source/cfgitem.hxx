@@ -70,8 +70,8 @@ class SmFontFormatList
     std::deque<SmFntFmtListEntry> aEntries;
     bool                    bModified;
 
-    SmFontFormatList(const SmFontFormatList&) SAL_DELETED_FUNCTION;
-    SmFontFormatList& operator=(const SmFontFormatList&) SAL_DELETED_FUNCTION;
+    SmFontFormatList(const SmFontFormatList&) = delete;
+    SmFontFormatList& operator=(const SmFontFormatList&) = delete;
 
 public:
     SmFontFormatList();
@@ -102,8 +102,8 @@ class SmMathConfig : public utl::ConfigItem, public SfxBroadcaster
     bool                              bIsFormatModified;
     SmFontPickList                    vFontPickList[7];
 
-    SmMathConfig(const SmMathConfig&) SAL_DELETED_FUNCTION;
-    SmMathConfig& operator=(const SmMathConfig&) SAL_DELETED_FUNCTION;
+    SmMathConfig(const SmMathConfig&) = delete;
+    SmMathConfig& operator=(const SmMathConfig&) = delete;
 
     void    StripFontFormatList( const std::vector< SmSym > &rSymbols );
 
@@ -139,14 +139,14 @@ protected:
         return const_cast<SmMathConfig*>(this)->GetFontFormatList();
     }
 
-    virtual void    ImplCommit() SAL_OVERRIDE;
+    virtual void    ImplCommit() override;
 
 public:
     SmMathConfig();
     virtual ~SmMathConfig();
 
     // utl::ConfigItem
-    virtual void    Notify( const com::sun::star::uno::Sequence< OUString > &rPropertyNames ) SAL_OVERRIDE;
+    virtual void    Notify( const com::sun::star::uno::Sequence< OUString > &rPropertyNames ) override;
 
     SmSymbolManager &   GetSymbolManager();
     void                GetSymbols( std::vector< SmSym > &rSymbols ) const;

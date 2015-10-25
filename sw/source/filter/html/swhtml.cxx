@@ -433,8 +433,7 @@ SwHTMLParser::~SwHTMLParser()
         sal_uInt16 nLinkMode = pDoc->getIDocumentSettingAccess().getLinkUpdateMode( true );
         if( nLinkMode != NEVER && bAsync &&
             SfxObjectCreateMode::INTERNAL!=pDoc->GetDocShell()->GetCreateMode() )
-            pDoc->getIDocumentLinksAdministration().GetLinkManager().UpdateAllLinks( nLinkMode == MANUAL,
-                                                   true, false );
+            pDoc->getIDocumentLinksAdministration().GetLinkManager().UpdateAllLinks( nLinkMode == MANUAL );
 
         if ( pDoc->GetDocShell()->IsLoading() )
         {
@@ -536,7 +535,7 @@ SvParserState SwHTMLParser::CallParser()
     {
         if( !bViewCreated )
         {
-            nEventId = Application::PostUserEvent( LINK( this, SwHTMLParser, AsyncCallback ), 0 );
+            nEventId = Application::PostUserEvent( LINK( this, SwHTMLParser, AsyncCallback ) );
         }
         else
         {
@@ -3039,7 +3038,7 @@ bool SwHTMLParser::EndAttr( _HTMLAttr* pAttr, _HTMLAttr **ppDepAttr,
 
     bool bInsert;
     sal_uInt16 nScriptItem = 0;
-    bool bScript = false, bFont = false;
+    bool bScript = false;
     // ein Bereich ??
     if( !bChkEmpty || (RES_PARATR_BEGIN <= nWhich && bMoveBack) ||
         RES_PAGEDESC == nWhich || RES_BREAK == nWhich ||
@@ -3050,6 +3049,7 @@ bool SwHTMLParser::EndAttr( _HTMLAttr* pAttr, _HTMLAttr **ppDepAttr,
         // We do some optimization for script depenedent attributes here.
         if( *pEndIdx == pAttr->GetSttPara() )
         {
+            bool bFont = false;
             lcl_swhtml_getItemInfo( *pAttr, bScript, bFont, nScriptItem );
         }
     }

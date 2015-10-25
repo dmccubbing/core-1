@@ -39,17 +39,17 @@ class SvxJSearchOptionsDialog : public SfxSingleTabDialog
     sal_Int32                     nInitialTlFlags;
     VclPtr<SvxJSearchOptionsPage> pPage;
 
-    SvxJSearchOptionsDialog( const SvxJSearchOptionsDialog & ) SAL_DELETED_FUNCTION;
-    SvxJSearchOptionsDialog & operator == ( const SvxJSearchOptionsDialog & ) SAL_DELETED_FUNCTION;
+    SvxJSearchOptionsDialog( const SvxJSearchOptionsDialog & ) = delete;
+    SvxJSearchOptionsDialog & operator == ( const SvxJSearchOptionsDialog & ) = delete;
 
 public:
     SvxJSearchOptionsDialog(vcl::Window *pParent,
         const SfxItemSet& rOptionsSet, sal_Int32 nInitialFlags);
     virtual ~SvxJSearchOptionsDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     // Window
-    virtual void    Activate() SAL_OVERRIDE;
+    virtual void    Activate() override;
 
     sal_Int32           GetTransliterationFlags() const;
 };

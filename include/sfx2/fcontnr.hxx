@@ -48,9 +48,9 @@ class SfxRefItem : public SfxPoolItem
 public:
     SfxRefItem( sal_uInt16 nWhichId, const tools::SvRef<SvRefBase>& rValue ) : SfxPoolItem( nWhichId )
     {   maRef = rValue; }
-    virtual SfxPoolItem*     Clone( SfxItemPool* = 0 ) const SAL_OVERRIDE
+    virtual SfxPoolItem*     Clone( SfxItemPool* = 0 ) const override
     {   return new SfxRefItem( *this ); }
-    virtual bool             operator==( const SfxPoolItem& rL) const SAL_OVERRIDE
+    virtual bool             operator==( const SfxPoolItem& rL) const override
     {   return static_cast<const SfxRefItem&>(rL).maRef == maRef; }
 };
 
@@ -85,8 +85,8 @@ public:
 
     SAL_DLLPRIVATE static void ReadFilters_Impl( bool bUpdate=false );
     SAL_DLLPRIVATE static void ReadSingleFilter_Impl( const OUString& rName,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess >& xTypeCFG,
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess >& xFilterCFG,
+                            const css::uno::Reference< css::container::XNameAccess >& xTypeCFG,
+                            const css::uno::Reference< css::container::XNameAccess >& xFilterCFG,
                             bool bUpdate );
     SAL_DLLPRIVATE static const SfxFilter* GetDefaultFilter_Impl( const OUString& );
 };
@@ -116,7 +116,7 @@ public:
     const SfxFilter*    GetFilter4Extension( const OUString& rExt, SfxFilterFlags nMust = SfxFilterFlags::IMPORT, SfxFilterFlags nDont = SFX_FILTER_NOTINSTALLED ) const;
     const SfxFilter*    GetFilter4FilterName( const OUString& rName, SfxFilterFlags nMust = SfxFilterFlags::NONE, SfxFilterFlags nDont = SFX_FILTER_NOTINSTALLED ) const;
     const SfxFilter*    GetFilter4UIName( const OUString& rName, SfxFilterFlags nMust = SfxFilterFlags::NONE, SfxFilterFlags nDont = SFX_FILTER_NOTINSTALLED ) const;
-    const SfxFilter*    GetFilterForProps( const com::sun::star::uno::Sequence < ::com::sun::star::beans::NamedValue >& aSeq, SfxFilterFlags nMust = SfxFilterFlags::NONE, SfxFilterFlags nDont = SFX_FILTER_NOTINSTALLED ) const;
+    const SfxFilter*    GetFilterForProps( const css::uno::Sequence < css::beans::NamedValue >& aSeq, SfxFilterFlags nMust = SfxFilterFlags::NONE, SfxFilterFlags nDont = SFX_FILTER_NOTINSTALLED ) const;
     const SfxFilter*    GetAnyFilter( SfxFilterFlags nMust=SfxFilterFlags::NONE, SfxFilterFlags nDont=SFX_FILTER_NOTINSTALLED ) const;
 };
 

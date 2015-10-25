@@ -313,8 +313,8 @@ public:
     {
     }
 
-    virtual void    LastPoint() SAL_OVERRIDE;
-    virtual void    Input( const Point& rPoint ) SAL_OVERRIDE;
+    virtual void    LastPoint() override;
+    virtual void    Input( const Point& rPoint ) override;
 
     ImplPolygon*    release() { return mxPoly.release(); }
 };
@@ -366,8 +366,8 @@ public:
     bool                IsPolygon() const
                             { return maFirstPoint == maLastPoint; }
 
-    virtual void        Input( const Point& rPoint ) SAL_OVERRIDE;
-    virtual void        LastPoint() SAL_OVERRIDE;
+    virtual void        Input( const Point& rPoint ) override;
+    virtual void        LastPoint() override;
 };
 
 inline int ImplEdgePointFilter::VisibleSide( const Point& rPoint ) const
@@ -637,7 +637,6 @@ Polygon::Polygon( const Point& rCenter, long nRadX, long nRadY, sal_uInt16 nPoin
         // Ceil number of points until divisible by four
         mpImplPolygon = new ImplPolygon( nPoints = (nPoints + 3) & ~3 );
 
-        Point* pPt;
         sal_uInt16 i;
         sal_uInt16 nPoints2 = nPoints >> 1;
         sal_uInt16 nPoints4 = nPoints >> 2;
@@ -649,7 +648,7 @@ Polygon::Polygon( const Point& rCenter, long nRadX, long nRadY, sal_uInt16 nPoin
             long nX = FRound( nRadX * cos( nAngle ) );
             long nY = FRound( -nRadY * sin( nAngle ) );
 
-            pPt = &(mpImplPolygon->mpPointAry[i]);
+            Point* pPt = &(mpImplPolygon->mpPointAry[i]);
             pPt->X() =  nX + rCenter.X();
             pPt->Y() =  nY + rCenter.Y();
             pPt = &(mpImplPolygon->mpPointAry[nPoints2-i-1]);
@@ -750,7 +749,7 @@ Polygon::Polygon( const Point& rBezPt1, const Point& rCtrlPt1,
 
     const double    fInc = 1.0 / ( nPoints - 1 );
     double          fK_1 = 0.0, fK1_1 = 1.0;
-    double          fK_2, fK_3, fK1_2, fK1_3, fK12, fK21;
+    double          fK_2, fK_3, fK1_2, fK1_3;
     const double    fX0 = rBezPt1.X();
     const double    fY0 = rBezPt1.Y();
     const double    fX1 = 3.0 * rCtrlPt1.X();
@@ -768,7 +767,8 @@ Polygon::Polygon( const Point& rBezPt1, const Point& rCtrlPt1,
 
         fK_2 = fK_1, fK_3 = ( fK_2 *= fK_1 ), fK_3 *= fK_1;
         fK1_2 = fK1_1, fK1_3 = ( fK1_2 *= fK1_1 ), fK1_3 *= fK1_1;
-        fK12 = fK_1 * fK1_2, fK21 = fK_2 * fK1_1;
+        double fK12 = fK_1 * fK1_2;
+        double fK21 = fK_2 * fK1_1;
 
         rPt.X() = FRound( fK1_3 * fX0 + fK12 * fX1 + fK21 * fX2 + fK_3 * fX3 );
         rPt.Y() = FRound( fK1_3 * fY0 + fK12 * fY1 + fK21 * fY2 + fK_3 * fY3 );
@@ -1536,7 +1536,7 @@ bool Polygon::IsEqual( const tools::Polygon& rPoly ) const
 
 SvStream& ReadPolygon( SvStream& rIStream, tools::Polygon& rPoly )
 {
-    DBG_ASSERTWARNING( rIStream.GetVersion(), "Polygon::>> - Solar-Version not set on rIStream" );
+    SAL_WARN_IF( !rIStream.GetVersion(), "tools", "Polygon::>> - Solar-Version not set on rIStream" );
 
     sal_uInt16          i;
     sal_uInt16          nPoints(0);
@@ -1587,7 +1587,7 @@ SvStream& ReadPolygon( SvStream& rIStream, tools::Polygon& rPoly )
 
 SvStream& WritePolygon( SvStream& rOStream, const tools::Polygon& rPoly )
 {
-    DBG_ASSERTWARNING( rOStream.GetVersion(), "Polygon::<< - Solar-Version not set on rOStream" );
+    SAL_WARN_IF( !rOStream.GetVersion(), "tools", "Polygon::<< - Solar-Version not set on rOStream" );
 
     sal_uInt16          i;
     sal_uInt16          nPoints = rPoly.GetSize();

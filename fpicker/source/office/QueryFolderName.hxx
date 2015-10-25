@@ -33,13 +33,13 @@ private:
     VclPtr<OKButton> m_pOKBtn;
 
     DECL_LINK_TYPED( OKHdl, Button*, void );
-    DECL_LINK( NameHdl, void * );
+    DECL_LINK_TYPED( NameHdl, Edit&, void );
 
 public:
     QueryFolderNameDialog(vcl::Window* _pParent, const OUString& rTitle,
         const OUString& rDefaultText, OUString* pGroupName = NULL);
     virtual ~QueryFolderNameDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     OUString GetName() const { return m_pNameEdit->GetText(); }
 };
 

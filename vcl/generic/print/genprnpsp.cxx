@@ -103,7 +103,7 @@ namespace
         // parent window, Query text, initial value
         QueryString(vcl::Window*, OUString &, OUString &);
         virtual ~QueryString() { disposeOnce(); }
-        virtual void dispose() SAL_OVERRIDE
+        virtual void dispose() override
         {
             m_pOKButton.clear();
             m_pFixedText.clear();
@@ -1146,7 +1146,7 @@ bool PspSalPrinter::StartJob( const OUString* i_pFileName, const OUString& i_rJo
                               TenMuToPt( aNewParm.maPageSize.Height() ),
                               vcl::PDFWriter::Portrait );
 
-            xWriter->PlayMetafile( aPageFile, aMtfContext, NULL );
+            xWriter->PlayMetafile( aPageFile, aMtfContext );
         }
     }
 

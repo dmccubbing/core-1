@@ -45,7 +45,7 @@ SwDelText::SwDelText( sal_Int32 nS, sal_Int32 nL )
 }
 
 SwUpdateAttr::SwUpdateAttr( sal_Int32 nS, sal_Int32 nE, sal_uInt16 nW )
-    : SwMsgPoolItem( RES_UPDATE_ATTR ), nStart( nS ), nEnd( nE ), nWhichAttr( nW ), aWhichFormatAttr()
+    : SwMsgPoolItem( RES_UPDATE_ATTR ), m_nStart( nS ), m_nEnd( nE ), m_nWhichAttr( nW ), m_aWhichFormatAttr()
 {
 }
 
@@ -145,7 +145,7 @@ SwCondCollCondChg::SwCondCollCondChg( SwFormat *pFormat )
 }
 
 SwVirtPageNumInfo::SwVirtPageNumInfo( const SwPageFrm *pPg ) :
-    SwMsgPoolItem( RES_VIRTPAGENUM_INFO ), pPage( 0 ), pOrigPage( pPg ), pFrm( 0 )
+    SwMsgPoolItem( RES_VIRTPAGENUM_INFO ), m_pPage( 0 ), m_pOrigPage( pPg ), m_pFrm( 0 )
 {
 }
 

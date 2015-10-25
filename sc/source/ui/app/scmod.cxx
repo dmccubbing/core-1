@@ -174,7 +174,7 @@ ScModule::ScModule( SfxObjectFactory* pFact ) :
                                         ERRCODE_AREA_APP2-1,
                                         GetResMgr() );
 
-    aSpellIdle.SetPriority(SchedulerPriority::REPAINT);
+    aSpellIdle.SetPriority(SchedulerPriority::LOWER);
     aSpellIdle.SetIdleHdl( LINK( this, ScModule, SpellTimerHdl ) );
     aIdleTimer.SetTimeout(SC_IDLE_MIN);
     aIdleTimer.SetTimeoutHdl( LINK( this, ScModule, IdleHandler ) );
@@ -455,7 +455,7 @@ void ScModule::Execute( SfxRequest& rReq )
             {
                 ScAppOptions aNewOpts( GetAppOptions() );
                 bool bNew = !aNewOpts.GetDetectiveAuto();
-                SFX_REQUEST_ARG( rReq, pAuto, SfxBoolItem, SID_DETECTIVE_AUTO, false );
+                const SfxBoolItem* pAuto = rReq.GetArg<SfxBoolItem>(SID_DETECTIVE_AUTO);
                 if ( pAuto )
                     bNew = pAuto->GetValue();
 
@@ -1039,7 +1039,19 @@ void ScModule::ModifyOptions( const SfxItemSet& rOptSet )
 
         // ScDocShell::SetFormulaOptions() may check for changed settings, so
         // set the new options here after that has been called.
-        SetFormulaOptions( rOpt );
+        if (!bCalcAll || rOpt.GetWriteCalcConfig())
+        {
+            // CalcConfig is new, didn't change or is global, simply set all.
+            SetFormulaOptions( rOpt );
+        }
+        else
+        {
+            // If "only for current document" was checked, reset those affected
+            // by that setting to previous values.
+            ScFormulaOptions aNewOpt( rOpt);
+            aNewOpt.GetCalcConfig().MergeDocumentSpecific( pFormulaCfg->GetCalcConfig());
+            SetFormulaOptions( aNewOpt);
+        }
     }
 
     // ViewOptions

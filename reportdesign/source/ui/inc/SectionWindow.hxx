@@ -55,8 +55,8 @@ namespace rptui
         ::rtl::Reference< comphelper::OPropertyChangeMultiplexer> m_pSectionMulti;
         ::rtl::Reference< comphelper::OPropertyChangeMultiplexer> m_pGroupMulti;
 
-        OSectionWindow(OSectionWindow&) SAL_DELETED_FUNCTION;
-        void operator =(OSectionWindow&) SAL_DELETED_FUNCTION;
+        OSectionWindow(OSectionWindow&) = delete;
+        void operator =(OSectionWindow&) = delete;
 
         /** set the title of the group header or footer
         *
@@ -85,19 +85,19 @@ namespace rptui
         DECL_LINK_TYPED(EndSplitHdl, Splitter*, void);
 
 
-        virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+        virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
         // Window overrides
-        virtual void Resize() SAL_OVERRIDE;
+        virtual void Resize() override;
 
     protected:
         virtual void    _propertyChanged(const ::com::sun::star::beans::PropertyChangeEvent& _rEvent)
-            throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+            throw (css::uno::RuntimeException, std::exception) override;
     public:
         OSectionWindow( OViewsWindow* _pParent
                         ,const ::com::sun::star::uno::Reference< ::com::sun::star::report::XSection >& _xSection
                         ,const OUString& _sColorEntry);
         virtual ~OSectionWindow();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         inline OStartMarker&    getStartMarker()    { return *m_aStartMarker.get();     }
         inline OReportSection&  getReportSection()  { return *m_aReportSection.get();   }

@@ -315,7 +315,7 @@ void ScUndoOutlineLevel::Redo()
 void ScUndoOutlineLevel::Repeat(SfxRepeatTarget& rTarget)
 {
     if (dynamic_cast<const ScTabViewTarget*>( &rTarget) !=  nullptr)
-        static_cast<ScTabViewTarget&>(rTarget).GetViewShell()->SelectLevel( bColumns, nLevel, true );
+        static_cast<ScTabViewTarget&>(rTarget).GetViewShell()->SelectLevel( bColumns, nLevel );
 }
 
 bool ScUndoOutlineLevel::CanRepeat(SfxRepeatTarget& rTarget) const
@@ -1189,7 +1189,7 @@ void ScUndoImportData::Redo()
                                                     nCol1, nRow1, nCol2, nRow2 );
     }
     bool bMoveCells = pUndoDBData && pRedoDBData &&
-                        pRedoDBData->IsDoSize();        // // the same in old and new
+                        pRedoDBData->IsDoSize();        // the same in old and new
     if (bMoveCells)
     {
         //  Redo: FitBlock, then delete data (needed for CopyToDocument)

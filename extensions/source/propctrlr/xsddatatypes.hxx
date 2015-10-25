@@ -50,7 +50,7 @@ namespace pcr
                             m_xFacetInfo;
 
     public:
-        XSDDataType(
+        explicit XSDDataType(
             const css::uno::Reference< css::xsd::XDataType >& _rxDataType
         );
 
@@ -80,8 +80,8 @@ namespace pcr
         virtual ~XSDDataType();
 
     private:
-        XSDDataType( const XSDDataType& ) SAL_DELETED_FUNCTION;
-        XSDDataType& operator=( const XSDDataType& ) SAL_DELETED_FUNCTION;
+        XSDDataType( const XSDDataType& ) = delete;
+        XSDDataType& operator=( const XSDDataType& ) = delete;
     };
 
 

@@ -86,18 +86,18 @@ class OOX_DLLPUBLIC ProgressBar : public IProgressBar
 {
 public:
     explicit            ProgressBar(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::task::XStatusIndicator >& rxIndicator,
+                            const css::uno::Reference< css::task::XStatusIndicator >& rxIndicator,
                             const OUString& rText );
 
     virtual             ~ProgressBar();
 
     /** Returns the current position of the progress bar. */
-    virtual double      getPosition() const SAL_OVERRIDE;
+    virtual double      getPosition() const override;
     /** Sets the current position of the progress bar. */
-    virtual void        setPosition( double fPosition ) SAL_OVERRIDE;
+    virtual void        setPosition( double fPosition ) override;
 
 private:
-    ::com::sun::star::uno::Reference< ::com::sun::star::task::XStatusIndicator >
+    css::uno::Reference< css::task::XStatusIndicator >
                         mxIndicator;
     double              mfPosition;
 };
@@ -110,18 +110,18 @@ class OOX_DLLPUBLIC SegmentProgressBar : public ISegmentProgressBar
 {
 public:
     explicit            SegmentProgressBar(
-                            const ::com::sun::star::uno::Reference< ::com::sun::star::task::XStatusIndicator >& rxIndicator,
+                            const css::uno::Reference< css::task::XStatusIndicator >& rxIndicator,
                             const OUString& rText );
 
     /** Returns the current position of the progress bar segment. */
-    virtual double      getPosition() const SAL_OVERRIDE;
+    virtual double      getPosition() const override;
     /** Sets the current position of the progress bar segment. */
-    virtual void        setPosition( double fPosition ) SAL_OVERRIDE;
+    virtual void        setPosition( double fPosition ) override;
 
     /** Returns the length that is still free for creating sub segments. */
-    virtual double      getFreeLength() const SAL_OVERRIDE;
+    virtual double      getFreeLength() const override;
     /** Adds a new segment with the specified length. */
-    virtual ISegmentProgressBarRef createSegment( double fLength ) SAL_OVERRIDE;
+    virtual ISegmentProgressBarRef createSegment( double fLength ) override;
 
 private:
     ProgressBar         maProgress;

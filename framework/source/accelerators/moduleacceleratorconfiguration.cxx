@@ -66,25 +66,25 @@ public:
      */
     ModuleAcceleratorConfiguration(
             const css::uno::Reference< css::uno::XComponentContext >& xContext,
-            const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >& lArguments);
+            const css::uno::Sequence< css::uno::Any >& lArguments);
 
     /** TODO */
     virtual ~ModuleAcceleratorConfiguration();
 
     virtual OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return OUString("com.sun.star.comp.framework.ModuleAcceleratorConfiguration");
     }
 
     virtual sal_Bool SAL_CALL supportsService(OUString const & ServiceName)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         return cppu::supportsService(this, ServiceName);
     }
 
     virtual css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE
+        throw (css::uno::RuntimeException, std::exception) override
     {
         css::uno::Sequence< OUString > aSeq(1);
         aSeq[0] = "com.sun.star.ui.ModuleAcceleratorConfiguration";
@@ -92,7 +92,7 @@ public:
     }
 
     // XComponent
-    virtual  void SAL_CALL dispose() throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual  void SAL_CALL dispose() throw (css::uno::RuntimeException, std::exception) override;
 
     /// This has to be called after when the instance is acquire()'d.
     void SAL_CALL fillCache();
@@ -104,7 +104,7 @@ private:
 
 ModuleAcceleratorConfiguration::ModuleAcceleratorConfiguration(
         const css::uno::Reference< css::uno::XComponentContext >& xContext,
-        const ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Any >& lArguments)
+        const css::uno::Sequence< css::uno::Any >& lArguments)
     : ModuleAcceleratorConfiguration_BASE(xContext)
 {
     SolarMutexGuard g;

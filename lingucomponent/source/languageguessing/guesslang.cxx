@@ -90,18 +90,18 @@ public:
     explicit LangGuess_Impl(css::uno::Reference< css::uno::XComponentContext > const & rxContext);
 
     // XServiceInfo implementation
-    virtual OUString SAL_CALL getImplementationName(  ) throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw(RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual Sequence< OUString > SAL_CALL getSupportedServiceNames(  ) throw(RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual OUString SAL_CALL getImplementationName(  ) throw(RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL supportsService( const OUString& ServiceName ) throw(RuntimeException, std::exception) override;
+    virtual Sequence< OUString > SAL_CALL getSupportedServiceNames(  ) throw(RuntimeException, std::exception) override;
     static Sequence< OUString > SAL_CALL getSupportedServiceNames_Static(  );
 
     // XLanguageGuessing implementation
-    virtual ::com::sun::star::lang::Locale SAL_CALL guessPrimaryLanguage( const OUString& aText, ::sal_Int32 nStartPos, ::sal_Int32 nLen ) throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL disableLanguages( const ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale >& aLanguages ) throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL enableLanguages( const ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale >& aLanguages ) throw (::com::sun::star::lang::IllegalArgumentException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale > SAL_CALL getAvailableLanguages(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale > SAL_CALL getEnabledLanguages(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual ::com::sun::star::uno::Sequence< ::com::sun::star::lang::Locale > SAL_CALL getDisabledLanguages(  ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual css::lang::Locale SAL_CALL guessPrimaryLanguage( const OUString& aText, ::sal_Int32 nStartPos, ::sal_Int32 nLen ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL disableLanguages( const css::uno::Sequence< css::lang::Locale >& aLanguages ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL enableLanguages( const css::uno::Sequence< css::lang::Locale >& aLanguages ) throw (css::lang::IllegalArgumentException, css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< css::lang::Locale > SAL_CALL getAvailableLanguages(  ) throw (css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< css::lang::Locale > SAL_CALL getEnabledLanguages(  ) throw (css::uno::RuntimeException, std::exception) override;
+    virtual css::uno::Sequence< css::lang::Locale > SAL_CALL getDisabledLanguages(  ) throw (css::uno::RuntimeException, std::exception) override;
 
     // implementation specific
     void SetFingerPrintsDB( const OUString &fileName ) throw (RuntimeException);
@@ -211,14 +211,14 @@ uno::Sequence< Locale > SAL_CALL LangGuess_Impl::getAvailableLanguages(  )
 
     EnsureInitialized();
 
-    Sequence< com::sun::star::lang::Locale > aRes;
+    Sequence< css::lang::Locale > aRes;
     vector<Guess> gs = m_aGuesser.GetAllManagedLanguages();
     aRes.realloc(gs.size());
 
-    com::sun::star::lang::Locale *pRes = aRes.getArray();
+    css::lang::Locale *pRes = aRes.getArray();
 
     for(size_t i = 0; i < gs.size() ; i++ ){
-        com::sun::star::lang::Locale current_aRes;
+        css::lang::Locale current_aRes;
         current_aRes.Language   = OUString::createFromAscii( gs[i].GetLanguage().c_str() );
         current_aRes.Country    = OUString::createFromAscii( gs[i].GetCountry().c_str() );
         pRes[i] = current_aRes;
@@ -234,14 +234,14 @@ uno::Sequence< Locale > SAL_CALL LangGuess_Impl::getEnabledLanguages(  )
 
     EnsureInitialized();
 
-    Sequence< com::sun::star::lang::Locale > aRes;
+    Sequence< css::lang::Locale > aRes;
     vector<Guess> gs = m_aGuesser.GetAvailableLanguages();
     aRes.realloc(gs.size());
 
-    com::sun::star::lang::Locale *pRes = aRes.getArray();
+    css::lang::Locale *pRes = aRes.getArray();
 
     for(size_t i = 0; i < gs.size() ; i++ ){
-        com::sun::star::lang::Locale current_aRes;
+        css::lang::Locale current_aRes;
         current_aRes.Language   = OUString::createFromAscii( gs[i].GetLanguage().c_str() );
         current_aRes.Country    = OUString::createFromAscii( gs[i].GetCountry().c_str() );
         pRes[i] = current_aRes;
@@ -257,14 +257,14 @@ uno::Sequence< Locale > SAL_CALL LangGuess_Impl::getDisabledLanguages(  )
 
     EnsureInitialized();
 
-    Sequence< com::sun::star::lang::Locale > aRes;
+    Sequence< css::lang::Locale > aRes;
     vector<Guess> gs = m_aGuesser.GetUnavailableLanguages();
     aRes.realloc(gs.size());
 
-    com::sun::star::lang::Locale *pRes = aRes.getArray();
+    css::lang::Locale *pRes = aRes.getArray();
 
     for(size_t i = 0; i < gs.size() ; i++ ){
-        com::sun::star::lang::Locale current_aRes;
+        css::lang::Locale current_aRes;
         current_aRes.Language   = OUString::createFromAscii( gs[i].GetLanguage().c_str() );
         current_aRes.Country    = OUString::createFromAscii( gs[i].GetCountry().c_str() );
         pRes[i] = current_aRes;

@@ -47,8 +47,8 @@ private:
     SAL_DLLPRIVATE void    ImplInitMenuButtonData();
     DECL_DLLPRIVATE_LINK_TYPED( ImplMenuTimeoutHdl, Timer*, void );
 
-                           MenuButton( const MenuButton & ) SAL_DELETED_FUNCTION;
-                           MenuButton& operator=( const MenuButton & ) SAL_DELETED_FUNCTION;
+                           MenuButton( const MenuButton & ) = delete;
+                           MenuButton& operator=( const MenuButton & ) = delete;
 
 protected:
     using Window::ImplInit;
@@ -57,12 +57,12 @@ protected:
 public:
     explicit        MenuButton( vcl::Window* pParent, WinBits nStyle = 0 );
     virtual         ~MenuButton();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
+    virtual void    MouseButtonDown( const MouseEvent& rMEvt ) override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
 
-    virtual void    Activate() SAL_OVERRIDE;
+    virtual void    Activate() override;
     virtual void    Select();
 
     void            ExecuteMenu();

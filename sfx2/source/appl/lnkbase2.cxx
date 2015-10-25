@@ -108,9 +108,9 @@ public:
 #endif
     virtual ~ImplDdeItem();
 
-    virtual DdeData* Get( SotClipboardFormatId ) SAL_OVERRIDE;
-    virtual bool     Put( const DdeData* ) SAL_OVERRIDE;
-    virtual void     AdviseLoop( bool ) SAL_OVERRIDE;
+    virtual DdeData* Get( SotClipboardFormatId ) override;
+    virtual bool     Put( const DdeData* ) override;
+    virtual void     AdviseLoop( bool ) override;
 
     void Notify()
     {
@@ -253,8 +253,7 @@ IMPL_LINK_TYPED( SvBaseLink, EndEditHdl, const OUString&, _rNewName, void )
     if ( !ExecuteEdit( sNewName ) )
         sNewName.clear();
     bWasLastEditOK = !sNewName.isEmpty();
-    if ( pImpl->m_aEndEditLink.IsSet() )
-        pImpl->m_aEndEditLink.Call( *this );
+    pImpl->m_aEndEditLink.Call( *this );
 }
 
 
@@ -505,8 +504,7 @@ void SvBaseLink::Edit( vcl::Window* pParent, const Link<SvBaseLink&,void>& rEndE
     {
         ExecuteEdit( OUString() );
         bWasLastEditOK = false;
-        if ( pImpl->m_aEndEditLink.IsSet() )
-            pImpl->m_aEndEditLink.Call( *this );
+        pImpl->m_aEndEditLink.Call( *this );
     }
 }
 

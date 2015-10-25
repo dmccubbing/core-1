@@ -43,15 +43,14 @@ public:
     ODocumentInfoPreview(vcl::Window * pParent, WinBits nBits);
 
     virtual ~ODocumentInfoPreview();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void Resize() SAL_OVERRIDE;
+    virtual void Resize() override;
 
     void clear();
 
     void fill(
-        com::sun::star::uno::Reference<
-            com::sun::star::document::XDocumentProperties > const & xDocProps,
+        css::uno::Reference< css::document::XDocumentProperties > const & xDocProps,
         OUString const & rURL);
 
 private:
@@ -63,7 +62,7 @@ private:
 
     void insertNonempty(long id, OUString const & value);
 
-    void insertDateTime(long id, com::sun::star::util::DateTime const & value);
+    void insertDateTime(long id, css::util::DateTime const & value);
 };
 
 }

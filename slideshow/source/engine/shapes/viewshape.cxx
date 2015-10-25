@@ -44,9 +44,6 @@
 #include "viewshape.hxx"
 #include "tools.hxx"
 
-#include <boost/bind.hpp>
-
-
 using namespace ::com::sun::star;
 
 namespace slideshow
@@ -231,15 +228,11 @@ namespace slideshow
 
 
                 bool bRet(true);
-                VectorOfDocTreeNodes::const_iterator        aIter( rSubsets.begin() );
-                const VectorOfDocTreeNodes::const_iterator  aEnd ( rSubsets.end() );
-                while( aIter != aEnd )
+                for( const auto& rSubset : rSubsets )
                 {
-                    if( !pRenderer->drawSubset( aIter->getStartIndex(),
-                                                aIter->getEndIndex() ) )
+                    if( !pRenderer->drawSubset( rSubset.getStartIndex(),
+                                                rSubset.getEndIndex() ) )
                         bRet = false;
-
-                    ++aIter;
                 }
 
                 return bRet;
@@ -746,12 +739,8 @@ namespace slideshow
             // already there?
             if( (aIter=::std::find_if( maRenderers.begin(),
                                        aEnd,
-                                       ::boost::bind(
-                                           ::std::equal_to< ::cppcanvas::CanvasSharedPtr >(),
-                                           ::boost::cref( rDestinationCanvas ),
-                                           ::boost::bind(
-                                               &RendererCacheEntry::getDestinationCanvas,
-                                               _1 ) ) ) ) == aEnd )
+                                       [&rDestinationCanvas]( const RendererCacheEntry& rCacheEntry )
+                                       { return rDestinationCanvas == rCacheEntry.getDestinationCanvas(); } ) ) == aEnd )
             {
                 if( maRenderers.size() >= MAX_RENDER_CACHE_ENTRIES )
                 {

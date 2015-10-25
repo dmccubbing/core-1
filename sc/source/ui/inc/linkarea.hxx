@@ -50,9 +50,9 @@ private:
 
     SfxObjectShellRef   aSourceRef;
 
-    DECL_LINK(FileHdl, void *);
+    DECL_LINK_TYPED(FileHdl, ComboBox&, void);
     DECL_LINK_TYPED(BrowseHdl, Button*, void);
-    DECL_LINK(RangeHdl, void *);
+    DECL_LINK_TYPED(RangeHdl, ListBox&, void);
     DECL_LINK_TYPED(ReloadHdl, Button*, void);
     DECL_LINK_TYPED( DialogClosedHdl, sfx2::FileDialogHelper*, void );
 
@@ -64,13 +64,13 @@ private:
 public:
             ScLinkedAreaDlg( vcl::Window* pParent );
             virtual ~ScLinkedAreaDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void            InitFromOldLink( const OUString& rFile, const OUString& rFilter,
                                         const OUString& rOptions, const OUString& rSource,
                                         sal_uLong nRefresh );
 
-    virtual short   Execute() SAL_OVERRIDE;          // overwritten to set dialog parent
+    virtual short   Execute() override;          // overwritten to set dialog parent
 
     OUString       GetURL();
     OUString       GetFilter();        // may be empty

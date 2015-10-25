@@ -50,7 +50,7 @@ public class _XTopWindow extends MultiMethodTest {
     * Listener implementation which sets flags on different
     * method calls.
     */
-    protected class TestListener implements XTopWindowListener {
+    protected static class TestListener implements XTopWindowListener {
         private final PrintWriter log;
         public boolean activated = false ;
         public boolean deactivated = false ;
@@ -166,15 +166,15 @@ public class _XTopWindow extends MultiMethodTest {
             menu = UnoRuntime.queryInterface(XMenuBar.class,
                 tParam.getMSF().
                 createInstance("com.sun.star.awt.MenuBar")) ;
+
+            menu.insertItem((short)1, "MenuItem",
+                com.sun.star.awt.MenuItemStyle.CHECKABLE, (short)1) ;
+
+            oObj.setMenuBar(menu) ;
         } catch (com.sun.star.uno.Exception e) {
             log.println("Can't instanciate MenuBar service") ;
             result = false ;
         }
-
-        menu.insertItem((short)1, "MenuItem",
-            com.sun.star.awt.MenuItemStyle.CHECKABLE, (short)1) ;
-
-        oObj.setMenuBar(menu) ;
 
         tRes.tested("setMenuBar()", result) ;
     }

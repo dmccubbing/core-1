@@ -194,7 +194,7 @@ class SwConnectionDisposedListener_Impl : public cppu::WeakImplHelper
 private:
     SwDBManager * m_pDBManager;
 
-    virtual void SAL_CALL disposing( const lang::EventObject& Source ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing( const lang::EventObject& Source ) throw (uno::RuntimeException, std::exception) override;
 
 public:
     explicit SwConnectionDisposedListener_Impl(SwDBManager& rMgr);
@@ -213,10 +213,10 @@ class SwDataSourceRemovedListener : public cppu::WeakImplHelper<sdb::XDatabaseRe
 public:
     explicit SwDataSourceRemovedListener(SwDBManager& rDBManager);
     virtual ~SwDataSourceRemovedListener();
-    virtual void SAL_CALL registeredDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL revokedDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL changedDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL disposing(const lang::EventObject& rObject) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL registeredDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL revokedDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL changedDatabaseLocation(const sdb::DatabaseRegistrationEvent& rEvent) throw (uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL disposing(const lang::EventObject& rObject) throw (uno::RuntimeException, std::exception) override;
     void Dispose();
 };
 
@@ -545,7 +545,7 @@ void SwDBManager::ImportFromConnection(  SwWrtShell* pSh )
     {
         {
             pSh->StartAllAction();
-            pSh->StartUndo(UNDO_EMPTY);
+            pSh->StartUndo();
             bool bGroupUndo(pSh->DoesGroupUndo());
             pSh->DoGroupUndo(false);
 
@@ -566,7 +566,7 @@ void SwDBManager::ImportFromConnection(  SwWrtShell* pSh )
             }
 
             pSh->DoGroupUndo(bGroupUndo);
-            pSh->EndUndo(UNDO_EMPTY);
+            pSh->EndUndo();
             pSh->EndAllAction();
         }
     }
@@ -1032,7 +1032,7 @@ bool SwDBManager::MergeMailFiles(SwWrtShell* pSourceShell,
             {
                 // create a target docshell to put the merged document into
                 xTargetDocShell = new SwDocShell( SfxObjectCreateMode::STANDARD );
-                xTargetDocShell->DoInitNew( 0 );
+                xTargetDocShell->DoInitNew();
                 if (nMaxDumpDocs)
                     lcl_SaveDoc( xTargetDocShell, "MergeDoc" );
                 SfxViewFrame* pTargetFrame = SfxViewFrame::LoadHiddenDocument( *xTargetDocShell, 0 );
@@ -1443,7 +1443,7 @@ bool SwDBManager::MergeMailFiles(SwWrtShell* pSourceShell,
                 {
                     std::set<SwRootFrm*> aAllLayouts = pTargetShell->GetDoc()->GetAllLayouts();
                     std::for_each( aAllLayouts.begin(), aAllLayouts.end(),
-                        ::std::bind2nd(::std::mem_fun(&SwRootFrm::FreezeLayout), true));
+                        [](SwRootFrm* pLayout) { pLayout->FreezeLayout(true); });
                     bFreezedLayouts = true;
                 }
             } while( !bCancel &&
@@ -1484,9 +1484,11 @@ bool SwDBManager::MergeMailFiles(SwWrtShell* pSourceShell,
             {
                 pTargetShell->CalcLayout();
                 std::set<SwRootFrm*> aAllLayouts = pTargetShell->GetDoc()->GetAllLayouts();
-                std::for_each( aAllLayouts.begin(), aAllLayouts.end(),
-                    ::std::bind2nd(::std::mem_fun(&SwRootFrm::FreezeLayout), false));
-                std::for_each( aAllLayouts.begin(), aAllLayouts.end(),std::mem_fun(&SwRootFrm::AllCheckPageDescs));
+                std::for_each( aAllLayouts.begin(), aAllLayouts.end(), [](SwRootFrm* pLayout)
+                {
+                    pLayout->FreezeLayout(false);
+                    pLayout->AllCheckPageDescs();
+                });
             }
 
             pProgressDlg.disposeAndClear();
@@ -2100,7 +2102,7 @@ bool SwDBManager::FillCalcWithMergeData( SvNumberFormatter *pDocFormatter,
             // aNumber is overwritten by SwDBField::FormatValue, so store initial status
             bool colIsNumber = aNumber != DBL_MAX;
             bool bValidValue = SwDBField::FormatValue( pDocFormatter, aString, nFormat,
-                                                       aNumber, nColumnType, NULL );
+                                                       aNumber, nColumnType );
             if( colIsNumber )
             {
                 if( bValidValue )

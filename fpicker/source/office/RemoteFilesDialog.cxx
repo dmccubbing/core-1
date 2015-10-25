@@ -42,7 +42,7 @@ class FileViewContainer : public vcl::Window
         disposeOnce();
     }
 
-    virtual void dispose() SAL_OVERRIDE
+    virtual void dispose() override
     {
         m_pFileView.clear();
         m_pTreeView.clear();
@@ -65,7 +65,7 @@ class FileViewContainer : public vcl::Window
         m_pFocusWidgets[FocusState::Next] = pNextSibling;
     }
 
-    virtual void Resize() SAL_OVERRIDE
+    virtual void Resize() override
     {
         Window::Resize();
 
@@ -115,7 +115,7 @@ class FileViewContainer : public vcl::Window
         }
     }
 
-    virtual void GetFocus() SAL_OVERRIDE
+    virtual void GetFocus() override
     {
         if( !m_pFileView || !m_pTreeView )
             return;
@@ -134,7 +134,7 @@ class FileViewContainer : public vcl::Window
         }
     }
 
-    virtual bool Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE
+    virtual bool Notify( NotifyEvent& rNEvt ) override
     {
         if( rNEvt.GetType() == MouseNotifyEvent::GETFOCUS )
         {
@@ -367,7 +367,7 @@ short RemoteFilesDialog::Execute()
     if( m_pServices_lb->GetEntryCount() > 0 )
     {
         Show();
-        SelectServiceHdl( NULL );
+        SelectServiceHdl( *m_pServices_lb );
     }
     if( !m_bIsConnected )
     {
@@ -619,7 +619,7 @@ void RemoteFilesDialog::EnableControls()
 {
     if( m_pServices_lb->GetEntryCount() > 0 )
     {
-        m_pServices_lb->Enable( true );
+        m_pServices_lb->Enable();
 
         if( m_pServices_lb->GetSelectEntryCount() )
         {
@@ -653,12 +653,12 @@ void RemoteFilesDialog::EnableControls()
 
     if( m_bIsConnected )
     {
-        m_pFilter_lb->Enable( true );
-        m_pName_ed->Enable( true );
-        m_pContainer->Enable( true );
+        m_pFilter_lb->Enable();
+        m_pName_ed->Enable();
+        m_pContainer->Enable();
 
         if( !m_pName_ed->GetText().isEmpty() )
-            m_pOk_btn->Enable( true );
+            m_pOk_btn->Enable();
         else
             m_pOk_btn->Enable( false );
     }
@@ -671,7 +671,7 @@ void RemoteFilesDialog::EnableControls()
     }
 
     m_pPath->EnableFields( true );
-    m_pAddService_btn->Enable( true );
+    m_pAddService_btn->Enable();
 
     Invalidate(InvalidateFlags::Update);
 }
@@ -686,7 +686,7 @@ void RemoteFilesDialog::DisableControls()
     m_pOk_btn->Enable( false );
     m_pPath->EnableFields( false );
 
-    m_pCancel_btn->Enable( true );
+    m_pCancel_btn->Enable();
 }
 
 void RemoteFilesDialog::SavePassword( const OUString& rURL, const OUString& rUser
@@ -749,7 +749,7 @@ IMPL_LINK_NOARG_TYPED ( RemoteFilesDialog, AddServiceHdl, Button*, void )
             m_pServices_lb->InsertEntry( sPrefix + newService->GetName() );
             m_pServices_lb->SelectEntryPos( m_pServices_lb->GetEntryCount() - 1 );
             m_pAddService_btn->SetPopupMenu( m_pAddMenu );
-            SelectServiceHdl( NULL );
+            SelectServiceHdl( *m_pServices_lb );
 
             m_bIsUpdated = true;
 
@@ -763,7 +763,7 @@ IMPL_LINK_NOARG_TYPED ( RemoteFilesDialog, AddServiceHdl, Button*, void )
     };
 }
 
-IMPL_LINK_NOARG ( RemoteFilesDialog, SelectServiceHdl )
+IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, SelectServiceHdl, ListBox&, void )
 {
     int nPos = GetSelectedServicePos();
 
@@ -775,8 +775,6 @@ IMPL_LINK_NOARG ( RemoteFilesDialog, SelectServiceHdl )
         m_bServiceChanged = true;
         OpenURL( sURL );
     }
-
-    return 1;
 }
 
 IMPL_LINK_TYPED ( RemoteFilesDialog, EditServiceMenuHdl, MenuButton *, pButton, void )
@@ -989,13 +987,11 @@ IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, FileNameGetFocusHdl, Control&, void )
     m_pFileView->SetNoSelection();
 }
 
-IMPL_LINK_NOARG( RemoteFilesDialog, FileNameModifyHdl )
+IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, FileNameModifyHdl, Edit&, void )
 {
     m_pFileView->SetNoSelection();
     if( !m_pOk_btn->IsEnabled() )
         EnableControls();
-
-    return 1;
 }
 
 IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, SplitHdl, Splitter*, void )
@@ -1020,7 +1016,7 @@ IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, SplitHdl, Splitter*, void )
     m_pSplitter->SetPosPixel( Point( placeSize.Width(), m_pSplitter->GetPosPixel().Y() ) );
 }
 
-IMPL_LINK_NOARG ( RemoteFilesDialog, SelectFilterHdl )
+IMPL_LINK_NOARG_TYPED( RemoteFilesDialog, SelectFilterHdl, ListBox&, void )
 {
     unsigned int nPos = m_pFilter_lb->GetSelectEntryPos();
 
@@ -1033,8 +1029,6 @@ IMPL_LINK_NOARG ( RemoteFilesDialog, SelectFilterHdl )
         if( !sCurrentURL.isEmpty() && m_bIsConnected )
             OpenURL( sCurrentURL );
     }
-
-    return 1;
 }
 
 IMPL_LINK_TYPED( RemoteFilesDialog, TreeSelectHdl, SvTreeListBox *, pBox, void )
@@ -1183,13 +1177,13 @@ void RemoteFilesDialog::SetHasFilename( bool )
 {
 }
 
-void RemoteFilesDialog::SetBlackList( const ::com::sun::star::uno::Sequence< OUString >& rBlackList )
+void RemoteFilesDialog::SetBlackList( const css::uno::Sequence< OUString >& rBlackList )
 {
     m_aBlackList = rBlackList;
     m_pTreeView->SetBlackList( rBlackList );
 }
 
-const ::com::sun::star::uno::Sequence< OUString >& RemoteFilesDialog::GetBlackList() const
+const css::uno::Sequence< OUString >& RemoteFilesDialog::GetBlackList() const
 {
     return m_aBlackList;
 }
@@ -1237,7 +1231,7 @@ void RemoteFilesDialog::setCurrentFileText( const OUString& rText, bool bSelectA
 
 void RemoteFilesDialog::AddFilterGroup(
                                   const OUString& rFilter,
-                                  const com::sun::star::uno::Sequence< com::sun::star::beans::StringPair >& rFilters )
+                                  const css::uno::Sequence< css::beans::StringPair >& rFilters )
 {
     AddFilter( rFilter, OUString() );
     const StringPair* pSubFilters       =               rFilters.getConstArray();
@@ -1450,7 +1444,7 @@ sal_Int32 RemoteFilesDialog::getAvailableHeight()
     return 0;
 }
 
-void RemoteFilesDialog::setImage( sal_Int16, const ::com::sun::star::uno::Any& )
+void RemoteFilesDialog::setImage( sal_Int16, const css::uno::Any& )
 {
     // This dialog doesn't contain preview
 }

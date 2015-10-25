@@ -135,36 +135,36 @@ public:
 private:
     Rectangle impl_getScaledRect_nothrow() const;
     // XStateChangeListener
-    virtual void SAL_CALL changingState( const ::com::sun::star::lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState ) throw (::com::sun::star::embed::WrongStateException, ::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL stateChanged( const ::com::sun::star::lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL changingState( const ::com::sun::star::lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState ) throw (::com::sun::star::embed::WrongStateException, ::com::sun::star::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL stateChanged( const ::com::sun::star::lang::EventObject& aEvent, ::sal_Int32 nOldState, ::sal_Int32 nNewState ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
+    virtual void SAL_CALL disposing( const ::com::sun::star::lang::EventObject& aEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
     // document::XEventListener
-    virtual void SAL_CALL       notifyEvent( const document::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL       notifyEvent( const document::EventObject& aEvent ) throw( uno::RuntimeException, std::exception ) override;
 
     // XEmbeddedClient
-    virtual void SAL_CALL saveObject() throw ( embed::ObjectSaveVetoException, uno::Exception, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL visibilityChanged( sal_Bool bVisible ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual void SAL_CALL saveObject() throw ( embed::ObjectSaveVetoException, uno::Exception, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL visibilityChanged( sal_Bool bVisible ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
 
     // XComponentSupplier
-    virtual uno::Reference< util::XCloseable > SAL_CALL getComponent() throw ( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual uno::Reference< util::XCloseable > SAL_CALL getComponent() throw ( uno::RuntimeException, std::exception ) override;
 
     // XInplaceClient
-    virtual sal_Bool SAL_CALL canInplaceActivate() throw ( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL activatingInplace() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL activatingUI() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL deactivatedInplace() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL deactivatedUI() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual uno::Reference< ::com::sun::star::frame::XLayoutManager > SAL_CALL getLayoutManager() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual uno::Reference< frame::XDispatchProvider > SAL_CALL getInplaceDispatchProvider() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual awt::Rectangle SAL_CALL getPlacement() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual awt::Rectangle SAL_CALL getClipRectangle() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL translateAccelerators( const uno::Sequence< awt::KeyEvent >& aKeys ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL scrollObject( const awt::Size& aOffset ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL changedPlacement( const awt::Rectangle& aPosRect ) throw ( embed::WrongStateException, uno::Exception, uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual sal_Bool SAL_CALL canInplaceActivate() throw ( uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL activatingInplace() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL activatingUI() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL deactivatedInplace() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL deactivatedUI() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual uno::Reference< ::com::sun::star::frame::XLayoutManager > SAL_CALL getLayoutManager() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual uno::Reference< frame::XDispatchProvider > SAL_CALL getInplaceDispatchProvider() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual awt::Rectangle SAL_CALL getPlacement() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual awt::Rectangle SAL_CALL getClipRectangle() throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL translateAccelerators( const uno::Sequence< awt::KeyEvent >& aKeys ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL scrollObject( const awt::Size& aOffset ) throw ( embed::WrongStateException, uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL changedPlacement( const awt::Rectangle& aPosRect ) throw ( embed::WrongStateException, uno::Exception, uno::RuntimeException, std::exception ) override;
 
     // XWindowSupplier
-    virtual uno::Reference< awt::XWindow > SAL_CALL getWindow() throw ( uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual uno::Reference< awt::XWindow > SAL_CALL getWindow() throw ( uno::RuntimeException, std::exception ) override;
 };
 
 
@@ -598,9 +598,9 @@ public:
     explicit            SdrEmbedObjectLink(SdrOle2Obj* pObj);
     virtual             ~SdrEmbedObjectLink();
 
-    virtual void        Closed() SAL_OVERRIDE;
+    virtual void        Closed() override;
     virtual ::sfx2::SvBaseLink::UpdateResult DataChanged(
-        const OUString& rMimeType, const ::com::sun::star::uno::Any & rValue ) SAL_OVERRIDE;
+        const OUString& rMimeType, const ::com::sun::star::uno::Any & rValue ) override;
 
     bool                Connect() { return GetRealObject() != NULL; }
 };
@@ -930,7 +930,7 @@ bool SdrOle2Obj::UpdateLinkURL_Impl()
         if ( pLinkManager )
         {
             OUString aNewLinkURL;
-            sfx2::LinkManager::GetDisplayNames( mpImpl->mpObjectLink, 0, &aNewLinkURL, 0, 0 );
+            sfx2::LinkManager::GetDisplayNames( mpImpl->mpObjectLink, 0, &aNewLinkURL );
             if ( !aNewLinkURL.equalsIgnoreAsciiCase( mpImpl->maLinkURL ) )
             {
                 GetObjRef_Impl();
@@ -1043,7 +1043,7 @@ void SdrOle2Obj::CheckFileLink_Impl()
                     {
                         mpImpl->mpObjectLink = new SdrEmbedObjectLink( this );
                         mpImpl->maLinkURL = aLinkURL;
-                        pLinkManager->InsertFileLink( *mpImpl->mpObjectLink, OBJECT_CLIENT_OLE, aLinkURL, NULL, NULL );
+                        pLinkManager->InsertFileLink( *mpImpl->mpObjectLink, OBJECT_CLIENT_OLE, aLinkURL );
                         mpImpl->mpObjectLink->Connect();
                     }
                 }

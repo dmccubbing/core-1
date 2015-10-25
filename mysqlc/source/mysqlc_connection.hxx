@@ -59,14 +59,11 @@ namespace connectivity
         using ::com::sun::star::sdbc::SQLWarning;
         using ::com::sun::star::sdbc::SQLException;
         using ::com::sun::star::uno::RuntimeException;
-        typedef ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XStatement > my_XStatementRef;
-        typedef ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XPreparedStatement > my_XPreparedStatementRef;
-        typedef ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess > my_XNameAccessRef;
-        typedef ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDatabaseMetaData > my_XDatabaseMetaDataRef;
+        typedef css::uno::Reference< css::container::XNameAccess > my_XNameAccessRef;
 
-        typedef ::cppu::WeakComponentImplHelper3<   ::com::sun::star::sdbc::XConnection,
-                                                    ::com::sun::star::sdbc::XWarningsSupplier,
-                                                    ::com::sun::star::lang::XServiceInfo
+        typedef ::cppu::WeakComponentImplHelper3<   css::sdbc::XConnection,
+                                                    css::sdbc::XWarningsSupplier,
+                                                    css::lang::XServiceInfo
                                                 > OMetaConnection_BASE;
         struct ConnectionSettings
         {
@@ -82,7 +79,7 @@ namespace connectivity
 
         typedef OMetaConnection_BASE OConnection_BASE;
 
-        typedef std::vector< ::com::sun::star::uno::WeakReferenceHelper > OWeakRefArray;
+        typedef std::vector< css::uno::WeakReferenceHelper > OWeakRefArray;
 
         class OConnection : public OBase_Mutex,
                             public OConnection_BASE,
@@ -94,14 +91,14 @@ namespace connectivity
             ConnectionSettings  m_settings;
 
         private:
-            ::com::sun::star::uno::Reference< com::sun::star::container::XNameAccess > m_typeMap;
-            ::com::sun::star::uno::Reference< com::sun::star::util::XStringSubstitution > m_xParameterSubstitution;
+            css::uno::Reference< css::container::XNameAccess > m_typeMap;
+            css::uno::Reference< css::util::XStringSubstitution > m_xParameterSubstitution;
         protected:
 
 
             // Data attributes
 
-            ::com::sun::star::uno::WeakReference< ::com::sun::star::sdbc::XDatabaseMetaData > m_xMetaData;
+            css::uno::WeakReference< css::sdbc::XDatabaseMetaData > m_xMetaData;
 
             OWeakRefArray   m_aStatements;  // vector containing a list
                                             // of all the Statement objects
@@ -124,7 +121,7 @@ namespace connectivity
             sal_Int32 getMysqlVersion()
                                                                 throw(SQLException, RuntimeException);
 
-            virtual void construct(const rtl::OUString& url,const ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& info)
+            virtual void construct(const rtl::OUString& url,const css::uno::Sequence< css::beans::PropertyValue >& info)
                                                                 throw(SQLException);
 
             OConnection(MysqlCDriver& _rDriver, sql::Driver * cppDriver);
@@ -152,13 +149,13 @@ namespace connectivity
                 SAL_OVERRIDE;
 
             // XConnection
-            my_XStatementRef SAL_CALL createStatement()
+            css::uno::Reference< css::sdbc::XStatement > SAL_CALL createStatement()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
 
-            my_XPreparedStatementRef SAL_CALL prepareStatement(const rtl::OUString& sql)
+            css::uno::Reference< css::sdbc::XPreparedStatement > SAL_CALL prepareStatement(const rtl::OUString& sql)
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
 
-            my_XPreparedStatementRef SAL_CALL prepareCall(const rtl::OUString& sql)
+            css::uno::Reference< css::sdbc::XPreparedStatement > SAL_CALL prepareCall(const rtl::OUString& sql)
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
 
             rtl::OUString SAL_CALL nativeSQL(const rtl::OUString& sql)
@@ -179,7 +176,7 @@ namespace connectivity
             sal_Bool SAL_CALL isClosed()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
 
-            my_XDatabaseMetaDataRef SAL_CALL getMetaData()
+            css::uno::Reference< css::sdbc::XDatabaseMetaData > SAL_CALL getMetaData()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
 
             void SAL_CALL setReadOnly(sal_Bool readOnly)
@@ -209,7 +206,7 @@ namespace connectivity
             void SAL_CALL close()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
             // XWarningsSupplier
-            ::com::sun::star::uno::Any SAL_CALL getWarnings()
+            css::uno::Any SAL_CALL getWarnings()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;
             void SAL_CALL clearWarnings()
                                                                 throw(SQLException, RuntimeException, std::exception) SAL_OVERRIDE;

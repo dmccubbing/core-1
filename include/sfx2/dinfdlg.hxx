@@ -67,11 +67,11 @@ private:
     OUString                     m_DefaultTarget;
     OUString                     m_TemplateName;
     OUString                     m_Author;
-    ::com::sun::star::util::DateTime    m_CreationDate;
+    css::util::DateTime          m_CreationDate;
     OUString                     m_ModifiedBy;
-    ::com::sun::star::util::DateTime    m_ModificationDate;
+    css::util::DateTime          m_ModificationDate;
     OUString                     m_PrintedBy;
-    ::com::sun::star::util::DateTime    m_PrintDate;
+    css::util::DateTime          m_PrintDate;
     sal_Int16                    m_EditingCycles;
     sal_Int32                    m_EditingDuration;
     OUString                     m_Description;
@@ -82,24 +82,21 @@ private:
     bool                         m_bDeleteUserData;
     bool                         m_bUseUserData;
     std::vector< CustomProperty* >    m_aCustomProperties;
-    ::com::sun::star::uno::Sequence< ::com::sun::star::document::CmisProperty > m_aCmisProperties;
+    css::uno::Sequence< css::document::CmisProperty > m_aCmisProperties;
 
 public:
     TYPEINFO_OVERRIDE();
     SfxDocumentInfoItem();
     SfxDocumentInfoItem( const OUString &rFileName,
-        const ::com::sun::star::uno::Reference<
-            ::com::sun::star::document::XDocumentProperties> & i_xDocProps,
-        const ::com::sun::star::uno::Sequence<
-            ::com::sun::star::document::CmisProperty> & i_cmisProps,
+        const css::uno::Reference< css::document::XDocumentProperties> & i_xDocProps,
+        const css::uno::Sequence< css::document::CmisProperty> & i_cmisProps,
         bool bUseUserData );
     SfxDocumentInfoItem( const SfxDocumentInfoItem& );
     virtual ~SfxDocumentInfoItem();
 
     /// update i_xDocProps with the data in this object
     void UpdateDocumentInfo(
-        const ::com::sun::star::uno::Reference<
-            ::com::sun::star::document::XDocumentProperties> & i_xDocProps,
+        const css::uno::Reference< css::document::XDocumentProperties> & i_xDocProps,
         bool i_bDoNotUpdateUserDefined = false)
         const;
     bool        isCmisDocument() const { return m_aCmisProperties.getLength() > 0;}
@@ -116,7 +113,7 @@ public:
     OUString    getAuthor() const { return m_Author; }
     void        setAuthor(const OUString& i_val) { m_Author = i_val; }
 
-    ::com::sun::star::util::DateTime
+    css::util::DateTime
                 getCreationDate() const { return m_CreationDate; }
     void        setCreationDate(const css::util::DateTime& i_val) {
                     m_CreationDate = i_val;
@@ -124,14 +121,14 @@ public:
     OUString getModifiedBy() const { return m_ModifiedBy; }
     void        setModifiedBy(const OUString& i_val) { m_ModifiedBy = i_val; }
 
-    ::com::sun::star::util::DateTime
+    css::util::DateTime
                 getModificationDate() const { return m_ModificationDate; }
     void        setModificationDate(const css::util::DateTime& i_val) {
                     m_ModificationDate = i_val;
                 }
     OUString getPrintedBy() const { return m_PrintedBy; }
     void        setPrintedBy(const OUString& i_val) { m_PrintedBy = i_val; }
-    ::com::sun::star::util::DateTime
+    css::util::DateTime
                 getPrintDate() const { return m_PrintDate; }
     void        setPrintDate(const css::util::DateTime& i_val) {
                     m_PrintDate = i_val;
@@ -162,16 +159,16 @@ public:
     std::vector< CustomProperty* >  GetCustomProperties() const;
     void        ClearCustomProperties();
     void        AddCustomProperty(  const OUString& sName,
-                                    const com::sun::star::uno::Any& rValue );
+                                    const css::uno::Any& rValue );
 
-    ::com::sun::star::uno::Sequence< ::com::sun::star::document::CmisProperty >
+    css::uno::Sequence< css::document::CmisProperty >
                         GetCmisProperties() const { return m_aCmisProperties;}
 
-    void        SetCmisProperties(const ::com::sun::star::uno::Sequence< ::com::sun::star::document::CmisProperty >& cmisProps );
-    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = NULL ) const SAL_OVERRIDE;
-    virtual bool            operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual bool        QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-    virtual bool        PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
+    void        SetCmisProperties(const css::uno::Sequence< css::document::CmisProperty >& cmisProps );
+    virtual SfxPoolItem*    Clone( SfxItemPool* pPool = NULL ) const override;
+    virtual bool            operator==( const SfxPoolItem& ) const override;
+    virtual bool        QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+    virtual bool        PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
 };
 
 // class SfxDocumentPage -------------------------------------------------
@@ -215,10 +212,10 @@ private:
 
 protected:
     virtual ~SfxDocumentPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
 
 public:
     SfxDocumentPage( vcl::Window* pParent, const SfxItemSet& );
@@ -240,10 +237,10 @@ private:
 
 protected:
     virtual ~SfxDocumentDescPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool            FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void            Reset( const SfxItemSet* ) SAL_OVERRIDE;
+    virtual bool            FillItemSet( SfxItemSet* ) override;
+    virtual void            Reset( const SfxItemSet* ) override;
 
 public:
     SfxDocumentDescPage( vcl::Window* pParent, const SfxItemSet& );
@@ -257,7 +254,7 @@ class SFX2_DLLPUBLIC SfxDocumentInfoDialog : public SfxTabDialog
 private:
     sal_uInt16 m_nDocInfoId;
 protected:
-    virtual void    PageCreated( sal_uInt16 nId, SfxTabPage& rPage ) SAL_OVERRIDE;
+    virtual void    PageCreated( sal_uInt16 nId, SfxTabPage& rPage ) override;
 
 public:
     SfxDocumentInfoDialog( vcl::Window* pParent, const SfxItemSet& );
@@ -321,14 +318,14 @@ public:
 class CustomPropertiesDurationField : public Edit
 {
     CustomPropertyLine*             m_pLine;
-    com::sun::star::util::Duration  m_aDuration;
+    css::util::Duration             m_aDuration;
 protected:
-    virtual void    RequestHelp(const HelpEvent& rEvt) SAL_OVERRIDE;
+    virtual void    RequestHelp(const HelpEvent& rEvt) override;
 public:
     CustomPropertiesDurationField(vcl::Window* pParent, WinBits nStyle, CustomPropertyLine* pLine);
 
-    void SetDuration( const com::sun::star::util::Duration& rDuration );
-    const com::sun::star::util::Duration& GetDuration() const { return m_aDuration; }
+    void SetDuration( const css::util::Duration& rDuration );
+    const css::util::Duration& GetDuration() const { return m_aDuration; }
 };
 
 class CustomPropertiesEditButton : public PushButton
@@ -365,9 +362,9 @@ private:
 public:
     CustomPropertiesYesNoButton( vcl::Window* pParent, const ResId& rResId );
     virtual ~CustomPropertiesYesNoButton();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void    Resize() SAL_OVERRIDE;
+    virtual void    Resize() override;
 
     inline void     CheckYes() { m_aYesButton->Check(); }
     inline void     CheckNo() { m_aNoButton->Check(); }
@@ -426,7 +423,7 @@ private:
     Idle                                m_aBoxLoseFocusIdle;
     Link<void*,void>                    m_aRemovedHdl;
 
-    DECL_STATIC_LINK( CustomPropertiesWindow, TypeHdl, CustomPropertiesTypeBox* );
+    DECL_STATIC_LINK_TYPED( CustomPropertiesWindow, TypeHdl, ListBox&, void );
     DECL_LINK_TYPED(  RemoveHdl, Button*, void );
     DECL_LINK_TYPED(  EditLoseFocusHdl, Control&, void );
     DECL_LINK_TYPED(  BoxLoseFocusHdl, Control&, void );
@@ -444,17 +441,17 @@ public:
         FixedText *pHeaderAccType,
         FixedText *pHeaderAccValue);
     virtual ~CustomPropertiesWindow();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     bool                InitControls( HeaderBar* pHeaderBar, const ScrollBar* pScrollBar );
     sal_uInt16          GetVisibleLineCount() const;
     inline sal_Int32    GetLineHeight() const { return m_nLineHeight; }
-    void                AddLine( const OUString& sName, com::sun::star::uno::Any& rAny );
+    void                AddLine( const OUString& sName, css::uno::Any& rAny );
     bool                AreAllLinesValid() const;
     void                ClearAllLines();
     void                DoScroll( sal_Int32 nNewPos );
 
-    ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >
+    css::uno::Sequence< css::beans::PropertyValue >
                         GetCustomProperties() const;
     void                SetRemovedHdl( const Link<void*,void>& rLink ) { m_aRemovedHdl = rLink; }
 
@@ -480,17 +477,17 @@ private:
 public:
     CustomPropertiesControl(vcl::Window* pParent);
     virtual ~CustomPropertiesControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    void            AddLine( const OUString& sName, com::sun::star::uno::Any& rAny, bool bInteractive );
+    void            AddLine( const OUString& sName, css::uno::Any& rAny, bool bInteractive );
 
     inline bool     AreAllLinesValid() const { return m_pPropertiesWin->AreAllLinesValid(); }
     inline void     ClearAllLines() { m_pPropertiesWin->ClearAllLines(); }
-    inline ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >
+    inline css::uno::Sequence< css::beans::PropertyValue >
                     GetCustomProperties() const
                         { return m_pPropertiesWin->GetCustomProperties(); }
     void    Init(VclBuilderContainer& rParent);
-    virtual void Resize() SAL_OVERRIDE;
+    virtual void Resize() override;
 };
 
 // class SfxCustomPropertiesPage -----------------------------------------
@@ -506,11 +503,11 @@ private:
 
 protected:
     virtual ~SfxCustomPropertiesPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) override;
 
 public:
     SfxCustomPropertiesPage( vcl::Window* pParent, const SfxItemSet& );
@@ -529,7 +526,7 @@ struct CmisDateTime : public VclBuilderContainer
     VclPtr<DateField>  m_aDateField;
     VclPtr<TimeField>  m_aTimeField;
 
-    CmisDateTime( vcl::Window* pParent, const ::com::sun::star::util::DateTime& aDateTime );
+    CmisDateTime( vcl::Window* pParent, const css::util::DateTime& aDateTime );
 };
 
 struct CmisYesNo : public VclBuilderContainer
@@ -581,12 +578,12 @@ public:
                   const OUString& sType, const bool bUpdatable,
                   const bool bRequired, const bool bMultiValued,
                   const bool bOpenChoice,
-                  com::sun::star::uno::Any& aChoices,
-                  com::sun::star::uno::Any& rAny );
+                  css::uno::Any& aChoices,
+                  css::uno::Any& rAny );
     void ClearAllLines();
     void DoScroll( sal_Int32 nNewPos );
 
-    ::com::sun::star::uno::Sequence< ::com::sun::star::document::CmisProperty >
+    css::uno::Sequence< css::document::CmisProperty >
                         GetCmisProperties() const;
 };
 
@@ -610,11 +607,11 @@ public:
                   const OUString& sType, const bool bUpdatable,
                   const bool bRequired, const bool bMultiValude,
                   const bool bOpenChoice,
-                  com::sun::star::uno::Any& aChoices,
-                  com::sun::star::uno::Any& rAny );
+                  css::uno::Any& aChoices,
+                  css::uno::Any& rAny );
 
     void ClearAllLines();
-    inline ::com::sun::star::uno::Sequence< ::com::sun::star::document::CmisProperty >
+    inline css::uno::Sequence< css::document::CmisProperty >
                     GetCmisProperties() const
                         { return m_pPropertiesWin.GetCmisProperties(); }
 };
@@ -628,9 +625,9 @@ private:
     using TabPage::DeactivatePage;
 
 protected:
-    virtual bool        FillItemSet( SfxItemSet* ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* ) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) SAL_OVERRIDE;
+    virtual bool        FillItemSet( SfxItemSet* ) override;
+    virtual void        Reset( const SfxItemSet* ) override;
+    virtual sfxpg       DeactivatePage( SfxItemSet* pSet = NULL ) override;
 
 public:
     SfxCmisPropertiesPage( vcl::Window* pParent, const SfxItemSet& );

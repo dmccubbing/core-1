@@ -33,6 +33,7 @@
 #include <unx/gtk/gtkdata.hxx>
 #include <unx/gtk/gtkinst.hxx>
 #include <unx/gtk/gtkframe.hxx>
+#include <unx/gtk/gtksalmenu.hxx>
 #include <unx/salobj.h>
 #include <generic/geninst.h>
 #include <osl/thread.h>
@@ -763,9 +764,8 @@ void GtkData::Init()
             pDisplay->monitorsChanged( pScreen );
             g_signal_connect( G_OBJECT(pScreen), "size-changed",
                               G_CALLBACK(signalScreenSizeChanged), pDisplay );
-            if( ! gtk_check_version( 2, 14, 0 ) ) // monitors-changed came in with 2.14, avoid an assertion
-                g_signal_connect( G_OBJECT(pScreen), "monitors-changed",
-                                  G_CALLBACK(signalMonitorsChanged), GetGtkDisplay() );
+            g_signal_connect( G_OBJECT(pScreen), "monitors-changed",
+                              G_CALLBACK(signalMonitorsChanged), GetGtkDisplay() );
         }
     }
 }
@@ -1017,5 +1017,23 @@ void GtkSalDisplay::deregisterFrame( SalFrame* pFrame )
     }
     SalGenericDisplay::deregisterFrame( pFrame );
 }
+
+#if GTK_CHECK_VERSION(3,0,0)
+void GtkSalDisplay::RefreshMenusUnity()
+{
+#ifdef ENABLE_GMENU_INTEGRATION
+    for(auto pSalFrame : m_aFrames) {
+        auto pGtkSalFrame( static_cast<GtkSalFrame*>(pSalFrame));
+        GtkSalMenu* pSalMenu = static_cast<GtkSalMenu*>(pGtkSalFrame->GetMenu());
+        if(pSalMenu) {
+            pSalMenu->Activate();
+            pSalMenu->UpdateFull();
+        }
+    }
+#else
+    (void) this;
+#endif
+}
+#endif
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

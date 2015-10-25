@@ -23,7 +23,7 @@
 
 using namespace com::sun::star;
 
-SV_IMPL_PTRARR( XResultListenerArr_Impl, XResultListenerPtr );
+SV_IMPL_PTRARR( XResultListenerArr_Impl, css::uno::Reference< css::sheet::XResultListener >* );
 
 ScAddInResult::ScAddInResult(const String& rStr) :
     aArg( rStr ),
@@ -50,11 +50,10 @@ void ScAddInResult::NewValue()
         (*aListeners[n])->modified( aEvent );
 }
 
-IMPL_LINK( ScAddInResult, TimeoutHdl, Timer*, pT )
+IMPL_LINK_TYPED( ScAddInResult, TimeoutHdl, Timer*, pT, void )
 {
     NewValue();
     pT->Start();
-    return 0;
 }
 
 ScAddInResult::~ScAddInResult()

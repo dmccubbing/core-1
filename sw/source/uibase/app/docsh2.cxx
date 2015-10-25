@@ -482,11 +482,11 @@ void SwDocShell::Execute(SfxRequest& rReq)
 
                 if ( pArgs )
                 {
-                    SFX_REQUEST_ARG( rReq, pTemplateItem, SfxStringItem, SID_TEMPLATE_NAME, false );
+                    const SfxStringItem* pTemplateItem = rReq.GetArg<SfxStringItem>(SID_TEMPLATE_NAME);
                     if ( pTemplateItem )
                     {
                         aFileName = pTemplateItem->GetValue();
-                        SFX_REQUEST_ARG( rReq, pFlagsItem, SfxInt32Item, SID_TEMPLATE_LOAD, false );
+                        const SfxInt32Item* pFlagsItem = rReq.GetArg<SfxInt32Item>(SID_TEMPLATE_LOAD);
                         if ( pFlagsItem )
                             nFlags = static_cast<SfxTemplateFlags>((sal_uInt16) pFlagsItem->GetValue());
                     }
@@ -700,7 +700,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                 sal_uInt8 nPara = pDlg->GetPara();
                 SwDoc* pSmryDoc = new SwDoc();
                 SfxObjectShellLock xDocSh( new SwDocShell( pSmryDoc, SfxObjectCreateMode::STANDARD));
-                xDocSh->DoInitNew( 0 );
+                xDocSh->DoInitNew();
 
                 bool bImpress = FN_ABSTRACT_STARIMPRESS == nWhich;
                 m_pDoc->Summary( pSmryDoc, nLevel, nPara, bImpress );
@@ -869,7 +869,7 @@ void SwDocShell::Execute(SfxRequest& rReq)
                 if( pArgs && SfxItemState::SET == pArgs->GetItemState( nWhich, false, &pItem ) )
                 {
                     aFileName = static_cast<const SfxStringItem*>(pItem)->GetValue();
-                    SFX_ITEMSET_ARG( pArgs, pTemplItem, SfxStringItem, SID_TEMPLATE_NAME, false );
+                    const SfxStringItem* pTemplItem = SfxItemSet::GetItem<SfxStringItem>(pArgs, SID_TEMPLATE_NAME, false);
                     if ( pTemplItem )
                         aTemplateName = pTemplItem->GetValue();
                 }

@@ -111,19 +111,19 @@ public:
     explicit SfxFrameLoader_Impl( const css::uno::Reference < css::uno::XComponentContext >& _rxContext );
 
     virtual OUString SAL_CALL getImplementationName()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual sal_Bool SAL_CALL supportsService(OUString const & ServiceName)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     virtual css::uno::Sequence<OUString> SAL_CALL getSupportedServiceNames()
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
 
     // XSynchronousFrameLoader
 
-    virtual sal_Bool SAL_CALL load( const css::uno::Sequence< css::beans::PropertyValue >& _rArgs, const css::uno::Reference< css::frame::XFrame >& _rxFrame ) throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-    virtual void SAL_CALL cancel() throw( css::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+    virtual sal_Bool SAL_CALL load( const css::uno::Sequence< css::beans::PropertyValue >& _rArgs, const css::uno::Reference< css::frame::XFrame >& _rxFrame ) throw( css::uno::RuntimeException, std::exception ) override;
+    virtual void SAL_CALL cancel() throw( css::uno::RuntimeException, std::exception ) override;
 
 protected:
     virtual                 ~SfxFrameLoader_Impl();
@@ -529,7 +529,8 @@ void SfxFrameLoader_Impl::impl_removeLoaderArguments( ::comphelper::NamedValueCo
 ::comphelper::NamedValueCollection SfxFrameLoader_Impl::impl_extractViewCreationArgs( ::comphelper::NamedValueCollection& io_rDescriptor )
 {
     const sal_Char* pKnownViewArgs[] = {
-        "JumpMark"
+        "JumpMark",
+        "PickListEntry"
     };
 
     ::comphelper::NamedValueCollection aViewArgs;

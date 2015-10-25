@@ -84,7 +84,7 @@ class OGroupsSortingDialog :    public FloatingWindow
 private:
     DECL_LINK_TYPED( OnControlFocusLost, Control&, void );
     DECL_LINK_TYPED( OnControlFocusGot, Control&, void );
-    DECL_LINK( LBChangeHdl, ListBox* );
+    DECL_LINK_TYPED( LBChangeHdl, ListBox&, void );
     DECL_LINK_TYPED( OnFormatAction, ToolBox*, void );
 
     /** returns the groups
@@ -135,17 +135,17 @@ private:
     *
     */
     void fillColumns();
-    OGroupsSortingDialog(OGroupsSortingDialog&) SAL_DELETED_FUNCTION;
-    void operator =(OGroupsSortingDialog&) SAL_DELETED_FUNCTION;
+    OGroupsSortingDialog(OGroupsSortingDialog&) = delete;
+    void operator =(OGroupsSortingDialog&) = delete;
 protected:
     // OPropertyChangeListener
-    virtual void    _propertyChanged(const ::com::sun::star::beans::PropertyChangeEvent& _rEvent) throw( css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void    _propertyChanged(const ::com::sun::star::beans::PropertyChangeEvent& _rEvent) throw( css::uno::RuntimeException, std::exception) override;
 public:
     OGroupsSortingDialog( vcl::Window* pParent
                         ,bool _bReadOnly
                         ,::rptui::OReportController* _pController);
     virtual ~OGroupsSortingDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     /* updates the current view
     */

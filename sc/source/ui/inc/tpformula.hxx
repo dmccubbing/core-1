@@ -27,6 +27,7 @@
 #include <vcl/button.hxx>
 
 #include "calcconfig.hxx"
+#include "docoptio.hxx"
 
 class ScTpFormulaOptions : public SfxTabPage
 {
@@ -36,14 +37,14 @@ public:
 
     static  VclPtr<SfxTabPage> Create (vcl::Window* pParent, const SfxItemSet* rCoreSet);
 
-    virtual bool FillItemSet(SfxItemSet* rCoreSet) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet* rCoreSet ) SAL_OVERRIDE;
-    virtual sfxpg DeactivatePage(SfxItemSet* pSet = NULL) SAL_OVERRIDE;
+    virtual bool FillItemSet(SfxItemSet* rCoreSet) override;
+    virtual void Reset( const SfxItemSet* rCoreSet ) override;
+    virtual sfxpg DeactivatePage(SfxItemSet* pSet = NULL) override;
 
 private:
     explicit ScTpFormulaOptions(vcl::Window* pParent, const SfxItemSet& rCoreSet);
     virtual ~ScTpFormulaOptions();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     void ResetSeparators();
     void OnFocusSeparatorInput(Edit* pEdit);
     void UpdateCustomCalcRadioButtons(bool bDefault);
@@ -53,7 +54,7 @@ private:
     bool IsValidSeparatorSet() const;
 
     DECL_LINK_TYPED( ButtonHdl, Button*, void );
-    DECL_LINK( SepModifyHdl, Edit* );
+    DECL_LINK_TYPED( SepModifyHdl, Edit&, void );
     DECL_LINK_TYPED( SepEditOnFocusHdl, Control&, void );
 
 private:
@@ -78,6 +79,9 @@ private:
 
     ScCalcConfig maSavedConfig;
     ScCalcConfig maCurrentConfig;
+
+    ScDocOptions maSavedDocOptions;
+    ScDocOptions maCurrentDocOptions;
 
     sal_Unicode mnDecSep;
 };

@@ -134,7 +134,7 @@ struct SetRowHeightOnlyFunc : public OptimalHeightsFuncObjBase
         mpTab(pTab)
     {}
 
-    virtual bool operator() (SCROW nStartRow, SCROW nEndRow, sal_uInt16 nHeight) SAL_OVERRIDE
+    virtual bool operator() (SCROW nStartRow, SCROW nEndRow, sal_uInt16 nHeight) override
     {
         mpTab->SetRowHeightOnly(nStartRow, nEndRow, nHeight);
         return false;
@@ -153,7 +153,7 @@ struct SetRowHeightRangeFunc : public OptimalHeightsFuncObjBase
         mnPPTY(nPPTY)
     {}
 
-    virtual bool operator() (SCROW nStartRow, SCROW nEndRow, sal_uInt16 nHeight) SAL_OVERRIDE
+    virtual bool operator() (SCROW nStartRow, SCROW nEndRow, sal_uInt16 nHeight) override
     {
         return mpTab->SetRowHeightRange(nStartRow, nEndRow, nHeight, mnPPTX, mnPPTY);
     }
@@ -1081,7 +1081,7 @@ SCCOL ScTable::FindNextVisibleCol( SCCOL nCol, bool bRight ) const
     {
         nCol--;
         SCCOL nStart = MAXCOL;
-        bool bHidden = pDocument->ColHidden(nCol, nTab, &nStart, nullptr);
+        bool bHidden = pDocument->ColHidden(nCol, nTab, &nStart);
         if(bHidden)
             nCol = nStart - 1;
 
@@ -1124,7 +1124,7 @@ SCCOL ScTable::FindNextVisibleColWithContent( SCCOL nCol, bool bRight, SCROW nRo
         {
             nCol--;
             SCCOL nStartCol = MAXCOL;
-            bool bHidden = pDocument->ColHidden( nCol, nTab, &nStartCol, nullptr );
+            bool bHidden = pDocument->ColHidden( nCol, nTab, &nStartCol );
             if(bHidden)
             {
                 nCol = nStartCol -1;
@@ -1800,7 +1800,6 @@ void ScTable::MaybeAddExtraColumn(SCCOL& rCol, SCROW nRow, OutputDevice* pDev, d
     if (!aCell.hasString())
         return;
 
-    bool bFormula = false;  //TODO: pass as parameter
     long nPixel = aCol[rCol].GetTextWidth(nRow);
 
     // Width already calculated in Idle-Handler ?
@@ -1808,7 +1807,7 @@ void ScTable::MaybeAddExtraColumn(SCCOL& rCol, SCROW nRow, OutputDevice* pDev, d
     {
         ScNeededSizeOptions aOptions;
         aOptions.bTotalSize  = true;
-        aOptions.bFormula    = bFormula;
+        aOptions.bFormula    = false; //TODO: pass as parameter
         aOptions.bSkipMerged = false;
 
         Fraction aZoom(1,1);

@@ -63,7 +63,7 @@ class SVL_DLLPUBLIC SvxSearchItem :
         public SfxPoolItem,
         public utl::ConfigItem
 {
-    com::sun::star::util::SearchOptions m_aSearchOpt;
+    css::util::SearchOptions m_aSearchOpt;
 
     SfxStyleFamily  m_eFamily;            // style family
 
@@ -75,6 +75,7 @@ class SVL_DLLPUBLIC SvxSearchItem :
     bool            m_bRowDirection;      // search direction: row-wise/column-wise
     bool            m_bAllTables;         // search in all sheets
     bool            m_bSearchFiltered;      // search filtered cells.
+    bool            m_bSearchFormatted;     // search formatted display strings
 
     // Writer-specific
     bool            m_bNotes;
@@ -88,7 +89,7 @@ class SVL_DLLPUBLIC SvxSearchItem :
     sal_Int32       m_nStartPointX;
     sal_Int32       m_nStartPointY;
 
-    virtual void    ImplCommit() SAL_OVERRIDE;
+    virtual void    ImplCommit() override;
 
 public:
     TYPEINFO_OVERRIDE();
@@ -97,17 +98,17 @@ public:
     SvxSearchItem( const SvxSearchItem& rItem );
     virtual ~SvxSearchItem();
 
-    virtual bool             QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-    virtual bool             PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
-    virtual bool             operator == ( const SfxPoolItem& ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*     Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
+    virtual bool             QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+    virtual bool             PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
+    virtual bool             operator == ( const SfxPoolItem& ) const override;
+    virtual SfxPoolItem*     Clone( SfxItemPool *pPool = 0 ) const override;
     virtual bool GetPresentation( SfxItemPresentation ePres,
                                     SfxMapUnit eCoreMetric,
                                     SfxMapUnit ePresMetric,
-                                    OUString &rText, const IntlWrapper * = 0 ) const SAL_OVERRIDE;
+                                    OUString &rText, const IntlWrapper * = 0 ) const override;
 
     // ConfigItem
-    virtual void            Notify( const com::sun::star::uno::Sequence< OUString > &rPropertyNames ) SAL_OVERRIDE;
+    virtual void            Notify( const css::uno::Sequence< OUString > &rPropertyNames ) override;
 
             SvxSearchCmd    GetCommand() const { return m_nCommand; }
             void            SetCommand(SvxSearchCmd nNewCommand) { m_nCommand = nNewCommand; }
@@ -149,6 +150,9 @@ public:
             bool            IsSearchFiltered() const { return m_bSearchFiltered; }
             void            SetSearchFiltered(bool b) { m_bSearchFiltered = b; }
 
+            bool            IsSearchFormatted() const { return m_bSearchFormatted; }
+            void            SetSearchFormatted(bool b) { m_bSearchFormatted = b; }
+
             SvxSearchCellType GetCellType() const { return m_nCellType; }
             void            SetCellType(SvxSearchCellType nNewCellType) { m_nCellType = nNewCellType; }
 
@@ -173,9 +177,9 @@ public:
     inline  sal_uInt16      GetLEVLonger() const;
     inline  void            SetLEVLonger(sal_uInt16 nSet);
 
-    inline const com::sun::star::util::SearchOptions &
-                GetSearchOptions() const;
-    inline void SetSearchOptions( const com::sun::star::util::SearchOptions &rOpt );
+    inline const css::util::SearchOptions &
+                            GetSearchOptions() const;
+    inline void             SetSearchOptions( const css::util::SearchOptions &rOpt );
 
     inline  sal_Int32       GetTransliterationFlags() const;
             void            SetTransliterationFlags( sal_Int32 nFlags );
@@ -215,30 +219,27 @@ void SvxSearchItem::SetReplaceString(const OUString& rNewString)
 bool SvxSearchItem::GetWordOnly() const
 {
     return 0 != (m_aSearchOpt.searchFlag &
-                        com::sun::star::util::SearchFlags::NORM_WORD_ONLY);
+                        css::util::SearchFlags::NORM_WORD_ONLY);
 }
 
 bool SvxSearchItem::GetExact() const
 {
-    return 0 == (m_aSearchOpt.transliterateFlags &
-                        com::sun::star::i18n::TransliterationModules_IGNORE_CASE);
+    return 0 == (m_aSearchOpt.transliterateFlags & css::i18n::TransliterationModules_IGNORE_CASE);
 }
 
 bool SvxSearchItem::GetSelection() const
 {
-    return 0 != (m_aSearchOpt.searchFlag &
-                        com::sun::star::util::SearchFlags::REG_NOT_BEGINOFLINE);
+    return 0 != (m_aSearchOpt.searchFlag & css::util::SearchFlags::REG_NOT_BEGINOFLINE);
 }
 
 bool SvxSearchItem::GetRegExp() const
 {
-    return m_aSearchOpt.algorithmType == com::sun::star::util::SearchAlgorithms_REGEXP ;
+    return m_aSearchOpt.algorithmType == css::util::SearchAlgorithms_REGEXP ;
 }
 
 bool SvxSearchItem::IsLEVRelaxed() const
 {
-    return 0 != (m_aSearchOpt.searchFlag &
-                        com::sun::star::util::SearchFlags::LEV_RELAXED);
+    return 0 != (m_aSearchOpt.searchFlag & css::util::SearchFlags::LEV_RELAXED);
 }
 
 sal_uInt16 SvxSearchItem::GetLEVOther() const
@@ -273,15 +274,15 @@ void SvxSearchItem::SetLEVLonger( sal_uInt16 nVal )
 
 bool SvxSearchItem::IsLevenshtein() const
 {
-    return m_aSearchOpt.algorithmType == com::sun::star::util::SearchAlgorithms_APPROXIMATE;
+    return m_aSearchOpt.algorithmType == css::util::SearchAlgorithms_APPROXIMATE;
 }
 
-const com::sun::star::util::SearchOptions & SvxSearchItem::GetSearchOptions() const
+const css::util::SearchOptions & SvxSearchItem::GetSearchOptions() const
 {
     return m_aSearchOpt;
 }
 
-void SvxSearchItem::SetSearchOptions( const com::sun::star::util::SearchOptions &rOpt )
+void SvxSearchItem::SetSearchOptions( const css::util::SearchOptions &rOpt )
 {
     m_aSearchOpt = rOpt;
 }
@@ -293,8 +294,7 @@ sal_Int32 SvxSearchItem::GetTransliterationFlags() const
 
 bool SvxSearchItem::IsMatchFullHalfWidthForms() const
 {
-    return 0 != (m_aSearchOpt.transliterateFlags &
-                        com::sun::star::i18n::TransliterationModules_IGNORE_WIDTH);
+    return 0 != (m_aSearchOpt.transliterateFlags & css::i18n::TransliterationModules_IGNORE_WIDTH);
 }
 
 #endif

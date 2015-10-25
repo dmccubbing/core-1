@@ -68,13 +68,13 @@ class SvtSysLocaleOptions_Impl : public utl::ConfigItem
         void                    MakeRealLocale();
         void                    MakeRealUILocale();
 
-    virtual void                ImplCommit() SAL_OVERRIDE;
+    virtual void                ImplCommit() override;
 
 public:
                                 SvtSysLocaleOptions_Impl();
     virtual                     ~SvtSysLocaleOptions_Impl();
 
-    virtual void                Notify( const com::sun::star::uno::Sequence< OUString >& aPropertyNames ) SAL_OVERRIDE;
+    virtual void                Notify( const com::sun::star::uno::Sequence< OUString >& aPropertyNames ) override;
 
             const OUString&     GetLocaleString() const
                                     { return m_aLocaleString; }
@@ -698,8 +698,7 @@ void SvtSysLocaleOptions::ConfigurationChanged( utl::ConfigurationBroadcaster* p
     if ( nHint & SYSLOCALEOPTIONS_HINT_CURRENCY )
     {
         const Link<LinkParamNone*,void>& rLink = GetCurrencyChangeLink();
-        if ( rLink.IsSet() )
-            rLink.Call( NULL );
+        rLink.Call( NULL );
     }
 
     ::utl::detail::Options::ConfigurationChanged( p, nHint );

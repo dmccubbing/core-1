@@ -68,13 +68,13 @@ $(eval $(call gb_Helper_register_executables,NONE, \
         svptest \
         svpclient \
         pixelctl ) \
-	$(if $(and $(ENABLE_GTK), $(filter LINUX,$(OS))), tilebench) \
-	$(if $(filter LINUX MACOSX WNT,$(OS)),icontest \
+	$(if $(and $(ENABLE_GTK), $(filter LINUX %BSD SOLARIS,$(OS))), tilebench) \
+	$(if $(filter LINUX MACOSX SOLARIS WNT %BSD,$(OS)),icontest \
 	    outdevgrind) \
 	vcldemo \
 	tiledrendering \
     mtfdemo \
-	$(if $(and $(ENABLE_GTK), $(filter LINUX,$(OS))), gtktiledviewer) \
+	$(if $(and $(ENABLE_GTK), $(filter LINUX %BSD SOLARIS,$(OS))), gtktiledviewer) \
 ))
 
 $(eval $(call gb_Helper_register_executables_for_install,SDK,sdk, \
@@ -146,7 +146,6 @@ $(eval $(call gb_Helper_register_executables_for_install,OOO,writer_brand, \
 $(eval $(call gb_Helper_register_executables_for_install,OOO,ooo, \
 	gengal \
 	$(if $(filter TRUE-TRUE,$(USING_X11)-$(ENABLE_NPAPI_FROM_BROWSER)),pluginapp.bin) \
-	$(if $(ENABLE_TDE),tdefilepicker) \
 	$(if $(filter WNT,$(OS)),,uri-encode) \
 	ui-previewer \
 	$(if $(filter WNT,$(OS)), \
@@ -223,6 +222,13 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,graphicfilter, \
 
 $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,tde, \
 	$(if $(ENABLE_TDE),tdebe1) \
+	$(if $(USING_X11), \
+		$(if $(ENABLE_TDE),vclplug_tde) \
+	) \
+))
+
+$(eval $(call gb_Helper_register_executables_for_install,OOO,tde, \
+       $(if $(ENABLE_TDE),tdefilepicker) \
 ))
 
 $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,impress, \
@@ -244,7 +250,6 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,gnome, \
 	$(if $(ENABLE_EVOAB2),evoab) \
 	$(if $(ENABLE_GTK),vclplug_gtk) \
 	$(if $(ENABLE_GTK3),vclplug_gtk3) \
-	$(if $(ENABLE_GCONF),gconfbe1) \
 	$(if $(ENABLE_SYSTRAY_GTK),qstart_gtk) \
 	$(if $(ENABLE_GIO),losessioninstall) \
 	$(if $(ENABLE_GIO),ucpgio1) \
@@ -426,7 +431,6 @@ $(eval $(call gb_Helper_register_libraries_for_install,OOOLIBS,ooo, \
 	vclcanvas \
 	$(if $(USING_X11), \
 		vclplug_gen \
-		$(if $(ENABLE_TDE),vclplug_tde) \
 	) \
 	writerperfect \
 	xmlscript \
@@ -578,7 +582,7 @@ $(eval $(call gb_Helper_register_libraries_for_install,PLAINLIBS_OOO,ooo, \
 	i18nlangtag \
 	i18nutil \
 	index_data \
-	$(if $(and $(ENABLE_GTK3), $(filter LINUX,$(OS))), libreofficekitgtk) \
+	$(if $(and $(ENABLE_GTK3), $(filter LINUX %BSD SOLARIS,$(OS))), libreofficekitgtk) \
 	localedata_en \
 	localedata_es \
 	localedata_euro \

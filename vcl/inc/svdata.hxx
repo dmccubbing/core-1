@@ -100,7 +100,7 @@ namespace vcl { class DisplayConnection; class SettingsConfigItem; class DeleteO
 class LocaleConfigurationListener : public utl::ConfigurationListener
 {
 public:
-    virtual void ConfigurationChanged( utl::ConfigurationBroadcaster*, sal_uInt32 ) SAL_OVERRIDE;
+    virtual void ConfigurationChanged( utl::ConfigurationBroadcaster*, sal_uInt32 ) override;
 };
 
 typedef std::vector<Link<VclWindowEvent&,bool> > SVAppKeyListeners;
@@ -161,7 +161,11 @@ struct ImplSVAppData
     Idle*               mpEventTestingIdle;
     int                 mnEventTestLimit;
 
-    DECL_STATIC_LINK_TYPED( ImplSVAppData, ImplQuitMsg, void*, void );
+    DECL_STATIC_LINK_TYPED(ImplSVAppData, ImplQuitMsg, void*, void);
+    DECL_STATIC_LINK_TYPED(ImplSVAppData, ImplPrepareExitMsg, void*, void);
+    DECL_STATIC_LINK_TYPED(ImplSVAppData, ImplEndAllDialogsMsg, void*, void);
+    DECL_STATIC_LINK_TYPED(ImplSVAppData, ImplEndAllPopupsMsg, void*, void);
+    DECL_STATIC_LINK_TYPED(ImplSVAppData, ImplVclEventTestingHdl, void*, void);
     DECL_LINK_TYPED(VclEventTestingHdl, Idle*, void);
 };
 

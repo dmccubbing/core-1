@@ -50,9 +50,9 @@ private:
     DECL_LINK_TYPED( Click_SmartProtocol_Impl  , Button*, void ); ///< Radiobutton clicked: Type HTTP or FTP
     DECL_LINK_TYPED( ClickAnonymousHdl_Impl    , Button*, void ); ///< Checkbox : Anonymous User
     DECL_LINK_TYPED( ClickBrowseHdl_Impl       , Button*, void ); ///< Button : Browse
-    DECL_LINK (ModifiedLoginHdl_Impl     , void * ); ///< Contens of editfield "Login" modified
+    DECL_LINK_TYPED( ModifiedLoginHdl_Impl     , Edit&,   void ); ///< Contents of editfield "Login" modified
     DECL_LINK_TYPED( LostFocusTargetHdl_Impl,    Control&, void ); ///< Combobox "Target" lost its focus
-    DECL_LINK (ModifiedTargetHdl_Impl    , void * ); ///< Contens of editfield "Target" modified
+    DECL_LINK_TYPED( ModifiedTargetHdl_Impl    , Edit&, void );    ///< Contents of editfield "Target" modified
 
     DECL_LINK_TYPED( TimeoutHdl_Impl,             Timer *, void); ///< Handler for timer -timeout
 
@@ -69,23 +69,23 @@ private:
     void   RefreshMarkWindow();
 
 protected:
-    virtual void FillDlgFields(const OUString& rStrURL) SAL_OVERRIDE;
+    virtual void FillDlgFields(const OUString& rStrURL) override;
     virtual void GetCurentItemData ( OUString& rStrURL, OUString& aStrName,
                                      OUString& aStrIntName, OUString& aStrFrame,
-                                     SvxLinkInsertMode& eMode ) SAL_OVERRIDE;
-    virtual bool ShouldOpenMarkWnd () SAL_OVERRIDE {return ( mbMarkWndOpen && m_pRbtLinktypInternet->IsChecked() );}
-    virtual void SetMarkWndShouldOpen (bool bOpen) SAL_OVERRIDE {mbMarkWndOpen=bOpen;}
+                                     SvxLinkInsertMode& eMode ) override;
+    virtual bool ShouldOpenMarkWnd () override {return ( mbMarkWndOpen && m_pRbtLinktypInternet->IsChecked() );}
+    virtual void SetMarkWndShouldOpen (bool bOpen) override {mbMarkWndOpen=bOpen;}
 
 public:
     SvxHyperlinkInternetTp ( vcl::Window *pParent, IconChoiceDialog* pDlg, const SfxItemSet& rItemSet);
     virtual ~SvxHyperlinkInternetTp();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static  VclPtr<IconChoicePage> Create( vcl::Window* pWindow, IconChoiceDialog* pDlg, const SfxItemSet& rItemSet );
 
-    virtual void        SetMarkStr ( const OUString& aStrMark ) SAL_OVERRIDE;
+    virtual void        SetMarkStr ( const OUString& aStrMark ) override;
 
-    virtual void        SetInitFocus() SAL_OVERRIDE;
+    virtual void        SetInitFocus() override;
 };
 
 

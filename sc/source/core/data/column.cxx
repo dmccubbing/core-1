@@ -1749,7 +1749,7 @@ void ScColumn::CopyScenarioFrom( const ScColumn& rSrcCol )
             aRefCxt.meMode = URM_COPY;
             aRefCxt.maRange = ScRange(nCol, nStart, nTab, nCol, nEnd, nTab);
             aRefCxt.mnTabDelta = nTab - rSrcCol.nTab;
-            UpdateReferenceOnCopy(aRefCxt, NULL);
+            UpdateReferenceOnCopy(aRefCxt);
             UpdateCompile();
         }
 
@@ -1779,7 +1779,7 @@ void ScColumn::CopyScenarioTo( ScColumn& rDestCol ) const
             aRefCxt.meMode = URM_COPY;
             aRefCxt.maRange = ScRange(rDestCol.nCol, nStart, rDestCol.nTab, rDestCol.nCol, nEnd, rDestCol.nTab);
             aRefCxt.mnTabDelta = rDestCol.nTab - nTab;
-            rDestCol.UpdateReferenceOnCopy(aRefCxt, NULL);
+            rDestCol.UpdateReferenceOnCopy(aRefCxt);
             rDestCol.UpdateCompile();
         }
 
@@ -2269,7 +2269,7 @@ public:
 
     virtual ~UpdateRefGroupBoundChecker() {}
 
-    virtual void processSharedTop( ScFormulaCell** ppCells, size_t /*nRow*/, size_t /*nLength*/ ) SAL_OVERRIDE
+    virtual void processSharedTop( ScFormulaCell** ppCells, size_t /*nRow*/, size_t /*nLength*/ ) override
     {
         // Check its tokens and record its reference boundaries.
         ScFormulaCell& rCell = **ppCells;
@@ -2290,7 +2290,7 @@ public:
 
     virtual ~UpdateRefExpandGroupBoundChecker() {}
 
-    virtual void processSharedTop( ScFormulaCell** ppCells, size_t /*nRow*/, size_t /*nLength*/ ) SAL_OVERRIDE
+    virtual void processSharedTop( ScFormulaCell** ppCells, size_t /*nRow*/, size_t /*nLength*/ ) override
     {
         // Check its tokens and record its reference boundaries.
         ScFormulaCell& rCell = **ppCells;
@@ -2309,12 +2309,12 @@ public:
 
     virtual ~FormulaGroupPicker() {}
 
-    virtual void processNonShared( ScFormulaCell* pCell, size_t nRow ) SAL_OVERRIDE
+    virtual void processNonShared( ScFormulaCell* pCell, size_t nRow ) override
     {
         mrGroups.push_back(sc::FormulaGroupEntry(pCell, nRow));
     }
 
-    virtual void processSharedTop( ScFormulaCell** ppCells, size_t nRow, size_t nLength ) SAL_OVERRIDE
+    virtual void processSharedTop( ScFormulaCell** ppCells, size_t nRow, size_t nLength ) override
     {
         mrGroups.push_back(sc::FormulaGroupEntry(ppCells, nRow, nLength));
     }
@@ -3419,7 +3419,7 @@ SCsROW ScColumn::SearchStyle(
             return -1;
     }
     else
-        return pAttrArray->SearchStyle( nRow, pSearchStyle, bUp, NULL );
+        return pAttrArray->SearchStyle( nRow, pSearchStyle, bUp );
 }
 
 bool ScColumn::SearchStyleRange(
@@ -3435,7 +3435,7 @@ bool ScColumn::SearchStyleRange(
             return false;
     }
     else
-        return pAttrArray->SearchStyleRange( rRow, rEndRow, pSearchStyle, bUp, NULL );
+        return pAttrArray->SearchStyleRange( rRow, rEndRow, pSearchStyle, bUp );
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

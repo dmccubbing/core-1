@@ -234,7 +234,7 @@ void ScEditWindow::Paint( vcl::RenderContext& rRenderContext, const Rectangle& r
     pEdView->Paint(rRect);
 
     if( HasFocus() )
-        pEdView->ShowCursor(true);
+        pEdView->ShowCursor();
 }
 
 void ScEditWindow::MouseMove( const MouseEvent& rMEvt )
@@ -271,8 +271,7 @@ void ScEditWindow::KeyInput( const KeyEvent& rKEvt )
     else if ( !rKEvt.GetKeyCode().IsMod1() && !rKEvt.GetKeyCode().IsShift() &&
                 rKEvt.GetKeyCode().IsMod2() && rKEvt.GetKeyCode().GetCode() == KEY_DOWN )
     {
-        if (aObjectSelectLink.IsSet() )
-            aObjectSelectLink.Call(*this);
+        aObjectSelectLink.Call(*this);
     }
 }
 
@@ -283,7 +282,7 @@ void ScEditWindow::Command( const CommandEvent& rCEvt )
 
 void ScEditWindow::GetFocus()
 {
-    pEdView->ShowCursor(true);
+    pEdView->ShowCursor();
     pActiveEdWnd = this;
 
     ::com::sun::star::uno::Reference< ::com::sun::star::accessibility::XAccessible > xTemp = xAcc;

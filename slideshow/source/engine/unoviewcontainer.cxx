@@ -42,12 +42,12 @@ namespace slideshow
         {
             // check whether same view is already added
 
+            uno::Reference< presentation::XSlideShowView > rTmpView = rView->getUnoView();
             // already added?
-            const uno::Reference< presentation::XSlideShowView > rShowView = rView->getUnoView();
             if( ::std::any_of( maViews.begin(),
                                maViews.end(),
-                               [&rShowView]( const UnoViewSharedPtr& pUnoView )
-                               { return rShowView == pUnoView->getUnoView(); } ) )
+                               [&rTmpView]( const UnoViewSharedPtr& pView )
+                               { return rTmpView == pView->getUnoView(); } ) )
             {
                 // yes, nothing to do
                 return false;
@@ -68,8 +68,8 @@ namespace slideshow
             // added in the first place?
             if( (aIter=::std::find_if( maViews.begin(),
                                        aEnd,
-                                       [&xView]( const UnoViewSharedPtr& pUnoView )
-                                       { return xView == pUnoView->getUnoView(); } ) ) == aEnd )
+                                       [&xView]( const UnoViewSharedPtr& pView )
+                                       { return xView == pView->getUnoView(); } )) == aEnd )
             {
                 // nope, nothing to do
                 return UnoViewSharedPtr();
@@ -79,8 +79,8 @@ namespace slideshow
                 ::std::count_if(
                     maViews.begin(),
                     aEnd,
-                    [&xView]( const UnoViewSharedPtr& pUnoView )
-                    { return xView == pUnoView->getUnoView(); } ) == 1,
+                    [&xView]( const UnoViewSharedPtr& pView )
+                    { return xView == pView->getUnoView(); } ) == 1,
                 "UnoViewContainer::removeView(): View was added multiple times" );
 
             UnoViewSharedPtr pView( *aIter );
@@ -93,8 +93,8 @@ namespace slideshow
 
         void UnoViewContainer::dispose()
         {
-            for( const auto& rView : maViews )
-                rView->_dispose();
+            for( const auto& pView : maViews )
+                pView->_dispose();
             maViews.clear();
         }
     }

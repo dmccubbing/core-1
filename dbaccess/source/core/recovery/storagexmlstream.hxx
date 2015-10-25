@@ -43,7 +43,7 @@ namespace dbaccess
         virtual ~StorageXMLOutputStream();
 
         // StorageOutputStream overridables
-        virtual void close() SAL_OVERRIDE;
+        virtual void close() override;
 
         void    addAttribute( const OUString& i_rName, const OUString& i_rValue ) const;
 
@@ -54,8 +54,8 @@ namespace dbaccess
         void    characters( const OUString& i_rCharacters ) const;
 
     private:
-        StorageXMLOutputStream( const StorageXMLOutputStream& ) SAL_DELETED_FUNCTION;
-        StorageXMLOutputStream& operator=( const StorageXMLOutputStream& ) SAL_DELETED_FUNCTION;
+        StorageXMLOutputStream( const StorageXMLOutputStream& ) = delete;
+        StorageXMLOutputStream& operator=( const StorageXMLOutputStream& ) = delete;
 
     private:
         ::std::unique_ptr< StorageXMLOutputStream_Data >   m_pData;
@@ -78,8 +78,8 @@ namespace dbaccess
                 );
 
     private:
-        StorageXMLInputStream( const StorageXMLInputStream& ) SAL_DELETED_FUNCTION;
-        StorageXMLInputStream& operator=( const StorageXMLInputStream& ) SAL_DELETED_FUNCTION;
+        StorageXMLInputStream( const StorageXMLInputStream& ) = delete;
+        StorageXMLInputStream& operator=( const StorageXMLInputStream& ) = delete;
 
     private:
         ::std::unique_ptr< StorageXMLInputStream_Data >   m_pData;

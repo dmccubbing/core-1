@@ -12,6 +12,7 @@
 #include <string.h>
 #include <string>
 #include <map>
+#include <iostream>
 
 #include <boost/property_tree/json_parser.hpp>
 #include <gdk/gdkkeysyms.h>
@@ -102,7 +103,6 @@ const float fZooms[] = { 0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 5.0 };
 /// Get the visible area of the scrolled window
 static void getVisibleAreaTwips(GtkWidget* pDocView, GdkRectangle* pArea)
 {
-#if GTK_CHECK_VERSION(2,14,0) // we need gtk_adjustment_get_page_size()
     TiledWindow& rWindow = lcl_getTiledWindow(pDocView);
 
     GtkAdjustment* pHAdjustment = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(rWindow.m_pScrolledWindow));
@@ -116,7 +116,6 @@ static void getVisibleAreaTwips(GtkWidget* pDocView, GdkRectangle* pArea)
                                                gtk_adjustment_get_page_size(pHAdjustment));
     pArea->height = lok_doc_view_pixel_to_twip(LOK_DOC_VIEW(pDocView),
                                                gtk_adjustment_get_page_size(pVAdjustment));
-#endif
 }
 
 static void changeZoom( GtkWidget* pButton, gpointer /* pItem */ )
@@ -282,6 +281,17 @@ static void doCopy(GtkWidget* pButton, gpointer /*pItem*/)
     free(pUsedFormat);
 }
 
+static void doPaste(GtkWidget* pButton, gpointer /*pItem*/)
+{
+    TiledWindow& rWindow = lcl_getTiledWindow(pButton);
+    LOKDocView* pLOKDocView = LOK_DOC_VIEW(rWindow.m_pDocView);
+    LibreOfficeKitDocument* pDocument = lok_doc_view_get_document(pLOKDocView);
+
+    GtkClipboard* pClipboard = gtk_clipboard_get_for_display(gtk_widget_get_display(rWindow.m_pDocView), GDK_SELECTION_CLIPBOARD);
+    gchar* pText = gtk_clipboard_wait_for_text(pClipboard);
+    if (pText)
+        pDocument->pClass->paste(pDocument, "text/plain;charset=utf-8", pText, strlen(pText));
+}
 
 /// Searches for the next or previous text of TiledWindow::m_pFindbarEntry.
 static void doSearch(GtkWidget* pButton, bool bBackwards)
@@ -536,10 +546,8 @@ static void changePart( GtkWidget* pSelector, gpointer /* pItem */ )
     TiledWindow& rWindow = lcl_getTiledWindow(pSelector);
 
     if (rWindow.m_bPartSelectorBroadcast && rWindow.m_pDocView)
-    {
         lok_doc_view_set_part( LOK_DOC_VIEW(rWindow.m_pDocView), nPart );
-        lok_doc_view_reset_view( LOK_DOC_VIEW(rWindow.m_pDocView) );
-    }
+    lok_doc_view_reset_view(LOK_DOC_VIEW(rWindow.m_pDocView));
 }
 
 static void removeChildrenFromStatusbar(GtkWidget* children, gpointer pData)
@@ -666,6 +674,12 @@ static GtkWidget* createWindow(TiledWindow& rWindow)
     gtk_tool_item_set_tooltip_text(pCopyButton, "Copy");
     gtk_toolbar_insert(GTK_TOOLBAR(pToolbar), pCopyButton, -1);
     g_signal_connect(G_OBJECT(pCopyButton), "clicked", G_CALLBACK(doCopy), NULL);
+
+    GtkToolItem* pPasteButton = gtk_tool_button_new( NULL, NULL);
+    gtk_tool_button_set_icon_name(GTK_TOOL_BUTTON(pPasteButton), "edit-paste-symbolic");
+    gtk_tool_item_set_tooltip_text(pPasteButton, "Paste");
+    gtk_toolbar_insert(GTK_TOOLBAR(pToolbar), pPasteButton, -1);
+    g_signal_connect(G_OBJECT(pPasteButton), "clicked", G_CALLBACK(doPaste), NULL);
     gtk_toolbar_insert( GTK_TOOLBAR(pToolbar), gtk_separator_tool_item_new(), -1);
 
     GtkToolItem* pEnableEditing = gtk_toggle_tool_button_new();

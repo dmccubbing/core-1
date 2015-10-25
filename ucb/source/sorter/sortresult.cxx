@@ -105,11 +105,11 @@ public:
 
     // XPropertySetInfo
     virtual Sequence< Property > SAL_CALL getProperties()
-        throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( RuntimeException, std::exception ) override;
     virtual Property SAL_CALL getPropertyByName( const OUString& aName )
-        throw( UnknownPropertyException, RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( UnknownPropertyException, RuntimeException, std::exception ) override;
     virtual sal_Bool SAL_CALL hasPropertyByName( const OUString& Name )
-        throw( RuntimeException, std::exception ) SAL_OVERRIDE;
+        throw( RuntimeException, std::exception ) override;
 };
 
 typedef OMultiTypeInterfaceContainerHelperVar<OUString>
@@ -1701,13 +1701,12 @@ void SortedResultSet::ResortModified( EventList* pList )
     sal_uInt32 i, j;
     sal_IntPtr nCompare, nCurPos, nNewPos;
     sal_IntPtr nStart, nEnd, nOffset, nVal;
-    SortListData *pData;
     ListAction *pAction;
 
     try {
         for ( i=0; i<maModList.Count(); i++ )
         {
-            pData = static_cast<SortListData*>(maModList.GetObject( i ));
+            SortListData *pData = static_cast<SortListData*>(maModList.GetObject( i ));
             nCompare = CompareImpl( mxOther, mxOriginal,
                                     pData->mnOldPos, pData->mnCurPos );
             pData->mbModified = false;

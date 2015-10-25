@@ -682,8 +682,7 @@ void ScViewFunc::PasteFromTransferable( const uno::Reference<datatransfer::XTran
                 return;
 
             PasteDataFormat( nFormatId, aDataHelper.GetTransferable(),
-                GetViewData().GetCurX(), GetViewData().GetCurY(),
-                NULL, false );
+                GetViewData().GetCurX(), GetViewData().GetCurY() );
         }
     }
 }
@@ -911,7 +910,7 @@ bool ScViewFunc::PasteFromClip( InsertDeleteFlags nFlags, ScDocument* pClipDoc,
         if ( bPasteDraw )
         {
             aTransShellRef = new ScDocShell;        // DocShell needs a Ref immediately
-            aTransShellRef->DoInitNew(NULL);
+            aTransShellRef->DoInitNew();
         }
         ScDrawLayer::SetGlobalDrawPersist(aTransShellRef);
 
@@ -1225,7 +1224,7 @@ bool ScViewFunc::PasteFromClip( InsertDeleteFlags nFlags, ScDocument* pClipDoc,
         if ( bCutMode )
         {
             pRefUndoDoc = new ScDocument( SCDOCMODE_UNDO );
-            pRefUndoDoc->InitUndo( pDoc, 0, nTabCount-1, false );
+            pRefUndoDoc->InitUndo( pDoc, 0, nTabCount-1 );
 
             pUndoData = new ScRefUndoData( pDoc );
         }
@@ -1512,7 +1511,7 @@ bool ScViewFunc::PasteMultiRangesFromClip(
     if (pDoc->IsUndoEnabled())
     {
         pUndoDoc.reset(new ScDocument(SCDOCMODE_UNDO));
-        pUndoDoc->InitUndoSelected(pDoc, aMark, false);
+        pUndoDoc->InitUndoSelected(pDoc, aMark);
         pDoc->CopyToDocument(aMarkedRange, nUndoFlags, false, pUndoDoc.get(), &aMark);
     }
 
@@ -1522,7 +1521,7 @@ bool ScViewFunc::PasteMultiRangesFromClip(
         if ( nFlags & IDF_CONTENTS )
         {
             pMixDoc.reset(new ScDocument(SCDOCMODE_UNDO));
-            pMixDoc->InitUndoSelected(pDoc, aMark, false);
+            pMixDoc->InitUndoSelected(pDoc, aMark);
             pDoc->CopyToDocument(aMarkedRange, IDF_CONTENTS, false, pMixDoc.get(), &aMark);
         }
     }
@@ -1658,7 +1657,7 @@ bool ScViewFunc::PasteFromClipToMultiRanges(
     if (pDoc->IsUndoEnabled())
     {
         pUndoDoc.reset(new ScDocument(SCDOCMODE_UNDO));
-        pUndoDoc->InitUndoSelected(pDoc, aMark, false);
+        pUndoDoc->InitUndoSelected(pDoc, aMark);
         for (size_t i = 0, n = aRanges.size(); i < n; ++i)
         {
             pDoc->CopyToDocument(
@@ -1672,7 +1671,7 @@ bool ScViewFunc::PasteFromClipToMultiRanges(
         if (nFlags & IDF_CONTENTS)
         {
             pMixDoc.reset(new ScDocument(SCDOCMODE_UNDO));
-            pMixDoc->InitUndoSelected(pDoc, aMark, false);
+            pMixDoc->InitUndoSelected(pDoc, aMark);
             for (size_t i = 0, n = aRanges.size(); i < n; ++i)
             {
                 pDoc->CopyToDocument(
@@ -1691,7 +1690,7 @@ bool ScViewFunc::PasteFromClipToMultiRanges(
     {
         pDoc->CopyFromClip(
             *aRanges[i], aMark, (nFlags & ~IDF_OBJECTS), NULL, pClipDoc,
-            false, false, true, bSkipEmpty, NULL);
+            false, false, true, bSkipEmpty);
     }
 
     if (pMixDoc.get())
@@ -1709,7 +1708,7 @@ bool ScViewFunc::PasteFromClipToMultiRanges(
         {
             pDoc->CopyFromClip(
                 *aRanges[i], aMark, IDF_OBJECTS, NULL, pClipDoc,
-                false, false, true, bSkipEmpty, NULL);
+                false, false, true, bSkipEmpty);
         }
     }
 

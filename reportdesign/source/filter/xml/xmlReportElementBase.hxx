@@ -39,8 +39,8 @@ namespace rptxml
 
     class OXMLReportElementBase : public SvXMLImportContext
     {
-        OXMLReportElementBase(const OXMLReportElementBase&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLReportElementBase&) SAL_DELETED_FUNCTION;
+        OXMLReportElementBase(const OXMLReportElementBase&) = delete;
+        void operator =(const OXMLReportElementBase&) = delete;
     protected:
         ORptFilter&   m_rImport;
         OXMLTable*    m_pContainer;
@@ -60,9 +60,9 @@ namespace rptxml
 
         virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
     };
 
 } // namespace rptxml

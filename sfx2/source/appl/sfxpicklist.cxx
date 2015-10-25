@@ -19,6 +19,7 @@
 
 #include <config_features.h>
 
+#include <comphelper/lok.hxx>
 #include <com/sun/star/document/XDocumentProperties.hpp>
 #include <unotools/historyoptions.hxx>
 #include <unotools/useroptions.hxx>
@@ -71,7 +72,7 @@ class StringLength : public ::cppu::WeakImplHelper< XStringWidth >
 
         // XStringWidth
         sal_Int32 SAL_CALL queryStringWidth( const OUString& aString )
-            throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE
+            throw (::com::sun::star::uno::RuntimeException, std::exception) override
         {
             return aString.getLength();
         }
@@ -161,6 +162,9 @@ SfxPickList::PickListEntry* SfxPickList::GetPickListEntry( sal_uInt32 nIndex )
 
 void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
 {
+    if (pDocSh->IsAvoidRecentDocs() || comphelper::LibreOfficeKit::isActive())
+        return;
+
     SfxMedium *pMed = pDocSh->GetMedium();
     if( !pMed )
         return;
@@ -179,7 +183,7 @@ void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
         return;
 
     // add no document that forbids this (for example Message-Body)
-    SFX_ITEMSET_ARG( pMed->GetItemSet(), pPicklistItem, SfxBoolItem, SID_PICKLIST, false );
+    const SfxBoolItem* pPicklistItem = SfxItemSet::GetItem<SfxBoolItem>(pMed->GetItemSet(), SID_PICKLIST, false);
     if ( pPicklistItem && !pPicklistItem->GetValue() )
         return;
 
@@ -193,14 +197,13 @@ void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
     if ( pFilter )
         aFilter = pFilter->GetFilterName();
 
-    // generate a thumbnail
     boost::optional<OUString> aThumbnail;
-    // don't generate thumbnail when in headless mode, or on non-desktop (?)
-#if HAVE_FEATURE_DESKTOP
+
+    // generate the thumbnail
     if (!pDocSh->IsModified() && !Application::IsHeadlessModeEnabled())
     {
         // not modified => the document matches what is in the shell
-        SFX_ITEMSET_ARG( pMed->GetItemSet(), pEncryptionDataItem, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false );
+        const SfxUnoAnyItem* pEncryptionDataItem = SfxItemSet::GetItem<SfxUnoAnyItem>(pMed->GetItemSet(), SID_ENCRYPTIONDATA, false);
         if ( pEncryptionDataItem )
         {
             // encrypted document, will show a generic document icon instead
@@ -224,7 +227,7 @@ void SfxPickList::AddDocumentToPickList( SfxObjectShell* pDocSh )
             }
         }
     }
-#endif
+
     // add to svtool history options
     SvtHistoryOptions().AppendItem( ePICKLIST,
             aURL.GetURLNoPass( INetURLObject::NO_DECODE ),
@@ -411,11 +414,6 @@ void SfxPickList::Notify( SfxBroadcaster&, const SfxHint& rHint )
             break;
 
             case SFX_EVENT_OPENDOC:
-            {
-                AddDocumentToPickList(pDocSh);
-            }
-            break;
-
             case SFX_EVENT_SAVEDOCDONE:
             case SFX_EVENT_SAVEASDOCDONE:
             case SFX_EVENT_SAVETODOCDONE:

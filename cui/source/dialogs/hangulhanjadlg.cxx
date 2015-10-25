@@ -213,10 +213,10 @@ namespace svx
     public:
         RubyRadioButton( vcl::Window* _pParent, WinBits nBits );
         void init( const OUString& rPrimaryText, const OUString& rSecondaryText, const PseudoRubyText::RubyPosition& rPosition );
-        virtual Size    GetOptimalSize() const SAL_OVERRIDE;
+        virtual Size    GetOptimalSize() const override;
 
     protected:
-        virtual void    Paint( vcl::RenderContext& /*rRenderContext*/, const Rectangle& _rRect ) SAL_OVERRIDE;
+        virtual void    Paint( vcl::RenderContext& /*rRenderContext*/, const Rectangle& _rRect ) override;
 
     private:
         PseudoRubyText m_aRubyText;
@@ -370,7 +370,7 @@ namespace svx
         , m_bInSelectionUpdate( false )
     {
         m_aValueSet->SetSelectHdl( LINK( this, SuggestionDisplay, SelectSuggestionValueSetHdl ) );
-        m_aListBox->SetSelectHdl( LINK( this, SuggestionDisplay, SelectSuggestionHdl ) );
+        m_aListBox->SetSelectHdl( LINK( this, SuggestionDisplay, SelectSuggestionListBoxHdl ) );
 
         m_aValueSet->SetLineCount( LINE_CNT );
         m_aValueSet->SetStyle( m_aValueSet->GetStyle() | WB_ITEMBORDER | WB_FLATVALUESET | WB_VSCROLL );
@@ -483,10 +483,14 @@ namespace svx
     {
         SelectSuggestionHdl(pControl);
     }
-    IMPL_LINK( SuggestionDisplay, SelectSuggestionHdl, Control*, pControl )
+    IMPL_LINK_TYPED( SuggestionDisplay, SelectSuggestionListBoxHdl, ListBox&, rControl, void )
+    {
+        SelectSuggestionHdl(&rControl);
+    }
+    void SuggestionDisplay::SelectSuggestionHdl( Control* pControl )
     {
         if( m_bInSelectionUpdate )
-            return 0L;
+            return;
 
         m_bInSelectionUpdate = true;
         if( pControl == m_aListBox.get() )
@@ -501,7 +505,6 @@ namespace svx
         }
         m_bInSelectionUpdate = false;
         m_aSelectLink.Call( *this );
-        return 0L;
     }
 
     void SuggestionDisplay::SetSelectHdl( const Link<SuggestionDisplay&,void>& rLink )
@@ -654,7 +657,7 @@ namespace svx
         }
         m_pWordInput->SetText( sFirstSuggestion );
         m_pWordInput->SaveValue();
-        OnSuggestionModified( m_pWordInput );
+        OnSuggestionModified( *m_pWordInput );
     }
 
 
@@ -715,19 +718,17 @@ namespace svx
     IMPL_LINK_NOARG_TYPED( HangulHanjaConversionDialog, OnSuggestionSelected, SuggestionDisplay&, void )
     {
         m_pWordInput->SetText( m_pSuggestions->GetSelectEntry() );
-        OnSuggestionModified( NULL );
+        OnSuggestionModified( *m_pWordInput );
     }
 
 
-    IMPL_LINK_NOARG( HangulHanjaConversionDialog, OnSuggestionModified )
+    IMPL_LINK_NOARG_TYPED( HangulHanjaConversionDialog, OnSuggestionModified, Edit&, void )
     {
         m_pFind->Enable( m_pWordInput->IsValueChangedFromSaved() );
 
         bool bSameLen = m_pWordInput->GetText().getLength() == m_pOriginalWord->GetText().getLength();
         m_pReplace->Enable( m_bDocumentMode && bSameLen );
         m_pReplaceAll->Enable( m_bDocumentMode && bSameLen );
-
-        return 0L;
     }
 
 
@@ -850,9 +851,9 @@ namespace svx
     {
         // default state: try both direction
         m_pHangulOnly->Check( false );
-        m_pHangulOnly->Enable( true );
+        m_pHangulOnly->Enable();
         m_pHanjaOnly->Check( false );
-        m_pHanjaOnly->Enable( true );
+        m_pHanjaOnly->Enable();
 
         if (!_bTryBothDirections)
         {
@@ -1194,13 +1195,11 @@ namespace svx
         EndDialog( RET_OK );
     }
 
-    IMPL_LINK_NOARG(HangulHanjaNewDictDialog, ModifyHdl)
+    IMPL_LINK_NOARG_TYPED(HangulHanjaNewDictDialog, ModifyHdl, Edit&, void)
     {
         OUString aName(comphelper::string::stripEnd(m_pDictNameED->GetText(), ' '));
 
         m_pOkBtn->Enable( !aName.isEmpty() );
-
-        return 0;
     }
 
     HangulHanjaNewDictDialog::HangulHanjaNewDictDialog(vcl::Window* pParent)
@@ -1381,8 +1380,7 @@ namespace svx
     void SuggestionEdit::DoJump( bool _bUp )
     {
         const Link<Control&,void>& rLoseFocusHdl = GetLoseFocusHdl();
-        if( rLoseFocusHdl.IsSet() )
-            rLoseFocusHdl.Call( *this );
+        rLoseFocusHdl.Call( *this );
         m_pScrollBar->SetThumbPos( m_pScrollBar->GetThumbPos() + ( _bUp? -1 : 1 ) );
 
         ( static_cast< HangulHanjaEditDictDialog* >( GetParentDialog() ) )->UpdateScrollbar();
@@ -1500,45 +1498,38 @@ namespace svx
         UpdateScrollbar();
     }
 
-    IMPL_LINK_NOARG( HangulHanjaEditDictDialog, OriginalModifyHdl )
+    IMPL_LINK_NOARG_TYPED( HangulHanjaEditDictDialog, OriginalModifyHdl, Edit&, void )
     {
         m_bModifiedOriginal = true;
         m_aOriginal = comphelper::string::stripEnd( m_aOriginalLB->GetText(), ' ' );
 
         UpdateSuggestions();
         UpdateButtonStates();
-
-        return 0;
     }
 
-    IMPL_LINK( HangulHanjaEditDictDialog, EditModifyHdl1, Edit*, pEdit )
+    IMPL_LINK_TYPED( HangulHanjaEditDictDialog, EditModifyHdl1, Edit&, rEdit, void )
     {
-        EditModify( pEdit, 0 );
-        return 0;
+        EditModify( &rEdit, 0 );
     }
 
-    IMPL_LINK( HangulHanjaEditDictDialog, EditModifyHdl2, Edit*, pEdit )
+    IMPL_LINK_TYPED( HangulHanjaEditDictDialog, EditModifyHdl2, Edit&, rEdit, void )
     {
-        EditModify( pEdit, 1 );
-        return 0;
+        EditModify( &rEdit, 1 );
     }
 
-    IMPL_LINK( HangulHanjaEditDictDialog, EditModifyHdl3, Edit*, pEdit )
+    IMPL_LINK_TYPED( HangulHanjaEditDictDialog, EditModifyHdl3, Edit&, rEdit, void )
     {
-        EditModify( pEdit, 2 );
-        return 0;
+        EditModify( &rEdit, 2 );
     }
 
-    IMPL_LINK( HangulHanjaEditDictDialog, EditModifyHdl4, Edit*, pEdit )
+    IMPL_LINK_TYPED( HangulHanjaEditDictDialog, EditModifyHdl4, Edit&, rEdit, void )
     {
-        EditModify( pEdit, 3 );
-        return 0;
+        EditModify( &rEdit, 3 );
     }
 
-    IMPL_LINK_NOARG( HangulHanjaEditDictDialog, BookLBSelectHdl )
+    IMPL_LINK_NOARG_TYPED( HangulHanjaEditDictDialog, BookLBSelectHdl, ListBox&, void )
     {
         InitEditDictDialog( m_aBookLB->GetSelectEntryPos() );
-        return 0;
     }
 
     IMPL_LINK_NOARG_TYPED( HangulHanjaEditDictDialog, NewPBPushHdl, Button*, void )
@@ -1576,7 +1567,7 @@ namespace svx
         }
         else
         {
-            DBG_WARNING( "+HangulHanjaEditDictDialog::NewPBPushHdl(): dictionary faded away..." );
+            SAL_INFO( "cui.dialogs", "dictionary faded away..." );
         }
     }
 
@@ -1659,7 +1650,7 @@ namespace svx
         }
         else
         {
-            DBG_WARNING( "+HangulHanjaEditDictDialog::UpdateOriginalLB(): dictionary faded away..." );
+            SAL_INFO( "cui.dialogs", "dictionary faded away..." );
         }
     }
 

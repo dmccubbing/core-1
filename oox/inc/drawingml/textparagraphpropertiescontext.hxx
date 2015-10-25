@@ -38,13 +38,13 @@ public:
             TextParagraphProperties& rTextParagraphProperties );
     virtual ~TextParagraphPropertiesContext();
 
-    virtual ::oox::core::ContextHandlerRef onCreateContext( ::sal_Int32 Element, const ::oox::AttributeList& rAttribs ) SAL_OVERRIDE;
+    virtual ::oox::core::ContextHandlerRef onCreateContext( ::sal_Int32 Element, const ::oox::AttributeList& rAttribs ) override;
 
 protected:
     TextParagraphProperties& mrTextParagraphProperties;
     TextSpacing     maLineSpacing;
     BulletList&     mrBulletList;
-    std::list< ::com::sun::star::style::TabStop >  maTabList;
+    std::list< css::style::TabStop >  maTabList;
     std::shared_ptr< BlipFillProperties > mxBlipProps;
 };
 

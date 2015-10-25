@@ -74,7 +74,7 @@ bool GalleryPreview::SetGraphic( const INetURLObject& _aURL )
     {
         GraphicFilter& rFilter = GraphicFilter::GetGraphicFilter();
         GalleryProgress aProgress( &rFilter );
-        if( rFilter.ImportGraphic( aGraphic, _aURL, GRFILTER_FORMAT_DONTKNOW ) )
+        if( rFilter.ImportGraphic( aGraphic, _aURL ) )
             bRet = false;
     }
 
@@ -588,8 +588,7 @@ void GalleryListView::DoubleClick( const BrowserMouseEvent& rEvt )
 
 void GalleryListView::Select()
 {
-    if( maSelectHdl.IsSet() )
-        maSelectHdl.Call( this );
+    maSelectHdl.Call( this );
 }
 
 sal_Int8 GalleryListView::AcceptDrop( const BrowserAcceptDropEvent& )

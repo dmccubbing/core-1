@@ -139,15 +139,15 @@ public:
         );
 
         // IAssigmentData overridables
-        virtual OUString getDatasourceName() const SAL_OVERRIDE;
-        virtual OUString getCommand() const SAL_OVERRIDE;
+        virtual OUString getDatasourceName() const override;
+        virtual OUString getCommand() const override;
 
-        virtual bool     hasFieldAssignment(const OUString& _rLogicalName) SAL_OVERRIDE;
-        virtual OUString getFieldAssignment(const OUString& _rLogicalName) SAL_OVERRIDE;
-        virtual void     setFieldAssignment(const OUString& _rLogicalName, const OUString& _rAssignment) SAL_OVERRIDE;
+        virtual bool     hasFieldAssignment(const OUString& _rLogicalName) override;
+        virtual OUString getFieldAssignment(const OUString& _rLogicalName) override;
+        virtual void     setFieldAssignment(const OUString& _rLogicalName, const OUString& _rAssignment) override;
 
-        virtual void    setDatasourceName(const OUString& _rName) SAL_OVERRIDE;
-        virtual void    setCommand(const OUString& _rCommand) SAL_OVERRIDE;
+        virtual void    setDatasourceName(const OUString& _rName) override;
+        virtual void    setCommand(const OUString& _rCommand) override;
     };
 
 
@@ -268,20 +268,20 @@ public:
         virtual ~AssignmentPersistentData();
 
         // IAssigmentData overridables
-        virtual OUString getDatasourceName() const SAL_OVERRIDE;
-        virtual OUString getCommand() const SAL_OVERRIDE;
+        virtual OUString getDatasourceName() const override;
+        virtual OUString getCommand() const override;
 
-        virtual bool     hasFieldAssignment(const OUString& _rLogicalName) SAL_OVERRIDE;
-        virtual OUString getFieldAssignment(const OUString& _rLogicalName) SAL_OVERRIDE;
-        virtual void     setFieldAssignment(const OUString& _rLogicalName, const OUString& _rAssignment) SAL_OVERRIDE;
+        virtual bool     hasFieldAssignment(const OUString& _rLogicalName) override;
+        virtual OUString getFieldAssignment(const OUString& _rLogicalName) override;
+        virtual void     setFieldAssignment(const OUString& _rLogicalName, const OUString& _rAssignment) override;
 
-        virtual void    setDatasourceName(const OUString& _rName) SAL_OVERRIDE;
-        virtual void    setCommand(const OUString& _rCommand) SAL_OVERRIDE;
+        virtual void    setDatasourceName(const OUString& _rName) override;
+        virtual void    setCommand(const OUString& _rCommand) override;
 
-        virtual void    Notify( const com::sun::star::uno::Sequence<OUString>& aPropertyNames) SAL_OVERRIDE;
+        virtual void    Notify( const com::sun::star::uno::Sequence<OUString>& aPropertyNames) override;
 
     private:
-        virtual void    ImplCommit() SAL_OVERRIDE;
+        virtual void    ImplCommit() override;
         void            clearFieldAssignment(const OUString& _rLogicalName);
     };
 
@@ -501,8 +501,8 @@ void AssignmentPersistentData::ImplCommit()
         }
 
         // Copy assignment is forbidden and not implemented.
-        AddressBookSourceDialogData (const AddressBookSourceDialogData &) SAL_DELETED_FUNCTION;
-        AddressBookSourceDialogData & operator= (const AddressBookSourceDialogData &) SAL_DELETED_FUNCTION;
+        AddressBookSourceDialogData (const AddressBookSourceDialogData &) = delete;
+        AddressBookSourceDialogData & operator= (const AddressBookSourceDialogData &) = delete;
     };
 
 
@@ -981,22 +981,20 @@ void AssignmentPersistentData::ImplCommit()
     }
 
 
-    IMPL_LINK(AddressBookSourceDialog, OnFieldSelect, ListBox*, _pListbox)
+    IMPL_LINK_TYPED(AddressBookSourceDialog, OnFieldSelect, ListBox&, _rListbox, void)
     {
         // the index of the affected list box in our array
-        sal_IntPtr nListBoxIndex = reinterpret_cast<sal_IntPtr>(_pListbox->GetEntryData(0));
+        sal_IntPtr nListBoxIndex = reinterpret_cast<sal_IntPtr>(_rListbox.GetEntryData(0));
         DBG_ASSERT(nListBoxIndex >= 0 && nListBoxIndex < FIELD_CONTROLS_VISIBLE,
             "AddressBookSourceDialog::OnFieldScroll: invalid list box entry!");
 
         // update the array where we remember the field selections
-        if (0 == _pListbox->GetSelectEntryPos())
+        if (0 == _rListbox.GetSelectEntryPos())
             // it's the "no field selection" entry
             m_pImpl->aFieldAssignments[m_pImpl->nFieldScrollPos * 2 + nListBoxIndex].clear();
         else
             // it's a regular field entry
-            m_pImpl->aFieldAssignments[m_pImpl->nFieldScrollPos * 2 + nListBoxIndex] = _pListbox->GetSelectEntry();
-
-        return 0L;
+            m_pImpl->aFieldAssignments[m_pImpl->nFieldScrollPos * 2 + nListBoxIndex] = _rListbox.GetSelectEntry();
     }
 
 
@@ -1121,13 +1119,12 @@ void AssignmentPersistentData::ImplCommit()
     }
 
 
-    IMPL_LINK(AddressBookSourceDialog, OnComboSelect, ComboBox*, _pBox)
+    IMPL_LINK_TYPED(AddressBookSourceDialog, OnComboSelect, ComboBox&, _rBox, void)
     {
-        if (_pBox == m_pDatasource)
+        if (&_rBox == m_pDatasource)
             resetTables();
         else
             resetFields();
-        return 0;
     }
 
 

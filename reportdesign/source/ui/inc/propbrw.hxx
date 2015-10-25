@@ -62,12 +62,12 @@ private:
     OSectionView*       m_pView;
     bool            m_bInitialStateChange;
 
-    PropBrw(PropBrw&) SAL_DELETED_FUNCTION;
-    void operator =(PropBrw&) SAL_DELETED_FUNCTION;
+    PropBrw(PropBrw&) = delete;
+    void operator =(PropBrw&) = delete;
 protected:
 
-    virtual void Resize() SAL_OVERRIDE;
-    virtual bool Close() SAL_OVERRIDE;
+    virtual void Resize() override;
+    virtual bool Close() override;
 
     ::com::sun::star::uno::Sequence< ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface> >
         CreateCompPropSet(const SdrMarkList& rMarkList);
@@ -90,9 +90,9 @@ public:
             ,Window* pParent
             ,ODesignView*  _pDesignView);
     virtual ~PropBrw();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void LoseFocus() SAL_OVERRIDE;
+    virtual void LoseFocus() override;
 
     void    Update( OSectionView* m_pView );
     void    Update( const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XInterface>& _xReportComponent);

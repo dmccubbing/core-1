@@ -30,8 +30,8 @@ namespace rptxml
         ::com::sun::star::uno::Reference< ::com::sun::star::report::XReportDefinition > m_xComponent;
         ::std::vector< OUString> m_aMasterFields;
         ::std::vector< OUString> m_aDetailFields;
-        OXMLReport(const OXMLReport&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLReport&) SAL_DELETED_FUNCTION;
+        OXMLReport(const OXMLReport&) = delete;
+        void operator =(const OXMLReport&) = delete;
     public:
 
         OXMLReport( ORptFilter& rImport, sal_uInt16 nPrfx,
@@ -43,11 +43,11 @@ namespace rptxml
 
         virtual SvXMLImportContext *CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
 
-        virtual void addMasterDetailPair(const ::std::pair< OUString,OUString >& _aPair) SAL_OVERRIDE;
+        virtual void addMasterDetailPair(const ::std::pair< OUString,OUString >& _aPair) override;
 
     private:
         /** initializes our object's properties whose runtime (API) default is different from the file

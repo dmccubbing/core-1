@@ -228,11 +228,25 @@ void XclExpXmlPivotCaches::SavePivotCacheXml( XclExpXmlStream& rStrm, const Entr
 
         const ScDPCache::ItemsType& rFieldItems = rCache.GetDimMemberValues(i);
 
+        ScDPCache::ItemsType::const_iterator it = rFieldItems.begin(), itEnd = rFieldItems.end();
+
+        std::set<ScDPItemData::Type> aDPTypes;
+        for (; it != itEnd; ++it)
+        {
+            aDPTypes.insert(it->GetType());
+        }
+
+        auto aDPTypeEnd = aDPTypes.cend();
+
         pDefStrm->startElement(XML_sharedItems,
             XML_count, OString::number(static_cast<long>(rFieldItems.size())).getStr(),
+            XML_containsMixedTypes, XclXmlUtils::ToPsz10(aDPTypes.size() > 1),
+            XML_containsSemiMixedTypes, XclXmlUtils::ToPsz10(aDPTypes.size() > 1),
+            XML_containsString, XclXmlUtils::ToPsz10(aDPTypes.find(ScDPItemData::String) != aDPTypeEnd),
+            XML_containsNumber, XclXmlUtils::ToPsz10(aDPTypes.find(ScDPItemData::Value) != aDPTypeEnd),
             FSEND);
 
-        ScDPCache::ItemsType::const_iterator it = rFieldItems.begin(), itEnd = rFieldItems.end();
+        it = rFieldItems.begin();
         for (; it != itEnd; ++it)
         {
             const ScDPItemData& rItem = *it;
@@ -379,8 +393,7 @@ void XclExpXmlPivotTables::SaveXml( XclExpXmlStream& rStrm )
             XclXmlUtils::GetStreamName(NULL, "../pivotTables/pivotTable", nPivotId),
             pWSStrm->getOutputStream(),
             CREATE_XL_CONTENT_TYPE("pivotTable"),
-            CREATE_OFFICEDOC_RELATION_TYPE("pivotTable"),
-            NULL);
+            CREATE_OFFICEDOC_RELATION_TYPE("pivotTable"));
 
         rStrm.PushStream(pPivotStrm);
         SavePivotTableXml(rStrm, rObj, nCacheId);

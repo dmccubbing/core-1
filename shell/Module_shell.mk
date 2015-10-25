@@ -30,12 +30,6 @@ $(eval $(call gb_Module_add_targets,shell,\
 endif
 endif
 
-ifeq ($(ENABLE_GCONF),TRUE)
-$(eval $(call gb_Module_add_targets,shell,\
-	Library_gconfbe \
-))
-endif
-
 ifeq ($(ENABLE_KDE4),TRUE)
 $(eval $(call gb_Module_add_targets,shell,\
 	Library_kde4be \
@@ -114,6 +108,7 @@ $(eval $(call gb_Module_add_targets,shell,\
 	Package_scripts \
 	Package_scripts_gnome \
 	Package_scripts_kde \
+	Package_scripts_tde \
 ))
 endif
 

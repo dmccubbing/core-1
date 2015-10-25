@@ -392,13 +392,13 @@ namespace css = ::com::sun::star;
 
 /** C++11 "= delete" feature.
 
-    With HAVE_CXX11_DELETE, calling a deleted function will cause a compile-time
+    For LIBO_INTERNAL_ONLY, calling a deleted function will cause a compile-time
     error, while otherwise it will only cause a link-time error as the declared
     function is not defined.
 
     @since LibreOffice 4.1
 */
-#if HAVE_CXX11_DELETE
+#if defined LIBO_INTERNAL_ONLY
 #define SAL_DELETED_FUNCTION = delete
 #else
 #define SAL_DELETED_FUNCTION
@@ -406,12 +406,12 @@ namespace css = ::com::sun::star;
 
 /** C++11 "override" feature.
 
-    With HAVE_CXX11_OVERRIDE, force the method to override a existing method in
+    For LIBO_INTERNAL_ONLY, force the method to override a existing method in
     parent, error out if the method with the correct signature does not exist.
 
     @since LibreOffice 4.1
 */
-#if HAVE_CXX11_OVERRIDE
+#if defined LIBO_INTERNAL_ONLY
 #define SAL_OVERRIDE override
 #else
 #define SAL_OVERRIDE
@@ -419,11 +419,11 @@ namespace css = ::com::sun::star;
 
 /** C++11 "final" feature.
 
-    With HAVE_CXX11_FINAL, mark a class as non-derivable or a method as non-overridable.
+    For LIBO_INTERNAL_ONLY, mark a class as non-derivable or a method as non-overridable.
 
     @since LibreOffice 4.1
 */
-#if HAVE_CXX11_FINAL
+#if defined LIBO_INTERNAL_ONLY
 #define SAL_FINAL final
 #else
 #define SAL_FINAL

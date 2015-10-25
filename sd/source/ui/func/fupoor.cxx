@@ -802,7 +802,7 @@ bool FuPoor::KeyInput(const KeyEvent& rKEvt)
     // and feed character to object
     if(!bReturn && !mpDocSh->IsReadOnly())
     {
-        if(!mpView->IsTextEdit() && mpViewShell)
+        if (!mpView->IsTextEdit())
         {
             const SdrMarkList& rMarkList = mpView->GetMarkedObjectList();
 
@@ -836,11 +836,9 @@ bool FuPoor::KeyInput(const KeyEvent& rKEvt)
             {
                 // test if there is a title object there. If yes, try to
                 // set it to edit mode and start typing...
-                if( dynamic_cast< const DrawViewShell *>( mpViewShell ) !=  nullptr
-                    && EditEngine::IsSimpleCharInput(rKEvt))
+                DrawViewShell* pDrawViewShell = dynamic_cast<DrawViewShell*>(mpViewShell);
+                if (pDrawViewShell && EditEngine::IsSimpleCharInput(rKEvt))
                 {
-                    DrawViewShell* pDrawViewShell =
-                        static_cast<DrawViewShell*>(mpViewShell);
                     SdPage* pActualPage = pDrawViewShell->GetActualPage();
                     SdrTextObj* pCandidate = 0L;
 
@@ -962,7 +960,7 @@ IMPL_LINK_NOARG_TYPED(FuPoor, DragHdl, Timer *, void)
         SdrHdl* pHdl = mpView->PickHandle(aMDPos);
 
         if ( pHdl==NULL && mpView->IsMarkedHit(aMDPos, nHitLog)
-             && !mpView->IsPresObjSelected(false, true) )
+             && !mpView->IsPresObjSelected(false) )
         {
             mpWindow->ReleaseMouse();
             bIsInDragMode = true;

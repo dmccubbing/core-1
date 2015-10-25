@@ -44,12 +44,10 @@ namespace dbaui
     {
         OTextConnectionHelper();
 
-        Link<>      m_aModifiedHandler;     /// to be called if something on the page has been modified
-
     public:
         OTextConnectionHelper( vcl::Window* pParent, const short _nAvailableSections );
         virtual ~OTextConnectionHelper();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
     private:
         VclPtr<FixedText>        m_pExtensionHeader;
@@ -80,11 +78,8 @@ namespace dbaui
         short       m_nAvailableSections;
 
     protected:
-        void callModifiedHdl() const { if (m_aModifiedHandler.IsSet()) m_aModifiedHandler.Call(const_cast<OTextConnectionHelper *>(this)); }
-        Link<> getControlModifiedLink() { return LINK(this, OTextConnectionHelper, OnControlModified); }
         DECL_LINK_TYPED(OnSetExtensionHdl,RadioButton&,void);
-        DECL_LINK(OnControlModified,Control*);
-        DECL_LINK(OnEditModified,Edit*);
+        DECL_LINK_TYPED(OnEditModified, Edit&, void);
 
     private:
         OUString    GetSeparator( const ComboBox& rBox, const OUString& rList );

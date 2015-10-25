@@ -412,9 +412,8 @@ static sal_uInt8 *ttmalloc(sal_uInt32 nbytes)
     sal_uInt32 n;
 
     n = (nbytes + 3) & (sal_uInt32) ~3;
-    sal_uInt8* res = static_cast<sal_uInt8*>(malloc(n));
+    sal_uInt8* res = static_cast<sal_uInt8*>(calloc(n, 1));
     assert(res != 0);
-    memset(res, 0, n);
 
     return res;
 }
@@ -798,7 +797,9 @@ static int GetRawData_name(TrueTypeTable *_this, sal_uInt8 **ptr, sal_uInt32 *le
         PutUInt16(nr[i].nameID, p1, 6, 1);
         PutUInt16(nr[i].slen, p1, 8, 1);
         PutUInt16((sal_uInt16)(p2 - (name + 6 + 12 * n)), p1, 10, 1);
-        memcpy(p2, nr[i].sptr, nr[i].slen);
+        if (nr[i].slen) {
+            memcpy(p2, nr[i].sptr, nr[i].slen);
+        }
         /* {int j; for(j=0; j<nr[i].slen; j++) printf("%c", nr[i].sptr[j]); printf("\n"); }; */
         p2 += nr[i].slen;
         p1 += 12;

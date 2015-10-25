@@ -34,20 +34,20 @@ class ScaleTabPage : public SfxTabPage
 public:
     ScaleTabPage( vcl::Window* pParent, const SfxItemSet& rInAttrs );
     virtual ~ScaleTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create( vcl::Window* pParent, const SfxItemSet* rInAttrs );
-    virtual bool FillItemSet( SfxItemSet* rOutAttrs ) SAL_OVERRIDE;
-    virtual void Reset( const SfxItemSet* rInAttrs ) SAL_OVERRIDE;
+    virtual bool FillItemSet( SfxItemSet* rOutAttrs ) override;
+    virtual void Reset( const SfxItemSet* rInAttrs ) override;
     using TabPage::DeactivatePage;
-    virtual sfxpg DeactivatePage( SfxItemSet* pItemSet = NULL ) SAL_OVERRIDE;
+    virtual sfxpg DeactivatePage( SfxItemSet* pItemSet = NULL ) override;
 
     void SetNumFormatter( SvNumberFormatter* pFormatter );
     void SetNumFormat();
 
     void ShowAxisOrigin( bool bShowOrigin );
 
-    virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
+    virtual void StateChanged( StateChangedType nType ) override;
 
 private:
     VclPtr<CheckBox>            m_pCbxReverse;
@@ -99,9 +99,9 @@ private:
 
     void EnableControls();
 
-    DECL_LINK( SelectAxisTypeHdl, void* );
+    DECL_LINK_TYPED( SelectAxisTypeHdl, ListBox&, void );
     DECL_LINK_TYPED( EnableValueHdl, Button*, void );
-    DECL_STATIC_LINK( ScaleTabPage, FmtFieldModifiedHdl, FormattedField* );
+    DECL_STATIC_LINK_TYPED( ScaleTabPage, FmtFieldModifiedHdl, Edit&, void);
 
     /** shows a warning window due to an invalid input.
 

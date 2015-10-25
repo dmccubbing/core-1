@@ -92,15 +92,15 @@ namespace
         }
         catch( const ucb::CommandAbortedException& )
         {
-            DBG_WARNING( "CommandAbortedException" );
+            SAL_INFO( "sfx2.appl", "CommandAbortedException" );
         }
         catch( const ucb::IllegalIdentifierException& )
         {
-            DBG_WARNING( "IllegalIdentifierException" );
+            SAL_INFO( "sfx2.appl", "IllegalIdentifierException" );
         }
         catch( const ucb::ContentCreationException& )
         {
-            DBG_WARNING( "IllegalIdentifierException" );
+            SAL_INFO( "sfx2.appl", "IllegalIdentifierException" );
         }
         catch( const uno::Exception& )
         {
@@ -203,7 +203,7 @@ public:
         : DdeTopic( "TRIGGER" )
         {}
 
-    virtual bool Execute( const OUString* ) SAL_OVERRIDE { return true; }
+    virtual bool Execute( const OUString* ) override { return true; }
 #endif
 };
 
@@ -219,11 +219,11 @@ public:
         : DdeTopic( pShell->GetTitle(SFX_TITLE_FULLNAME) ), pSh( pShell )
     {}
 
-    virtual DdeData* Get( SotClipboardFormatId ) SAL_OVERRIDE;
-    virtual bool Put( const DdeData* ) SAL_OVERRIDE;
-    virtual bool Execute( const OUString* ) SAL_OVERRIDE;
-    virtual bool StartAdviseLoop() SAL_OVERRIDE;
-    virtual bool MakeItem( const OUString& rItem ) SAL_OVERRIDE;
+    virtual DdeData* Get( SotClipboardFormatId ) override;
+    virtual bool Put( const DdeData* ) override;
+    virtual bool Execute( const OUString* ) override;
+    virtual bool StartAdviseLoop() override;
+    virtual bool MakeItem( const OUString& rItem ) override;
 #endif
 };
 

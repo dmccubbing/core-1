@@ -37,6 +37,7 @@
 #include <unotools/syslocaleoptions.hxx>
 
 #include "vcl/dialog.hxx"
+#include "vcl/floatwin.hxx"
 #include "vcl/settings.hxx"
 #include "vcl/keycod.hxx"
 #include "vcl/event.hxx"
@@ -64,7 +65,9 @@
 
 #include "com/sun/star/uno/Reference.h"
 #include "com/sun/star/awt/XToolkit.hpp"
+#include <com/sun/star/frame/Desktop.hpp>
 #include "com/sun/star/uno/XNamingService.hpp"
+#include <com/sun/star/util/XModifiable.hpp>
 #include "com/sun/star/lang/XMultiServiceFactory.hpp"
 #include "comphelper/solarmutex.hxx"
 #include "osl/process.h"
@@ -328,84 +331,140 @@ const vcl::KeyCode* Application::GetReservedKeyCode( sal_uLong i )
         return &ImplReservedKeys::get()->first[i].mKeyCode;
 }
 
+IMPL_STATIC_LINK_NOARG_TYPED( ImplSVAppData, ImplEndAllPopupsMsg, void*, void )
+{
+    ImplSVData* pSVData = ImplGetSVData();
+    while (pSVData->maWinData.mpFirstFloat)
+        pSVData->maWinData.mpFirstFloat->EndPopupMode(FloatWinPopupEndFlags::Cancel);
+}
+
+IMPL_STATIC_LINK_NOARG_TYPED( ImplSVAppData, ImplEndAllDialogsMsg, void*, void )
+{
+    vcl::Window* pAppWindow = Application::GetFirstTopLevelWindow();
+    while (pAppWindow)
+    {
+        Dialog::EndAllDialogs(pAppWindow);
+        pAppWindow = Application::GetNextTopLevelWindow(pAppWindow);
+    }
+}
+
+void Application::EndAllDialogs()
+{
+    Application::PostUserEvent( LINK( NULL, ImplSVAppData, ImplEndAllDialogsMsg ) );
+}
+
+void Application::EndAllPopups()
+{
+    Application::PostUserEvent( LINK( NULL, ImplSVAppData, ImplEndAllPopupsMsg ) );
+}
+
+
 namespace
 {
+    VclPtr<vcl::Window> GetEventWindow()
+    {
+        VclPtr<vcl::Window> xWin(Application::GetFirstTopLevelWindow());
+        while (xWin)
+        {
+            if (xWin->IsVisible())
+                break;
+            xWin.reset(Application::GetNextTopLevelWindow(xWin));
+        }
+        return xWin;
+    }
+
     bool InjectKeyEvent(SvStream& rStream)
     {
-        VclPtr<vcl::Window> xWin(Application::GetActiveTopWindow());
+        VclPtr<vcl::Window> xWin(GetEventWindow());
         if (!xWin)
             return false;
 
-        SalKeyEvent aKeyEvent;
-        aKeyEvent.mnTime = 0;
-        rStream.ReadUInt16(aKeyEvent.mnCode);
-        rStream.ReadUInt16(aKeyEvent.mnCharCode);
-        aKeyEvent.mnRepeat = 0;
+        // skip the first available cycle and insert on the next one when we
+        // are trying the initial event, flagged by a triggered but undeleted
+        // mpEventTestingIdle
+        ImplSVData* pSVData = ImplGetSVData();
+        if (pSVData->maAppData.mpEventTestingIdle)
+        {
+            delete pSVData->maAppData.mpEventTestingIdle;
+            pSVData->maAppData.mpEventTestingIdle = nullptr;
+            return false;
+        }
+
+        sal_uInt16 nCode, nCharCode;
+        rStream.ReadUInt16(nCode);
+        rStream.ReadUInt16(nCharCode);
         if (!rStream.good())
             return false;
 
-        ImplWindowFrameProc(xWin.get(), NULL, SALEVENT_KEYINPUT, &aKeyEvent);
-        ImplWindowFrameProc(xWin.get(), NULL, SALEVENT_KEYUP, &aKeyEvent);
+        KeyEvent aVCLKeyEvt(nCharCode, nCode);
+        Application::PostKeyEvent(VCLEVENT_WINDOW_KEYINPUT, xWin.get(), &aVCLKeyEvt);
+        Application::PostKeyEvent(VCLEVENT_WINDOW_KEYUP, xWin.get(), &aVCLKeyEvt);
         return true;
     }
 
     void CloseDialogsAndQuit()
     {
-        Scheduler::ProcessTaskScheduling(true);
-        vcl::Window* pAppWindow = Application::GetFirstTopLevelWindow();
-        while (pAppWindow)
-        {
-            Dialog::EndAllDialogs(pAppWindow);
-            pAppWindow = Application::GetNextTopLevelWindow(pAppWindow);
-        }
-        Scheduler::ProcessTaskScheduling(true);
-        Application::Quit();
+        Application::EndAllPopups();
+        Application::EndAllDialogs();
+        Application::PostUserEvent( LINK( NULL, ImplSVAppData, ImplPrepareExitMsg ) );
     }
 }
 
 IMPL_LINK_NOARG_TYPED(ImplSVAppData, VclEventTestingHdl, Idle *, void)
 {
-    SAL_INFO("vcl.eventtesting", "EventTestLimit is " << mnEventTestLimit);
-    if (mnEventTestLimit == 0)
+    if (Application::AnyInput())
     {
-        delete mpEventTestInput;
-        delete mpEventTestingIdle;
-        SAL_INFO("vcl.eventtesting", "Event Limit reached, exiting" << mnEventTestLimit);
+        mpEventTestingIdle->Start();
+    }
+    else
+    {
+        Application::PostUserEvent( LINK( NULL, ImplSVAppData, ImplVclEventTestingHdl ) );
+    }
+}
+
+IMPL_STATIC_LINK_NOARG_TYPED( ImplSVAppData, ImplVclEventTestingHdl, void*, void )
+{
+    ImplSVData* pSVData = ImplGetSVData();
+    SAL_INFO("vcl.eventtesting", "EventTestLimit is " << pSVData->maAppData.mnEventTestLimit);
+    if (pSVData->maAppData.mnEventTestLimit == 0)
+    {
+        delete pSVData->maAppData.mpEventTestInput;
+        SAL_INFO("vcl.eventtesting", "Event Limit reached, exiting" << pSVData->maAppData.mnEventTestLimit);
         CloseDialogsAndQuit();
     }
     else
     {
-        Scheduler::ProcessTaskScheduling(true);
-        if (InjectKeyEvent(*mpEventTestInput))
-            --mnEventTestLimit;
-        if (!mpEventTestInput->good())
+        if (InjectKeyEvent(*pSVData->maAppData.mpEventTestInput))
+            --pSVData->maAppData.mnEventTestLimit;
+        if (!pSVData->maAppData.mpEventTestInput->good())
         {
             SAL_INFO("vcl.eventtesting", "Event Input exhausted, exit next cycle");
-            mnEventTestLimit = 0;
+            pSVData->maAppData.mnEventTestLimit = 0;
         }
-        Scheduler::ProcessTaskScheduling(true);
-        mpEventTestingIdle->Start();
+        Application::PostUserEvent( LINK( NULL, ImplSVAppData, ImplVclEventTestingHdl ) );
     }
+}
+
+IMPL_STATIC_LINK_NOARG_TYPED( ImplSVAppData, ImplPrepareExitMsg, void*, void )
+{
+    //now close top level frames
+    (void)GetpApp()->QueryExit();
 }
 
 void Application::Execute()
 {
     ImplSVData* pSVData = ImplGetSVData();
     pSVData->maAppData.mbInAppExecute = true;
+    pSVData->maAppData.mbAppQuit = false;
 
-    sal_uInt16 n = GetCommandLineParamCount();
-    for (sal_uInt16 i = 0; i != n; ++i)
+    if (Application::IsEventTestingModeEnabled())
     {
-        if (GetCommandLineParam(i) == "--eventtesting")
-        {
-            pSVData->maAppData.mnEventTestLimit = 10;
-            pSVData->maAppData.mpEventTestingIdle = new Idle("eventtesting");
-            pSVData->maAppData.mpEventTestingIdle->SetIdleHdl(LINK(&(pSVData->maAppData), ImplSVAppData, VclEventTestingHdl));
-            pSVData->maAppData.mpEventTestingIdle->SetPriority(SchedulerPriority::LOWEST);
-            pSVData->maAppData.mpEventTestInput = new SvFileStream("eventtesting", StreamMode::READ);
-            pSVData->maAppData.mpEventTestingIdle->Start();
-            break;
-        }
+        pSVData->maAppData.mnEventTestLimit = 50;
+        pSVData->maAppData.mpEventTestingIdle = new Idle("eventtesting");
+        pSVData->maAppData.mpEventTestingIdle->SetIdleHdl(LINK(&(pSVData->maAppData), ImplSVAppData, VclEventTestingHdl));
+        pSVData->maAppData.mpEventTestingIdle->SetPriority(SchedulerPriority::MEDIUM);
+        pSVData->maAppData.mpEventTestInput = new SvFileStream("eventtesting", StreamMode::READ);
+        pSVData->maAppData.mpEventTestingIdle->Start();
     }
 
     while ( !pSVData->maAppData.mbAppQuit )
@@ -1603,6 +1662,18 @@ void Application::EnableConsoleOnly()
 {
     EnableHeadlessMode(true);
     bConsoleOnly = true;
+}
+
+static bool bEventTestingMode = false;
+
+bool Application::IsEventTestingModeEnabled()
+{
+    return bEventTestingMode;
+}
+
+void Application::EnableEventTestingMode()
+{
+    bEventTestingMode = true;
 }
 
 void Application::ShowNativeErrorBox(const OUString& sTitle  ,

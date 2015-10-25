@@ -454,9 +454,9 @@ struct SBBItem
 public:
     Sttb();
     virtual ~Sttb();
-    bool Read(SvStream &rS) SAL_OVERRIDE;
+    bool Read(SvStream &rS) override;
 #if OSL_DEBUG_LEVEL > 1
-    virtual void Print( FILE* fp ) SAL_OVERRIDE;
+    virtual void Print( FILE* fp ) override;
 #endif
     OUString getStringAtIndex( sal_uInt32 );
 };
@@ -577,8 +577,7 @@ SdrObject* SwMSDffManager::ImportOLE( long nOLEId,
     uno::Reference < embed::XStorage > xDstStg;
     if( GetOLEStorageName( nOLEId, sStorageName, xSrcStg, xDstStg ))
     {
-        tools::SvRef<SotStorage> xSrc = xSrcStg->OpenSotStorage( sStorageName,
-            STREAM_READWRITE| StreamMode::SHARE_DENYALL );
+        tools::SvRef<SotStorage> xSrc = xSrcStg->OpenSotStorage( sStorageName );
         OSL_ENSURE(rReader.m_pFormImpl, "No Form Implementation!");
         ::com::sun::star::uno::Reference< ::com::sun::star::drawing::XShape > xShape;
         if ( (!(rReader.m_bIsHeader || rReader.m_bIsFooter)) &&
@@ -2839,7 +2838,7 @@ void SwWW8ImplReader::PostProcessAttrs()
                 m_pCtrlStck->NewAttr(*m_pPostProcessAttrsInfo->mPaM.GetPoint(),
                                    *pItem);
                 m_pCtrlStck->SetAttr(*m_pPostProcessAttrsInfo->mPaM.GetMark(),
-                                   pItem->Which(), true);
+                                   pItem->Which());
             }
             while (!aIter.IsAtEnd() && 0 != (pItem = aIter.NextItem()));
         }
@@ -3531,11 +3530,24 @@ bool SwWW8ImplReader::ReadChar(long nPosCp, long nCpOfs)
             }
             break;
         case 0x7:
-            bNewParaEnd = true;
-            if (m_pPlcxMan->GetPapPLCF()->Where() == nCpOfs+nPosCp+1)
-                TabCellEnd();       // Table cell/row end
-            else
-                bParaMark = true;
+            {
+                bNewParaEnd = true;
+                WW8PLCFxDesc* pPap = m_pPlcxMan->GetPap();
+                //The last paragraph of each cell is terminated by a special
+                //paragraph mark called a cell mark. Following the cell mark
+                //that ends the last cell of a table row, the table row is
+                //terminated by a special paragraph mark called a row mark
+                //
+                //So the 0x7 should be right at the end of the previous
+                //range to be a real cell-end.
+                if (pPap->nOrigStartPos == nCpOfs+nPosCp+1 ||
+                    pPap->nOrigStartPos == WW8_CP_MAX)
+                {
+                    TabCellEnd();       // Table cell/row end
+                }
+                else
+                    bParaMark = true;
+            }
             break;
         case 0xf:
             if( !m_bSpec )        // "Satellite"
@@ -4313,6 +4325,8 @@ void wwSectionManager::SetSegmentToPageDesc(const wwSection &rSection,
     wwULSpaceData aULData;
     GetPageULData(rSection, aULData);
     SetPageULSpaceItems(rFormat, aULData, rSection);
+
+    rPage.SetVerticalAdjustment( rSection.mnVerticalAdjustment );
 
     SetPage(rPage, rFormat, rSection, bIgnoreCols);
 
@@ -5513,7 +5527,7 @@ namespace
     uno::Sequence< beans::NamedValue > InitXorWord95Codec( ::msfilter::MSCodec_XorWord95& rCodec, SfxMedium& rMedium, WW8Fib* pWwFib )
     {
         uno::Sequence< beans::NamedValue > aEncryptionData;
-        SFX_ITEMSET_ARG( rMedium.GetItemSet(), pEncryptionData, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false );
+        const SfxUnoAnyItem* pEncryptionData = SfxItemSet::GetItem<SfxUnoAnyItem>(rMedium.GetItemSet(), SID_ENCRYPTIONDATA, false);
         if ( pEncryptionData && ( pEncryptionData->GetValue() >>= aEncryptionData ) && !rCodec.InitCodec( aEncryptionData ) )
             aEncryptionData.realloc( 0 );
 
@@ -5572,7 +5586,7 @@ namespace
     uno::Sequence< beans::NamedValue > InitStd97Codec( ::msfilter::MSCodec_Std97& rCodec, sal_uInt8 pDocId[16], SfxMedium& rMedium )
     {
         uno::Sequence< beans::NamedValue > aEncryptionData;
-        SFX_ITEMSET_ARG( rMedium.GetItemSet(), pEncryptionData, SfxUnoAnyItem, SID_ENCRYPTIONDATA, false );
+        const SfxUnoAnyItem* pEncryptionData = SfxItemSet::GetItem<SfxUnoAnyItem>(rMedium.GetItemSet(), SID_ENCRYPTIONDATA, false);
         if ( pEncryptionData && ( pEncryptionData->GetValue() >>= aEncryptionData ) && !rCodec.InitCodec( aEncryptionData ) )
             aEncryptionData.realloc( 0 );
 
@@ -6068,7 +6082,7 @@ extern "C" SAL_DLLPUBLIC_EXPORT bool SAL_CALL TestImportDOC(const OUString &rURL
     SwGlobals::ensure();
 
     SfxObjectShellLock xDocSh(new SwDocShell(SfxObjectCreateMode::INTERNAL));
-    xDocSh->DoInitNew(0);
+    xDocSh->DoInitNew();
     SwDoc *pD =  static_cast<SwDocShell*>((&xDocSh))->GetDoc();
 
     SwNodeIndex aIdx(

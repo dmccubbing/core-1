@@ -43,7 +43,7 @@ struct IteratorAttr
     IteratorAttr();
 
     // not sure this belong here, but wth
-    void loadFromXAttr( const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttributes );
+    void loadFromXAttr( const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttributes );
 
     sal_Int32 mnAxis;
     sal_Int32 mnCnt;
@@ -58,7 +58,7 @@ struct ConditionAttr
     ConditionAttr();
 
     // not sure this belong here, but wth
-    void loadFromXAttr( const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttributes );
+    void loadFromXAttr( const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttributes );
 
     sal_Int32 mnFunc;
     sal_Int32 mnArg;
@@ -109,7 +109,7 @@ public:
 
     virtual ~ConstraintAtom() { }
 
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
 
     void setFor( sal_Int32 nToken )
         { mnFor = nToken; }
@@ -157,7 +157,7 @@ public:
 
     typedef std::map<sal_Int32,sal_Int32> ParamMap;
 
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
 
     void setType( sal_Int32 nToken )
         { mnType = nToken; }
@@ -177,13 +177,13 @@ class ForEachAtom
     : public LayoutAtom
 {
 public:
-    explicit ForEachAtom(const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttributes);
+    explicit ForEachAtom(const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttributes);
 
     virtual ~ForEachAtom() { }
 
     IteratorAttr & iterator()
         { return maIter; }
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
 
 private:
     IteratorAttr maIter;
@@ -195,14 +195,14 @@ class ConditionAtom
     : public LayoutAtom
 {
 public:
-    explicit ConditionAtom(const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XFastAttributeList >& xAttributes);
+    explicit ConditionAtom(const css::uno::Reference< css::xml::sax::XFastAttributeList >& xAttributes);
     virtual ~ConditionAtom()
         { }
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
     void readElseBranch()
         { mbElse=true; }
-    virtual void addChild( const LayoutAtomPtr & pNode ) SAL_OVERRIDE;
-    virtual const std::vector<LayoutAtomPtr>& getChildren() const SAL_OVERRIDE;
+    virtual void addChild( const LayoutAtomPtr & pNode ) override;
+    virtual const std::vector<LayoutAtomPtr>& getChildren() const override;
 private:
     bool          mbElse;
     IteratorAttr  maIter;
@@ -219,7 +219,7 @@ class ChooseAtom
 public:
     virtual ~ChooseAtom()
         { }
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
 };
 
 class LayoutNode
@@ -239,11 +239,11 @@ public:
     };
     // we know that the array is of fixed size
     // the use of Any allow having empty values
-    typedef boost::array< ::com::sun::star::uno::Any, 9 > VarMap;
+    typedef boost::array< css::uno::Any, 9 > VarMap;
 
     LayoutNode() : mnChildOrder(0) {}
     virtual ~LayoutNode() { }
-    virtual void accept( LayoutAtomVisitor& ) SAL_OVERRIDE;
+    virtual void accept( LayoutAtomVisitor& ) override;
     VarMap & variables()
         { return mVariables; }
     void setMoveWith( const OUString & sName )
@@ -289,12 +289,12 @@ class ShapeCreationVisitor : public LayoutAtomVisitor
     sal_Int32 mnCurrIdx;
 
     void defaultVisit(LayoutAtom& rAtom);
-    virtual void visit(ConstraintAtom& rAtom) SAL_OVERRIDE;
-    virtual void visit(AlgAtom& rAtom) SAL_OVERRIDE;
-    virtual void visit(ForEachAtom& rAtom) SAL_OVERRIDE;
-    virtual void visit(ConditionAtom& rAtom) SAL_OVERRIDE;
-    virtual void visit(ChooseAtom& rAtom) SAL_OVERRIDE;
-    virtual void visit(LayoutNode& rAtom) SAL_OVERRIDE;
+    virtual void visit(ConstraintAtom& rAtom) override;
+    virtual void visit(AlgAtom& rAtom) override;
+    virtual void visit(ForEachAtom& rAtom) override;
+    virtual void visit(ConditionAtom& rAtom) override;
+    virtual void visit(ChooseAtom& rAtom) override;
+    virtual void visit(LayoutNode& rAtom) override;
 
 public:
     ShapeCreationVisitor(const ShapePtr& rParentShape,

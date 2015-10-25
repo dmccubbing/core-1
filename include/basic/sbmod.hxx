@@ -57,10 +57,10 @@ class BASIC_DLLPUBLIC SbModule : public SbxObject
 
     BASIC_DLLPRIVATE void implClearIfVarDependsOnDeletedBasic( SbxVariable* pVar, StarBASIC* pDeletedBasic );
 
-    SbModule(const SbModule&) SAL_DELETED_FUNCTION;
-    SbModule& operator=(const SbModule&) SAL_DELETED_FUNCTION;
+    SbModule(const SbModule&) = delete;
+    SbModule& operator=(const SbModule&) = delete;
 protected:
-    com::sun::star::uno::Reference< com::sun::star::script::XInvocation > mxWrapper;
+    css::uno::Reference< css::script::XInvocation > mxWrapper;
     OUString            aOUSource;
     OUString            aComment;
     SbiImage*           pImage;        // the Image
@@ -87,20 +87,20 @@ protected:
     const sal_uInt8* FindNextStmnt( const sal_uInt8*, sal_uInt16&, sal_uInt16& ) const;
     const sal_uInt8* FindNextStmnt( const sal_uInt8*, sal_uInt16&, sal_uInt16&,
                                     bool bFollowJumps, const SbiImage* pImg=NULL ) const;
-    virtual bool LoadData( SvStream&, sal_uInt16 ) SAL_OVERRIDE;
-    virtual bool StoreData( SvStream& ) const SAL_OVERRIDE;
-    virtual bool LoadCompleted() SAL_OVERRIDE;
-    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual bool LoadData( SvStream&, sal_uInt16 ) override;
+    virtual bool StoreData( SvStream& ) const override;
+    virtual bool LoadCompleted() override;
+    virtual void Notify( SfxBroadcaster& rBC, const SfxHint& rHint ) override;
     void handleProcedureProperties( SfxBroadcaster& rBC, const SfxHint& rHint );
     virtual ~SbModule();
 public:
     SBX_DECL_PERSIST_NODATA(SBXCR_SBX,SBXID_BASICMOD,2);
     TYPEINFO_OVERRIDE();
                     SbModule( const OUString&, bool bCompat = false );
-    virtual void    SetParent( SbxObject* ) SAL_OVERRIDE;
-    virtual void    Clear() SAL_OVERRIDE;
+    virtual void    SetParent( SbxObject* ) override;
+    virtual void    Clear() override;
 
-    virtual SbxVariable* Find( const OUString&, SbxClassType ) SAL_OVERRIDE;
+    virtual SbxVariable* Find( const OUString&, SbxClassType ) override;
 
     const OUString&  GetSource() const;
     const OUString&  GetSource32() const { return aOUSource;}
@@ -129,8 +129,8 @@ public:
     bool     isProxyModule() { return bIsProxyModule; }
     void     AddVarName( const OUString& aName );
     void     RemoveVars();
-    ::com::sun::star::uno::Reference< ::com::sun::star::script::XInvocation > GetUnoModule();
-    bool     createCOMWrapperForIface( ::com::sun::star::uno::Any& o_rRetAny, SbClassModuleObject* pProxyClassModuleObject );
+    css::uno::Reference< css::script::XInvocation > GetUnoModule();
+    bool     createCOMWrapperForIface( css::uno::Any& o_rRetAny, SbClassModuleObject* pProxyClassModuleObject );
     void     GetCodeCompleteDataFromParse(CodeCompleteDataCache& aCache);
     SbxArrayRef GetMethods() { return pMethods;}
     static OUString GetKeywordCase( const OUString& sKeyword );
@@ -150,9 +150,9 @@ public:
     virtual ~SbClassModuleObject();
 
     // Overridden to support NameAccess etc.
-    virtual SbxVariable* Find( const OUString&, SbxClassType ) SAL_OVERRIDE;
+    virtual SbxVariable* Find( const OUString&, SbxClassType ) override;
 
-    virtual void Notify( SfxBroadcaster&, const SfxHint& rHint ) SAL_OVERRIDE;
+    virtual void Notify( SfxBroadcaster&, const SfxHint& rHint ) override;
 
     SbModule* getClassModule()
         { return mpClassModule; }

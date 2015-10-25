@@ -60,11 +60,11 @@ public:
 
                             virtual ~ScPatternAttr();
 
-    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const SAL_OVERRIDE;
-    virtual SfxPoolItem*    Create(SvStream& rStream, sal_uInt16 nVersion) const SAL_OVERRIDE;
-    virtual SvStream&       Store(SvStream& rStream, sal_uInt16 nItemVersion) const SAL_OVERRIDE;
+    virtual SfxPoolItem*    Clone( SfxItemPool *pPool = 0 ) const override;
+    virtual SfxPoolItem*    Create(SvStream& rStream, sal_uInt16 nVersion) const override;
+    virtual SvStream&       Store(SvStream& rStream, sal_uInt16 nItemVersion) const override;
 
-    virtual bool            operator==(const SfxPoolItem& rCmp) const SAL_OVERRIDE;
+    virtual bool            operator==(const SfxPoolItem& rCmp) const override;
 
     const SfxPoolItem&      GetItem( sal_uInt16 nWhichP ) const
                                         { return GetItemSet().Get(nWhichP); }
@@ -144,8 +144,8 @@ class ScFontToSubsFontConverter_AutoPtr
                                             DestroyFontToSubsFontConverter( h );
                                     }
 
-                                ScFontToSubsFontConverter_AutoPtr( const ScFontToSubsFontConverter_AutoPtr& ) SAL_DELETED_FUNCTION;
-    ScFontToSubsFontConverter_AutoPtr& operator=( const ScFontToSubsFontConverter_AutoPtr& ) SAL_DELETED_FUNCTION;
+                                ScFontToSubsFontConverter_AutoPtr( const ScFontToSubsFontConverter_AutoPtr& ) = delete;
+    ScFontToSubsFontConverter_AutoPtr& operator=( const ScFontToSubsFontConverter_AutoPtr& ) = delete;
 
 public:
                                 ScFontToSubsFontConverter_AutoPtr()

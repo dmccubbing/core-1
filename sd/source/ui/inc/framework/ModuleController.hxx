@@ -72,18 +72,18 @@ public:
             const css::uno::Reference<css::uno::XComponentContext>&
             rxContext);
 
-    virtual void SAL_CALL disposing() SAL_OVERRIDE;
+    virtual void SAL_CALL disposing() override;
 
     // XModuleController
 
     virtual void SAL_CALL requestResource(const OUString& rsResourceURL)
-        throw (css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::RuntimeException, std::exception) override;
 
     // XInitialization
 
     virtual void SAL_CALL initialize(
         const css::uno::Sequence<css::uno::Any>& aArguments)
-        throw (css::uno::Exception, css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw (css::uno::Exception, css::uno::RuntimeException, std::exception) override;
 
 private:
     css::uno::Reference<
@@ -97,7 +97,7 @@ private:
     ModuleController (
         const css::uno::Reference<css::uno::XComponentContext>& rxContext)
         throw (std::exception);
-    ModuleController (const ModuleController&) SAL_DELETED_FUNCTION;
+    ModuleController (const ModuleController&) = delete;
     virtual ~ModuleController() throw();
 
     /** Load a list of URL to service mappings from the

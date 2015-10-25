@@ -75,8 +75,8 @@ private:
     BASIC_DLLPRIVATE bool               RTError( SbError, const OUString& rMsg, sal_Int32, sal_Int32, sal_Int32 );
     BASIC_DLLPRIVATE sal_uInt16         BreakPoint( sal_Int32 nLine, sal_Int32 nCol1, sal_Int32 nCol2 );
     BASIC_DLLPRIVATE sal_uInt16         StepPoint( sal_Int32 nLine, sal_Int32 nCol1, sal_Int32 nCol2 );
-    virtual bool LoadData( SvStream&, sal_uInt16 ) SAL_OVERRIDE;
-    virtual bool StoreData( SvStream& ) const SAL_OVERRIDE;
+    virtual bool LoadData( SvStream&, sal_uInt16 ) override;
+    virtual bool StoreData( SvStream& ) const override;
 
 protected:
     bool        ErrorHdl();
@@ -92,20 +92,20 @@ public:
 
     // #51727 SetModified overridden so that the Modfied-State is
         // not delivered to Parent.
-    virtual void SetModified( bool ) SAL_OVERRIDE;
+    virtual void SetModified( bool ) override;
 
     void* operator  new( size_t );
     void operator   delete( void* );
 
-    virtual void    Insert( SbxVariable* ) SAL_OVERRIDE;
+    virtual void    Insert( SbxVariable* ) override;
     using SbxObject::Remove;
-    virtual void    Remove( SbxVariable* ) SAL_OVERRIDE;
-    virtual void    Clear() SAL_OVERRIDE;
+    virtual void    Remove( SbxVariable* ) override;
+    virtual void    Clear() override;
 
     // Compiler-Interface
     SbModule*       MakeModule( const OUString& rName, const OUString& rSrc );
     SbModule*       MakeModule32( const OUString& rName, const OUString& rSrc );
-    SbModule*       MakeModule32( const OUString& rName, const com::sun::star::script::ModuleInfo& mInfo, const OUString& rSrc );
+    SbModule*       MakeModule32( const OUString& rName, const css::script::ModuleInfo& mInfo, const OUString& rSrc );
     static bool     Compile( SbModule* );
     static void     Stop();
     static void     Error( SbError );
@@ -118,8 +118,8 @@ public:
     static OUString GetErrorMsg();
     static sal_Int32 GetErl();
 
-    virtual SbxVariable* Find( const OUString&, SbxClassType ) SAL_OVERRIDE;
-    virtual bool Call( const OUString&, SbxArray* = NULL ) SAL_OVERRIDE;
+    virtual SbxVariable* Find( const OUString&, SbxClassType ) override;
+    virtual bool Call( const OUString&, SbxArray* = NULL ) override;
 
     SbxArray*       GetModules() { return pModules; }
     SbxObject*      GetRtl()     { return pRtl;     }
@@ -161,11 +161,11 @@ public:
     SbxObjectRef getRTL() { return pRtl; }
     bool IsDocBasic() { return bDocBasic; }
     SbxVariable* VBAFind( const OUString& rName, SbxClassType t );
-    bool GetUNOConstant( const sal_Char* _pAsciiName, ::com::sun::star::uno::Any& aOut );
+    bool GetUNOConstant( const sal_Char* _pAsciiName, css::uno::Any& aOut );
     void QuitAndExitApplication();
     bool IsQuitApplication() { return bQuit; };
 
-    static ::com::sun::star::uno::Reference< ::com::sun::star::frame::XModel >
+    static css::uno::Reference< css::frame::XModel >
         GetModelFromBasic( SbxObject* pBasic );
 
     static void DetachAllDocBasicItems();

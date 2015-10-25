@@ -38,11 +38,11 @@ public:
     DependencyDialog(
         vcl::Window * parent, std::vector< OUString > const & dependencies);
     virtual ~DependencyDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
 private:
-    DependencyDialog(DependencyDialog &) SAL_DELETED_FUNCTION;
-    void operator =(DependencyDialog &) SAL_DELETED_FUNCTION;
+    DependencyDialog(DependencyDialog &) = delete;
+    void operator =(DependencyDialog &) = delete;
 
     VclPtr<ListBox>  m_list;
 };

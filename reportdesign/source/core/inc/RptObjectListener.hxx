@@ -38,18 +38,18 @@ class OObjectListener: public TPropertyChangeListenerHelper
 {
 private:
     OObjectBase*        m_pObject;
-    OObjectListener(const OObjectListener&) SAL_DELETED_FUNCTION;
-    void operator =(const OObjectListener&) SAL_DELETED_FUNCTION;
+    OObjectListener(const OObjectListener&) = delete;
+    void operator =(const OObjectListener&) = delete;
 protected:
     virtual ~OObjectListener();
 public:
     OObjectListener(OObjectBase* _pObject);
 
     // XEventListener
-    virtual void SAL_CALL disposing( const  ::com::sun::star::lang::EventObject& Source ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL disposing( const  ::com::sun::star::lang::EventObject& Source ) throw(::com::sun::star::uno::RuntimeException, std::exception) override;
 
     // XPropertyChangeListener
-    virtual void SAL_CALL propertyChange( const  ::com::sun::star::beans::PropertyChangeEvent& evt ) throw(::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual void SAL_CALL propertyChange( const  ::com::sun::star::beans::PropertyChangeEvent& evt ) throw(::com::sun::star::uno::RuntimeException, std::exception) override;
 };
 }
 #endif // INCLUDED_REPORTDESIGN_SOURCE_CORE_INC_RPTOBJECTLISTENER_HXX

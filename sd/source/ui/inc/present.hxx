@@ -71,7 +71,7 @@ private:
 
                         DECL_LINK_TYPED( ChangeRangeHdl, Button*, void );
                         DECL_LINK_TYPED( ClickWindowPresentationHdl, Button*, void );
-                        DECL_LINK( ChangePauseHdl, void * );
+                        DECL_LINK_TYPED( ChangePauseHdl, Edit&, void );
 
     void                InitMonitorSettings();
     enum DisplayType {
@@ -89,7 +89,7 @@ public:
                                 const std::vector<OUString> &rPageNames,
                                 SdCustomShowList* pCSList );
     virtual             ~SdStartPresentationDlg();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     void                GetAttr( SfxItemSet& rOutAttrs );
 };

@@ -45,7 +45,7 @@ namespace framework{
                 All these steps are done inside one method call here.
 */
 
-class DispatchHelper : public ::cppu::WeakImplHelper< ::com::sun::star::lang::XServiceInfo,::com::sun::star::frame::XDispatchHelper,::com::sun::star::frame::XDispatchResultListener >
+class DispatchHelper : public ::cppu::WeakImplHelper< css::lang::XServiceInfo,css::frame::XDispatchHelper,css::frame::XDispatchResultListener >
 {
 
     // member
@@ -85,17 +85,17 @@ class DispatchHelper : public ::cppu::WeakImplHelper< ::com::sun::star::lang::XS
                                         const OUString&                                      sTargetFrameName  ,
                                               sal_Int32                                             nSearchFlags      ,
                                         const css::uno::Sequence< css::beans::PropertyValue >&      lArguments        )
-        throw(css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw(css::uno::RuntimeException, std::exception) override;
 
         // XDispatchResultListener
         virtual void SAL_CALL dispatchFinished(
                                 const css::frame::DispatchResultEvent& aResult )
-        throw(css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw(css::uno::RuntimeException, std::exception) override;
 
         // XEventListener
         virtual void SAL_CALL disposing(
                                 const css::lang::EventObject& aEvent )
-        throw(css::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        throw(css::uno::RuntimeException, std::exception) override;
 };
 
 }

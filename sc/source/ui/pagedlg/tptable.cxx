@@ -67,9 +67,8 @@ static bool lcl_PutBoolItem( sal_uInt16            nWhich,
 
 #define PAGENO_HDL          LINK(this,ScTablePage,PageNoHdl)
 #define PAGEDIR_HDL         LINK(this,ScTablePage,PageDirHdl)
-#define SCALE_HDL           LINK(this,ScTablePage,ScaleHdl)
 
-#define WAS_DEFAULT(w,s)    (SfxItemState::DEFAULT==(s).GetItemState((w),true))
+#define WAS_DEFAULT(w,s)    (SfxItemState::DEFAULT==(s).GetItemState((w)))
 #define GET_BOOL(sid,set)   static_cast<const SfxBoolItem&>((set).Get(GetWhich((sid)))).GetValue()
 #define GET_USHORT(sid,set) (sal_uInt16)static_cast<const SfxUInt16Item&>((set).Get(GetWhich((sid)))).GetValue()
 #define GET_SHOW(sid,set)   ( ScVObjMode( static_cast<const ScViewObjectModeItem&>((set).Get(GetWhich((sid)))).GetValue() ) \
@@ -112,7 +111,7 @@ ScTablePage::ScTablePage( vcl::Window* pParent, const SfxItemSet& rCoreAttrs ) :
     m_pBtnPageNo->SetClickHdl( PAGENO_HDL );
     m_pBtnTopDown->SetClickHdl( PAGEDIR_HDL );
     m_pBtnLeftRight->SetClickHdl( PAGEDIR_HDL );
-    m_pLbScaleMode->SetSelectHdl( SCALE_HDL );
+    m_pLbScaleMode->SetSelectHdl( LINK(this,ScTablePage,ScaleHdl) );
 
 }
 
@@ -186,7 +185,7 @@ void ScTablePage::Reset( const SfxItemSet* rCoreSet )
 
     // scaling:
     nWhich = GetWhich(SID_SCATTR_PAGE_SCALE);
-    if ( rCoreSet->GetItemState( nWhich, true ) >= SfxItemState::DEFAULT )
+    if ( rCoreSet->GetItemState( nWhich ) >= SfxItemState::DEFAULT )
     {
         sal_uInt16 nScale = static_cast<const SfxUInt16Item&>(rCoreSet->Get(nWhich)).GetValue();
         if( nScale > 0 )
@@ -195,7 +194,7 @@ void ScTablePage::Reset( const SfxItemSet* rCoreSet )
     }
 
     nWhich = GetWhich(SID_SCATTR_PAGE_SCALETO);
-    if ( rCoreSet->GetItemState( nWhich, true ) >= SfxItemState::DEFAULT )
+    if ( rCoreSet->GetItemState( nWhich ) >= SfxItemState::DEFAULT )
     {
         const ScPageScaleToItem& rItem = static_cast< const ScPageScaleToItem& >( rCoreSet->Get( nWhich ) );
         sal_uInt16 nWidth = rItem.GetWidth();
@@ -211,7 +210,7 @@ void ScTablePage::Reset( const SfxItemSet* rCoreSet )
     }
 
     nWhich = GetWhich(SID_SCATTR_PAGE_SCALETOPAGES);
-    if ( rCoreSet->GetItemState( nWhich, true ) >= SfxItemState::DEFAULT )
+    if ( rCoreSet->GetItemState( nWhich ) >= SfxItemState::DEFAULT )
     {
         sal_uInt16 nPages = static_cast<const SfxUInt16Item&>(rCoreSet->Get(nWhich)).GetValue();
         if( nPages > 0 )
@@ -228,7 +227,7 @@ void ScTablePage::Reset( const SfxItemSet* rCoreSet )
     }
 
     PageDirHdl( NULL );
-    ScaleHdl( NULL );
+    ScaleHdl( *m_pLbScaleMode.get() );
 
     // remember for FillItemSet
     m_pBtnFormulas->SaveValue();
@@ -376,7 +375,7 @@ IMPL_LINK_TYPED( ScTablePage, PageNoHdl, Button*, pBtn, void )
         m_pEdPageNo->Disable();
 }
 
-IMPL_LINK_NOARG(ScTablePage, ScaleHdl)
+IMPL_LINK_NOARG_TYPED(ScTablePage, ScaleHdl, ListBox&, void)
 {
     // controls for Box "Reduce/enlarge"
     m_pBxScaleAll->Show(m_pLbScaleMode->GetSelectEntryPos() == SC_TPTABLE_SCALE_PERCENT);
@@ -386,8 +385,6 @@ IMPL_LINK_NOARG(ScTablePage, ScaleHdl)
 
     // controls for Box "Scale to pages"
     m_pBxScalePageNum->Show(m_pLbScaleMode->GetSelectEntryPos() == SC_TPTABLE_SCALE_TO_PAGES);
-
-    return 0;
 }
 
 // Helper functions for FillItemSet:

@@ -1919,7 +1919,7 @@ SwTwips SwSectionFrm::_Grow( SwTwips nDist, bool bTst )
                 if( bInCalcContent )
                     _InvalidateSize();
                 else if( nSpace < nGrow &&  nDist != nSpace + GetUpper()->
-                         Grow( nGrow - nSpace, false ) )
+                         Grow( nGrow - nSpace ) )
                     InvalidateSize();
                 else
                 {
@@ -2483,7 +2483,7 @@ SwFootnoteContFrm* SwSectionFrm::ContainsFootnoteCont( const SwFootnoteContFrm* 
 
 void SwSectionFrm::InvalidateFootnotePos()
 {
-    SwFootnoteContFrm* pCont = ContainsFootnoteCont( NULL );
+    SwFootnoteContFrm* pCont = ContainsFootnoteCont();
     if( pCont )
     {
         SwFrm *pTmp = pCont->ContainsContent();

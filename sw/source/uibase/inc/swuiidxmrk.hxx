@@ -108,17 +108,19 @@ class SwIndexMarkPane
     void            UpdateMark();
 
     DECL_LINK_TYPED( InsertHdl, Button *, void );
-    DECL_LINK_TYPED(CloseHdl, Button*, void);
-    DECL_LINK_TYPED(DelHdl, Button*, void);
-    DECL_LINK_TYPED(NextHdl, Button*, void);
-    DECL_LINK_TYPED(NextSameHdl, Button*, void);
-    DECL_LINK_TYPED(PrevHdl, Button*, void);
-    DECL_LINK_TYPED(PrevSameHdl, Button*, void);
-    DECL_LINK( ModifyHdl, ListBox* pBox );
-    DECL_LINK( KeyDCBModifyHdl, ComboBox * );
-    DECL_LINK_TYPED(NewUserIdxHdl, Button*, void);
-    DECL_LINK_TYPED( SearchTypeHdl, Button*, void);
-    DECL_LINK( PhoneticEDModifyHdl, Edit * );
+    DECL_LINK_TYPED( CloseHdl, Button*, void );
+    DECL_LINK_TYPED( DelHdl, Button*, void );
+    DECL_LINK_TYPED( NextHdl, Button*, void );
+    DECL_LINK_TYPED( NextSameHdl, Button*, void );
+    DECL_LINK_TYPED( PrevHdl, Button*, void );
+    DECL_LINK_TYPED( PrevSameHdl, Button*, void );
+    DECL_LINK_TYPED( ModifyListBoxHdl, ListBox&, void );
+    DECL_LINK_TYPED( ModifyEditHdl, Edit&, void );
+    void ModifyHdl(Control*);
+    DECL_LINK_TYPED( KeyDCBModifyHdl, Edit&, void );
+    DECL_LINK_TYPED( NewUserIdxHdl, Button*, void );
+    DECL_LINK_TYPED( SearchTypeHdl, Button*, void );
+    DECL_LINK_TYPED( PhoneticEDModifyHdl, Edit&, void );
 
     //this method updates the values from 'nLangForPhoneticReading' and 'bIsPhoneticReadingEnabled'
     //it needs to be called ones if this dialog is opened to create a new entry (in InitControls),
@@ -151,7 +153,7 @@ public:
 class SwIndexMarkFloatDlg : public SfxModelessDialog
 {
     SwIndexMarkPane m_aContent;
-    virtual void    Activate() SAL_OVERRIDE;
+    virtual void    Activate() override;
     public:
         SwIndexMarkFloatDlg(       SfxBindings* pBindings,
                                    SfxChildWindow* pChild,
@@ -167,7 +169,7 @@ class SwIndexMarkModalDlg : public SvxStandardDialog
 public:
     SwIndexMarkModalDlg(vcl::Window *pParent, SwWrtShell& rSh, SwTOXMark* pCurTOXMark);
 
-    virtual void        Apply() SAL_OVERRIDE;
+    virtual void        Apply() override;
 };
 
 class SwAuthMarkModalDlg;
@@ -208,10 +210,10 @@ class SwAuthorMarkPane
     DECL_LINK_TYPED(InsertHdl, Button*, void);
     DECL_LINK_TYPED(CloseHdl, Button*, void);
     DECL_LINK_TYPED(CreateEntryHdl, Button*, void);
-    DECL_LINK(CompEntryHdl, ListBox*);
+    DECL_LINK_TYPED(CompEntryHdl, ListBox&, void);
     DECL_LINK_TYPED(ChangeSourceHdl, Button*, void);
     DECL_LINK_TYPED(IsEntryAllowedHdl, Edit*, bool);
-    DECL_LINK(EditModifyHdl, Edit*);
+    DECL_LINK_TYPED(EditModifyHdl, Edit&, void);
 
     void InitControls();
     void Activate();
@@ -226,7 +228,7 @@ public:
 class SwAuthMarkFloatDlg : public SfxModelessDialog
 {
     SwAuthorMarkPane m_aContent;
-    virtual void    Activate() SAL_OVERRIDE;
+    virtual void    Activate() override;
     public:
         SwAuthMarkFloatDlg(        SfxBindings* pBindings,
                                    SfxChildWindow* pChild,
@@ -242,7 +244,7 @@ class SwAuthMarkModalDlg : public SvxStandardDialog
 public:
     SwAuthMarkModalDlg(vcl::Window *pParent, SwWrtShell& rSh);
 
-    virtual void        Apply() SAL_OVERRIDE;
+    virtual void        Apply() override;
 };
 
 #endif // INCLUDED_SW_SOURCE_UIBASE_INC_SWUIIDXMRK_HXX

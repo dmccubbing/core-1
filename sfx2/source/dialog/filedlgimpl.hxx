@@ -37,8 +37,6 @@ class FileDialogHelper;
 
 namespace sfx2
 {
-    typedef ::com::sun::star::beans::StringPair FilterPair;
-
     class FileDialogHelper_Impl :
         public ::cppu::WeakImplHelper<
             ::com::sun::star::ui::dialogs::XFilePickerListener,
@@ -49,7 +47,7 @@ namespace sfx2
         ::com::sun::star::uno::Reference < ::com::sun::star::ui::dialogs::XFilePicker2 > mxFileDlg;
         ::com::sun::star::uno::Reference < ::com::sun::star::container::XNameAccess >   mxFilterCFG;
 
-        std::vector< FilterPair >   maFilters;
+        std::vector< css::beans::StringPair >   maFilters;
 
         SfxFilterMatcher*           mpMatcher;
         GraphicFilter*              mpGraphicFilter;
@@ -152,17 +150,17 @@ namespace sfx2
 
     public:
         // XFilePickerListener methods
-        virtual void SAL_CALL               fileSelectionChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual void SAL_CALL               directoryChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual OUString SAL_CALL    helpRequested( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual void SAL_CALL               controlStateChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
-        virtual void SAL_CALL               dialogSizeChanged() throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        virtual void SAL_CALL               fileSelectionChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
+        virtual void SAL_CALL               directoryChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
+        virtual OUString SAL_CALL    helpRequested( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
+        virtual void SAL_CALL               controlStateChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
+        virtual void SAL_CALL               dialogSizeChanged() throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
         // XDialogClosedListener methods
-        virtual void SAL_CALL               dialogClosed( const ::com::sun::star::ui::dialogs::DialogClosedEvent& _rEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) SAL_OVERRIDE;
+        virtual void SAL_CALL               dialogClosed( const ::com::sun::star::ui::dialogs::DialogClosedEvent& _rEvent ) throw (::com::sun::star::uno::RuntimeException, std::exception) override;
 
         // XEventListener methods
-        virtual void SAL_CALL       disposing( const ::com::sun::star::lang::EventObject& Source ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) SAL_OVERRIDE;
+        virtual void SAL_CALL       disposing( const ::com::sun::star::lang::EventObject& Source ) throw( ::com::sun::star::uno::RuntimeException, std::exception ) override;
 
         // handle XFilePickerListener events
         void                    handleFileSelectionChanged( const ::com::sun::star::ui::dialogs::FilePickerEvent& aEvent );

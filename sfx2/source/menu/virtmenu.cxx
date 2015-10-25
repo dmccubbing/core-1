@@ -64,7 +64,7 @@ class SfxMenuImageControl_Impl : public SfxControllerItem
     bool                bIsMirrored;
 
 protected:
-    virtual void        StateChanged( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState ) SAL_OVERRIDE;
+    virtual void        StateChanged( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState ) override;
 public:
                         SfxMenuImageControl_Impl( sal_uInt16 nSlotId, SfxBindings& rBindings, SfxVirtualMenu* pVMenu )
                             : SfxControllerItem( nSlotId, rBindings )
@@ -900,7 +900,7 @@ IMPL_LINK_TYPED( SfxVirtualMenu, Activate, Menu *, pMenu, bool )
         bool bRet = pMenu && Bind_Impl(pMenu);
 #ifdef DBG_UTIL
         if ( !bRet)
-            DBG_WARNING( "W1: Virtual menu could not be created!" );
+            SAL_INFO( "sfx", "W1: Virtual menu could not be created!" );
 #endif
         return bRet;
     }

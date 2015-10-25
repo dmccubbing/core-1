@@ -47,40 +47,40 @@ private:
     PropertyHashMap     aPropHashMap;
     PropertyPairHashMap aPropPairHashMap;
 
-    com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue > aPropSeq;
+    css::uno::Sequence< css::beans::PropertyValue > aPropSeq;
 
     public:
 
             TYPEINFO_OVERRIDE();
 
             SdrCustomShapeGeometryItem();
-            SdrCustomShapeGeometryItem( const com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >& );
+            SdrCustomShapeGeometryItem( const css::uno::Sequence< css::beans::PropertyValue >& );
             SdrCustomShapeGeometryItem( SvStream& rIn, sal_uInt16 nVersion );
             virtual ~SdrCustomShapeGeometryItem();
 
-            virtual bool                operator==( const SfxPoolItem& ) const SAL_OVERRIDE;
+            virtual bool                operator==( const SfxPoolItem& ) const override;
             virtual bool GetPresentation(SfxItemPresentation ePresentation,
                                             SfxMapUnit eCoreMetric, SfxMapUnit ePresentationMetric,
-                                            OUString &rText, const IntlWrapper * = 0) const SAL_OVERRIDE;
+                                            OUString &rText, const IntlWrapper * = 0) const override;
 
-            virtual SfxPoolItem*        Create( SvStream&, sal_uInt16 nItem ) const SAL_OVERRIDE;
-            virtual SvStream&           Store( SvStream&, sal_uInt16 nVersion ) const SAL_OVERRIDE;
+            virtual SfxPoolItem*        Create( SvStream&, sal_uInt16 nItem ) const override;
+            virtual SvStream&           Store( SvStream&, sal_uInt16 nVersion ) const override;
 
-            virtual SfxPoolItem*        Clone( SfxItemPool* pPool = NULL ) const SAL_OVERRIDE;
-            virtual sal_uInt16          GetVersion( sal_uInt16 nFileFormatVersion ) const SAL_OVERRIDE;
+            virtual SfxPoolItem*        Clone( SfxItemPool* pPool = NULL ) const override;
+            virtual sal_uInt16          GetVersion( sal_uInt16 nFileFormatVersion ) const override;
 
-            virtual bool                QueryValue( com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const SAL_OVERRIDE;
-            virtual bool                PutValue( const com::sun::star::uno::Any& rVal, sal_uInt8 nMemberId ) SAL_OVERRIDE;
+            virtual bool                QueryValue( css::uno::Any& rVal, sal_uInt8 nMemberId = 0 ) const override;
+            virtual bool                PutValue( const css::uno::Any& rVal, sal_uInt8 nMemberId ) override;
 
-            const com::sun::star::uno::Sequence< com::sun::star::beans::PropertyValue >& GetGeometry() const { return aPropSeq;}
+            const css::uno::Sequence< css::beans::PropertyValue >& GetGeometry() const { return aPropSeq;}
 
-            com::sun::star::uno::Any* GetPropertyValueByName( const OUString& rPropName );
-            const com::sun::star::uno::Any* GetPropertyValueByName( const OUString& rPropName ) const;
-            com::sun::star::uno::Any* GetPropertyValueByName( const OUString& rPropName, const OUString& rPropName2 );
-            const com::sun::star::uno::Any* GetPropertyValueByName( const OUString& rPropName, const OUString& rPropName2 ) const;
+            css::uno::Any* GetPropertyValueByName( const OUString& rPropName );
+            const css::uno::Any* GetPropertyValueByName( const OUString& rPropName ) const;
+            css::uno::Any* GetPropertyValueByName( const OUString& rPropName, const OUString& rPropName2 );
+            const css::uno::Any* GetPropertyValueByName( const OUString& rPropName, const OUString& rPropName2 ) const;
 
-            void SetPropertyValue( const com::sun::star::beans::PropertyValue& rPropVal );
-            void SetPropertyValue( const OUString& rSequenceName, const com::sun::star::beans::PropertyValue& rPropVal );
+            void SetPropertyValue( const css::beans::PropertyValue& rPropVal );
+            void SetPropertyValue( const OUString& rSequenceName, const css::beans::PropertyValue& rPropVal );
 
             void ClearPropertyValue( const OUString& rPropertyName );
 };

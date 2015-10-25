@@ -134,7 +134,7 @@ SwMailMergeLayoutPage::SwMailMergeLayoutPage( SwMailMergeWizard* _pParent) :
     m_pZoomLB->SelectEntryPos(0); //page size
     m_pZoomLB->SetSelectHdl(LINK(this, SwMailMergeLayoutPage, ZoomHdl_Impl));
 
-    Link<> aFrameHdl = LINK(this, SwMailMergeLayoutPage, ChangeAddressHdl_Impl);
+    Link<SpinField&,void> aFrameHdl = LINK(this, SwMailMergeLayoutPage, ChangeAddressHdl_Impl);
     Link<Control&,void> aFocusHdl = LINK(this, SwMailMergeLayoutPage, ChangeAddressLoseFocusHdl_Impl);
     m_pLeftMF->SetUpHdl(aFrameHdl);
     m_pLeftMF->SetDownHdl(aFrameHdl);
@@ -622,7 +622,7 @@ void SwMailMergeLayoutPage::InsertGreeting(SwWrtShell& rShell, SwMailMergeConfig
 
 IMPL_LINK_NOARG_TYPED(SwMailMergeLayoutPage, PreviewLoadedHdl_Impl, SwOneExampleFrame&, void)
 {
-    m_pExampleContainerWIN->Show(true);
+    m_pExampleContainerWIN->Show();
 
     Reference< XModel > & xModel = m_pExampleFrame->GetModel();
     //now the ViewOptions should be set properly
@@ -660,13 +660,13 @@ IMPL_LINK_NOARG_TYPED(SwMailMergeLayoutPage, PreviewLoadedHdl_Impl, SwOneExample
     m_pTopMF->SetMax(rPageSize.GetHeight() - DEFAULT_TOP_DISTANCE);
 }
 
-IMPL_LINK(SwMailMergeLayoutPage, ZoomHdl_Impl, ListBox*, pBox)
+IMPL_LINK_TYPED(SwMailMergeLayoutPage, ZoomHdl_Impl, ListBox&, rBox, void)
 {
     if(m_pExampleWrtShell)
     {
         sal_Int16 eType = DocumentZoomType::BY_VALUE;
         short nZoom = 50;
-        switch(pBox->GetSelectEntryPos())
+        switch(rBox.GetSelectEntryPos())
         {
             case 0 : eType = DocumentZoomType::ENTIRE_PAGE; break;
             case 1 : nZoom = 50; break;
@@ -680,14 +680,13 @@ IMPL_LINK(SwMailMergeLayoutPage, ZoomHdl_Impl, ListBox*, pBox)
         m_xViewProperties->setPropertyValue(UNO_NAME_ZOOM_VALUE, aZoom);
 
     }
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED(SwMailMergeLayoutPage, ChangeAddressLoseFocusHdl_Impl, Control&, void)
 {
-    ChangeAddressHdl_Impl(nullptr);
+    ChangeAddressHdl_Impl(*m_pLeftMF);
 }
-IMPL_LINK_NOARG(SwMailMergeLayoutPage, ChangeAddressHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SwMailMergeLayoutPage, ChangeAddressHdl_Impl, SpinField&, void)
 {
     if(m_pExampleWrtShell && m_pAddressBlockFormat)
     {
@@ -705,7 +704,6 @@ IMPL_LINK_NOARG(SwMailMergeLayoutPage, ChangeAddressHdl_Impl)
         aSet.Put(SwFormatVertOrient( nTop, text::VertOrientation::NONE, text::RelOrientation::PAGE_FRAME ));
         m_pExampleWrtShell->GetDoc()->SetFlyFrmAttr( *m_pAddressBlockFormat, aSet );
     }
-    return 0;
 }
 
 IMPL_LINK_TYPED(SwMailMergeLayoutPage, GreetingsHdl_Impl, Button*, pButton, void)
@@ -726,7 +724,7 @@ IMPL_LINK_TYPED(SwMailMergeLayoutPage, AlignToTextHdl_Impl, Button*, pBox, void)
     bool bCheck = static_cast<CheckBox*>(pBox)->IsChecked() && pBox->IsEnabled();
     m_pLeftFT->Enable(!bCheck);
     m_pLeftMF->Enable(!bCheck);
-    ChangeAddressHdl_Impl( 0 );
+    ChangeAddressHdl_Impl( *m_pLeftMF );
 }
 
 /* vim:set shiftwidth=4 softtabstop=4 expandtab: */

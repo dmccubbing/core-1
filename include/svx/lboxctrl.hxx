@@ -39,16 +39,16 @@ protected:
     void    Impl_SetInfo( sal_Int32 nCount );
 
     DECL_LINK_TYPED( PopupModeEndHdl, FloatingWindow*, void );
-    DECL_LINK( SelectHdl, void * );
+    DECL_LINK_TYPED( SelectHdl, ListBox&, void );
 
 public:
     SvxListBoxControl( sal_uInt16 nSlotId, sal_uInt16 nId, ToolBox& rTbx );
     virtual ~SvxListBoxControl();
 
-    virtual VclPtr<SfxPopupWindow> CreatePopupWindow() SAL_OVERRIDE;
+    virtual VclPtr<SfxPopupWindow> CreatePopupWindow() override;
     virtual void                StateChanged( sal_uInt16 nSID,
                                               SfxItemState eState,
-                                              const SfxPoolItem* pState ) SAL_OVERRIDE;
+                                              const SfxPoolItem* pState ) override;
 };
 
 
@@ -66,9 +66,9 @@ public:
     virtual ~SvxUndoRedoControl();
     virtual void StateChanged( sal_uInt16 nSID,
                                SfxItemState eState,
-                               const SfxPoolItem* pState ) SAL_OVERRIDE;
+                               const SfxPoolItem* pState ) override;
 
-    virtual VclPtr<SfxPopupWindow> CreatePopupWindow() SAL_OVERRIDE;
+    virtual VclPtr<SfxPopupWindow> CreatePopupWindow() override;
 };
 
 #endif

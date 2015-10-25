@@ -69,7 +69,7 @@ public:
     explicit        HexEncoder (osl::File* pFile);
     virtual         ~HexEncoder ();
     void            WriteAscii (sal_uInt8 nByte);
-    virtual void    EncodeByte (sal_uInt8 nByte) SAL_OVERRIDE;
+    virtual void    EncodeByte (sal_uInt8 nByte) override;
     void            FlushLine ();
 };
 
@@ -142,7 +142,7 @@ public:
 
     explicit        Ascii85Encoder (osl::File* pFile);
     virtual         ~Ascii85Encoder ();
-    virtual void    EncodeByte (sal_uInt8 nByte) SAL_OVERRIDE;
+    virtual void    EncodeByte (sal_uInt8 nByte) override;
     void            WriteAscii (sal_uInt8 nByte);
 };
 
@@ -289,7 +289,7 @@ public:
     explicit LZWEncoder (osl::File* pOutputFile);
     virtual ~LZWEncoder ();
 
-    virtual void    EncodeByte (sal_uInt8 nByte) SAL_OVERRIDE;
+    virtual void    EncodeByte (sal_uInt8 nByte) override;
 };
 
 LZWEncoder::LZWEncoder(osl::File* pOutputFile) :
@@ -489,7 +489,7 @@ PrinterGfx::DrawPS1GrayImage (const PrinterBmp& rBitmap, const Rectangle& rArea)
     nChar += psp::appendStr  (" string readhexstring pop}\n",   pGrayImage + nChar);
     nChar += psp::appendStr  ("image\n",                        pGrayImage + nChar);
 
-    WritePS (mpPageBody, pGrayImage);
+    WritePS (mpPageBody, pGrayImage, nChar);
 
     // image body
     std::unique_ptr<HexEncoder> xEncoder(new HexEncoder (mpPageBody));
@@ -540,7 +540,7 @@ PrinterGfx::writePS2ImageHeader (const Rectangle& rArea, psp::ImageType nType)
     nChar += psp::getValueOf (nCompressType,     pImage + nChar);
     nChar += psp::appendStr  (" psp_imagedict image\n", pImage + nChar);
 
-    WritePS (mpPageBody, pImage);
+    WritePS (mpPageBody, pImage, nChar);
 }
 
 void
@@ -573,7 +573,7 @@ PrinterGfx::writePS2Colorspace(const PrinterBmp& rBitmap, psp::ImageType nType)
                 nChar += psp::appendStr ("\npsp_lzwstring\n", pImage + nChar);
             else
                 nChar += psp::appendStr ("\npsp_ascii85string\n", pImage + nChar);
-            WritePS (mpPageBody, pImage);
+            WritePS (mpPageBody, pImage, nChar);
 
             std::unique_ptr<ByteEncoder> xEncoder(mbCompressBmp ? new LZWEncoder(mpPageBody)
                                                     : new Ascii85Encoder(mpPageBody));

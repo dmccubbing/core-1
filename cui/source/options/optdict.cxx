@@ -206,13 +206,12 @@ IMPL_LINK_NOARG_TYPED(SvxNewDictionaryDialog, OKHdl_Impl, Button*, void)
 
 
 
-IMPL_LINK_NOARG(SvxNewDictionaryDialog, ModifyHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxNewDictionaryDialog, ModifyHdl_Impl, Edit&, void)
 {
     if ( !pNameEdit->GetText().isEmpty() )
         pOKBtn->Enable();
     else
         pOKBtn->Disable();
-    return 0;
 }
 
 // class SvxEditDictionaryDialog -------------------------------------------
@@ -433,7 +432,7 @@ void SvxEditDictionaryDialog::RemoveDictEntry(SvTreeListEntry* pEntry)
 
 
 
-IMPL_LINK_NOARG(SvxEditDictionaryDialog, SelectBookHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxEditDictionaryDialog, SelectBookHdl_Impl, ListBox&, void)
 {
     sal_Int32 nPos = pAllDictsLB->GetSelectEntryPos();
 
@@ -453,12 +452,11 @@ IMPL_LINK_NOARG(SvxEditDictionaryDialog, SelectBookHdl_Impl)
         pLangFT->Enable( bEnable );
         pLangLB->Enable( bEnable );
     }
-    return 0;
 }
 
 
 
-IMPL_LINK_NOARG(SvxEditDictionaryDialog, SelectLangHdl_Impl)
+IMPL_LINK_NOARG_TYPED(SvxEditDictionaryDialog, SelectLangHdl_Impl, ListBox&, void)
 {
     sal_Int32 nDicPos = pAllDictsLB->GetSelectEntryPos();
     sal_Int32 nLang = pLangLB->GetSelectLanguage();
@@ -488,7 +486,6 @@ IMPL_LINK_NOARG(SvxEditDictionaryDialog, SelectLangHdl_Impl)
         else
             SetLanguage_Impl( nOldLang );
     }
-    return 1;
 }
 
 
@@ -692,15 +689,15 @@ bool SvxEditDictionaryDialog::NewDelHdl(void* pBtn)
         // which means EndDialog() - has to be evaluated in KeyInput
         return false;
     }
-    ModifyHdl(pWordED);
+    ModifyHdl(*pWordED);
     return true;
 }
 
 
 
-IMPL_LINK(SvxEditDictionaryDialog, ModifyHdl, Edit*, pEdt)
+IMPL_LINK_TYPED(SvxEditDictionaryDialog, ModifyHdl, Edit&, rEdt, void)
 {
-    OUString rEntry = pEdt->GetText();
+    OUString rEntry = rEdt.GetText();
 
     sal_Int32 nWordLen = rEntry.getLength();
     const OUString& rRepString = pReplaceED->GetText();
@@ -709,7 +706,7 @@ IMPL_LINK(SvxEditDictionaryDialog, ModifyHdl, Edit*, pEdt)
     bool bEnableDelete      = false;
     OUString aNewReplaceText  = sNew;
 
-    if(pEdt == pWordED)
+    if(&rEdt == pWordED)
     {
         if(nWordLen>0)
         {
@@ -770,7 +767,7 @@ IMPL_LINK(SvxEditDictionaryDialog, ModifyHdl, Edit*, pEdt)
             bDoNothing=false;
         }
     }
-    else if(pEdt == pReplaceED)
+    else if(&rEdt == pReplaceED)
     {
         OUString aReplaceText;
         OUString aWordText;
@@ -793,8 +790,6 @@ IMPL_LINK(SvxEditDictionaryDialog, ModifyHdl, Edit*, pEdt)
     pNewReplacePB->SetText( aNewReplaceText );
     pNewReplacePB->Enable( bEnableNewReplace && !IsDicReadonly_Impl() );
     pDeletePB->Enable( bEnableDelete     && !IsDicReadonly_Impl() );
-
-    return 0;
 }
 
 

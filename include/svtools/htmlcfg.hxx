@@ -37,16 +37,16 @@ struct HtmlOptions_Impl;
 class SVT_DLLPUBLIC SvxHtmlOptions : public utl::ConfigItem
 {
     HtmlOptions_Impl*pImp;
-    static const com::sun::star::uno::Sequence<OUString>& GetPropertyNames();
-    void Load( const com::sun::star::uno::Sequence< OUString >& rPropertyNames );
+    static const css::uno::Sequence<OUString>& GetPropertyNames();
+    void Load( const css::uno::Sequence< OUString >& rPropertyNames );
 
-    virtual void    ImplCommit() SAL_OVERRIDE;
+    virtual void    ImplCommit() override;
 
 public:
     SvxHtmlOptions();
     virtual ~SvxHtmlOptions();
 
-    virtual void Notify( const com::sun::star::uno::Sequence< OUString >& _rPropertyNames) SAL_OVERRIDE;
+    virtual void Notify( const css::uno::Sequence< OUString >& _rPropertyNames) override;
 
     sal_uInt16      GetFontSize(sal_uInt16 nPos) const;
     void        SetFontSize(sal_uInt16 nPos, sal_uInt16 nSize);

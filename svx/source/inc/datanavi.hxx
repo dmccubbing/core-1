@@ -86,32 +86,19 @@ namespace svxform
     class DataNavigatorWindow;
     class AddInstanceDialog;
 
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::xforms::XFormsUIHelper1 >         XFormsUIHelper1_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::xml::dom::XNode >                 XNode_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::beans::XPropertySet >             XPropertySet_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::xforms::XModel >                  XModel_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::container::XContainer >           XContainer_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::container::XNameContainer >       XNameContainer_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::frame::XFrame >                   XFrame_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::frame::XModel >                   XFrameModel_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::xml::dom::events::XEventTarget >  XEventTarget_ref;
-    typedef ::com::sun::star::uno::Reference<
-                ::com::sun::star::xforms::XSubmission >             XSubmission_ref;
-
-    typedef ::com::sun::star::uno::Sequence<
-                ::com::sun::star::beans::PropertyValue >            PropertyValue_seq;
-
-    typedef std::vector< XContainer_ref >                           ContainerList;
-    typedef std::vector< XEventTarget_ref >                         EventTargetList;
+    typedef css::uno::Reference< css::xforms::XFormsUIHelper1 >         XFormsUIHelper1_ref;
+    typedef css::uno::Reference< css::xml::dom::XNode >                 XNode_ref;
+    typedef css::uno::Reference< css::beans::XPropertySet >             XPropertySet_ref;
+    typedef css::uno::Reference< css::xforms::XModel >                  XModel_ref;
+    typedef css::uno::Reference< css::container::XContainer >           XContainer_ref;
+    typedef css::uno::Reference< css::container::XNameContainer >       XNameContainer_ref;
+    typedef css::uno::Reference< css::frame::XFrame >                   XFrame_ref;
+    typedef css::uno::Reference< css::frame::XModel >                   XFrameModel_ref;
+    typedef css::uno::Reference< css::xml::dom::events::XEventTarget >  XEventTarget_ref;
+    typedef css::uno::Reference< css::xforms::XSubmission >             XSubmission_ref;
+    typedef css::uno::Sequence< css::beans::PropertyValue >             PropertyValue_seq;
+    typedef std::vector< XContainer_ref >                               ContainerList;
+    typedef std::vector< XEventTarget_ref >                             EventTargetList;
 
 
     class DataTreeListBox : public SvTreeListBox
@@ -131,13 +118,13 @@ namespace svxform
     public:
         DataTreeListBox( vcl::Window* pParent, WinBits nBits );
         virtual ~DataTreeListBox();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual std::unique_ptr<PopupMenu> CreateContextMenu() SAL_OVERRIDE;
-        virtual void            ExcecuteContextMenuAction( sal_uInt16 _nSelectedPopupEntry ) SAL_OVERRIDE;
-        virtual sal_Int8        AcceptDrop( const AcceptDropEvent& rEvt ) SAL_OVERRIDE;
-        virtual sal_Int8        ExecuteDrop( const ExecuteDropEvent& rEvt ) SAL_OVERRIDE;
-        virtual void            StartDrag( sal_Int8 nAction, const Point& rPosPixel ) SAL_OVERRIDE;
+        virtual std::unique_ptr<PopupMenu> CreateContextMenu() override;
+        virtual void            ExcecuteContextMenuAction( sal_uInt16 _nSelectedPopupEntry ) override;
+        virtual sal_Int8        AcceptDrop( const AcceptDropEvent& rEvt ) override;
+        virtual sal_Int8        ExecuteDrop( const ExecuteDropEvent& rEvt ) override;
+        virtual void            StartDrag( sal_Int8 nAction, const Point& rPosPixel ) override;
 
         void                    SetGroup(DataGroupType _eGroup);
         void                    SetXFormsPage(XFormsPage* _pPage);
@@ -160,7 +147,7 @@ namespace svxform
         OUString m_sInstance_API;
         OUString m_sNone_API;
 
-        ReplaceString( const ReplaceString& ) SAL_DELETED_FUNCTION;
+        ReplaceString( const ReplaceString& ) = delete;
 
     public:
         ReplaceString() :
@@ -208,7 +195,7 @@ namespace svxform
         OUString m_sPut_API;
         OUString m_sGet_API;
 
-        MethodString( const MethodString& ) SAL_DELETED_FUNCTION;
+        MethodString( const MethodString& ) = delete;
 
     public:
 
@@ -287,14 +274,14 @@ namespace svxform
         bool                        RemoveEntry();
 
     protected:
-        virtual bool                Notify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool                Notify( NotifyEvent& rNEvt ) override;
 
     public:
         XFormsPage( vcl::Window* pParent, DataNavigatorWindow* _pNaviWin, DataGroupType _eGroup );
         virtual ~XFormsPage();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void                Resize() SAL_OVERRIDE;
+        virtual void                Resize() override;
 
         inline bool                 HasModel() const { return m_bHasModel; }
         OUString                    SetModel( const XModel_ref& _xModel, sal_uInt16 _nPagePos );
@@ -349,12 +336,12 @@ namespace svxform
         XFrame_ref                  m_xFrame;
         XFrameModel_ref             m_xFrameModel;
 
-        DECL_LINK(                  ModelSelectHdl, ListBox * );
+        DECL_LINK_TYPED(            ModelSelectListBoxHdl, ListBox&, void );
         DECL_LINK_TYPED(            MenuSelectHdl, MenuButton *, void );
         DECL_LINK_TYPED(            MenuActivateHdl, MenuButton *, void );
         DECL_LINK_TYPED(            ActivatePageHdl, TabControl*, void);
         DECL_LINK_TYPED(            UpdateHdl, Timer *, void);
-
+        void ModelSelectHdl(ListBox*);
         XFormsPage*                 GetCurrentPage( sal_uInt16& rCurId );
         void                        LoadModels();
         void                        SetPageModel();
@@ -367,13 +354,13 @@ namespace svxform
         bool                        IsAdditionalPage(sal_uInt16 nPageId) const;
 
     protected:
-        virtual void                Resize() SAL_OVERRIDE;
-        virtual Size                GetOptimalSize() const SAL_OVERRIDE;
+        virtual void                Resize() override;
+        virtual Size                GetOptimalSize() const override;
 
     public:
         DataNavigatorWindow( vcl::Window* pParent, SfxBindings* pBindings );
         virtual ~DataNavigatorWindow();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         static void                 SetDocModified();
         void                        NotifyChanges( bool _bLoadAll = false );
@@ -393,22 +380,22 @@ namespace svxform
         VclPtr<DataNavigatorWindow> m_aDataWin;
 
     protected:
-        virtual void                Resize() SAL_OVERRIDE;
-        virtual bool                Close() SAL_OVERRIDE;
-        virtual void                GetFocus() SAL_OVERRIDE;
-        virtual Size                CalcDockingSize( SfxChildAlignment ) SAL_OVERRIDE;
-        virtual SfxChildAlignment   CheckAlignment( SfxChildAlignment, SfxChildAlignment ) SAL_OVERRIDE;
+        virtual void                Resize() override;
+        virtual bool                Close() override;
+        virtual void                GetFocus() override;
+        virtual Size                CalcDockingSize( SfxChildAlignment ) override;
+        virtual SfxChildAlignment   CheckAlignment( SfxChildAlignment, SfxChildAlignment ) override;
 
     public:
         DataNavigator( SfxBindings* pBindings, SfxChildWindow* pMgr, vcl::Window* pParent );
         virtual ~DataNavigator();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         using Window::Update;
         using                       SfxDockingWindow::StateChanged;
 
         void                        StateChanged( sal_uInt16 nSID, SfxItemState eState,
-                                                  const SfxPoolItem* pState ) SAL_OVERRIDE;
+                                                  const SfxPoolItem* pState ) override;
     };
 
 
@@ -473,7 +460,7 @@ namespace svxform
         AddDataItemDialog(
             vcl::Window* pParent, ItemNode* _pNode, const XFormsUIHelper1_ref& _rUIHelper );
         virtual ~AddDataItemDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         void                InitText( DataItemType _eType );
     };
@@ -493,7 +480,7 @@ namespace svxform
         XFormsUIHelper1_ref     m_xUIHelper;
         XPropertySet_ref        m_xBinding;
 
-        DECL_LINK(ModifyHdl, void *);
+        DECL_LINK_TYPED(ModifyHdl, Edit&, void);
         DECL_LINK_TYPED(ResultHdl, Idle *, void);
         DECL_LINK_TYPED(EditHdl, Button*, void);
         DECL_LINK_TYPED(OKHdl, Button*, void);
@@ -502,7 +489,7 @@ namespace svxform
         AddConditionDialog(vcl::Window* pParent,
             const OUString& _rPropertyName, const XPropertySet_ref& _rBinding);
         virtual ~AddConditionDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         XFormsUIHelper1_ref GetUIHelper() const { return m_xUIHelper; }
         OUString GetCondition() const { return m_pConditionED->GetText(); }
@@ -539,7 +526,7 @@ namespace svxform
     public:
         NamespaceItemDialog( AddConditionDialog* pParent, XNameContainer_ref& _rContainer );
         virtual ~NamespaceItemDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
     };
 
 
@@ -557,7 +544,7 @@ namespace svxform
     public:
         ManageNamespaceDialog(vcl::Window* pParent, AddConditionDialog* _pCondDlg, bool bIsEdit);
         virtual ~ManageNamespaceDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         void SetNamespace(const OUString& _rPrefix, const OUString& _rURL)
         {
@@ -602,7 +589,7 @@ namespace svxform
         AddSubmissionDialog( vcl::Window* pParent, ItemNode* _pNode,
             const XFormsUIHelper1_ref& _rUIHelper );
         virtual ~AddSubmissionDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         inline const XSubmission_ref& GetNewSubmission() const { return m_xNewSubmission; }
     };
@@ -617,7 +604,7 @@ namespace svxform
     public:
         AddModelDialog( vcl::Window* pParent, bool _bEdit );
         virtual ~AddModelDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         OUString         GetName() const { return m_pNameED->GetText(); }
         void             SetName( const OUString& _rName ) { m_pNameED->SetText( _rName );}
@@ -643,7 +630,7 @@ namespace svxform
     public:
         AddInstanceDialog( vcl::Window* pParent, bool _bEdit );
         virtual ~AddInstanceDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         OUString         GetName() const { return m_pNameED->GetText(); }
         void             SetName( const OUString& _rName ) { m_pNameED->SetText( _rName );}

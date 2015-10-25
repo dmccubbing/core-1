@@ -52,20 +52,20 @@ class SwBreakDlg: public SvxStandardDialog
     bool            bHtmlMode;
 
     DECL_LINK_TYPED( ClickHdl, Button*, void );
-    DECL_LINK( SelectHdl, void * );
+    DECL_LINK_TYPED( SelectHdl, ListBox&, void );
     DECL_LINK_TYPED( PageNumHdl, Button*, void );
-    DECL_LINK(PageNumModifyHdl, void *);
+    DECL_LINK_TYPED(PageNumModifyHdl, Edit&, void);
     DECL_LINK_TYPED(OkHdl, Button*, void);
 
     void CheckEnable();
 
 protected:
-    virtual void Apply() SAL_OVERRIDE;
+    virtual void Apply() override;
 
 public:
     SwBreakDlg( vcl::Window *pParent, SwWrtShell &rSh );
     virtual ~SwBreakDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     OUString    GetTemplateName() { return aTemplate; }
     sal_uInt16  GetKind() { return nKind; }

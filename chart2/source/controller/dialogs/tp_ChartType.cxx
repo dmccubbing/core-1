@@ -56,7 +56,7 @@ public:
 
 private:
     DECL_LINK_TYPED( Dim3DLookCheckHdl, CheckBox&, void );
-    DECL_LINK( SelectSchemeHdl, void* );
+    DECL_LINK_TYPED( SelectSchemeHdl, ListBox&, void );
 
 private:
     VclPtr<CheckBox> m_pCB_3DLook;
@@ -110,11 +110,10 @@ IMPL_LINK_NOARG_TYPED(Dim3DLookResourceGroup, Dim3DLookCheckHdl, CheckBox&, void
         m_pChangeListener->stateChanged(this);
 }
 
-IMPL_LINK_NOARG(Dim3DLookResourceGroup, SelectSchemeHdl)
+IMPL_LINK_NOARG_TYPED(Dim3DLookResourceGroup, SelectSchemeHdl, ListBox&, void)
 {
     if(m_pChangeListener)
         m_pChangeListener->stateChanged(this);
-    return 0;
 }
 
 class SortByXValuesResourceGroup : public ChangingResource
@@ -312,15 +311,15 @@ class SplinePropertiesDialog : public ModalDialog
 public:
     explicit SplinePropertiesDialog( vcl::Window* pParent );
     virtual ~SplinePropertiesDialog() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void fillControls( const ChartTypeParameter& rParameter );
     void fillParameter( ChartTypeParameter& rParameter, bool bSmoothLines );
 
-    virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
+    virtual void StateChanged( StateChangedType nType ) override;
 
 private:
-    DECL_LINK( SplineTypeListBoxHdl, void* );
+    DECL_LINK_TYPED( SplineTypeListBoxHdl, ListBox&, void );
 
 private:
     VclPtr<ListBox>      m_pLB_Spline_Type;
@@ -393,11 +392,10 @@ void SplinePropertiesDialog::fillParameter( ChartTypeParameter& rParameter, bool
     rParameter.nCurveResolution = static_cast< sal_Int32 >( m_pMF_SplineResolution->GetValue());
     rParameter.nSplineOrder = static_cast< sal_Int32 >( m_pMF_SplineOrder->GetValue());
 }
-IMPL_LINK_NOARG(SplinePropertiesDialog, SplineTypeListBoxHdl)
+IMPL_LINK_NOARG_TYPED(SplinePropertiesDialog, SplineTypeListBoxHdl, ListBox&, void)
 {
     m_pFT_SplineOrder->Enable(B_SPLINE_POS == m_pLB_Spline_Type->GetSelectEntryPos());
     m_pMF_SplineOrder->Enable(B_SPLINE_POS == m_pLB_Spline_Type->GetSelectEntryPos());
-    return 0;
 }
 
 class SteppedPropertiesDialog : public ModalDialog
@@ -405,12 +403,12 @@ class SteppedPropertiesDialog : public ModalDialog
 public:
     explicit SteppedPropertiesDialog( vcl::Window* pParent );
     virtual ~SteppedPropertiesDialog() { disposeOnce(); }
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void fillControls( const ChartTypeParameter& rParameter );
     void fillParameter( ChartTypeParameter& rParameter, bool bSteppedLines );
 
-    virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
+    virtual void StateChanged( StateChangedType nType ) override;
 
 private:
 
@@ -493,7 +491,7 @@ public:
     void fillParameter( ChartTypeParameter& rParameter );
 
 private:
-    DECL_LINK( LineTypeChangeHdl, void* );
+    DECL_LINK_TYPED( LineTypeChangeHdl, ListBox&, void );
     DECL_LINK_TYPED( SplineDetailsDialogHdl, Button*, void );
     DECL_LINK_TYPED( SteppedDetailsDialogHdl, Button*, void );
     SplinePropertiesDialog& getSplinePropertiesDialog();
@@ -551,7 +549,7 @@ void SplineResourceGroup::fillControls( const ChartTypeParameter& rParameter )
         case CurveStyle_CUBIC_SPLINES:
         case CurveStyle_B_SPLINES:
             m_pLB_LineType->SelectEntryPos(POS_LINETYPE_SMOOTH);
-            m_pPB_DetailsDialog->Enable(true);
+            m_pPB_DetailsDialog->Enable();
             m_pPB_DetailsDialog->SetClickHdl( LINK( this, SplineResourceGroup, SplineDetailsDialogHdl ) );
             m_pPB_DetailsDialog->SetQuickHelpText( SCH_RESSTR(STR_DLG_SMOOTH_LINE_PROPERTIES) );
             getSplinePropertiesDialog().fillControls( rParameter );
@@ -561,7 +559,7 @@ void SplineResourceGroup::fillControls( const ChartTypeParameter& rParameter )
         case CurveStyle_STEP_CENTER_X:
         case CurveStyle_STEP_CENTER_Y:
             m_pLB_LineType->SelectEntryPos(POS_LINETYPE_STEPPED);
-            m_pPB_DetailsDialog->Enable(true);
+            m_pPB_DetailsDialog->Enable();
             m_pPB_DetailsDialog->SetClickHdl( LINK( this, SplineResourceGroup, SteppedDetailsDialogHdl ) );
             m_pPB_DetailsDialog->SetQuickHelpText( SCH_RESSTR(STR_DLG_STEPPED_LINE_PROPERTIES) );
             getSteppedPropertiesDialog().fillControls( rParameter );
@@ -586,11 +584,10 @@ void SplineResourceGroup::fillParameter( ChartTypeParameter& rParameter )
             break;
     }
 }
-IMPL_LINK_NOARG(SplineResourceGroup, LineTypeChangeHdl)
+IMPL_LINK_NOARG_TYPED(SplineResourceGroup, LineTypeChangeHdl, ListBox&, void)
 {
     if( m_pChangeListener )
         m_pChangeListener->stateChanged(this);
-    return 0;
 }
 IMPL_LINK_NOARG_TYPED(SplineResourceGroup, SplineDetailsDialogHdl, Button*, void)
 {
@@ -644,7 +641,7 @@ public:
     void fillParameter( ChartTypeParameter& rParameter );
 
 private:
-    DECL_LINK( GeometryChangeHdl, void* );
+    DECL_LINK_TYPED( GeometryChangeHdl, ListBox&, void );
 
 private:
     BarGeometryResources m_aGeometryResources;
@@ -676,11 +673,10 @@ void GeometryResourceGroup::fillParameter( ChartTypeParameter& rParameter )
         rParameter.nGeometry3D = m_aGeometryResources.GetSelectEntryPos();
 }
 
-IMPL_LINK_NOARG(GeometryResourceGroup, GeometryChangeHdl)
+IMPL_LINK_NOARG_TYPED(GeometryResourceGroup, GeometryChangeHdl, ListBox&, void)
 {
     if( m_pChangeListener )
         m_pChangeListener->stateChanged(this);
-    return 0;
 }
 
 ChartTypeTabPage::ChartTypeTabPage(vcl::Window* pParent
@@ -891,10 +887,9 @@ IMPL_LINK_NOARG_TYPED(ChartTypeTabPage, SelectSubTypeHdl, ValueSet*, void)
     }
 }
 
-IMPL_LINK_NOARG(ChartTypeTabPage, SelectMainTypeHdl)
+IMPL_LINK_NOARG_TYPED(ChartTypeTabPage, SelectMainTypeHdl, ListBox&, void)
 {
     selectMainType();
-    return 0;
 }
 
 void ChartTypeTabPage::selectMainType()

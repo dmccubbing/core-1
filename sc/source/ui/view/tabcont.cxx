@@ -38,7 +38,7 @@
 // STATIC DATA -----------------------------------------------------------
 
 ScTabControl::ScTabControl( vcl::Window* pParent, ScViewData* pData )
-    : TabBar(pParent, WB_3DLOOK | WB_MINSCROLL | WB_RANGESELECT | WB_MULTISELECT | WB_DRAG)
+    : TabBar(pParent, WB_3DLOOK | WB_MINSCROLL | WB_SCROLL | WB_RANGESELECT | WB_MULTISELECT | WB_DRAG)
     , DropTargetHelper(this)
     , DragSourceHelper(this)
     , pViewData(pData)
@@ -79,7 +79,7 @@ ScTabControl::ScTabControl( vcl::Window* pParent, ScViewData* pData )
     EnableEditMode();
     UpdateInputContext();
 
-    SetScrollAlwaysEnabled(true);
+    SetScrollAlwaysEnabled(false);
 
     SetScrollAreaContextHdl( LINK( this, ScTabControl, ShowPageList ) );
 }
@@ -463,7 +463,7 @@ void ScTabControl::DoDrag( const vcl::Region& /* rRegion */ )
 
     ScDocument* pClipDoc = new ScDocument( SCDOCMODE_CLIP );
     ScClipParam aClipParam(aTabRange, false);
-    rDoc.CopyToClip(aClipParam, pClipDoc, &aTabMark, false);
+    rDoc.CopyToClip(aClipParam, pClipDoc, &aTabMark);
 
     TransferableObjectDescriptor aObjDesc;
     pDocSh->FillTransferableObjectDescriptor( aObjDesc );

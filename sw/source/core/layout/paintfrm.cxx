@@ -3140,7 +3140,7 @@ namespace
 
             virtual drawinglayer::primitive2d::Primitive2DSequence createRedirectedPrimitive2DSequence(
                                     const sdr::contact::ViewObjectContact& rOriginal,
-                                    const sdr::contact::DisplayInfo& rDisplayInfo) SAL_OVERRIDE
+                                    const sdr::contact::DisplayInfo& rDisplayInfo) override
             {
                 bool bPaint( true );
 
@@ -4226,7 +4226,7 @@ void SwFlyFrm::Paint(vcl::RenderContext& rRenderContext, SwRect const& rRect, Sw
                 const SwBorderAttrs &rAttrs = *aAccess.Get();
                 SwRect aPaintRect( aRect );
                 aPaintRect._Intersection( pParentFlyFrm->Frm() );
-                pParentFlyFrm->PaintBackground( aPaintRect, pPage, rAttrs, false, false );
+                pParentFlyFrm->PaintBackground( aPaintRect, pPage, rAttrs );
 
                 gProp.pSRetoucheFly2 = pOldRet;
             }
@@ -4426,7 +4426,7 @@ static void lcl_PaintShadow( const SwRect& rRect, SwRect& rOutRect,
     const long nWidth  = ::lcl_AlignWidth ( rShadow.GetWidth(), properties );
     const long nHeight = ::lcl_AlignHeight( rShadow.GetWidth(), properties );
 
-    SwRects aRegion( 2 );
+    SwRects aRegion;
     SwRect aOut( rOutRect );
 
     switch ( rShadow.GetLocation() )
@@ -5665,7 +5665,7 @@ void SwLayoutFrm::PaintColLines( const SwRect &rRect, const SwFormatCol &rFormat
 
 void SwPageFrm::PaintGrid( OutputDevice* pOut, SwRect &rRect ) const
 {
-    if( !bHasGrid || gProp.pSRetoucheFly || gProp.pSRetoucheFly2 )
+    if( !m_bHasGrid || gProp.pSRetoucheFly || gProp.pSRetoucheFly2 )
         return;
     SwTextGridItem const*const pGrid(GetGridItem(this));
     if( pGrid && ( OUTDEV_PRINTER != pOut->GetOutDevType() ?
@@ -7650,7 +7650,7 @@ Graphic SwFlyFrameFormat::MakeGraphic( ImageMap* pMap )
         gProp.pSGlobalShell = pSh;
 
         bool bNoteURL = pMap &&
-            SfxItemState::SET != GetAttrSet().GetItemState( RES_URL, true );
+            SfxItemState::SET != GetAttrSet().GetItemState( RES_URL );
         if( bNoteURL )
         {
             OSL_ENSURE( !pNoteURL, "MakeGraphic: pNoteURL already used? " );

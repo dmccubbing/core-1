@@ -216,8 +216,8 @@ protected:
     static int      CalcAsianKerning( sal_UCS4, bool bLeft, bool bVertical );
 
 private:
-                    SalLayout( const SalLayout& ) SAL_DELETED_FUNCTION;
-                    SalLayout& operator=( const SalLayout& ) SAL_DELETED_FUNCTION;
+                    SalLayout( const SalLayout& ) = delete;
+                    SalLayout& operator=( const SalLayout& ) = delete;
 
 protected:
     int             mnMinCharPos;
@@ -235,23 +235,23 @@ protected:
 class VCL_PLUGIN_PUBLIC MultiSalLayout : public SalLayout
 {
 public:
-    virtual void    DrawText( SalGraphics& ) const SAL_OVERRIDE;
-    virtual sal_Int32 GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const SAL_OVERRIDE;
-    virtual DeviceCoordinate FillDXArray( DeviceCoordinate* pDXArray ) const SAL_OVERRIDE;
-    virtual void    GetCaretPositions( int nArraySize, long* pCaretXArray ) const SAL_OVERRIDE;
+    virtual void    DrawText( SalGraphics& ) const override;
+    virtual sal_Int32 GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const override;
+    virtual DeviceCoordinate FillDXArray( DeviceCoordinate* pDXArray ) const override;
+    virtual void    GetCaretPositions( int nArraySize, long* pCaretXArray ) const override;
     virtual int     GetNextGlyphs( int nLen, sal_GlyphId* pGlyphIdxAry, Point& rPos,
                                    int&, DeviceCoordinate* pGlyphAdvAry, int* pCharPosAry,
-                                   const PhysicalFontFace** pFallbackFonts ) const SAL_OVERRIDE;
-    virtual bool    GetOutline( SalGraphics&, ::basegfx::B2DPolyPolygonVector& ) const SAL_OVERRIDE;
+                                   const PhysicalFontFace** pFallbackFonts ) const override;
+    virtual bool    GetOutline( SalGraphics&, ::basegfx::B2DPolyPolygonVector& ) const override;
 
     // used only by OutputDevice::ImplLayout, TODO: make friend
     explicit        MultiSalLayout( SalLayout& rBaseLayout,
                                     const PhysicalFontFace* pBaseFont = NULL );
     bool            AddFallback( SalLayout& rFallbackLayout,
                                  ImplLayoutRuns&, const PhysicalFontFace* pFallbackFont );
-    virtual bool    LayoutText( ImplLayoutArgs& ) SAL_OVERRIDE;
-    virtual void    AdjustLayout( ImplLayoutArgs& ) SAL_OVERRIDE;
-    virtual void    InitFont() const SAL_OVERRIDE;
+    virtual bool    LayoutText( ImplLayoutArgs& ) override;
+    virtual void    AdjustLayout( ImplLayoutArgs& ) override;
+    virtual void    InitFont() const override;
 
     void SetInComplete(bool bInComplete = true);
 
@@ -260,12 +260,12 @@ protected:
 
 private:
     // dummy implementations
-    virtual void    MoveGlyph( int, long ) SAL_OVERRIDE {}
-    virtual void    DropGlyph( int ) SAL_OVERRIDE {}
-    virtual void    Simplify( bool ) SAL_OVERRIDE {}
+    virtual void    MoveGlyph( int, long ) override {}
+    virtual void    DropGlyph( int ) override {}
+    virtual void    Simplify( bool ) override {}
 
-                    MultiSalLayout( const MultiSalLayout& ) SAL_DELETED_FUNCTION;
-                    MultiSalLayout& operator=( const MultiSalLayout& ) SAL_DELETED_FUNCTION;
+                    MultiSalLayout( const MultiSalLayout& ) = delete;
+                    MultiSalLayout& operator=( const MultiSalLayout& ) = delete;
 
 private:
     SalLayout*      mpLayouts[ MAX_FALLBACK ];
@@ -334,7 +334,7 @@ public:
     // used by layout engines
     void            AppendGlyph( const GlyphItem& );
     void            Reserve(int size) { m_GlyphItems.reserve(size + 1); }
-    virtual void    AdjustLayout( ImplLayoutArgs& ) SAL_OVERRIDE;
+    virtual void    AdjustLayout( ImplLayoutArgs& ) override;
     void    ApplyDXArray( ImplLayoutArgs& );
     void    Justify( DeviceCoordinate nNewWidth );
     void            KashidaJustify( long nIndex, int nWidth );
@@ -342,24 +342,24 @@ public:
     void            SortGlyphItems();
 
     // used by upper layers
-    virtual DeviceCoordinate GetTextWidth() const SAL_OVERRIDE;
-    virtual DeviceCoordinate FillDXArray( DeviceCoordinate* pDXArray ) const SAL_OVERRIDE;
-    virtual sal_Int32 GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const SAL_OVERRIDE;
-    virtual void    GetCaretPositions( int nArraySize, long* pCaretXArray ) const SAL_OVERRIDE;
+    virtual DeviceCoordinate GetTextWidth() const override;
+    virtual DeviceCoordinate FillDXArray( DeviceCoordinate* pDXArray ) const override;
+    virtual sal_Int32 GetTextBreak(DeviceCoordinate nMaxWidth, DeviceCoordinate nCharExtra, int nFactor) const override;
+    virtual void    GetCaretPositions( int nArraySize, long* pCaretXArray ) const override;
 
     // used by display layers
     virtual int     GetNextGlyphs( int nLen, sal_GlyphId* pGlyphIdxAry, Point& rPos, int&,
                                    DeviceCoordinate* pGlyphAdvAry = NULL, int* pCharPosAry = NULL,
-                                   const PhysicalFontFace** pFallbackFonts = NULL ) const SAL_OVERRIDE;
+                                   const PhysicalFontFace** pFallbackFonts = NULL ) const override;
 
 protected:
                     GenericSalLayout();
     virtual         ~GenericSalLayout();
 
     // for glyph+font+script fallback
-    virtual void    MoveGlyph( int nStart, long nNewXPos ) SAL_OVERRIDE;
-    virtual void    DropGlyph( int nStart ) SAL_OVERRIDE;
-    virtual void    Simplify( bool bIsBase ) SAL_OVERRIDE;
+    virtual void    MoveGlyph( int nStart, long nNewXPos ) override;
+    virtual void    DropGlyph( int nStart ) override;
+    virtual void    Simplify( bool bIsBase ) override;
 
     bool            GetCharWidths( DeviceCoordinate* pCharWidths ) const;
 
@@ -368,8 +368,8 @@ protected:
 private:
     mutable Point   maBasePoint;
 
-                    GenericSalLayout( const GenericSalLayout& ) SAL_DELETED_FUNCTION;
-                    GenericSalLayout& operator=( const GenericSalLayout& ) SAL_DELETED_FUNCTION;
+                    GenericSalLayout( const GenericSalLayout& ) = delete;
+                    GenericSalLayout& operator=( const GenericSalLayout& ) = delete;
 };
 
 #undef SalGraphics

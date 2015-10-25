@@ -60,6 +60,7 @@
 #include <unocrsr.hxx>
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
 #include <comphelper/lok.hxx>
+#include <comphelper/string.hxx>
 
 #include <view.hrc>
 #include <SwRewriter.hxx>
@@ -95,7 +96,8 @@ static void lcl_addContainerToJson(boost::property_tree::ptree& rTree, const OSt
     for (const OString& rMatch : rMatches)
     {
         boost::property_tree::ptree aChild;
-        aChild.put("", rMatch.getStr());
+        aChild.put("part", "0");
+        aChild.put("rectangles", rMatch.getStr());
         aChildren.push_back(std::make_pair("", aChild));
     }
 
@@ -103,11 +105,8 @@ static void lcl_addContainerToJson(boost::property_tree::ptree& rTree, const OSt
 }
 
 /// Emits LOK callbacks (count, selection) for search results.
-static void lcl_emitSearchResultCallbacks(sal_uInt16 nFound, SvxSearchItem* pSearchItem, SwWrtShell* pWrtShell)
+static void lcl_emitSearchResultCallbacks(SvxSearchItem* pSearchItem, SwWrtShell* pWrtShell)
 {
-    OString aPayload = OString::number(nFound) + ";" + pSearchItem->GetSearchString().toUtf8();
-    pWrtShell->libreOfficeKitCallback(LOK_CALLBACK_SEARCH_RESULT_COUNT, aPayload.getStr());
-
     // Emit a callback also about the selection rectangles, grouped by matches.
     if (SwPaM* pPaM = pWrtShell->GetCrsr())
     {
@@ -118,20 +117,15 @@ static void lcl_emitSearchResultCallbacks(sal_uInt16 nFound, SvxSearchItem* pSea
             {
                 std::vector<OString> aSelectionRectangles;
                 pShellCrsr->SwSelPaintRects::Show(&aSelectionRectangles);
-                std::stringstream ss;
-                bool bFirst = true;
+                std::vector<OString> aRect;
                 for (size_t i = 0; i < aSelectionRectangles.size(); ++i)
                 {
                     const OString& rSelectionRectangle = aSelectionRectangles[i];
                     if (rSelectionRectangle.isEmpty())
                         continue;
-                    if (bFirst)
-                        bFirst = false;
-                    else
-                        ss << "; ";
-                    ss << rSelectionRectangle.getStr();
+                    aRect.push_back(rSelectionRectangle);
                 }
-                OString sRect = ss.str().c_str();
+                OString sRect = comphelper::string::join("; ", aRect);
                 aMatches.push_back(sRect);
             }
         }
@@ -141,7 +135,7 @@ static void lcl_emitSearchResultCallbacks(sal_uInt16 nFound, SvxSearchItem* pSea
 
         std::stringstream aStream;
         boost::property_tree::write_json(aStream, aTree);
-        aPayload = aStream.str().c_str();
+        OString aPayload = aStream.str().c_str();
 
         pWrtShell->libreOfficeKitCallback(LOK_CALLBACK_SEARCH_RESULT_SELECTION, aPayload.getStr());
     }
@@ -256,7 +250,7 @@ void SwView::ExecSearch(SfxRequest& rReq, bool bNoMessage)
                 {
                     Scroll(m_pWrtShell->GetCharRect().SVRect());
                     if (comphelper::LibreOfficeKit::isActive())
-                        lcl_emitSearchResultCallbacks(1, m_pSrchItem, m_pWrtShell);
+                        lcl_emitSearchResultCallbacks(m_pSrchItem, m_pWrtShell);
                 }
                 rReq.SetReturnValue(SfxBoolItem(nSlot, bRet));
 #if HAVE_FEATURE_DESKTOP
@@ -275,8 +269,7 @@ void SwView::ExecSearch(SfxRequest& rReq, bool bNoMessage)
             break;
             case SvxSearchCmd::FIND_ALL:
             {
-                sal_uInt16 nFound = 0;
-                bool bRet = SearchAll(&nFound);
+                bool bRet = SearchAll();
                 if( !bRet )
                 {
 #if HAVE_FEATURE_DESKTOP
@@ -290,7 +283,7 @@ void SwView::ExecSearch(SfxRequest& rReq, bool bNoMessage)
                     m_bFound = false;
                 }
                 else if (comphelper::LibreOfficeKit::isActive())
-                    lcl_emitSearchResultCallbacks(nFound, m_pSrchItem, m_pWrtShell);
+                    lcl_emitSearchResultCallbacks(m_pSrchItem, m_pWrtShell);
                 rReq.SetReturnValue(SfxBoolItem(nSlot, bRet));
 #if HAVE_FEATURE_DESKTOP
                 {

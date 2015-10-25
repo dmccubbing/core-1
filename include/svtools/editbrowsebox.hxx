@@ -83,10 +83,11 @@ namespace svt
     class SVT_DLLPUBLIC CellController : public SvRefBase
     {
         friend class EditBrowseBox;
+        Link<LinkParamNone*, void> maModifyHdl;
 
     protected:
-        VclPtr<Control>  pWindow;
-        bool        bSuspended;     // <true> if the window is hidden and disabled
+        VclPtr<Control>            pWindow;
+        bool                       bSuspended;     // <true> if the window is hidden and disabled
 
     public:
         TYPEINFO();
@@ -111,8 +112,9 @@ namespace svt
 
     protected:
         virtual bool MoveAllowed(const KeyEvent& rEvt) const;
-        virtual void SetModifyHdl(const Link<>& rLink) = 0;
+        void SetModifyHdl(const Link<LinkParamNone*,void>& rLink) { maModifyHdl = rLink; }
         virtual bool WantMouseEvent() const;
+        virtual void callModifyHdl() { maModifyHdl.Call(nullptr); }
     };
 
     typedef tools::SvRef<CellController> CellControllerRef;
@@ -145,7 +147,7 @@ namespace svt
         virtual void                SetModified() = 0;
         virtual bool                IsModified() const = 0;
         virtual void                ClearModified() = 0;
-        virtual void                SetModifyHdl( const Link<>& _rLink ) = 0;
+        virtual void                SetModifyHdl( const Link<Edit&,void>& _rLink ) = 0;
     };
 
 
@@ -160,27 +162,27 @@ namespace svt
 
         EDIT& GetEditWindow() { return static_cast< EDIT& >( GetControl() ); }
 
-        virtual Control&            GetControl() SAL_OVERRIDE;
+        virtual Control&            GetControl() override;
 
-        virtual OUString            GetText( LineEnd aSeparator ) const SAL_OVERRIDE;
-        virtual void                SetText( const OUString& _rStr ) SAL_OVERRIDE;
+        virtual OUString            GetText( LineEnd aSeparator ) const override;
+        virtual void                SetText( const OUString& _rStr ) override;
 
-        virtual bool                IsReadOnly() const SAL_OVERRIDE;
-        virtual void                SetReadOnly( bool bReadOnly ) SAL_OVERRIDE;
+        virtual bool                IsReadOnly() const override;
+        virtual void                SetReadOnly( bool bReadOnly ) override;
 
-        virtual sal_Int32           GetMaxTextLen() const SAL_OVERRIDE;
-        virtual void                SetMaxTextLen( sal_Int32 _nMaxLen ) SAL_OVERRIDE;
+        virtual sal_Int32           GetMaxTextLen() const override;
+        virtual void                SetMaxTextLen( sal_Int32 _nMaxLen ) override;
 
-        virtual Selection           GetSelection() const SAL_OVERRIDE;
-        virtual void                SetSelection( const Selection& _rSelection ) SAL_OVERRIDE;
+        virtual Selection           GetSelection() const override;
+        virtual void                SetSelection( const Selection& _rSelection ) override;
 
-        virtual void                ReplaceSelected( const OUString& _rStr ) SAL_OVERRIDE;
-        virtual OUString            GetSelected( LineEnd aSeparator ) const SAL_OVERRIDE;
+        virtual void                ReplaceSelected( const OUString& _rStr ) override;
+        virtual OUString            GetSelected( LineEnd aSeparator ) const override;
 
-        virtual void                SetModified() SAL_OVERRIDE;
-        virtual bool                IsModified() const SAL_OVERRIDE;
-        virtual void                ClearModified() SAL_OVERRIDE;
-        virtual void                SetModifyHdl( const Link<>& _rLink ) SAL_OVERRIDE;
+        virtual void                SetModified() override;
+        virtual bool                IsModified() const override;
+        virtual void                ClearModified() override;
+        virtual void                SetModifyHdl( const Link<Edit&,void>& _rLink ) override;
     };
 
     #include <svtools/editimplementation.hxx>
@@ -200,10 +202,10 @@ namespace svt
 
     protected:
         // Window overridables
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
 
         // MultiLineEdit overridables
-        virtual void Modify() SAL_OVERRIDE;
+        virtual void Modify() override;
 
     private:
         bool         dispatchKeyEvent( const KeyEvent& _rEvent );
@@ -222,8 +224,8 @@ namespace svt
         {
         }
 
-        virtual OUString GetText( LineEnd aSeparator ) const SAL_OVERRIDE;
-        virtual OUString GetSelected( LineEnd aSeparator ) const SAL_OVERRIDE;
+        virtual OUString GetText( LineEnd aSeparator ) const override;
+        virtual OUString GetSelected( LineEnd aSeparator ) const override;
     };
 
 
@@ -243,13 +245,14 @@ namespace svt
         const IEditImplementation* GetEditImplementation( ) const { return m_pEditImplementation; }
               IEditImplementation* GetEditImplementation( )       { return m_pEditImplementation; }
 
-        virtual void SetModified() SAL_OVERRIDE;
-        virtual bool IsModified() const SAL_OVERRIDE;
-        virtual void ClearModified() SAL_OVERRIDE;
+        virtual void SetModified() override;
+        virtual bool IsModified() const override;
+        virtual void ClearModified() override;
 
     protected:
-        virtual bool MoveAllowed(const KeyEvent& rEvt) const SAL_OVERRIDE;
-        virtual void SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE;
+        virtual bool MoveAllowed(const KeyEvent& rEvt) const override;
+    private:
+        DECL_LINK_TYPED(ModifyHdl, Edit&, void);
     };
 
 
@@ -263,13 +266,14 @@ namespace svt
         const SpinField& GetSpinWindow() const { return static_cast<const SpinField &>(GetWindow()); }
         SpinField& GetSpinWindow() { return static_cast<SpinField &>(GetWindow()); }
 
-        virtual void SetModified() SAL_OVERRIDE;
-        virtual bool IsModified() const SAL_OVERRIDE;
-        virtual void ClearModified() SAL_OVERRIDE;
+        virtual void SetModified() override;
+        virtual bool IsModified() const override;
+        virtual void ClearModified() override;
 
     protected:
-        virtual bool MoveAllowed(const KeyEvent& rEvt) const SAL_OVERRIDE;
-        virtual void SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE;
+        virtual bool MoveAllowed(const KeyEvent& rEvt) const override;
+    private:
+        DECL_LINK_TYPED(ModifyHdl, Edit&, void);
     };
 
 
@@ -280,24 +284,24 @@ namespace svt
         VclPtr<CheckBox>             pBox;
         Rectangle                    aFocusRect;
         Link<VclPtr<CheckBox>,void>  m_aClickLink;
-        Link<>                       m_aModifyLink;
+        Link<LinkParamNone*,void>    m_aModifyLink;
 
     public:
         CheckBoxControl(vcl::Window* pParent, WinBits nWinStyle = 0);
         virtual ~CheckBoxControl();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual bool PreNotify(NotifyEvent& rEvt) SAL_OVERRIDE;
-        virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rClientRect) SAL_OVERRIDE;
-        virtual void Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) SAL_OVERRIDE;
-        virtual void StateChanged( StateChangedType nStateChange ) SAL_OVERRIDE;
-        virtual void DataChanged( const DataChangedEvent& _rEvent ) SAL_OVERRIDE;
-        virtual void Resize() SAL_OVERRIDE;
+        virtual void GetFocus() override;
+        virtual bool PreNotify(NotifyEvent& rEvt) override;
+        virtual void Paint(vcl::RenderContext& rRenderContext, const Rectangle& rClientRect) override;
+        virtual void Draw( OutputDevice* pDev, const Point& rPos, const Size& rSize, DrawFlags nFlags ) override;
+        virtual void StateChanged( StateChangedType nStateChange ) override;
+        virtual void DataChanged( const DataChangedEvent& _rEvent ) override;
+        virtual void Resize() override;
 
         void SetClickHdl(const Link<VclPtr<CheckBox>,void>& rHdl) {m_aClickLink = rHdl;}
 
-        void SetModifyHdl(const Link<>& rHdl) {m_aModifyLink = rHdl;}
+        void SetModifyHdl(const Link<LinkParamNone*,void>& rHdl) {m_aModifyLink = rHdl;}
 
         CheckBox&   GetBox() {return *pBox;};
 
@@ -313,15 +317,16 @@ namespace svt
     public:
         TYPEINFO_OVERRIDE();
 
-        CheckBoxCellController(CheckBoxControl* pWin):CellController(pWin){}
+        CheckBoxCellController(CheckBoxControl* pWin);
         CheckBox& GetCheckBox() const;
 
-        virtual bool IsModified() const SAL_OVERRIDE;
-        virtual void ClearModified() SAL_OVERRIDE;
+        virtual bool IsModified() const override;
+        virtual void ClearModified() override;
 
     protected:
-        virtual void SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE;
-        virtual bool WantMouseEvent() const SAL_OVERRIDE;
+        virtual bool WantMouseEvent() const override;
+    private:
+        DECL_LINK_TYPED(ModifyHdl, LinkParamNone*, void);
     };
 
 
@@ -335,7 +340,7 @@ namespace svt
         ComboBoxControl(vcl::Window* pParent, WinBits nWinStyle = 0);
 
     protected:
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
     };
 
 
@@ -349,12 +354,13 @@ namespace svt
         ComboBoxCellController(ComboBoxControl* pParent);
         ComboBoxControl& GetComboBox() const { return static_cast<ComboBoxControl &>(GetWindow()); }
 
-        virtual bool IsModified() const SAL_OVERRIDE;
-        virtual void ClearModified() SAL_OVERRIDE;
+        virtual bool IsModified() const override;
+        virtual void ClearModified() override;
 
     protected:
-        virtual bool MoveAllowed(const KeyEvent& rEvt) const SAL_OVERRIDE;
-        virtual void SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE;
+        virtual bool MoveAllowed(const KeyEvent& rEvt) const override;
+    private:
+        DECL_LINK_TYPED(ModifyHdl, Edit&, void);
     };
 
 
@@ -368,7 +374,7 @@ namespace svt
         ListBoxControl(vcl::Window* pParent, WinBits nWinStyle = 0);
 
     protected:
-        virtual bool PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+        virtual bool PreNotify( NotifyEvent& rNEvt ) override;
     };
 
 
@@ -383,12 +389,13 @@ namespace svt
         const ListBoxControl& GetListBox() const { return static_cast<const ListBoxControl &>(GetWindow()); }
         ListBoxControl& GetListBox() { return static_cast<ListBoxControl &>(GetWindow()); }
 
-        virtual bool IsModified() const SAL_OVERRIDE;
-        virtual void ClearModified() SAL_OVERRIDE;
+        virtual bool IsModified() const override;
+        virtual void ClearModified() override;
 
     protected:
-        virtual bool MoveAllowed(const KeyEvent& rEvt) const SAL_OVERRIDE;
-        virtual void SetModifyHdl(const Link<>& rLink) SAL_OVERRIDE;
+        virtual bool MoveAllowed(const KeyEvent& rEvt) const override;
+    private:
+        DECL_LINK_TYPED(ListBoxSelectHdl, ListBox&, void);
     };
 
 
@@ -400,7 +407,7 @@ namespace svt
         TYPEINFO_OVERRIDE();
         FormattedFieldCellController( FormattedField* _pFormatted );
 
-        virtual void CommitModifications() SAL_OVERRIDE;
+        virtual void CommitModifications() override;
     };
 
 
@@ -413,7 +420,7 @@ namespace svt
             :BrowserHeader(pParent, nWinBits){}
 
     protected:
-        virtual void DoubleClick() SAL_OVERRIDE;
+        virtual void DoubleClick() override;
     };
 
 
@@ -448,8 +455,8 @@ namespace svt
         };
 
     private:
-        EditBrowseBox(EditBrowseBox&) SAL_DELETED_FUNCTION;
-        EditBrowseBox& operator=(EditBrowseBox&) SAL_DELETED_FUNCTION;
+        EditBrowseBox(EditBrowseBox&) = delete;
+        EditBrowseBox& operator=(EditBrowseBox&) = delete;
 
         class BrowserMouseEventPtr
         {
@@ -503,32 +510,32 @@ namespace svt
     protected:
         BrowserHeader*  GetHeaderBar() const {return pHeader;}
 
-        virtual VclPtr<BrowserHeader> CreateHeaderBar(BrowseBox* pParent) SAL_OVERRIDE;
+        virtual VclPtr<BrowserHeader> CreateHeaderBar(BrowseBox* pParent) override;
 
         // if you want to have an own header ...
         virtual VclPtr<BrowserHeader> imp_CreateHeaderBar(BrowseBox* pParent);
 
-        virtual void ColumnMoved(sal_uInt16 nId) SAL_OVERRIDE;
-        virtual void ColumnResized(sal_uInt16 nColId) SAL_OVERRIDE;
-        virtual void Resize() SAL_OVERRIDE;
+        virtual void ColumnMoved(sal_uInt16 nId) override;
+        virtual void ColumnResized(sal_uInt16 nColId) override;
+        virtual void Resize() override;
         virtual void ArrangeControls(sal_uInt16& nX, sal_uInt16 nY);
-        virtual bool SeekRow(long nRow) SAL_OVERRIDE;
+        virtual bool SeekRow(long nRow) override;
 
-        virtual void GetFocus() SAL_OVERRIDE;
-        virtual void LoseFocus() SAL_OVERRIDE;
-        virtual void KeyInput(const KeyEvent& rEvt) SAL_OVERRIDE;
-        virtual void MouseButtonDown(const BrowserMouseEvent& rEvt) SAL_OVERRIDE;
-        virtual void MouseButtonUp(const BrowserMouseEvent& rEvt) SAL_OVERRIDE;
-        virtual void StateChanged( StateChangedType nType ) SAL_OVERRIDE;
-        virtual void DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+        virtual void GetFocus() override;
+        virtual void LoseFocus() override;
+        virtual void KeyInput(const KeyEvent& rEvt) override;
+        virtual void MouseButtonDown(const BrowserMouseEvent& rEvt) override;
+        virtual void MouseButtonUp(const BrowserMouseEvent& rEvt) override;
+        virtual void StateChanged( StateChangedType nType ) override;
+        virtual void DataChanged( const DataChangedEvent& rDCEvt ) override;
 
         using BrowseBox::MouseButtonUp;
         using BrowseBox::MouseButtonDown;
 
-        virtual bool PreNotify(NotifyEvent& rNEvt ) SAL_OVERRIDE;
-        virtual bool Notify(NotifyEvent& rNEvt) SAL_OVERRIDE;
+        virtual bool PreNotify(NotifyEvent& rNEvt ) override;
+        virtual bool Notify(NotifyEvent& rNEvt) override;
 
-        virtual void EndScroll() SAL_OVERRIDE;
+        virtual void EndScroll() override;
 
         // should be used instead of GetFieldRectPixel, 'cause this method here takes into account the borders
         Rectangle GetCellRect(long nRow, sal_uInt16 nColId, bool bRelToBrowser = true) const;
@@ -540,19 +547,19 @@ namespace svt
 
         virtual RowStatus GetRowStatus(long nRow) const;
 
-        virtual void    RowHeightChanged() SAL_OVERRIDE;
+        virtual void    RowHeightChanged() override;
 
         // callbacks for the data window
-        virtual void    ImplStartTracking() SAL_OVERRIDE;
-        virtual void    ImplTracking() SAL_OVERRIDE;
-        virtual void    ImplEndTracking() SAL_OVERRIDE;
+        virtual void    ImplStartTracking() override;
+        virtual void    ImplTracking() override;
+        virtual void    ImplEndTracking() override;
 
         // when changing a row:
         // CursorMoving:    cursor is being moved, but GetCurRow() still provides the old row
         virtual bool CursorMoving(long nNewRow, sal_uInt16 nNewCol);
 
         // cursor has been moved
-        virtual void CursorMoved() SAL_OVERRIDE;
+        virtual void CursorMoved() override;
 
         virtual void CellModified();        // called whenever a cell has been modified
         virtual bool SaveModified();    // called whenever a cell should be left, and it's content should be saved
@@ -564,7 +571,7 @@ namespace svt
         virtual CellController* GetController(long nRow, sal_uInt16 nCol);
         virtual void InitController(CellControllerRef& rController, long nRow, sal_uInt16 nCol);
         static void ResizeController(CellControllerRef& rController, const Rectangle&);
-        virtual void DoubleClick(const BrowserMouseEvent&) SAL_OVERRIDE;
+        virtual void DoubleClick(const BrowserMouseEvent&) override;
 
         void ActivateCell() { ActivateCell(GetCurRow(), GetCurColumnId()); }
 
@@ -580,7 +587,7 @@ namespace svt
         // result in traveling to the next or to th previous cell
         virtual bool IsTabAllowed(bool bForward) const;
 
-        virtual bool IsCursorMoveAllowed(long nNewRow, sal_uInt16 nNewColId) const SAL_OVERRIDE;
+        virtual bool IsCursorMoveAllowed(long nNewRow, sal_uInt16 nNewColId) const override;
 
         void    PaintTristate(OutputDevice& rDev, const Rectangle& rRect, const TriState& eState, bool _bEnabled=true) const;
 
@@ -591,7 +598,7 @@ namespace svt
         EditBrowseBox(vcl::Window* pParent, EditBrowseBoxFlags nBrowserFlags = EditBrowseBoxFlags::NONE, WinBits nBits = WB_TABSTOP, BrowserMode nMode = BrowserMode::NONE );
         EditBrowseBox(vcl::Window* pParent, const ResId& rId, EditBrowseBoxFlags nBrowserFlags = EditBrowseBoxFlags::NONE, BrowserMode nMode = BrowserMode::NONE );
         virtual ~EditBrowseBox();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         bool IsEditing() const {return aController.Is();}
         void InvalidateStatusCell(long nRow) {RowModified(nRow, 0);}
@@ -617,46 +624,42 @@ namespace svt
             The column ID of the cell.
         @return
             The XAccessible interface of the specified cell. */
-        virtual ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible >
-        CreateAccessibleCell( sal_Int32 nRow, sal_uInt16 nColumnPos ) SAL_OVERRIDE;
+        virtual css::uno::Reference< css::accessibility::XAccessible >
+        CreateAccessibleCell( sal_Int32 nRow, sal_uInt16 nColumnPos ) override;
 
         /** @return  The count of additional controls of the control area. */
-        virtual sal_Int32 GetAccessibleControlCount() const SAL_OVERRIDE;
+        virtual sal_Int32 GetAccessibleControlCount() const override;
 
         /** Creates the accessible object of an additional control.
             @param nIndex
                 The 0-based index of the control.
             @return
                 The XAccessible interface of the specified control. */
-        virtual ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible >
-        CreateAccessibleControl( sal_Int32 nIndex ) SAL_OVERRIDE;
+        virtual css::uno::Reference< css::accessibility::XAccessible >
+        CreateAccessibleControl( sal_Int32 nIndex ) override;
 
         /** Creates the accessible object of a column header.
             @param nColumnId
                 The column ID of the header.
             @return
                 The XAccessible interface of the specified column header. */
-        virtual ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible >
-        CreateAccessibleRowHeader( sal_Int32 _nRow ) SAL_OVERRIDE;
+        virtual css::uno::Reference< css::accessibility::XAccessible >
+        CreateAccessibleRowHeader( sal_Int32 _nRow ) override;
 
         /** Sets focus to current cell of the data table. */
-        virtual void GrabTableFocus() SAL_OVERRIDE;
+        virtual void GrabTableFocus() override;
 
-        virtual Rectangle GetFieldCharacterBounds(sal_Int32 _nRow,sal_Int32 _nColumnPos,sal_Int32 nIndex) SAL_OVERRIDE;
-        virtual sal_Int32 GetFieldIndexAtPoint(sal_Int32 _nRow,sal_Int32 _nColumnPos,const Point& _rPoint) SAL_OVERRIDE;
+        virtual Rectangle GetFieldCharacterBounds(sal_Int32 _nRow,sal_Int32 _nColumnPos,sal_Int32 nIndex) override;
+        virtual sal_Int32 GetFieldIndexAtPoint(sal_Int32 _nRow,sal_Int32 _nColumnPos,const Point& _rPoint) override;
 
-        ::com::sun::star::uno::Reference<
-            ::com::sun::star::accessibility::XAccessible > CreateAccessibleCheckBoxCell(long _nRow, sal_uInt16 _nColumnPos,const TriState& eState);
+        css::uno::Reference< css::accessibility::XAccessible > CreateAccessibleCheckBoxCell(long _nRow, sal_uInt16 _nColumnPos,const TriState& eState);
     protected:
         // creates the accessible which wraps the active cell
         void    implCreateActiveAccessible( );
 
     private:
         virtual void PaintField(OutputDevice& rDev, const Rectangle& rRect,
-                                sal_uInt16 nColumnId ) const SAL_OVERRIDE;
+                                sal_uInt16 nColumnId ) const override;
         using Control::ImplInitSettings;
         SVT_DLLPRIVATE void ImplInitSettings( bool bFont, bool bForeground, bool bBackground );
         SVT_DLLPRIVATE void DetermineFocus( const GetFocusFlags _nGetFocusFlags = GetFocusFlags::NONE);
@@ -666,10 +669,10 @@ namespace svt
         SVT_DLLPRIVATE void implActivateCellOnMouseEvent(const BrowserMouseEvent& _rEvt, bool _bUp);
         SVT_DLLPRIVATE void impl_construct();
 
-        DECL_DLLPRIVATE_LINK(ModifyHdl, void* );
-        DECL_DLLPRIVATE_LINK_TYPED(StartEditHdl, void*, void );
-        DECL_DLLPRIVATE_LINK_TYPED(EndEditHdl, void*, void );
-        DECL_DLLPRIVATE_LINK_TYPED(CellModifiedHdl, void*, void );
+        DECL_DLLPRIVATE_LINK_TYPED( ModifyHdl, LinkParamNone*, void );
+        DECL_DLLPRIVATE_LINK_TYPED( StartEditHdl, void*, void );
+        DECL_DLLPRIVATE_LINK_TYPED( EndEditHdl, void*, void );
+        DECL_DLLPRIVATE_LINK_TYPED( CellModifiedHdl, void*, void );
     };
 
 

@@ -54,8 +54,8 @@ namespace sdr
         class SVX_DLLPUBLIC OverlayObject : public sdr::animation::Event
         {
         private:
-            OverlayObject(const OverlayObject&) SAL_DELETED_FUNCTION;
-            OverlayObject& operator=(const OverlayObject&) SAL_DELETED_FUNCTION;
+            OverlayObject(const OverlayObject&) = delete;
+            OverlayObject& operator=(const OverlayObject&) = delete;
 
             // Manager is allowed access to private Member mpOverlayManager
             friend class                                    OverlayManager;
@@ -149,7 +149,7 @@ namespace sdr
 
             // execute event from base class sdr::animation::Event. Default
             // implementation does nothing and does not create a new event.
-            virtual void Trigger(sal_uInt32 nTime) SAL_OVERRIDE;
+            virtual void Trigger(sal_uInt32 nTime) override;
 
             // access to AllowsAnimation flag
             bool allowsAnimation() const { return mbAllowsAnimation; }

@@ -47,7 +47,7 @@ namespace sdr
         // ViewContact part
         sdr::contact::ViewContact*                      mpViewContact;
 
-        void operator=(const MasterPageDescriptor& rCandidate) SAL_DELETED_FUNCTION;
+        void operator=(const MasterPageDescriptor& rCandidate) = delete;
 
     protected:
         sdr::contact::ViewContact* CreateObjectSpecificViewContact();
@@ -62,7 +62,7 @@ namespace sdr
         // this method is called form the destructor of the referenced page.
         // do all necessary action to forget the page. It is not necessary to call
         // RemovePageUser(), that is done form the destructor.
-        virtual void PageInDestruction(const SdrPage& rPage) SAL_OVERRIDE;
+        virtual void PageInDestruction(const SdrPage& rPage) override;
 
         // member access to UsedPage
         SdrPage& GetUsedPage() const { return maUsedPage; }

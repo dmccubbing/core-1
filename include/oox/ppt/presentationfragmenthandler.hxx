@@ -39,8 +39,8 @@ class PresentationFragmentHandler : public ::oox::core::FragmentHandler2
 public:
     PresentationFragmentHandler( ::oox::core::XmlFilterBase& rFilter, const OUString& rFragmentPath ) throw();
     virtual ~PresentationFragmentHandler() throw();
-    virtual void finalizeImport() SAL_OVERRIDE;
-    virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) SAL_OVERRIDE;
+    virtual void finalizeImport() override;
+    virtual ::oox::core::ContextHandlerRef onCreateContext( sal_Int32 aElementToken, const AttributeList& rAttribs ) override;
 
 protected:
     bool importSlide( const ::oox::core::FragmentHandlerRef& rSlideFragmentHandler,
@@ -55,8 +55,8 @@ private:
     std::vector< OUString > maNotesMasterVector;
     ::oox::drawingml::TextListStylePtr mpTextListStyle;
 
-    ::com::sun::star::awt::Size maSlideSize;
-    ::com::sun::star::awt::Size maNotesSize;
+    css::awt::Size              maSlideSize;
+    css::awt::Size              maNotesSize;
 
     std::vector< CustomShow >   maCustomShowList;
 

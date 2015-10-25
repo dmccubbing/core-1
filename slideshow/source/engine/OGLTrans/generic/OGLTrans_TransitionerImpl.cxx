@@ -167,7 +167,7 @@ int oglErrorHandler( Display* /*dpy*/, XErrorEvent* /*evnt*/ )
 #endif
 
 /** This is the Transitioner class for OpenGL 3D transitions in
- * slideshow. At the moment, it's Linux only. This class is implicitly
+ * slideshow. This class is implicitly
  * constructed from XTransitionFactory.
 */
 class OGLTransitionerImpl : private cppu::BaseMutex, private boost::noncopyable, public OGLTransitionerImplBase
@@ -181,17 +181,17 @@ public:
 
     // XTransition
     virtual void SAL_CALL update( double nTime )
-    throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    throw (uno::RuntimeException, std::exception) override;
     virtual void SAL_CALL viewChanged( const Reference< presentation::XSlideShowView >& rView,
                        const Reference< rendering::XBitmap >& rLeavingBitmap,
                        const Reference< rendering::XBitmap >& rEnteringBitmap )
-    throw (uno::RuntimeException, std::exception) SAL_OVERRIDE;
+    throw (uno::RuntimeException, std::exception) override;
 
 protected:
     void disposeTextures();
 
     // WeakComponentImplHelperBase
-    virtual void SAL_CALL disposing() SAL_OVERRIDE;
+    virtual void SAL_CALL disposing() override;
 
     bool isDisposed() const
     {
@@ -611,25 +611,25 @@ namespace
         uno::Sequence< sal_Int8 >  maComponentTags;
         uno::Sequence< sal_Int32 > maBitCounts;
 
-        virtual ::sal_Int8 SAL_CALL getType(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual ::sal_Int8 SAL_CALL getType(  ) throw (uno::RuntimeException, std::exception) override
         {
             return rendering::ColorSpaceType::RGB;
         }
-        virtual uno::Sequence< ::sal_Int8 > SAL_CALL getComponentTags(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< ::sal_Int8 > SAL_CALL getComponentTags(  ) throw (uno::RuntimeException, std::exception) override
         {
             return maComponentTags;
         }
-        virtual ::sal_Int8 SAL_CALL getRenderingIntent(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual ::sal_Int8 SAL_CALL getRenderingIntent(  ) throw (uno::RuntimeException, std::exception) override
         {
             return rendering::RenderingIntent::PERCEPTUAL;
         }
-        virtual uno::Sequence< beans::PropertyValue > SAL_CALL getProperties(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< beans::PropertyValue > SAL_CALL getProperties(  ) throw (uno::RuntimeException, std::exception) override
         {
             return uno::Sequence< beans::PropertyValue >();
         }
         virtual uno::Sequence< double > SAL_CALL convertColorSpace( const uno::Sequence< double >& deviceColor,
                                                                     const uno::Reference< rendering::XColorSpace >& targetColorSpace ) throw (lang::IllegalArgumentException,
-                                                                                                                                                uno::RuntimeException, std::exception) SAL_OVERRIDE
+                                                                                                                                                uno::RuntimeException, std::exception) override
         {
             // TODO(P3): if we know anything about target
             // colorspace, this can be greatly sped up
@@ -637,7 +637,7 @@ namespace
                 convertToARGB(deviceColor));
             return targetColorSpace->convertFromARGB(aIntermediate);
         }
-        virtual uno::Sequence< rendering::RGBColor > SAL_CALL convertToRGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::RGBColor > SAL_CALL convertToRGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const double*  pIn( deviceColor.getConstArray() );
             const sal_Size nLen( deviceColor.getLength() );
@@ -654,7 +654,7 @@ namespace
             }
             return aRes;
         }
-        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertToARGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertToARGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const double*  pIn( deviceColor.getConstArray() );
             const sal_Size nLen( deviceColor.getLength() );
@@ -671,7 +671,7 @@ namespace
             }
             return aRes;
         }
-        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertToPARGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertToPARGB( const uno::Sequence< double >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const double*  pIn( deviceColor.getConstArray() );
             const sal_Size nLen( deviceColor.getLength() );
@@ -688,7 +688,7 @@ namespace
             }
             return aRes;
         }
-        virtual uno::Sequence< double > SAL_CALL convertFromRGB( const uno::Sequence< rendering::RGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< double > SAL_CALL convertFromRGB( const uno::Sequence< rendering::RGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::RGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size             nLen( rgbColor.getLength() );
@@ -705,7 +705,7 @@ namespace
             }
             return aRes;
         }
-        virtual uno::Sequence< double > SAL_CALL convertFromARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< double > SAL_CALL convertFromARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::ARGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size              nLen( rgbColor.getLength() );
@@ -722,7 +722,7 @@ namespace
             }
             return aRes;
         }
-        virtual uno::Sequence< double > SAL_CALL convertFromPARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< double > SAL_CALL convertFromPARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::ARGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size              nLen( rgbColor.getLength() );
@@ -741,21 +741,21 @@ namespace
         }
 
         // XIntegerBitmapColorSpace
-        virtual ::sal_Int32 SAL_CALL getBitsPerPixel(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual ::sal_Int32 SAL_CALL getBitsPerPixel(  ) throw (uno::RuntimeException, std::exception) override
         {
             return 32;
         }
-        virtual uno::Sequence< ::sal_Int32 > SAL_CALL getComponentBitCounts(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< ::sal_Int32 > SAL_CALL getComponentBitCounts(  ) throw (uno::RuntimeException, std::exception) override
         {
             return maBitCounts;
         }
-        virtual ::sal_Int8 SAL_CALL getEndianness(  ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual ::sal_Int8 SAL_CALL getEndianness(  ) throw (uno::RuntimeException, std::exception) override
         {
             return util::Endianness::LITTLE;
         }
         virtual uno::Sequence<double> SAL_CALL convertFromIntegerColorSpace( const uno::Sequence< ::sal_Int8 >& deviceColor,
                                                                                 const uno::Reference< rendering::XColorSpace >& targetColorSpace ) throw (lang::IllegalArgumentException,
-                                                                                                                                                        uno::RuntimeException, std::exception) SAL_OVERRIDE
+                                                                                                                                                        uno::RuntimeException, std::exception) override
         {
             if( dynamic_cast<OGLColorSpace*>(targetColorSpace.get()) )
             {
@@ -787,7 +787,7 @@ namespace
         }
         virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertToIntegerColorSpace( const uno::Sequence< ::sal_Int8 >& deviceColor,
                                                                                     const uno::Reference< rendering::XIntegerBitmapColorSpace >& targetColorSpace ) throw (lang::IllegalArgumentException,
-                                                                                                                                                                        uno::RuntimeException, std::exception) SAL_OVERRIDE
+                                                                                                                                                                        uno::RuntimeException, std::exception) override
         {
             if( dynamic_cast<OGLColorSpace*>(targetColorSpace.get()) )
             {
@@ -803,7 +803,7 @@ namespace
                 return targetColorSpace->convertIntegerFromARGB(aIntermediate);
             }
         }
-        virtual uno::Sequence< rendering::RGBColor > SAL_CALL convertIntegerToRGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::RGBColor > SAL_CALL convertIntegerToRGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const sal_Int8* pIn( deviceColor.getConstArray() );
             const sal_Size  nLen( deviceColor.getLength() );
@@ -824,7 +824,7 @@ namespace
             return aRes;
         }
 
-        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertIntegerToARGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertIntegerToARGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const sal_Int8* pIn( deviceColor.getConstArray() );
             const sal_Size  nLen( deviceColor.getLength() );
@@ -846,7 +846,7 @@ namespace
             return aRes;
         }
 
-        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertIntegerToPARGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< rendering::ARGBColor > SAL_CALL convertIntegerToPARGB( const uno::Sequence< ::sal_Int8 >& deviceColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const sal_Int8* pIn( deviceColor.getConstArray() );
             const sal_Size  nLen( deviceColor.getLength() );
@@ -869,7 +869,7 @@ namespace
             return aRes;
         }
 
-        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromRGB( const uno::Sequence< rendering::RGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromRGB( const uno::Sequence< rendering::RGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::RGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size             nLen( rgbColor.getLength() );
@@ -887,7 +887,7 @@ namespace
             return aRes;
         }
 
-        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::ARGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size              nLen( rgbColor.getLength() );
@@ -905,7 +905,7 @@ namespace
             return aRes;
         }
 
-        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromPARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) SAL_OVERRIDE
+        virtual uno::Sequence< ::sal_Int8 > SAL_CALL convertIntegerFromPARGB( const uno::Sequence< rendering::ARGBColor >& rgbColor ) throw (lang::IllegalArgumentException, uno::RuntimeException, std::exception) override
         {
             const rendering::ARGBColor* pIn( rgbColor.getConstArray() );
             const sal_Size              nLen( rgbColor.getLength() );
@@ -1415,25 +1415,32 @@ public:
     {}
 
     // XTransitionFactory
-    virtual sal_Bool SAL_CALL hasTransition( ::sal_Int16 transitionType, ::sal_Int16 transitionSubType ) throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+    virtual sal_Bool SAL_CALL hasTransition( ::sal_Int16 transitionType, ::sal_Int16 transitionSubType ) throw (uno::RuntimeException, std::exception) override
     {
+        // A set of css::animation::TransitionSubType that don't have any meaning (in the SMIL 2.0
+        // standard) for MISCSHAPEWIPE have been chosen to refer to some of these "fancy" optional
+        // transitions. (The only subtypes of 'miscShapeWipe' defined in the standard are 'heart'
+        // and 'keyhole'.) The set of subtypes used seems to be a bit random; it starts from the
+        // beginning of the list (in the order (numeric) in our TransitionSubType set of constants)
+        // but then jumps a bit randomly. The numeric values as such have no meaning, but still.
+
         if( transitionType == animations::TransitionType::MISCSHAPEWIPE ) {
             switch( transitionSubType )
             {
-                case animations::TransitionSubType::ACROSS:
-                case animations::TransitionSubType::CORNERSOUT:
-                case animations::TransitionSubType::CIRCLE:
-                case animations::TransitionSubType::FANOUTHORIZONTAL:
-                case animations::TransitionSubType::CORNERSIN:
-                case animations::TransitionSubType::LEFTTORIGHT:
-                case animations::TransitionSubType::TOPTOBOTTOM:
-                case animations::TransitionSubType::TOPRIGHT:
-                case animations::TransitionSubType::TOPLEFT:
-                case animations::TransitionSubType::BOTTOMRIGHT:
-                case animations::TransitionSubType::BOTTOMLEFT:
-                case animations::TransitionSubType::TOPCENTER:
-                case animations::TransitionSubType::RIGHTCENTER:
-                case animations::TransitionSubType::BOTTOMCENTER:
+                case animations::TransitionSubType::LEFTTORIGHT:        //   1
+                case animations::TransitionSubType::TOPTOBOTTOM:        //   2
+                case animations::TransitionSubType::TOPLEFT:            //   3
+                case animations::TransitionSubType::TOPRIGHT:           //   4
+                case animations::TransitionSubType::BOTTOMRIGHT:        //   5
+                case animations::TransitionSubType::BOTTOMLEFT:         //   6
+                case animations::TransitionSubType::TOPCENTER:          //   7
+                case animations::TransitionSubType::RIGHTCENTER:        //   8
+                case animations::TransitionSubType::BOTTOMCENTER:       //   9
+                case animations::TransitionSubType::CORNERSIN:          //  11
+                case animations::TransitionSubType::CORNERSOUT:         //  12
+                case animations::TransitionSubType::CIRCLE:             //  27
+                case animations::TransitionSubType::FANOUTHORIZONTAL:   //  55
+                case animations::TransitionSubType::ACROSS:             // 108
                     return sal_True;
 
                 default:
@@ -1457,7 +1464,7 @@ public:
         const uno::Reference< presentation::XSlideShowView >& view,
         const uno::Reference< rendering::XBitmap >&           leavingBitmap,
         const uno::Reference< rendering::XBitmap >&           enteringBitmap )
-    throw (uno::RuntimeException, std::exception) SAL_OVERRIDE
+    throw (uno::RuntimeException, std::exception) override
     {
         if( !hasTransition( transitionType, transitionSubType ) )
             return uno::Reference< presentation::XTransition >();
@@ -1471,32 +1478,17 @@ public:
         if( transitionType == animations::TransitionType::MISCSHAPEWIPE ) {
             switch( transitionSubType )
                 {
-                case animations::TransitionSubType::ACROSS:
-                    pTransition = makeNByMTileFlip(8,6);
-                    break;
-                case animations::TransitionSubType::CORNERSOUT:
-                    pTransition = makeOutsideCubeFaceToLeft();
-                    break;
-                case animations::TransitionSubType::CIRCLE:
-                    pTransition = makeRevolvingCircles(8,128);
-                    break;
-                case animations::TransitionSubType::FANOUTHORIZONTAL:
-                    pTransition = makeHelix(20);
-                    break;
-                case animations::TransitionSubType::CORNERSIN:
-                    pTransition = makeInsideCubeFaceToLeft();
-                    break;
                 case animations::TransitionSubType::LEFTTORIGHT:
                     pTransition = makeFallLeaving();
                     break;
                 case animations::TransitionSubType::TOPTOBOTTOM:
                     pTransition = makeTurnAround();
                     break;
-                case animations::TransitionSubType::TOPRIGHT:
-                    pTransition = makeTurnDown();
-                    break;
                 case animations::TransitionSubType::TOPLEFT:
                     pTransition = makeIris();
+                    break;
+                case animations::TransitionSubType::TOPRIGHT:
+                    pTransition = makeTurnDown();
                     break;
                 case animations::TransitionSubType::BOTTOMRIGHT:
                     pTransition = makeRochade();
@@ -1512,6 +1504,21 @@ public:
                     break;
                 case animations::TransitionSubType::BOTTOMCENTER:
                     pTransition = makeDissolve();
+                    break;
+                case animations::TransitionSubType::CORNERSIN:
+                    pTransition = makeInsideCubeFaceToLeft();
+                    break;
+                case animations::TransitionSubType::CORNERSOUT:
+                    pTransition = makeOutsideCubeFaceToLeft();
+                    break;
+                case animations::TransitionSubType::CIRCLE:
+                    pTransition = makeRevolvingCircles(8,128);
+                    break;
+                case animations::TransitionSubType::FANOUTHORIZONTAL:
+                    pTransition = makeHelix(20);
+                    break;
+                case animations::TransitionSubType::ACROSS:
+                    pTransition = makeNByMTileFlip(8,6);
                     break;
                 }
         } else if( transitionType == animations::TransitionType::FADE && transitionSubType == animations::TransitionSubType::CROSSFADE ) {

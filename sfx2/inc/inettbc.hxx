@@ -35,7 +35,7 @@ private:
     void                    OpenURL( const OUString& rName, bool bNew ) const;
 
     DECL_LINK_TYPED(        OpenHdl, SvtURLBox*, void );
-    DECL_LINK(              SelectHdl, void* );
+    DECL_LINK_TYPED(        SelectHdl, ComboBox&, void );
 
     struct ExecuteInfo
     {
@@ -53,8 +53,8 @@ public:
                             SfxURLToolBoxControl_Impl( sal_uInt16 nSlotId, sal_uInt16 nId, ToolBox& rBox );
     virtual                 ~SfxURLToolBoxControl_Impl();
 
-    virtual VclPtr<vcl::Window> CreateItemWindow( vcl::Window* pParent ) SAL_OVERRIDE;
-    virtual void            StateChanged( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState ) SAL_OVERRIDE;
+    virtual VclPtr<vcl::Window> CreateItemWindow( vcl::Window* pParent ) override;
+    virtual void            StateChanged( sal_uInt16 nSID, SfxItemState eState, const SfxPoolItem* pState ) override;
 };
 
 #endif

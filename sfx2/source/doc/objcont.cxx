@@ -396,7 +396,7 @@ void SfxObjectShell::UpdateFromTemplate_Impl(  )
     if ( !pFile->GetFilter() || !pFile->GetFilter()->IsOwnFormat() )
         return;
 
-    SFX_ITEMSET_ARG( pFile->GetItemSet(), pUpdateDocItem, SfxUInt16Item, SID_UPDATEDOCMODE, false);
+    const SfxUInt16Item* pUpdateDocItem = SfxItemSet::GetItem<SfxUInt16Item>(pFile->GetItemSet(), SID_UPDATEDOCMODE, false);
     sal_Int16 bCanUpdateFromTemplate = pUpdateDocItem ? pUpdateDocItem->GetValue() : document::UpdateDocMode::NO_UPDATE;
 
     // created from template?
@@ -490,7 +490,7 @@ void SfxObjectShell::UpdateFromTemplate_Impl(  )
                 // styles should be updated, create document in organizer mode to read in the styles
                 //TODO: testen!
                 SfxObjectShellLock xTemplDoc = CreateObjectByFactoryName( GetFactory().GetFactoryName(), SfxObjectCreateMode::ORGANIZER );
-                xTemplDoc->DoInitNew(0);
+                xTemplDoc->DoInitNew();
 
                 // TODO/MBA: do we need a BaseURL? Then LoadFrom must be extended!
                 //xTemplDoc->SetBaseURL( aFoundName );

@@ -94,10 +94,10 @@ class AnnotationDragMove : public SdrDragMove
 {
 public:
     AnnotationDragMove(SdrDragView& rNewView, const rtl::Reference <AnnotationTag >& xTag);
-    virtual bool BeginSdrDrag() SAL_OVERRIDE;
-    virtual bool EndSdrDrag(bool bCopy) SAL_OVERRIDE;
-    virtual void MoveSdrDrag(const Point& rNoSnapPnt) SAL_OVERRIDE;
-    virtual void CancelSdrDrag() SAL_OVERRIDE;
+    virtual bool BeginSdrDrag() override;
+    virtual bool EndSdrDrag(bool bCopy) override;
+    virtual void MoveSdrDrag(const Point& rNoSnapPnt) override;
+    virtual void CancelSdrDrag() override;
 
 private:
     rtl::Reference <AnnotationTag > mxTag;
@@ -156,9 +156,9 @@ class AnnotationHdl : public SmartHdl
 public:
     AnnotationHdl( const SmartTagReference& xTag, const Reference< XAnnotation >& xAnnotation, const Point& rPnt );
     virtual ~AnnotationHdl();
-    virtual void CreateB2dIAObject() SAL_OVERRIDE;
-    virtual bool IsFocusHdl() const SAL_OVERRIDE;
-    virtual bool isMarkable() const SAL_OVERRIDE;
+    virtual void CreateB2dIAObject() override;
+    virtual bool IsFocusHdl() const override;
+    virtual bool isMarkable() const override;
 
 private:
     Reference< XAnnotation > mxAnnotation;
@@ -566,9 +566,9 @@ void AnnotationTag::OpenPopup( bool bEdit )
 
     if( !mpAnnotationWindow.get() )
     {
-           vcl::Window* pWindow = dynamic_cast< vcl::Window* >( getView().GetFirstOutputDevice() );
-           if( pWindow )
-           {
+        vcl::Window* pWindow = dynamic_cast< vcl::Window* >( getView().GetFirstOutputDevice() );
+        if( pWindow )
+        {
             RealPoint2D aPosition( mxAnnotation->getPosition() );
             Point aPos( pWindow->OutputToScreenPixel( pWindow->LogicToPixel( Point( static_cast<long>(aPosition.X * 100.0), static_cast<long>(aPosition.Y * 100.0) ) ) ) );
 
@@ -604,7 +604,7 @@ void AnnotationTag::ClosePopup()
     {
         mpAnnotationWindow->RemoveEventListener( LINK(this, AnnotationTag, WindowEventHandler));
         mpAnnotationWindow->Deactivate();
-        mpAnnotationWindow.reset();
+        mpAnnotationWindow.disposeAndClear();
     }
 }
 

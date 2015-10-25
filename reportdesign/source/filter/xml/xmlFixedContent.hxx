@@ -38,10 +38,10 @@ namespace rptxml
     protected:
         virtual SvXMLImportContext* _CreateChildContext( sal_uInt16 nPrefix,
                     const OUString& rLocalName,
-                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) SAL_OVERRIDE;
+                    const ::com::sun::star::uno::Reference< ::com::sun::star::xml::sax::XAttributeList > & xAttrList ) override;
     private:
-        OXMLFixedContent(const OXMLFixedContent&) SAL_DELETED_FUNCTION;
-        OXMLFixedContent& operator =(const OXMLFixedContent&) SAL_DELETED_FUNCTION;
+        OXMLFixedContent(const OXMLFixedContent&) = delete;
+        OXMLFixedContent& operator =(const OXMLFixedContent&) = delete;
     public:
 
         OXMLFixedContent( ORptFilter& rImport, sal_uInt16 nPrfx,
@@ -53,9 +53,9 @@ namespace rptxml
 
         // This method is called for all characters that are contained in the
         // current element. The default is to ignore them.
-        virtual void Characters( const OUString& rChars ) SAL_OVERRIDE;
+        virtual void Characters( const OUString& rChars ) override;
 
-        virtual void EndElement() SAL_OVERRIDE;
+        virtual void EndElement() override;
     };
 
 } // namespace rptxml

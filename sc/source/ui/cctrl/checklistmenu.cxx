@@ -1215,7 +1215,7 @@ IMPL_LINK_NOARG_TYPED(ScCheckListMenuWindow, TriStateHdl, Button*, void)
     mePrevToggleAllState = maChkToggleAll->GetState();
 }
 
-IMPL_LINK_NOARG(ScCheckListMenuWindow, EdModifyHdl)
+IMPL_LINK_NOARG_TYPED(ScCheckListMenuWindow, EdModifyHdl, Edit&, void)
 {
     OUString aSearchText = maEdSearch->GetText();
     aSearchText = aSearchText.toAsciiLowerCase();
@@ -1241,7 +1241,7 @@ IMPL_LINK_NOARG(ScCheckListMenuWindow, EdModifyHdl)
 
         if ( aLabelDisp.toAsciiLowerCase().indexOf( aSearchText ) != -1 )
         {
-            maChecks->ShowCheckEntry( aLabelDisp, maMembers[i].mpParent, true );
+            maChecks->ShowCheckEntry( aLabelDisp, maMembers[i].mpParent );
             ++nSelCount;
         }
         else
@@ -1255,7 +1255,8 @@ IMPL_LINK_NOARG(ScCheckListMenuWindow, EdModifyHdl)
     else
         maChkToggleAll->SetState( TRISTATE_INDET );
 
-    return 0;
+    if ( !maConfig.mbAllowEmptySet )
+        maBtnOk->Enable( nSelCount != 0);
 }
 
 IMPL_LINK_TYPED( ScCheckListMenuWindow, CheckHdl, SvTreeListBox*, pChecks, void )
@@ -1424,7 +1425,7 @@ void ScCheckListMenuWindow::addDateMember(const OUString& rsName, double nVal, b
     SvTreeListEntry* pDayEntry = maChecks->FindEntry(pMonthEntry, aDayName);
     if (!pDayEntry)
     {
-        maChecks->InsertEntry(aDayName, pMonthEntry, false);
+        maChecks->InsertEntry(aDayName, pMonthEntry);
         Member aMemDay;
         aMemDay.maName = aDayName;
         aMemDay.maRealName = rsName;
@@ -1550,8 +1551,7 @@ void ScCheckListBox::ShowCheckEntry( const OUString& sName, SvTreeListEntry* pPa
         if ( !pEntry )
         {
             pEntry = InsertEntry(
-                sName, nullptr, false, TREELIST_APPEND, nullptr,
-                SvLBoxButtonKind_enabledCheckbox);
+                sName);
 
             SetCheckButtonState(
                 pEntry, bCheck ? SV_BUTTON_CHECKED : SV_BUTTON_UNCHECKED);
@@ -1643,8 +1643,7 @@ void ScCheckListMenuWindow::initMembers()
             if (aLabel.isEmpty())
                 aLabel = ScGlobal::GetRscString(STR_EMPTYDATA);
             SvTreeListEntry* pEntry = maChecks->InsertEntry(
-                aLabel, nullptr, false, TREELIST_APPEND, nullptr,
-                SvLBoxButtonKind_enabledCheckbox);
+                aLabel);
 
             maChecks->SetCheckButtonState(
                 pEntry, maMembers[i].mbVisible ? SV_BUTTON_CHECKED : SV_BUTTON_UNCHECKED);

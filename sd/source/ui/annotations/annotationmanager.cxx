@@ -152,7 +152,7 @@ OUString getAnnotationDateTimeString( const Reference< XAnnotation >& xAnnotatio
         com::sun::star::util::DateTime aDateTime( xAnnotation->getDateTime() );
 
         Date aSysDate( Date::SYSTEM );
-        Date aDate = Date( aDateTime.Day, aDateTime.Month, aDateTime.Year );
+        Date aDate( aDateTime.Day, aDateTime.Month, aDateTime.Year );
         if (aDate==aSysDate)
             sRet = SdResId(STR_ANNOTATION_TODAY);
         else if (aDate == Date(aSysDate-1))
@@ -1140,7 +1140,9 @@ SdPage* AnnotationManagerImpl::GetLastPage()
 
 SdPage* AnnotationManagerImpl::GetCurrentPage()
 {
-    return mrBase.GetMainViewShell()->getCurrentPage();
+    if (mrBase.GetMainViewShell().get())
+        return mrBase.GetMainViewShell()->getCurrentPage();
+    return nullptr;
 }
 
 AnnotationManager::AnnotationManager( ViewShellBase& rViewShellBase )

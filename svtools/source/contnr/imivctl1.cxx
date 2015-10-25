@@ -78,9 +78,9 @@ public:
                         const Link<LinkParamNone*,void>& rNotifyEditEnd );
 
     virtual         ~IcnViewEdit_Impl();
-    virtual void    dispose() SAL_OVERRIDE;
-    virtual void    KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
-    virtual bool    PreNotify( NotifyEvent& rNEvt ) SAL_OVERRIDE;
+    virtual void    dispose() override;
+    virtual void    KeyInput( const KeyEvent& rKEvt ) override;
+    virtual bool    PreNotify( NotifyEvent& rNEvt ) override;
     bool            EditingCanceled() const { return bCanceled; }
     void            StopEditing( bool bCancel = false );
     bool            IsGrabFocus() const { return bGrabFocus; }
@@ -1163,7 +1163,7 @@ bool SvxIconChoiceCtrl_Impl::KeyInput( const KeyEvent& rKEvt )
         case KEY_DIVIDE :
         case KEY_A:
             if( bMod1 && (eSelectionMode != SINGLE_SELECTION))
-                SelectAll( true );
+                SelectAll();
             else
                 bKeyUsed = false;
             break;
@@ -1743,7 +1743,7 @@ void SvxIconChoiceCtrl_Impl::SetEntryPos( SvxIconChoiceCtrlEntry* pEntry, const 
                 // output size. The virtual size has to be adapted, because
                 // AdjustEntryAtGrid depends on it.
                 const Rectangle& rBoundRect = GetEntryBoundRect( pEntry );
-                Rectangle aCenterRect( CalcBmpRect( pEntry, 0 ));
+                Rectangle aCenterRect( CalcBmpRect( pEntry ));
                 Point aNewPos( AdjustAtGrid( aCenterRect, rBoundRect ) );
                 Rectangle aNewBoundRect( aNewPos, pEntry->aRect.GetSize());
                 AdjustVirtSize( aNewBoundRect );
@@ -2058,7 +2058,7 @@ void SvxIconChoiceCtrl_Impl::SetCursor( SvxIconChoiceCtrlEntry* pEntry, bool bSy
     {
         if( pCursor && eSelectionMode == SINGLE_SELECTION && bSyncSingleSelection &&
                 !pCursor->IsSelected() )
-            SelectEntry( pCursor, true, true );
+            SelectEntry( pCursor, true );
         return;
     }
     ShowCursor( false );
@@ -2068,14 +2068,14 @@ void SvxIconChoiceCtrl_Impl::SetCursor( SvxIconChoiceCtrlEntry* pEntry, bool bSy
     {
         pOldCursor->ClearFlags( SvxIconViewFlags::FOCUSED );
         if( eSelectionMode == SINGLE_SELECTION && bSyncSingleSelection )
-            SelectEntry( pOldCursor, false, true ); // deselect old cursor
+            SelectEntry( pOldCursor, false ); // deselect old cursor
     }
     if( pCursor )
     {
         ToTop( pCursor );
         pCursor->SetFlags( SvxIconViewFlags::FOCUSED );
         if( eSelectionMode == SINGLE_SELECTION && bSyncSingleSelection )
-            SelectEntry( pCursor, true, true );
+            SelectEntry( pCursor, true );
         if( !bShowFocusAsync )
             ShowCursor( true );
         else
@@ -2817,7 +2817,7 @@ void SvxIconChoiceCtrl_Impl::AdjustAtGrid( const SvxIconChoiceCtrlEntryPtrVec& r
         // Decisive (for our eye) is the bitmap, else, the entry might jump too
         // much within long texts.
         const Rectangle& rBoundRect = GetEntryBoundRect( pCur );
-        Rectangle aCenterRect( CalcBmpRect( pCur, 0 ));
+        Rectangle aCenterRect( CalcBmpRect( pCur ));
         if( bGo && !pCur->IsPosLocked() )
         {
             long nWidth = aCenterRect.GetSize().Width();
@@ -3353,7 +3353,7 @@ void SvxIconChoiceCtrl_Impl::SetPositionMode( SvxIconChoiceCtrlPositionMode eMod
     }
     else if( ePositionMode == IcnViewPositionModeAutoAdjust )
     {
-        AdjustEntryAtGrid( 0 );
+        AdjustEntryAtGrid();
     }
 }
 

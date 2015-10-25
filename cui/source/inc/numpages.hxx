@@ -49,7 +49,7 @@ class SvxNumberingPreview : public vcl::Window
     sal_uInt16              nActLevel;
 
     protected:
-        virtual void        Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) SAL_OVERRIDE;
+        virtual void        Paint( vcl::RenderContext& rRenderContext, const Rectangle& rRect ) override;
 
     public:
         SvxNumberingPreview(vcl::Window* pParent, WinBits nWinBits = WB_BORDER);
@@ -104,15 +104,15 @@ public:
         SvxSingleNumPickTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
     virtual ~SvxSingleNumPickTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 
@@ -139,18 +139,18 @@ public:
         SvxBulletPickTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
     virtual ~SvxBulletPickTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     void                SetCharFormatName(const OUString& rName){sBulletCharFormatName = rName;}
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 #define NUM_VALUSET_COUNT 16
@@ -183,20 +183,20 @@ public:
     SvxNumPickTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
     virtual ~SvxNumPickTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     void                SetCharFormatNames(const OUString& rCharName, const OUString& rBulName)
                             {   sNumCharFmtName = rCharName;
                                 sBulletCharFormatName = rBulName;}
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 
@@ -231,15 +231,15 @@ public:
         SvxBitmapPickTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
         virtual ~SvxBitmapPickTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 };
 
 
@@ -320,35 +320,37 @@ class SvxNumOptionsTabPage : public SfxTabPage
     void                SwitchNumberType( sal_uInt8 nType, bool bBmp = false );
     void                CheckForStartValue_Impl(sal_uInt16 nNumberingType);
 
-        DECL_LINK( NumberTypeSelectHdl_Impl, ListBox * );
-        DECL_LINK( LevelHdl_Impl, ListBox * );
+        DECL_LINK_TYPED( NumberTypeSelectHdl_Impl, ListBox&, void );
+        DECL_LINK_TYPED( LevelHdl_Impl, ListBox&, void );
         DECL_LINK_TYPED( PopupActivateHdl_Impl, Menu *, bool);
         DECL_LINK_TYPED( GraphicHdl_Impl, MenuButton *, void );
         DECL_LINK_TYPED( BulletHdl_Impl, Button*, void);
-        DECL_LINK( SizeHdl_Impl, MetricField * );
+        DECL_LINK_TYPED( SizeHdl_Impl, Edit&, void );
         DECL_LINK_TYPED( RatioHdl_Impl, Button*, void );
-        DECL_LINK( CharFmtHdl_Impl, void *);
-        DECL_LINK( EditModifyHdl_Impl, Edit * );
-        DECL_LINK( AllLevelHdl_Impl, NumericField * );
-        DECL_LINK( OrientHdl_Impl, ListBox * );
+        DECL_LINK_TYPED( CharFmtHdl_Impl, ListBox&, void );
+        DECL_LINK_TYPED( EditModifyHdl_Impl, Edit&, void );
+        DECL_LINK_TYPED( EditListBoxHdl_Impl, ListBox&, void );
+        DECL_LINK_TYPED( AllLevelHdl_Impl, Edit&, void );
+        DECL_LINK_TYPED( OrientHdl_Impl, ListBox&, void );
         DECL_LINK_TYPED( SameLevelHdl_Impl, Button*, void );
-        DECL_LINK( BulColorHdl_Impl, ColorListBox* );
-        DECL_LINK( BulRelSizeHdl_Impl, MetricField *);
+        DECL_LINK_TYPED( BulColorHdl_Impl, ListBox&, void );
+        DECL_LINK_TYPED( BulRelSizeHdl_Impl, Edit&, void);
         DECL_LINK_TYPED( PreviewInvalidateHdl_Impl, Timer *, void);
+        void EditModifyHdl_Impl(Edit*);
 
 public:
         SvxNumOptionsTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
         virtual ~SvxNumOptionsTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     void                SetCharFmts(const OUString& rNumName, const OUString& rBulletName)
                         {
@@ -359,7 +361,7 @@ public:
 
     ListBox&            GetCharFmtListBox() {return *m_pCharFmtLB;}
     void                SetModified(bool bRepaint = true);
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 
     /** Get the numberings provided by the i18n framework (CTL, Asian, ...) and
         add them to the listbox. Extended numbering schemes present in the
@@ -426,9 +428,9 @@ class SvxNumPositionTabPage : public SfxTabPage
 
     void                InitControls();
 
-    DECL_LINK( LevelHdl_Impl, ListBox * );
-    DECL_LINK( EditModifyHdl_Impl, void *);
-    DECL_LINK( DistanceHdl_Impl, MetricField * );
+    DECL_LINK_TYPED( LevelHdl_Impl, ListBox&, void );
+    DECL_LINK_TYPED( EditModifyHdl_Impl, ListBox&, void);
+    DECL_LINK_TYPED( DistanceHdl_Impl, SpinField&, void );
     DECL_LINK_TYPED( DistanceFocusHdl_Impl, Control&, void );
     DECL_LINK_TYPED( RelativeHdl_Impl, Button*, void );
     DECL_LINK_TYPED( StandardHdl_Impl, Button*, void);
@@ -436,28 +438,28 @@ class SvxNumPositionTabPage : public SfxTabPage
     void InitPosAndSpaceMode();
     void ShowControlsDependingOnPosAndSpaceMode();
 
-    DECL_LINK(LabelFollowedByHdl_Impl, void *);
-    DECL_LINK( ListtabPosHdl_Impl, MetricField* );
-    DECL_LINK( AlignAtHdl_Impl, MetricField* );
-    DECL_LINK( IndentAtHdl_Impl, MetricField* );
+    DECL_LINK_TYPED(LabelFollowedByHdl_Impl, ListBox&, void);
+    DECL_LINK_TYPED( ListtabPosHdl_Impl, SpinField&, void );
+    DECL_LINK_TYPED( AlignAtHdl_Impl, SpinField&, void );
+    DECL_LINK_TYPED( IndentAtHdl_Impl, SpinField&, void );
 
 public:
         SvxNumPositionTabPage(vcl::Window* pParent,
                                const SfxItemSet& rSet);
         virtual ~SvxNumPositionTabPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual void        ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
-    virtual bool        FillItemSet( SfxItemSet* rSet ) SAL_OVERRIDE;
-    virtual void        Reset( const SfxItemSet* rSet ) SAL_OVERRIDE;
+    virtual void        ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg       DeactivatePage(SfxItemSet *pSet) override;
+    virtual bool        FillItemSet( SfxItemSet* rSet ) override;
+    virtual void        Reset( const SfxItemSet* rSet ) override;
 
     static VclPtr<SfxTabPage>  Create( vcl::Window* pParent,
                                 const SfxItemSet* rAttrSet);
 
     void                SetMetric(FieldUnit eSet);
     void                SetModified(bool bRepaint = true);
-    virtual void        PageCreated(const SfxAllItemSet& aSet) SAL_OVERRIDE;
+    virtual void        PageCreated(const SfxAllItemSet& aSet) override;
 };
 
 #endif

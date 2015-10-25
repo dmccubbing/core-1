@@ -98,9 +98,9 @@ public:
     SfxLinkItem( sal_uInt16 nWhichId, const Link<SfxPoolItem*, void>& rValue ) : SfxPoolItem( nWhichId )
     {   aLink = rValue; }
 
-    virtual SfxPoolItem*     Clone( SfxItemPool* = 0 ) const SAL_OVERRIDE
+    virtual SfxPoolItem*     Clone( SfxItemPool* = 0 ) const override
     {   return new SfxLinkItem( *this ); }
-    virtual bool             operator==( const SfxPoolItem& rL) const SAL_OVERRIDE
+    virtual bool             operator==( const SfxPoolItem& rL) const override
     {   return static_cast<const SfxLinkItem&>(rL).aLink == aLink; }
     const Link<SfxPoolItem*, void>&
                              GetValue() const { return aLink; }
@@ -175,15 +175,15 @@ public:
     static ErrCode              CallAppBasic( const OUString& i_macroName, SbxArray* i_args = NULL, SbxValue* i_ret = NULL )
                                 { return CallBasic( i_macroName, SfxApplication::GetBasicManager(), i_args, i_ret ); }
     static BasicManager*        GetBasicManager();
-    com::sun::star::script::XLibraryContainer * GetDialogContainer();
-    com::sun::star::script::XLibraryContainer * GetBasicContainer();
+    css::script::XLibraryContainer * GetDialogContainer();
+    css::script::XLibraryContainer * GetBasicContainer();
     static StarBASIC*           GetBasic();
     sal_uInt16                  SaveBasicAndDialogContainer() const;
 
     // misc.
     bool                        GetOptions(SfxItemSet &);
     void                        SetOptions(const SfxItemSet &);
-    virtual void                Invalidate(sal_uInt16 nId = 0) SAL_OVERRIDE;
+    virtual void                Invalidate(sal_uInt16 nId = 0) override;
     void                        NotifyEvent(const SfxEventHint& rEvent, bool bSynchron = true );
     bool                        IsDowning() const;
     void                        ResetLastDir();

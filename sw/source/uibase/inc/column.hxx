@@ -60,13 +60,14 @@ class SwColumnDlg : public SfxModalDialog
     bool                bSelSectionChanged : 1;
     bool                bFrameChanged : 1;
 
-    DECL_LINK(ObjectHdl, ListBox*);
+    DECL_LINK_TYPED(ObjectListBoxHdl, ListBox&, void);
     DECL_LINK_TYPED(OkHdl, Button*, void);
+    void ObjectHdl(ListBox*);
 
 public:
     SwColumnDlg(vcl::Window* pParent, SwWrtShell& rSh);
     virtual ~SwColumnDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 };
 
 class ColumnValueSet : public ValueSet
@@ -80,8 +81,8 @@ public:
         : ValueSet(pParent, WB_TABSTOP | WB_ITEMBORDER | WB_DOUBLEBORDER)
     {
     }
-    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) SAL_OVERRIDE;
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void    UserDraw( const UserDrawEvent& rUDEvt ) override;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 };
 
 // column dialog now as TabPage
@@ -138,15 +139,17 @@ class SwColumnPage : public SfxTabPage
     bool            bLockUpdate;
 
     // Handler
-    DECL_LINK( ColModify, NumericField * );
-    DECL_LINK( GapModify, MetricField * );
-    DECL_LINK( EdModify, MetricField * );
+    DECL_LINK_TYPED( ColModify, Edit&, void );
+    void ColModify(NumericField*);
+    DECL_LINK_TYPED( GapModify, Edit&, void );
+    DECL_LINK_TYPED( EdModify, Edit&, void );
     DECL_LINK_TYPED( AutoWidthHdl, Button *, void );
     DECL_LINK_TYPED( SetDefaultsHdl, ValueSet *, void );
 
-    DECL_LINK_TYPED(Up, Button *, void);
-    DECL_LINK_TYPED(Down, Button *, void);
-    DECL_LINK( UpdateColMgr, void* );
+    DECL_LINK_TYPED( Up, Button *, void );
+    DECL_LINK_TYPED( Down, Button *, void );
+    DECL_LINK_TYPED( UpdateColMgr, Edit&, void );
+    DECL_LINK_TYPED( UpdateColMgrListBox, ListBox&, void );
     void Timeout();
 
     void            Update(MetricField *pInteractiveField);
@@ -158,8 +161,8 @@ class SwColumnPage : public SfxTabPage
     using SfxTabPage::ActivatePage;
     using SfxTabPage::DeactivatePage;
 
-    virtual void    ActivatePage(const SfxItemSet& rSet) SAL_OVERRIDE;
-    virtual sfxpg   DeactivatePage(SfxItemSet *pSet) SAL_OVERRIDE;
+    virtual void    ActivatePage(const SfxItemSet& rSet) override;
+    virtual sfxpg   DeactivatePage(SfxItemSet *pSet) override;
 
     void connectPercentField(PercentField &rWrap, const OString &rName);
 
@@ -170,13 +173,13 @@ class SwColumnPage : public SfxTabPage
 public:
     SwColumnPage(vcl::Window *pParent, const SfxItemSet &rSet);
     virtual ~SwColumnPage();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     static VclPtr<SfxTabPage> Create(vcl::Window *pParent, const SfxItemSet *rSet);
     static const sal_uInt16* GetRanges() { return aPageRg; }
 
-    virtual bool    FillItemSet(SfxItemSet *rSet) SAL_OVERRIDE;
-    virtual void    Reset(const SfxItemSet *rSet) SAL_OVERRIDE;
+    virtual bool    FillItemSet(SfxItemSet *rSet) override;
+    virtual void    Reset(const SfxItemSet *rSet) override;
 
     void SetFrmMode(bool bMod);
     void SetPageWidth(long nPageWidth);

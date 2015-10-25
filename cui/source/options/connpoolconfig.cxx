@@ -141,7 +141,7 @@ namespace offapp
     {
         // the config node where all pooling relevant info are stored under
         OConfigurationTreeRoot aConnectionPoolRoot = OConfigurationTreeRoot::createWithComponentContext(
-            ::comphelper::getProcessComponentContext(), getConnectionPoolNodeName(), -1, OConfigurationTreeRoot::CM_UPDATABLE);
+            ::comphelper::getProcessComponentContext(), getConnectionPoolNodeName());
 
         if (!aConnectionPoolRoot.isValid())
             // already asserted by the OConfigurationTreeRoot
@@ -150,7 +150,7 @@ namespace offapp
         bool bNeedCommit = false;
 
         // the global "enabled" flag
-        SFX_ITEMSET_GET( _rSourceItems, pEnabled, SfxBoolItem, SID_SB_POOLING_ENABLED, true );
+        const SfxBoolItem* pEnabled = _rSourceItems.GetItem<SfxBoolItem>(SID_SB_POOLING_ENABLED);
         if (pEnabled)
         {
             sal_Bool bEnabled = pEnabled->GetValue();
@@ -159,7 +159,7 @@ namespace offapp
         }
 
         // the settings for the single drivers
-        SFX_ITEMSET_GET( _rSourceItems, pDriverSettings, DriverPoolingSettingsItem, SID_SB_DRIVER_TIMEOUTS, true );
+        const DriverPoolingSettingsItem* pDriverSettings = _rSourceItems.GetItem<DriverPoolingSettingsItem>(SID_SB_DRIVER_TIMEOUTS);
         if (pDriverSettings)
         {
             OConfigurationNode aDriverSettings = aConnectionPoolRoot.openNode(getDriverSettingsNodeName());

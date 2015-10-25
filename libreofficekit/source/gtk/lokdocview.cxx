@@ -12,6 +12,7 @@
 #include <string.h>
 #include <vector>
 #include <string>
+#include <boost/property_tree/json_parser.hpp>
 
 #include <com/sun/star/awt/Key.hpp>
 #define LOK_USE_UNSTABLE_API
@@ -227,8 +228,6 @@ callbackTypeToString (int nType)
         return "LOK_CALLBACK_STATUS_INDICATOR_FINISH";
     case LOK_CALLBACK_SEARCH_NOT_FOUND:
         return "LOK_CALLBACK_SEARCH_NOT_FOUND";
-    case LOK_CALLBACK_SEARCH_RESULT_COUNT:
-        return "LOK_CALLBACK_SEARCH_RESULT_COUNT";
     case LOK_CALLBACK_DOCUMENT_SIZE_CHANGED:
         return "LOK_CALLBACK_DOCUMENT_SIZE_CHANGED";
     case LOK_CALLBACK_SET_PART:
@@ -267,6 +266,7 @@ signalKey (GtkWidget* pWidget, GdkEventKey* pEvent)
     LOKDocViewPrivate* priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     int nCharCode = 0;
     int nKeyCode = 0;
+    GError* error = NULL;
 
     if (!priv->m_bEdit)
     {
@@ -340,7 +340,12 @@ signalKey (GtkWidget* pWidget, GdkEventKey* pEvent)
         pLOEvent->m_nCharCode = nCharCode;
         pLOEvent->m_nKeyCode  = nKeyCode;
         g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
-        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+        if (error != NULL)
+        {
+            g_warning("Unable to call LOK_POST_KEY: %s", error->message);
+            g_clear_error(&error);
+        }
         g_object_unref(task);
     }
     else
@@ -351,7 +356,12 @@ signalKey (GtkWidget* pWidget, GdkEventKey* pEvent)
         pLOEvent->m_nCharCode = nCharCode;
         pLOEvent->m_nKeyCode  = nKeyCode;
         g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
-        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+        if (error != NULL)
+        {
+            g_warning("Unable to call LOK_POST_KEY: %s", error->message);
+            g_clear_error(&error);
+        }
         g_object_unref(task);
     }
 
@@ -661,12 +671,6 @@ callback (gpointer pData)
         searchNotFound(pDocView, pCallback->m_aPayload);
     }
     break;
-    case LOK_CALLBACK_SEARCH_RESULT_COUNT:
-    {
-        size_t nPos = pCallback->m_aPayload.find_first_of(";");
-        searchResultCount(pDocView, pCallback->m_aPayload.substr(0, nPos));
-    }
-    break;
     case LOK_CALLBACK_DOCUMENT_SIZE_CHANGED:
     {
         payloadToSize(pCallback->m_aPayload.c_str(), priv->m_nDocumentWidthTwips, priv->m_nDocumentHeightTwips);
@@ -684,6 +688,11 @@ callback (gpointer pData)
     break;
     case LOK_CALLBACK_SEARCH_RESULT_SELECTION:
     {
+        boost::property_tree::ptree aTree;
+        std::stringstream aStream(pCallback->m_aPayload);
+        boost::property_tree::read_json(aStream, aTree);
+        int nCount = aTree.get_child("searchResultSelection").size();
+        searchResultCount(pDocView, std::to_string(nCount));
     }
     break;
     default:
@@ -700,7 +709,7 @@ static void callbackWorker (int nType, const char* pPayload, void* pData)
     LOKDocView* pDocView = LOK_DOC_VIEW (pData);
 
     CallbackData* pCallback = new CallbackData(nType, pPayload ? pPayload : "(nil)", pDocView);
-    g_info("lok_doc_view_callbackWorker: %s, '%s'", callbackTypeToString(nType), pPayload);
+    g_info("callbackWorker: %s, '%s'", callbackTypeToString(nType), pPayload);
     gdk_threads_add_idle(callback, pCallback);
 }
 
@@ -952,6 +961,7 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
 {
     LOKDocView* pDocView = LOK_DOC_VIEW (pWidget);
     LOKDocViewPrivate *priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
+    GError* error = NULL;
 
     g_info("LOKDocView_Impl::signalButton: %d, %d (in twips: %d, %d)",
            (int)pEvent->x, (int)pEvent->y,
@@ -994,7 +1004,12 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
                 pLOEvent->m_nSetGraphicSelectionY = pixelToTwip(pEvent->y, priv->m_fZoom);
                 g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-                g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+                g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+                if (error != NULL)
+                {
+                    g_warning("Unable to call LOK_SET_GRAPHIC_SELECTION: %s", error->message);
+                    g_clear_error(&error);
+                }
                 g_object_unref(task);
 
                 return FALSE;
@@ -1013,7 +1028,12 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
             pLOEvent->m_nSetGraphicSelectionY = pixelToTwip(pEvent->y, priv->m_fZoom);
             g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-            g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+            g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+            if (error != NULL)
+            {
+                g_warning("Unable to call LOK_SET_GRAPHIC_SELECTION: %s", error->message);
+                g_clear_error(&error);
+            }
             g_object_unref(task);
 
             return FALSE;
@@ -1062,7 +1082,12 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
                     pLOEvent->m_nSetGraphicSelectionY = pixelToTwip(priv->m_aGraphicHandleRects[i].y + priv->m_aGraphicHandleRects[i].height / 2, priv->m_fZoom);
                     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-                    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+                    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+                    if (error != NULL)
+                    {
+                        g_warning("Unable to call LOK_SET_GRAPHIC_SELECTION: %s", error->message);
+                        g_clear_error(&error);
+                    }
                     g_object_unref(task);
 
                     return FALSE;
@@ -1104,7 +1129,12 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
         priv->m_nLastButtonPressed = pLOEvent->m_nPostMouseEventButton;
         g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+        if (error != NULL)
+        {
+            g_warning("Unable to call LOK_POST_MOUSE_EVENT: %s", error->message);
+            g_clear_error(&error);
+        }
         g_object_unref(task);
         break;
     }
@@ -1136,7 +1166,12 @@ lok_doc_view_signal_button(GtkWidget* pWidget, GdkEventButton* pEvent)
         priv->m_nLastButtonPressed = pLOEvent->m_nPostMouseEventButton;
         g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+        if (error != NULL)
+        {
+            g_warning("Unable to call LOK_POST_MOUSE_EVENT: %s", error->message);
+            g_clear_error(&error);
+        }
         g_object_unref(task);
         break;
     }
@@ -1170,6 +1205,7 @@ lok_doc_view_signal_motion (GtkWidget* pWidget, GdkEventMotion* pEvent)
     LOKDocView* pDocView = LOK_DOC_VIEW (pWidget);
     LOKDocViewPrivate *priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     GdkPoint aPoint;
+    GError* error = NULL;
 
     priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
     if (priv->m_bInDragMiddleHandle)
@@ -1224,7 +1260,12 @@ lok_doc_view_signal_motion (GtkWidget* pWidget, GdkEventMotion* pEvent)
         pLOEvent->m_nSetGraphicSelectionY = pixelToTwip(pEvent->y, priv->m_fZoom);
         g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+        g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+        if (error != NULL)
+        {
+            g_warning("Unable to call LOK_SET_GRAPHIC_SELECTION: %s", error->message);
+            g_clear_error(&error);
+        }
         g_object_unref(task);
 
         return FALSE;
@@ -1243,7 +1284,12 @@ lok_doc_view_signal_motion (GtkWidget* pWidget, GdkEventMotion* pEvent)
 
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_MOUSEEVENT_MOUSEMOVE: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 
     return FALSE;
@@ -1367,6 +1413,9 @@ postCommandInThread (gpointer data)
     LOKDocViewPrivate *priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
 
     priv->m_pDocument->pClass->setView(priv->m_pDocument, priv->m_nViewId);
+    std::stringstream ss;
+    ss << "lok::Document::postUnoCommand(" << pLOEvent->m_pCommand << ", " << pLOEvent->m_pArguments << ")";
+    g_info(ss.str().c_str());
     priv->m_pDocument->pClass->postUnoCommand(priv->m_pDocument, pLOEvent->m_pCommand, pLOEvent->m_pArguments);
 }
 
@@ -1637,8 +1686,9 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                               "LO Path",
                               "LibreOffice Install Path",
                               0,
-                              static_cast<GParamFlags>(G_PARAM_READWRITE
-                                                       | G_PARAM_CONSTRUCT_ONLY)));
+                              static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                       G_PARAM_CONSTRUCT_ONLY |
+                                                       G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:lopointer:
@@ -1649,10 +1699,11 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
     g_object_class_install_property (pGObjectClass,
           PROP_LO_POINTER,
           g_param_spec_pointer("lopointer",
-                              "LO Pointer",
-                              "A LibreOfficeKit* from lok_init()",
-                              static_cast<GParamFlags>(G_PARAM_READWRITE
-                                                       | G_PARAM_CONSTRUCT_ONLY)));
+                               "LO Pointer",
+                               "A LibreOfficeKit* from lok_init()",
+                               static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                        G_PARAM_CONSTRUCT_ONLY |
+                                                        G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:docpath:
@@ -1665,7 +1716,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                               "Document Path",
                               "The URI of the document to open",
                               0,
-                              static_cast<GParamFlags>(G_PARAM_READWRITE)));
+                              static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                       G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:docpointer:
@@ -1676,9 +1728,10 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
     g_object_class_install_property (pGObjectClass,
           PROP_DOC_POINTER,
           g_param_spec_pointer("docpointer",
-                              "Document Pointer",
-                              "A LibreOfficeKitDocument* from documentLoad()",
-                              static_cast<GParamFlags>(G_PARAM_READWRITE)));
+                               "Document Pointer",
+                               "A LibreOfficeKitDocument* from documentLoad()",
+                               static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                        G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:editable:
@@ -1691,7 +1744,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                                "Editable",
                                "Whether the content is in edit mode or not",
                                FALSE,
-                               static_cast<GParamFlags>(G_PARAM_READWRITE)));
+                               static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                        G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:load-progress:
@@ -1707,7 +1761,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                               "Estimated Load Progress",
                               "Shows the progress of the document load operation",
                               0.0, 1.0, 0.0,
-                              G_PARAM_READABLE));
+                              static_cast<GParamFlags>(G_PARAM_READABLE |
+                                                       G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:zoom-level:
@@ -1722,7 +1777,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                              "The current zoom level of the content",
                              0, 5.0, 1.0,
                              static_cast<GParamFlags>(G_PARAM_READWRITE |
-                                                      G_PARAM_CONSTRUCT)));
+                                                      G_PARAM_CONSTRUCT |
+                                                      G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:is-loading:
@@ -1736,7 +1792,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                                "Is Loading",
                                "Whether the view is loading a document",
                                FALSE,
-                               static_cast<GParamFlags>(G_PARAM_READABLE)));
+                               static_cast<GParamFlags>(G_PARAM_READABLE |
+                                                        G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:doc-width:
@@ -1749,7 +1806,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                             "Document Width",
                             "Width of the document in twips",
                             0, G_MAXLONG, 0,
-                            static_cast<GParamFlags>(G_PARAM_READWRITE)));
+                            static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                     G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:doc-height:
@@ -1762,7 +1820,8 @@ static void lok_doc_view_class_init (LOKDocViewClass* pClass)
                             "Document Height",
                             "Height of the document in twips",
                             0, G_MAXLONG, 0,
-                            static_cast<GParamFlags>(G_PARAM_READWRITE)));
+                            static_cast<GParamFlags>(G_PARAM_READWRITE |
+                                                     G_PARAM_STATIC_STRINGS)));
 
     /**
      * LOKDocView:can-zoom-in:
@@ -1975,6 +2034,7 @@ lok_doc_view_open_document (LOKDocView* pDocView,
 {
     GTask* task = g_task_new(pDocView, cancellable, callback, userdata);
     LOKDocViewPrivate *priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
+    GError* error = NULL;
 
     LOEvent* pLOEvent = new LOEvent(LOK_LOAD_DOC);
     pLOEvent->m_pPath = pPath;
@@ -1982,7 +2042,12 @@ lok_doc_view_open_document (LOKDocView* pDocView,
     priv->m_aDocPath = pPath;
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_LOAD_DOC: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 }
 
@@ -2040,11 +2105,17 @@ lok_doc_view_set_part (LOKDocView* pDocView, int nPart)
     LOKDocViewPrivate* priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     GTask* task = g_task_new(pDocView, NULL, NULL, NULL);
     LOEvent* pLOEvent = new LOEvent(LOK_SET_PART);
+    GError* error = NULL;
 
     pLOEvent->m_nPart = nPart;
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_SET_PART: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 }
 
@@ -2063,10 +2134,16 @@ lok_doc_view_set_partmode(LOKDocView* pDocView,
     LOKDocViewPrivate* priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     GTask* task = g_task_new(pDocView, NULL, NULL, NULL);
     LOEvent* pLOEvent = new LOEvent(LOK_SET_PARTMODE);
+    GError* error = NULL;
     pLOEvent->m_nPartMode = nPartMode;
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_SET_PARTMODE: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 }
 
@@ -2122,10 +2199,16 @@ lok_doc_view_set_edit(LOKDocView* pDocView,
     LOKDocViewPrivate* priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     GTask* task = g_task_new(pDocView, NULL, NULL, NULL);
     LOEvent* pLOEvent = new LOEvent(LOK_SET_EDIT);
+    GError* error = NULL;
     pLOEvent->m_bEdit = bEdit;
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
 
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_SET_EDIT: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 }
 
@@ -2145,11 +2228,17 @@ lok_doc_view_post_command (LOKDocView* pDocView,
     LOKDocViewPrivate* priv = static_cast<LOKDocViewPrivate*>(lok_doc_view_get_instance_private (pDocView));
     GTask* task = g_task_new(pDocView, NULL, NULL, NULL);
     LOEvent* pLOEvent = new LOEvent(LOK_POST_COMMAND);
+    GError* error = NULL;
     pLOEvent->m_pCommand = pCommand;
     pLOEvent->m_pArguments  = g_strdup(pArguments);
 
     g_task_set_task_data(task, pLOEvent, LOEvent::destroy);
-    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), NULL);
+    g_thread_pool_push(priv->lokThreadPool, g_object_ref(task), &error);
+    if (error != NULL)
+    {
+        g_warning("Unable to call LOK_POST_COMMAND: %s", error->message);
+        g_clear_error(&error);
+    }
     g_object_unref(task);
 }
 

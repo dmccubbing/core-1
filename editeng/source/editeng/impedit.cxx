@@ -46,6 +46,7 @@
 #include <sot/exchange.hxx>
 #include <sot/formats.hxx>
 #include <LibreOfficeKit/LibreOfficeKitEnums.h>
+#include <comphelper/string.hxx>
 
 using namespace ::com::sun::star;
 using namespace ::com::sun::star::uno;
@@ -184,12 +185,10 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
 
     // pRegion: When not NULL, then only calculate Region.
 
+    vcl::Region* pOldRegion = pRegion;
     vcl::Region aRegion;
-    if (isTiledRendering())
-    {
-        assert(!pRegion);
+    if (isTiledRendering() && !pRegion)
         pRegion = &aRegion;
-    }
 
     tools::PolyPolygon* pPolyPoly = NULL;
     if ( pRegion )
@@ -325,7 +324,7 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
     {
         *pRegion = vcl::Region( *pPolyPoly );
 
-        if (isTiledRendering())
+        if (isTiledRendering() && !pOldRegion)
         {
             bool bMm100ToTwip = pOutWin->GetMapMode().GetMapUnit() == MAP_100TH_MM;
             OString sRectangle;
@@ -350,17 +349,15 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
                     libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION_END, aEnd.toString().getStr());
                 }
 
-                std::stringstream ss;
+                std::vector<OString> v;
                 for (size_t i = 0; i < aRectangles.size(); ++i)
                 {
                     Rectangle& rRectangle = aRectangles[i];
-                    if (i)
-                        ss << "; ";
                     if (bMm100ToTwip)
                         rRectangle = OutputDevice::LogicToLogic(rRectangle, MAP_100TH_MM, MAP_TWIP);
-                    ss << rRectangle.toString().getStr();
+                    v.push_back(rRectangle.toString().getStr());
                 }
-                sRectangle = ss.str().c_str();
+                sRectangle = comphelper::string::join("; ", v);
             }
             libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION, sRectangle.getStr());
         }
@@ -376,6 +373,20 @@ void ImpEditView::DrawSelection( EditSelection aTmpSel, vcl::Region* pRegion, Ou
             pTarget->SetClipRegion( aOldRegion );
         else
             pTarget->SetClipRegion();
+    }
+}
+
+void ImpEditView::GetSelectionRectangles(std::vector<Rectangle>& rLogicRects)
+{
+    bool bMm100ToTwip = pOutWin->GetMapMode().GetMapUnit() == MAP_100TH_MM;
+    vcl::Region aRegion;
+    DrawSelection(aEditSelection, &aRegion);
+    aRegion.GetRegionRectangles(rLogicRects);
+
+    for (Rectangle& rRectangle : rLogicRects)
+    {
+        if (bMm100ToTwip)
+            rRectangle = OutputDevice::LogicToLogic(rRectangle, MAP_100TH_MM, MAP_TWIP);
     }
 }
 
@@ -983,7 +994,7 @@ Pair ImpEditView::Scroll( long ndX, long ndY, ScrollRangeCheck nRangeCheck )
     Rectangle aR( aOutArea );
     aR = pOutWin->LogicToPixel( aR );
     aR = pOutWin->PixelToLogic( aR );
-    DBG_ASSERTWARNING( aR == aOutArea, "OutArea before Scroll not aligned" );
+    SAL_WARN_IF( aR != aOutArea, "editeng", "OutArea before Scroll not aligned" );
 #endif
 
     Rectangle aNewVisArea( GetVisDocArea() );

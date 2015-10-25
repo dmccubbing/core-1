@@ -40,7 +40,7 @@ public:
                                 const OUString& aTableName );
 
 protected:
-    virtual void    KeyInput( const KeyEvent&  ) SAL_OVERRIDE;
+    virtual void    KeyInput( const KeyEvent&  ) override;
 };
 
 class SwInputWindow : public ToolBox
@@ -66,13 +66,13 @@ friend class InputEdit;
     void CleanupUglyHackWithUndo();
 
     void DelBoxContent();
-    DECL_LINK( ModifyHdl, void* );
+    DECL_LINK_TYPED( ModifyHdl, Edit&, void );
 
     using Window::IsActive;
 
 protected:
-    virtual void    Resize() SAL_OVERRIDE;
-    virtual void    Click() SAL_OVERRIDE;
+    virtual void    Resize() override;
+    virtual void    Click() override;
     DECL_LINK_TYPED( MenuHdl, Menu *, bool );
     DECL_LINK_TYPED( DropdownClickHdl, ToolBox*, void );
     void            ApplyFormula();
@@ -81,9 +81,9 @@ protected:
 public:
                     SwInputWindow( vcl::Window* pParent );
     virtual         ~SwInputWindow();
-    virtual void    dispose() SAL_OVERRIDE;
+    virtual void    dispose() override;
 
-    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) SAL_OVERRIDE;
+    virtual void    DataChanged( const DataChangedEvent& rDCEvt ) override;
 
     void            ShowWin();
 

@@ -182,7 +182,7 @@ private:
     DECL_LINK_TYPED( LastPageHdl, Button*, void );
 
     DECL_LINK_TYPED( DesignHdl, Button*, void );
-    DECL_LINK( DesignSelectHdl, void * );
+    DECL_LINK_TYPED( DesignSelectHdl, ListBox&, void );
     DECL_LINK_TYPED( DesignDeleteHdl, Button*, void );
     DECL_LINK_TYPED( BaseHdl, Button*, void );
     DECL_LINK_TYPED( ContentHdl, Button*, void );
@@ -197,7 +197,7 @@ public:
 
     SdPublishingDlg(vcl::Window* pWindow, DocumentType eDocType);
     virtual ~SdPublishingDlg();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
     void GetParameterSequence( ::com::sun::star::uno::Sequence< ::com::sun::star::beans::PropertyValue >& rParams );
 };

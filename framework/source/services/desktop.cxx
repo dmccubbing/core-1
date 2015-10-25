@@ -231,8 +231,13 @@ sal_Bool SAL_CALL Desktop::terminate()
 
     // try to close all open frames.
     // Allow using of any UI ... because Desktop.terminate() was designed as UI functionality in the past.
-    bool bAllowUI      = true;
-    bool bFramesClosed = impl_closeFrames(bAllowUI);
+    bool bIsEventTestingMode = Application::IsEventTestingModeEnabled();
+    bool bFramesClosed = impl_closeFrames(!bIsEventTestingMode);
+    if (bIsEventTestingMode)
+    {
+        Application::Quit();
+        return true;
+    }
     if ( ! bFramesClosed )
     {
         impl_sendCancelTerminationEvent(lCalledTerminationListener);
@@ -1470,7 +1475,7 @@ void SAL_CALL Desktop::getFastPropertyValue( css::uno::Any& aValue  ,
     @return     reference to object with information [XPropertySetInfo]
     @threadsafe yes
 *//*-*************************************************************************************************************/
-css::uno::Reference< css::beans::XPropertySetInfo > SAL_CALL Desktop::getPropertySetInfo() throw (::com::sun::star::uno::RuntimeException, std::exception)
+css::uno::Reference< css::beans::XPropertySetInfo > SAL_CALL Desktop::getPropertySetInfo() throw (css::uno::RuntimeException, std::exception)
 {
     /* UNSAFE AREA --------------------------------------------------------------------------------------------- */
     // Register transaction and reject wrong calls.

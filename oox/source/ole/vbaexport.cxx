@@ -10,6 +10,7 @@
 #include <sal/config.h>
 
 #include <cmath>
+#include <random>
 
 #include <oox/ole/vbaexport.hxx>
 
@@ -47,6 +48,11 @@
 #define VBA_USE_ORIGINAL_PROJECT_STREAM 0
 #define VBA_USE_ORIGINAL_VBA_PROJECT 0
 
+/* Enable to see VBA Encryption work. For now the input data and length values
+ * for encryption correspond to the case when the VBA macro is not protected.
+ */
+#define VBA_ENCRYPTION 1
+
 namespace {
 
 void exportString(SvStream& rStrm, const OUString& rString)
@@ -70,6 +76,36 @@ bool isWorkbook(css::uno::Reference<css::uno::XInterface> xInterface)
 {
     css::uno::Reference<ooo::vba::excel::XWorkbook> xWorkbook(xInterface, css::uno::UNO_QUERY);
     return xWorkbook.is();
+}
+
+OUString createHexStringFromDigit(sal_uInt8 nDigit)
+{
+    OUString aString = OUString::number( nDigit, 16 );
+    if(aString.getLength() == 1)
+        aString = OUString::number(0) + aString;
+    return aString.toAsciiUpperCase();
+}
+
+OUString createGuidStringFromInt(sal_uInt8 nGuid[16])
+{
+    OUStringBuffer aBuffer;
+    aBuffer.append('{');
+    for(size_t i = 0; i < 16; ++i)
+    {
+        aBuffer.append(createHexStringFromDigit(nGuid[i]));
+        if(i == 3|| i == 5 || i == 7 || i == 9 )
+            aBuffer.append('-');
+    }
+    aBuffer.append('}');
+    OUString aString = aBuffer.makeStringAndClear();
+    return aString.toAsciiUpperCase();
+}
+
+OUString generateGUIDString()
+{
+    sal_uInt8 nGuid[16];
+    rtl_createUuid(nGuid, NULL, true);
+    return createGuidStringFromInt(nGuid);
 }
 
 }
@@ -336,6 +372,123 @@ void VBACompression::write()
     }
 }
 
+// section 2.4.3
+#if VBA_ENCRYPTION
+
+VBAEncryption::VBAEncryption(const sal_uInt8* pData, const sal_uInt16 length, SvStream& rEncryptedData, sal_uInt8* pSeed, sal_uInt8 nProjKey)
+    :mpData(pData)
+    ,mnLength(length)
+    ,mrEncryptedData(rEncryptedData)
+    ,mnUnencryptedByte1(0)
+    ,mnEncryptedByte1(0)
+    ,mnEncryptedByte2(0)
+    ,mnVersion(2)
+    ,mnProjKey(nProjKey)
+    ,mnIgnoredLength(0)
+    ,mnSeed(pSeed ? *pSeed : 0x00)
+    ,mnVersionEnc(0)
+{
+    if (!pSeed)
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<> dis(0, 255);
+        mnSeed = dis(gen);
+    }
+}
+
+void VBAEncryption::writeSeed()
+{
+    exportString(mrEncryptedData, createHexStringFromDigit(mnSeed));
+}
+
+void VBAEncryption::writeVersionEnc()
+{
+    mnVersionEnc = mnSeed ^ mnVersion;
+    exportString(mrEncryptedData, createHexStringFromDigit(mnVersionEnc));
+}
+
+sal_uInt8 VBAEncryption::calculateProjKey(const OUString& rProjectKey)
+{
+    sal_uInt32 nProjKey = 0;
+        // use sal_uInt32 instead of sal_uInt8 to avoid miscompilation at least
+        // under "Microsoft (R) C/C++ Optimizing Compiler Version 18.00.31101
+        // for x64" with --enable-64-bit and non-debug, causing
+        // CppunitTest_oox_vba_encryption's TestVbaEncryption::testProjKey1 to
+        // fail with actual 53 vs. expected 223
+    sal_Int32 n = rProjectKey.getLength();
+    const sal_Unicode* pString = rProjectKey.getStr();
+    for (sal_Int32 i = 0; i < n; ++i)
+    {
+        sal_Unicode character = pString[i];
+        nProjKey += character;
+    }
+
+    return nProjKey;
+}
+
+void VBAEncryption::writeProjKeyEnc()
+{
+    sal_uInt8 nProjKeyEnc = mnSeed ^ mnProjKey;
+    exportString(mrEncryptedData, createHexStringFromDigit(nProjKeyEnc));
+    mnUnencryptedByte1 = mnProjKey;
+    mnEncryptedByte1 = nProjKeyEnc; // ProjKeyEnc
+    mnEncryptedByte2 = mnVersionEnc; // VersionEnc
+}
+
+void VBAEncryption::writeIgnoredEnc()
+{
+    mnIgnoredLength = (mnSeed & 6) / 2;
+    for(sal_Int32 i = 1; i <= mnIgnoredLength; ++i)
+    {
+        sal_uInt8 nTempValue = 0xBE; // Any value can be assigned here
+        sal_uInt8 nByteEnc = nTempValue ^ (mnEncryptedByte2 + mnUnencryptedByte1);
+        exportString(mrEncryptedData, createHexStringFromDigit(nByteEnc));
+        mnEncryptedByte2 = mnEncryptedByte1;
+        mnEncryptedByte1 = nByteEnc;
+        mnUnencryptedByte1 = nTempValue;
+    }
+}
+
+void VBAEncryption::writeDataLengthEnc()
+{
+    sal_uInt16 temp = mnLength;
+    for(sal_Int8 i = 0; i < 4; ++i)
+    {
+        sal_uInt8 nByte = temp & 0xFF;
+        sal_uInt8 nByteEnc = nByte ^ (mnEncryptedByte2 + mnUnencryptedByte1);
+        exportString(mrEncryptedData, createHexStringFromDigit(nByteEnc));
+        mnEncryptedByte2 = mnEncryptedByte1;
+        mnEncryptedByte1 = nByteEnc;
+        mnUnencryptedByte1 = nByte;
+        temp >>= 8;
+    }
+}
+
+void VBAEncryption::writeDataEnc()
+{
+    for(sal_Int16 i = 0; i < mnLength; i++)
+    {
+        sal_uInt8 nByteEnc = mpData[i] ^ (mnEncryptedByte2 + mnUnencryptedByte1);
+        exportString(mrEncryptedData, createHexStringFromDigit(nByteEnc));
+        mnEncryptedByte2 = mnEncryptedByte1;
+        mnEncryptedByte1 = nByteEnc;
+        mnUnencryptedByte1 = mpData[i];
+    }
+}
+
+void VBAEncryption::write()
+{
+    writeSeed();
+    writeVersionEnc();
+    writeProjKeyEnc();
+    writeIgnoredEnc();
+    writeDataLengthEnc();
+    writeDataEnc();
+}
+
+#endif
+
 VbaExport::VbaExport(css::uno::Reference<css::frame::XModel> xModel):
     mxModel(xModel)
 {
@@ -541,11 +694,11 @@ void writeMODULEDOCSTRING(SvStream& rStrm)
 }
 
 // section 2.3.4.2.3.2.5
-void writeMODULEOFFSET(SvStream& rStrm, sal_uInt32 offset)
+void writeMODULEOFFSET(SvStream& rStrm)
 {
     rStrm.WriteUInt16(0x0031); // id
     rStrm.WriteUInt32(0x00000004); // sizeOfTextOffset
-    rStrm.WriteUInt32(offset); // TextOffset
+    rStrm.WriteUInt32(0x00000000); // TextOffset
 }
 
 // section 2.3.4.2.3.2.6
@@ -575,13 +728,13 @@ void writeMODULETYPE(SvStream& rStrm, const sal_uInt16 type)
 }
 
 // section 2.3.4.2.3.2
-void writePROJECTMODULE(SvStream& rStrm, const OUString& name, const OUString& streamName, sal_uInt32 offset, const sal_uInt16 type)
+void writePROJECTMODULE(SvStream& rStrm, const OUString& name, const sal_uInt16 type)
 {
     writeMODULENAME(rStrm, name);
     writeMODULENAMEUNICODE(rStrm, name);
-    writeMODULESTREAMNAME(rStrm, streamName);
+    writeMODULESTREAMNAME(rStrm, name);
     writeMODULEDOCSTRING(rStrm);
-    writeMODULEOFFSET(rStrm, offset);
+    writeMODULEOFFSET(rStrm);
     writeMODULEHELPCONTEXT(rStrm);
     writeMODULECOOKIE(rStrm);
     writeMODULETYPE(rStrm, type);
@@ -608,7 +761,7 @@ void writePROJECTMODULES(SvStream& rStrm, css::uno::Reference<css::container::XN
     {
         const OUString& rModuleName = aElementNames[rLibrayMap[i]];
         css::script::ModuleInfo aModuleInfo = xModuleInfo->getModuleInfo(rModuleName);
-        writePROJECTMODULE(rStrm, rModuleName, rModuleName, 0x00000000, aModuleInfo.ModuleType);
+        writePROJECTMODULE(rStrm, rModuleName, aModuleInfo.ModuleType);
     }
 }
 
@@ -694,39 +847,6 @@ void exportVBAProjectStream(SvStream& rStrm)
     rStrm.WriteUInt16(0x0000); // Undefined
 }
 
-/*
-OString createHexStringFromDigit(sal_uInt8 nDigit)
-{
-    OString aString = OString::number( nDigit, 16 );
-    if(aString.getLength() == 1)
-        aString = aString + OString::number(0);
-    return aString;
-}
-
-OString createGuidStringFromInt(sal_uInt8 nGuid[16])
-{
-    OStringBuffer aBuffer;
-    aBuffer.append('{');
-    for(size_t i = 0; i < 16; ++i)
-    {
-        aBuffer.append(createHexStringFromDigit(nGuid[i]));
-        if(i == 3|| i == 5 || i == 7 || i == 9 )
-            aBuffer.append('-');
-    }
-    aBuffer.append('}');
-    OString aString = aBuffer.makeStringAndClear();
-    return aString.toAsciiUpperCase();
-}
-
-OString generateGUIDString()
-{
-    sal_uInt8 nGuid[16];
-    rtl_createUuid(nGuid, NULL, true);
-    return createGuidStringFromInt(nGuid);
-}
-
-*/
-
 // section 2.3.1 PROJECT Stream
 void exportPROJECTStream(SvStream& rStrm, css::uno::Reference<css::container::XNameContainer> xNameContainer,
         const OUString& projectName, const std::vector<sal_Int32>& rLibraryMap)
@@ -740,7 +860,8 @@ void exportPROJECTStream(SvStream& rStrm, css::uno::Reference<css::container::XN
 
     // section 2.3.1.2 ProjectId
     exportString(rStrm, "ID=\"");
-    exportString(rStrm, "{9F10AB9C-89AC-4C0F-8AFB-8E9B96D5F170}");
+    OUString aProjectID = generateGUIDString();
+    exportString(rStrm, aProjectID);
     exportString(rStrm, "\"\r\n");
 
     // section 2.3.1.3 ProjectModule
@@ -768,13 +889,44 @@ void exportPROJECTStream(SvStream& rStrm, css::uno::Reference<css::container::XN
     exportString(rStrm, "VersionCompatible32=\"393222000\"\r\n");
 
     // section 2.3.1.15 ProjectProtectionState
+#if VBA_ENCRYPTION
+    exportString(rStrm, "CMG=\"");
+    SvMemoryStream aProtectedStream(4096, 4096);
+    aProtectedStream.WriteUInt32(0x00000000);
+    const sal_uInt8* pData = static_cast<const sal_uInt8*>(aProtectedStream.GetData());
+    sal_uInt8 nProjKey = VBAEncryption::calculateProjKey(aProjectID);
+    VBAEncryption aProtectionState(pData, 4, rStrm, NULL, nProjKey);
+    aProtectionState.write();
+    exportString(rStrm, "\"\r\n");
+#else
     exportString(rStrm, "CMG=\"BEBC9256EEAAA8AEA8AEA8AEA8AE\"\r\n");
+#endif
 
     // section 2.3.1.16 ProjectPassword
+#if VBA_ENCRYPTION
+    exportString(rStrm, "DPB=\"");
+    aProtectedStream.Seek(0);
+    aProtectedStream.WriteUInt8(0x00);
+    pData = static_cast<const sal_uInt8*>(aProtectedStream.GetData());
+    VBAEncryption aProjectPassword(pData, 1, rStrm, NULL, nProjKey);
+    aProjectPassword.write();
+    exportString(rStrm, "\"\r\n");
+#else
     exportString(rStrm, "DPB=\"7C7E5014B0D3B1D3B1D3\"\r\n");
+#endif
 
     // section 2.3.1.17 ProjectVisibilityState
+#if VBA_ENCRYPTION
+    exportString(rStrm, "GC=\"");
+    aProtectedStream.Seek(0);
+    aProtectedStream.WriteUInt8(0xFF);
+    pData = static_cast<const sal_uInt8*>(aProtectedStream.GetData());
+    VBAEncryption aVisibilityState(pData, 1, rStrm, NULL, nProjKey);
+    aVisibilityState.write();
+    exportString(rStrm, "\"\r\n\r\n");
+#else
     exportString(rStrm, "GC=\"3A3816DAD5DBD5DB2A\"\r\n\r\n");
+#endif
 
     // section 2.3.1.18 HostExtenders
     exportString(rStrm, "[Host Extender Info]\r\n"

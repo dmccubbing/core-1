@@ -54,23 +54,23 @@ namespace svt
         VclPtr<ScrollBar>      m_pFieldScroller;
 
         // string to display for "no selection"
-        const OUString  m_sNoFieldSelection;
+        const OUString         m_sNoFieldSelection;
 
         /// the DatabaseContext for selecting data sources
-        ::com::sun::star::uno::Reference< ::com::sun::star::sdb::XDatabaseContext >
-                        m_xDatabaseContext;
+        css::uno::Reference< css::sdb::XDatabaseContext >
+                               m_xDatabaseContext;
         // the ORB for creating objects
-        ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >
-                        m_xORB;
-        ::com::sun::star::uno::Reference< ::com::sun::star::container::XNameAccess >
-                        m_xCurrentDatasourceTables;
+        css::uno::Reference< css::uno::XComponentContext >
+                               m_xORB;
+        css::uno::Reference< css::container::XNameAccess >
+                               m_xCurrentDatasourceTables;
 
         AddressBookSourceDialogData*
-                        m_pImpl;
+                               m_pImpl;
 
     public:
         AddressBookSourceDialog( vcl::Window* _pParent,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& _rxORB );
+            const css::uno::Reference< css::uno::XComponentContext >& _rxORB );
 
         /** if you use this ctor, the dialog
             <ul><li>will not store it's data in the configuration (nor initially retrieve it from there)</li>
@@ -92,25 +92,25 @@ namespace svt
                 obtained from <arg>_rxTransientDS</arg>
         */
         AddressBookSourceDialog( vcl::Window* _pParent,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::uno::XComponentContext >& _rxORB,
-            const ::com::sun::star::uno::Reference< ::com::sun::star::sdbc::XDataSource >& _rxTransientDS,
+            const css::uno::Reference< css::uno::XComponentContext >& _rxORB,
+            const css::uno::Reference< css::sdbc::XDataSource >& _rxTransientDS,
             const OUString& _rDataSourceName,
             const OUString& _rTable,
-            const ::com::sun::star::uno::Sequence< ::com::sun::star::util::AliasProgrammaticPair >& _rMapping
+            const css::uno::Sequence< css::util::AliasProgrammaticPair >& _rMapping
         );
 
         virtual ~AddressBookSourceDialog();
-        virtual void dispose() SAL_OVERRIDE;
+        virtual void dispose() override;
 
         // to be used if the object was constructed for editing a field mapping only
         void        getFieldMapping(
-            ::com::sun::star::uno::Sequence< ::com::sun::star::util::AliasProgrammaticPair >& _rMapping) const;
+            css::uno::Sequence< css::util::AliasProgrammaticPair >& _rMapping) const;
 
     protected:
         void    implConstruct();
 
         // Window overridables
-        virtual bool        PreNotify( NotifyEvent& _rNEvt ) SAL_OVERRIDE;
+        virtual bool        PreNotify( NotifyEvent& _rNEvt ) override;
 
         // implementations
         void    implScrollFields(sal_Int32 _nPos, bool _bAdjustFocus, bool _bAdjustScrollbar);
@@ -126,11 +126,11 @@ namespace svt
         void    loadConfiguration();
 
         DECL_LINK_TYPED(OnFieldScroll, ScrollBar*, void);
-        DECL_LINK(OnFieldSelect, ListBox*);
+        DECL_LINK_TYPED(OnFieldSelect, ListBox&, void);
         DECL_LINK_TYPED(OnAdministrateDatasources, Button*, void);
         DECL_STATIC_LINK_TYPED(AddressBookSourceDialog, OnComboGetFocus, Control&, void);
         DECL_LINK_TYPED(OnComboLoseFocus, Control&, void);
-        DECL_LINK(OnComboSelect, ComboBox*);
+        DECL_LINK_TYPED(OnComboSelect, ComboBox&, void);
         DECL_LINK_TYPED(OnOkClicked, Button*, void);
         DECL_LINK_TYPED(OnDelayedInitialize, void*, void);
     };

@@ -85,19 +85,19 @@ public:
         std::vector< dp_gui::UpdateData > * updateData);
 
     virtual ~UpdateDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    virtual bool Close() SAL_OVERRIDE;
+    virtual bool Close() override;
 
-    virtual short Execute() SAL_OVERRIDE;
+    virtual short Execute() override;
 
     void notifyMenubar( bool bPrepareOnly, bool bRecheckOnly );
     static void createNotifyJob( bool bPrepareOnly,
         css::uno::Sequence< css::uno::Sequence< OUString > > &rItemList );
 
 private:
-    UpdateDialog(UpdateDialog &) SAL_DELETED_FUNCTION;
-    void operator =(UpdateDialog &) SAL_DELETED_FUNCTION;
+    UpdateDialog(UpdateDialog &) = delete;
+    void operator =(UpdateDialog &) = delete;
 
     struct DisabledUpdate;
     struct SpecificError;
@@ -115,12 +115,12 @@ private:
         sal_uInt16 getItemCount() const;
 
     private:
-        explicit CheckListBox(UpdateDialog::CheckListBox &) SAL_DELETED_FUNCTION;
-        void operator =(UpdateDialog::CheckListBox &) SAL_DELETED_FUNCTION;
+        explicit CheckListBox(UpdateDialog::CheckListBox &) = delete;
+        void operator =(UpdateDialog::CheckListBox &) = delete;
 
-        virtual void MouseButtonDown(MouseEvent const & event) SAL_OVERRIDE;
-        virtual void MouseButtonUp(MouseEvent const & event) SAL_OVERRIDE;
-        virtual void KeyInput(KeyEvent const & event) SAL_OVERRIDE;
+        virtual void MouseButtonDown(MouseEvent const & event) override;
+        virtual void MouseButtonUp(MouseEvent const & event) override;
+        virtual void KeyInput(KeyEvent const & event) override;
 
         void handlePopupMenu( const Point &rPos );
 
@@ -163,7 +163,7 @@ private:
     DECL_LINK_TYPED(allHandler, CheckBox&, void);
     DECL_LINK_TYPED(okHandler, Button*, void);
     DECL_LINK_TYPED(closeHandler, Button*, void);
-    DECL_LINK(hyperlink_clicked, FixedHyperlink *);
+    DECL_LINK_TYPED(hyperlink_clicked, FixedHyperlink&, void);
 
     css::uno::Reference< css::uno::XComponentContext >  m_context;
     VclPtr<FixedText> m_pchecking;

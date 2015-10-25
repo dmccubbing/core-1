@@ -506,6 +506,8 @@ void Edit::ImplRepaint(vcl::RenderContext& rRenderContext, const Rectangle& rRec
     if (!IsReallyVisible())
         return;
 
+    ApplySettings(rRenderContext);
+
     OUString aText = ImplGetText();
     sal_Int32 nLen = aText.getLength();
 
@@ -2416,7 +2418,7 @@ void Edit::Modify()
         if ( mpUpdateDataTimer )
             mpUpdateDataTimer->Start();
 
-        if ( ImplCallEventListenersAndHandler( VCLEVENT_EDIT_MODIFY, [this] () { maModifyHdl.Call(this); } ) )
+        if ( ImplCallEventListenersAndHandler( VCLEVENT_EDIT_MODIFY, [this] () { maModifyHdl.Call(*this); } ) )
             // have been destroyed while calling into the handlers
             return;
 
@@ -2435,7 +2437,7 @@ void Edit::Modify()
 
 void Edit::UpdateData()
 {
-    maUpdateDataHdl.Call( this );
+    maUpdateDataHdl.Call( *this );
 }
 
 IMPL_LINK_NOARG_TYPED(Edit, ImplUpdateDataHdl, Timer *, void)

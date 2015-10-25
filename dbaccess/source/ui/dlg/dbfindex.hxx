@@ -83,13 +83,13 @@ protected:
     VclPtr<PushButton>     m_pAddAll;
     VclPtr<PushButton>     m_pRemoveAll;
 
-    DECL_LINK( TableSelectHdl, ComboBox* );
+    DECL_LINK_TYPED( TableSelectHdl, ComboBox&, void );
     DECL_LINK_TYPED( AddClickHdl, Button*, void );
     DECL_LINK_TYPED( RemoveClickHdl, Button*, void );
     DECL_LINK_TYPED( AddAllClickHdl, Button*, void );
     DECL_LINK_TYPED( RemoveAllClickHdl, Button*, void );
     DECL_LINK_TYPED( OKClickHdl, Button*, void );
-    DECL_LINK( OnListEntrySelected, ListBox* );
+    DECL_LINK_TYPED( OnListEntrySelected, ListBox&, void );
 
     OUString            m_aDSN;
     TableInfoList       m_aTableInfoList;
@@ -113,7 +113,7 @@ protected:
 public:
     ODbaseIndexDialog( vcl::Window * pParent, const OUString& aDataSrcName );
     virtual ~ODbaseIndexDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 };
 
 }   // namespace dbaui

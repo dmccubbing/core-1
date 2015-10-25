@@ -38,10 +38,10 @@ namespace rptxml
                 const SvXMLExportPropertyMapper& rPropExp,
                 const SvXMLUnitConverter& rUnitConverter,
                 const SvXMLNamespaceMap& rNamespaceMap
-                ) const SAL_OVERRIDE;
+                ) const override;
 
-        OXMLAutoStylePoolP(const OXMLAutoStylePoolP&) SAL_DELETED_FUNCTION;
-        void operator =(const OXMLAutoStylePoolP&) SAL_DELETED_FUNCTION;
+        OXMLAutoStylePoolP(const OXMLAutoStylePoolP&) = delete;
+        void operator =(const OXMLAutoStylePoolP&) = delete;
     public:
         explicit OXMLAutoStylePoolP(ORptExport& rXMLExport);
         virtual ~OXMLAutoStylePoolP();

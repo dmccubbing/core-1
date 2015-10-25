@@ -174,7 +174,7 @@ void ScFilterOptionsMgr::Init()
 
             pBtnCopyResult->Check();
             pEdCopyArea->SetText( aString );
-            EdAreaModifyHdl( pEdCopyArea );
+            EdAreaModifyHdl( *pEdCopyArea );
             pLbCopyArea->Enable();
             pEdCopyArea->Enable();
             pRbCopyArea->Enable();
@@ -209,9 +209,9 @@ bool ScFilterOptionsMgr::VerifyPosStr( const OUString& rPosStr ) const
 
 // Handler:
 
-IMPL_LINK( ScFilterOptionsMgr, LbAreaSelHdl, ListBox*, pLb )
+IMPL_LINK_TYPED( ScFilterOptionsMgr, LbAreaSelHdl, ListBox&, rLb, void )
 {
-    if ( pLb == pLbCopyArea )
+    if ( &rLb == pLbCopyArea )
     {
         OUString aString;
         const sal_Int32 nSelPos = pLbCopyArea->GetSelectEntryPos();
@@ -221,15 +221,13 @@ IMPL_LINK( ScFilterOptionsMgr, LbAreaSelHdl, ListBox*, pLb )
 
         pEdCopyArea->SetText( aString );
     }
-
-    return 0;
 }
 
-IMPL_LINK( ScFilterOptionsMgr, EdAreaModifyHdl, Edit*, pEd )
+IMPL_LINK_TYPED( ScFilterOptionsMgr, EdAreaModifyHdl, Edit&, rEd, void )
 {
-    if ( pEd == pEdCopyArea )
+    if ( &rEd == pEdCopyArea )
     {
-        OUString  theCurPosStr = pEd->GetText();
+        OUString  theCurPosStr = rEd.GetText();
         sal_uInt16  nResult = ScAddress().Parse( theCurPosStr, pDoc, pDoc->GetAddressConvention() );
 
         if ( SCA_VALID == (nResult & SCA_VALID) )
@@ -242,15 +240,13 @@ IMPL_LINK( ScFilterOptionsMgr, EdAreaModifyHdl, Edit*, pEd )
                 if (theCurPosStr == *pStr)
                 {
                     pLbCopyArea->SelectEntryPos( i );
-                    return 0;
+                    return;
                 }
             }
 
         }
         pLbCopyArea->SelectEntryPos( 0 );
     }
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( ScFilterOptionsMgr, BtnCopyResultHdl, CheckBox&, rBox, void )

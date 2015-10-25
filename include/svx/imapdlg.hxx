@@ -66,7 +66,7 @@ class SvxIMapDlgItem : public SfxControllerItem
 protected:
 
     virtual void StateChanged( sal_uInt16 nSID, SfxItemState eState,
-                               const SfxPoolItem* pState ) SAL_OVERRIDE;
+                               const SfxPoolItem* pState ) override;
 
 
 public:
@@ -116,13 +116,14 @@ class SVX_DLLPUBLIC SvxIMapDlg : public SfxModelessDialog // SfxFloatingWindow
     void*               pCheckObj;
     SvxIMapDlgItem      aIMapItem;
 
-    virtual bool    Close() SAL_OVERRIDE;
+    virtual bool    Close() override;
 
     DECL_LINK_TYPED( TbxClickHdl, ToolBox*, void );
     DECL_LINK_TYPED( InfoHdl, IMapWindow&, void );
     DECL_LINK_TYPED( MousePosHdl, GraphCtrl*, void );
     DECL_LINK_TYPED( GraphSizeHdl, GraphCtrl*, void );
-    DECL_LINK( URLModifyHdl, void* );
+    DECL_LINK_TYPED( URLModifyHdl, Edit&, void );
+    DECL_LINK_TYPED( URLModifyComboBoxHdl, ComboBox&, void );
     DECL_LINK_TYPED( URLLoseFocusHdl, Control&, void );
     DECL_LINK_TYPED( UpdateHdl, Idle *, void );
     DECL_LINK_TYPED( StateHdl, GraphCtrl*, void );
@@ -137,7 +138,7 @@ public:
                         SvxIMapDlg( SfxBindings *pBindings, SfxChildWindow *pCW,
                                     vcl::Window* pParent );
                         virtual ~SvxIMapDlg();
-    virtual void        dispose() SAL_OVERRIDE;
+    virtual void        dispose() override;
 
     void                SetExecState( bool bEnable );
 
@@ -154,7 +155,7 @@ public:
     void                UpdateLink( const Graphic& rGraphic, const ImageMap* pImageMap = NULL,
                                 const TargetList* pTargetList = NULL, void* pEditingObj = NULL );
 
-    virtual void        KeyInput( const KeyEvent& rKEvt ) SAL_OVERRIDE;
+    virtual void        KeyInput( const KeyEvent& rKEvt ) override;
 };
 
 SVX_DLLPUBLIC SvxIMapDlg* GetIMapDlg();

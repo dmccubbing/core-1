@@ -162,7 +162,7 @@ void SwFieldVarPage::Reset(const SfxItemSet* )
 
     m_pTypeLB->SetDoubleClickHdl       (LINK(this, SwFieldVarPage, ListBoxInsertHdl));
     m_pTypeLB->SetSelectHdl            (LINK(this, SwFieldVarPage, TypeHdl));
-    m_pSelectionLB->SetSelectHdl       (LINK(this, SwFieldVarPage, SubTypeHdl));
+    m_pSelectionLB->SetSelectHdl       (LINK(this, SwFieldVarPage, SubTypeListBoxHdl));
     m_pSelectionLB->SetDoubleClickHdl  (LINK(this, SwFieldVarPage, ListBoxInsertHdl));
     m_pFormatLB->SetDoubleClickHdl     (LINK(this, SwFieldVarPage, ListBoxInsertHdl));
     m_pNumFormatLB->SetDoubleClickHdl  (LINK(this, SwFieldVarPage, ListBoxInsertHdl));
@@ -190,7 +190,7 @@ void SwFieldVarPage::Reset(const SfxItemSet* )
             }
         }
     }
-    TypeHdl(0);
+    TypeHdl(*m_pTypeLB);
 
     m_pTypeLB->SetUpdateMode(true);
 
@@ -207,7 +207,7 @@ void SwFieldVarPage::Reset(const SfxItemSet* )
     }
 }
 
-IMPL_LINK_NOARG(SwFieldVarPage, TypeHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldVarPage, TypeHdl, ListBox&, void)
 {
     // save old ListBoxPos
     const sal_Int32 nOld = GetTypeSel();
@@ -235,11 +235,14 @@ IMPL_LINK_NOARG(SwFieldVarPage, TypeHdl)
     }
 
     bInit = false;
-
-    return 0;
 }
 
-IMPL_LINK( SwFieldVarPage, SubTypeHdl, ListBox *, pBox )
+IMPL_LINK_TYPED( SwFieldVarPage, SubTypeListBoxHdl, ListBox&, rBox, void )
+{
+    SubTypeHdl(&rBox);
+}
+
+void SwFieldVarPage::SubTypeHdl(ListBox* pBox)
 {
     sal_uInt16 nTypeId = (sal_uInt16)reinterpret_cast<sal_uLong>(m_pTypeLB->GetEntryData(GetTypeSel()));
     sal_Int32 nSelPos = m_pSelectionLB->GetSelectEntryPos();
@@ -514,7 +517,7 @@ IMPL_LINK( SwFieldVarPage, SubTypeHdl, ListBox *, pBox )
                         m_pChapterLevelLB->SelectEntryPos( nLevel + 1 );
                     OUString sDelim = static_cast<SwSetExpFieldType*>(pFieldTyp)->GetDelimiter();
                     m_pSeparatorED->SetText( sDelim );
-                    ChapterHdl();
+                    ChapterHdl(*m_pChapterLevelLB);
                 }
             }
             break;
@@ -558,7 +561,7 @@ IMPL_LINK( SwFieldVarPage, SubTypeHdl, ListBox *, pBox )
     m_pChapterFrame->Show(bShowChapterFrame);
     m_pInvisibleCB->Enable(bInvisible);
 
-    ModifyHdl();    // apply/insert/delete status update
+    ModifyHdl(*m_pNameED);    // apply/insert/delete status update
 
     m_pNumFormatLB->SetUpdateMode(true);
     m_pFormatLB->SetUpdateMode(true);
@@ -579,7 +582,7 @@ IMPL_LINK( SwFieldVarPage, SubTypeHdl, ListBox *, pBox )
                         if (nSelData != SIZE_MAX && pBox && !bInit)
                         {
                             m_pValueED->ReplaceSelected(m_pSelectionLB->GetSelectEntry());
-                            ModifyHdl();
+                            ModifyHdl(*m_pNameED);
                         }
                     }
                 }
@@ -587,7 +590,6 @@ IMPL_LINK( SwFieldVarPage, SubTypeHdl, ListBox *, pBox )
         }
         m_pSelectionLB->ResetCallAddSelection();
     }
-    return 0;
 }
 
 // renew types in SelectionBox
@@ -829,7 +831,7 @@ sal_Int32 SwFieldVarPage::FillFormatLB(sal_uInt16 nTypeId)
 }
 
 // Modify
-IMPL_LINK_NOARG(SwFieldVarPage, ModifyHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldVarPage, ModifyHdl, Edit&, void)
 {
     OUString sValue(m_pValueED->GetText());
     bool bHasValue = !sValue.isEmpty();
@@ -950,8 +952,6 @@ IMPL_LINK_NOARG(SwFieldVarPage, ModifyHdl)
     m_pNewDelTBX->EnableItem(m_nApplyId, bApply);
     m_pNewDelTBX->EnableItem(m_nDeleteId, bDelete);
     EnableInsert(bInsert);
-
-    return 0;
 }
 
 IMPL_LINK_TYPED( SwFieldVarPage, TBClickHdl, ToolBox *, pBox, void )
@@ -1098,24 +1098,20 @@ IMPL_LINK_TYPED( SwFieldVarPage, TBClickHdl, ToolBox *, pBox, void )
     }
 }
 
-IMPL_LINK_NOARG(SwFieldVarPage, ChapterHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldVarPage, ChapterHdl, ListBox&, void)
 {
     bool bEnable = m_pChapterLevelLB->GetSelectEntryPos() != 0;
 
     m_pSeparatorED->Enable(bEnable);
     m_pSeparatorFT->Enable(bEnable);
-    SeparatorHdl();
-
-    return 0;
+    SeparatorHdl(*m_pSeparatorED);
 }
 
-IMPL_LINK_NOARG(SwFieldVarPage, SeparatorHdl)
+IMPL_LINK_NOARG_TYPED(SwFieldVarPage, SeparatorHdl, Edit&, void)
 {
     bool bEnable = !m_pSeparatorED->GetText().isEmpty() ||
                     m_pChapterLevelLB->GetSelectEntryPos() == 0;
     EnableInsert(bEnable);
-
-    return 0;
 }
 
 bool SwFieldVarPage::FillItemSet(SfxItemSet* )

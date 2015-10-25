@@ -434,7 +434,7 @@ SfxObjectShell* ScModelObj::GetEmbeddedObject() const
 void ScModelObj::UpdateAllRowHeights()
 {
     if (pDocShell)
-        pDocShell->UpdateAllRowHeights(NULL);
+        pDocShell->UpdateAllRowHeights();
 }
 
 void ScModelObj::BeforeXMLLoading()
@@ -845,6 +845,17 @@ void ScModelObj::resetSelection()
     pDocShell->GetDocument().GetDrawLayer()->libreOfficeKitCallback(LOK_CALLBACK_TEXT_SELECTION, "");
 }
 
+vcl::Window* ScModelObj::getWindow()
+{
+    SolarMutexGuard aGuard;
+
+    ScViewData* pViewData = ScDocShell::GetViewData();
+    if (!pViewData)
+        return 0;
+
+    return pViewData->GetActiveWin();
+}
+
 void ScModelObj::initializeForTiledRendering()
 {
     SolarMutexGuard aGuard;
@@ -1108,7 +1119,7 @@ static bool lcl_ParseTarget( const OUString& rTarget, ScRange& rTargetRange, Rec
         rTargetRange = aAddress;
         bRangeValid = true;             // cell reference
     }
-    else if ( ScRangeUtil::MakeRangeFromName( rTarget, pDoc, nSourceTab, rTargetRange, RUTL_NAMES ) ||
+    else if ( ScRangeUtil::MakeRangeFromName( rTarget, pDoc, nSourceTab, rTargetRange ) ||
               ScRangeUtil::MakeRangeFromName( rTarget, pDoc, nSourceTab, rTargetRange, RUTL_DBASE ) )
     {
         bRangeValid = true;             // named range or database range

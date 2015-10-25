@@ -295,22 +295,21 @@ void SmShowFont::SetFont(const vcl::Font& rFont)
     Invalidate();
 }
 
-IMPL_LINK( SmFontDialog, FontSelectHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmFontDialog, FontSelectHdl, ComboBox&, rComboBox, void )
 {
-    maFont.SetName(pComboBox->GetText());
+    maFont.SetName(rComboBox.GetText());
     m_pShowFont->SetFont(maFont);
-    return 0;
 }
 
-IMPL_LINK( SmFontDialog, FontModifyHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmFontDialog, FontModifyHdl, Edit&, rEdit, void )
 {
+    ComboBox& rComboBox = static_cast<ComboBox&>(rEdit);
     // if font is available in list then use it
-    sal_Int32 nPos = pComboBox->GetEntryPos( pComboBox->GetText() );
+    sal_Int32 nPos = rComboBox.GetEntryPos( rComboBox.GetText() );
     if (COMBOBOX_ENTRY_NOTFOUND != nPos)
     {
-        FontSelectHdl( pComboBox );
+        FontSelectHdl( rComboBox );
     }
-    return 0;
 }
 
 IMPL_LINK_NOARG_TYPED( SmFontDialog, AttrChangeHdl, Button*, void )
@@ -1313,7 +1312,7 @@ void SmShowSymbolSetWindow::SetScrollBarRange()
     if (aSymbolSet.size() > static_cast<size_t>(nColumns * nRows))
     {
         m_pVScrollBar->SetRange(Range(0, ((aSymbolSet.size() + (nColumns - 1)) / nColumns) - nRows));
-        m_pVScrollBar->Enable(true);
+        m_pVScrollBar->Enable();
     }
     else
     {
@@ -1450,10 +1449,9 @@ void SmSymbolDialog::FillSymbolSets(bool bDeleteText)
 }
 
 
-IMPL_LINK_NOARG( SmSymbolDialog, SymbolSetChangeHdl )
+IMPL_LINK_NOARG_TYPED( SmSymbolDialog, SymbolSetChangeHdl, ListBox&, void )
 {
     SelectSymbolSet(m_pSymbolSets->GetSelectEntry());
-    return 0;
 }
 
 
@@ -1792,72 +1790,66 @@ SmSym * SmSymDefineDialog::GetSymbol(const ComboBox &rComboBox)
 }
 
 
-IMPL_LINK( SmSymDefineDialog, OldSymbolChangeHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmSymDefineDialog, OldSymbolChangeHdl, ComboBox&, rComboBox, void )
 {
-    (void) pComboBox;
+    (void) rComboBox;
 #if OSL_DEBUG_LEVEL > 1
-    OSL_ENSURE(pComboBox == pOldSymbols, "Sm : wrong argument");
+    OSL_ENSURE(&rComboBox == pOldSymbols, "Sm : wrong argument");
 #endif
     SelectSymbol(*pOldSymbols, pOldSymbols->GetText(), false);
-    return 0;
 }
 
 
-IMPL_LINK( SmSymDefineDialog, OldSymbolSetChangeHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmSymDefineDialog, OldSymbolSetChangeHdl, ComboBox&, rComboBox, void )
 {
-    (void) pComboBox;
+    (void) rComboBox;
 #if OSL_DEBUG_LEVEL > 1
-    OSL_ENSURE(pComboBox == pOldSymbolSets, "Sm : wrong argument");
+    OSL_ENSURE(&rComboBox == pOldSymbolSets, "Sm : wrong argument");
 #endif
     SelectSymbolSet(*pOldSymbolSets, pOldSymbolSets->GetText(), false);
-    return 0;
 }
 
 
-IMPL_LINK( SmSymDefineDialog, ModifyHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmSymDefineDialog, ModifyHdl, Edit&, rEdit, void )
 {
+    ComboBox& rComboBox = static_cast<ComboBox&>(rEdit);
     // remember cursor position for later restoring of it
-    Selection  aSelection (pComboBox->GetSelection());
+    Selection  aSelection (rComboBox.GetSelection());
 
-    if (pComboBox == pSymbols)
+    if (&rComboBox == pSymbols)
         SelectSymbol(*pSymbols, pSymbols->GetText(), false);
-    else if (pComboBox == pSymbolSets)
+    else if (&rComboBox == pSymbolSets)
         SelectSymbolSet(*pSymbolSets, pSymbolSets->GetText(), false);
-    else if (pComboBox == pOldSymbols)
+    else if (&rComboBox == pOldSymbols)
         // allow only names from the list
         SelectSymbol(*pOldSymbols, pOldSymbols->GetText(), true);
-    else if (pComboBox == pOldSymbolSets)
+    else if (&rComboBox == pOldSymbolSets)
         // allow only names from the list
         SelectSymbolSet(*pOldSymbolSets, pOldSymbolSets->GetText(), true);
-    else if (pComboBox == pStyles)
+    else if (&rComboBox == pStyles)
         // allow only names from the list (that's the case here anyway)
         SelectStyle(pStyles->GetText(), true);
     else
         SAL_WARN("starmath", "wrong combobox argument");
 
-    pComboBox->SetSelection(aSelection);
+    rComboBox.SetSelection(aSelection);
 
     UpdateButtons();
-
-    return 0;
 }
 
-
-IMPL_LINK( SmSymDefineDialog, FontChangeHdl, ListBox *, pListBox )
+IMPL_LINK_TYPED( SmSymDefineDialog, FontChangeHdl, ListBox&, rListBox, void )
 {
-    (void) pListBox;
+    (void) rListBox;
 #if OSL_DEBUG_LEVEL > 1
-    OSL_ENSURE(pListBox == pFonts, "Sm : wrong argument");
+    OSL_ENSURE(&rListBox == pFonts, "Sm : wrong argument");
 #endif
 
     SelectFont(pFonts->GetSelectEntry());
-    return 0;
 }
 
 
-IMPL_LINK( SmSymDefineDialog, SubsetChangeHdl, ListBox *, pListBox )
+IMPL_LINK_NOARG_TYPED( SmSymDefineDialog, SubsetChangeHdl, ListBox&, void )
 {
-    (void) pListBox;
     sal_Int32 nPos = pFontsSubsetLB->GetSelectEntryPos();
     if (LISTBOX_ENTRY_NOTFOUND != nPos)
     {
@@ -1867,19 +1859,17 @@ IMPL_LINK( SmSymDefineDialog, SubsetChangeHdl, ListBox *, pListBox )
             pCharsetDisplay->SelectCharacter( pSubset->GetRangeMin() );
         }
     }
-    return 0;
 }
 
 
-IMPL_LINK( SmSymDefineDialog, StyleChangeHdl, ComboBox *, pComboBox )
+IMPL_LINK_TYPED( SmSymDefineDialog, StyleChangeHdl, ComboBox&, rComboBox, void )
 {
-    (void) pComboBox;
+    (void) rComboBox;
 #if OSL_DEBUG_LEVEL > 1
-    OSL_ENSURE(pComboBox == pStyles, "Sm : falsches Argument");
+    OSL_ENSURE(&rComboBox == pStyles, "Sm : falsches Argument");
 #endif
 
     SelectStyle(pStyles->GetText());
-    return 0;
 }
 
 

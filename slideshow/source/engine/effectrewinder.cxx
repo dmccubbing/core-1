@@ -30,7 +30,6 @@
 #include <com/sun/star/animations/EventTrigger.hpp>
 #include <com/sun/star/container/XEnumerationAccess.hpp>
 
-#include <boost/bind.hpp>
 #include <boost/enable_shared_from_this.hpp>
 
 using ::com::sun::star::uno::Reference;
@@ -49,7 +48,7 @@ public:
     virtual ~RewinderEventHandler() {}
 private:
     const Action maAction;
-    virtual bool handleEvent() SAL_OVERRIDE { return maAction(); }
+    virtual bool handleEvent() override { return maAction(); }
 };
 
 
@@ -62,7 +61,7 @@ public:
     virtual ~RewinderAnimationEventHandler() {}
 private:
     const Action maAction;
-    virtual bool handleAnimationEvent (const AnimationNodeSharedPtr& rpNode) SAL_OVERRIDE
+    virtual bool handleAnimationEvent (const AnimationNodeSharedPtr& rpNode) override
         { return maAction(rpNode); }
 };
 
@@ -104,17 +103,18 @@ void EffectRewinder::initialize()
 
     mpAnimationStartHandler.reset(
         new RewinderAnimationEventHandler(
-            ::boost::bind(&EffectRewinder::notifyAnimationStart, this, _1)));
+            [this]( const AnimationNodeSharedPtr& pNode)
+            { return this->notifyAnimationStart( pNode ); } ) );
     mrEventMultiplexer.addAnimationStartHandler(mpAnimationStartHandler);
 
     mpSlideStartHandler.reset(
         new RewinderEventHandler(
-            ::boost::bind(&EffectRewinder::resetEffectCount, this)));
+            [this]() { return this->resetEffectCount(); } ) );
     mrEventMultiplexer.addSlideStartHandler(mpSlideStartHandler);
 
     mpSlideEndHandler.reset(
         new RewinderEventHandler(
-            ::boost::bind(&EffectRewinder::resetEffectCount, this)));
+            [this]() { return this->resetEffectCount(); } ) );
     mrEventMultiplexer.addSlideEndHandler(mpSlideEndHandler);
 }
 

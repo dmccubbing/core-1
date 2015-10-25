@@ -1789,8 +1789,8 @@ static void refreshpage( SdDrawDocument* pDoc, const PageKind ePageKind )
             const long nWidth = aPageSize.Width();
             const long nHeight = aPageSize.Height();
 
-            Point aPageOrg = Point(nWidth, nHeight / 2);
-            Size aViewSize = Size(nWidth * 3, nHeight * 2);
+            Point aPageOrg(nWidth, nHeight / 2);
+            Size aViewSize(nWidth * 3, nHeight * 2);
 
             pDoc->SetMaxObjSize(aViewSize);
 
@@ -2613,15 +2613,15 @@ void SdGenericDrawPage::setNavigationOrder( const Any& rValue )
 class SdNavigationOrderAccess : public ::cppu::WeakImplHelper< XIndexAccess >
 {
 public:
-    SdNavigationOrderAccess( SdrPage* pPage );
+    explicit SdNavigationOrderAccess(SdrPage* pPage);
 
     // XIndexAccess
-    virtual sal_Int32 SAL_CALL getCount(  ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual Any SAL_CALL getByIndex( sal_Int32 Index ) throw (IndexOutOfBoundsException, WrappedTargetException, RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual sal_Int32 SAL_CALL getCount(  ) throw (RuntimeException, std::exception) override;
+    virtual Any SAL_CALL getByIndex( sal_Int32 Index ) throw (IndexOutOfBoundsException, WrappedTargetException, RuntimeException, std::exception) override;
 
     // XElementAccess
-    virtual Type SAL_CALL getElementType(  ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
-    virtual sal_Bool SAL_CALL hasElements(  ) throw (RuntimeException, std::exception) SAL_OVERRIDE;
+    virtual Type SAL_CALL getElementType(  ) throw (RuntimeException, std::exception) override;
+    virtual sal_Bool SAL_CALL hasElements(  ) throw (RuntimeException, std::exception) override;
 
 private:
     std::vector< Reference< XShape > > maShapes;

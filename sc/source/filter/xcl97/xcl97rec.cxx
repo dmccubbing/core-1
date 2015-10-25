@@ -512,7 +512,7 @@ static void lcl_FillProps( EscherPropertyContainer& rPropOpt, SdrObject* pCaptio
                 // If the Colour is the same as the 'ToolTip' System colour then
                 // use the default rather than the explicit colour value. This will
                 // be incorrect where user has chosen to use this colour explicity.
-                Color aColor = Color( (sal_uInt8)nValue, (sal_uInt8)( nValue >> 8 ), (sal_uInt8)( nValue >> 16 ) );
+                Color aColor( (sal_uInt8)nValue, (sal_uInt8)( nValue >> 8 ), (sal_uInt8)( nValue >> 16 ) );
                 const StyleSettings& rSett = Application::GetSettings().GetStyleSettings();
                 if( aColor == rSett.GetHelpColor().GetColor() )
                 {
@@ -584,11 +584,11 @@ class VmlCommentExporter : public VMLExport
 public:
                         VmlCommentExporter ( sax_fastparser::FSHelperPtr p, ScAddress aScPos, SdrCaptionObj* pCaption, bool bVisible, Rectangle &aFrom, Rectangle &aTo );
 protected:
-    virtual void        Commit( EscherPropertyContainer& rProps, const Rectangle& rRect ) SAL_OVERRIDE;
+    virtual void        Commit( EscherPropertyContainer& rProps, const Rectangle& rRect ) override;
     using VMLExport::StartShape;
-    virtual sal_Int32   StartShape() SAL_OVERRIDE;
+    virtual sal_Int32   StartShape() override;
     using VMLExport::EndShape;
-    virtual void        EndShape( sal_Int32 nShapeElement ) SAL_OVERRIDE;
+    virtual void        EndShape( sal_Int32 nShapeElement ) override;
 };
 
 VmlCommentExporter::VmlCommentExporter( sax_fastparser::FSHelperPtr p, ScAddress aScPos, SdrCaptionObj* pCaption,
@@ -892,8 +892,7 @@ void XclObjOle::WriteSubRecs( XclExpStream& rStrm )
     sal_uInt32          nPictureId = sal_uInt32(sal_uIntPtr(this) >> 2);
     sprintf( aBuf, "%08X", static_cast< unsigned int >( nPictureId ) );
     aStorageName += OUString::createFromAscii(aBuf);
-    tools::SvRef<SotStorage>    xOleStg = pRootStorage->OpenSotStorage( aStorageName,
-                            STREAM_READWRITE| StreamMode::SHARE_DENYALL );
+    tools::SvRef<SotStorage>    xOleStg = pRootStorage->OpenSotStorage( aStorageName );
     if( xOleStg.Is() )
     {
         uno::Reference < embed::XEmbeddedObject > xObj( static_cast<const SdrOle2Obj&>(rOleObj).GetObjRef() );
@@ -1137,14 +1136,14 @@ public:
     {
     }
 
-    virtual OUString getTransformedString(const OUString& rURL) const SAL_OVERRIDE
+    virtual OUString getTransformedString(const OUString& rURL) const override
     {
         OUString aNewURL;
         transformURL(rURL, aNewURL, &mrDoc);
         return aNewURL;
     }
 
-    virtual bool isExternalURL(const OUString& rURL) const SAL_OVERRIDE
+    virtual bool isExternalURL(const OUString& rURL) const override
     {
         OUString aNewURL;
         return transformURL(rURL, aNewURL, &mrDoc);

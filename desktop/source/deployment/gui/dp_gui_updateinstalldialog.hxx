@@ -60,14 +60,14 @@ public:
         css::uno::Reference< css::uno::XComponentContext > const & xCtx);
 
     virtual ~UpdateInstallDialog();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
 
-    bool Close() SAL_OVERRIDE;
-    virtual short Execute() SAL_OVERRIDE;
+    bool Close() override;
+    virtual short Execute() override;
 
 private:
-    UpdateInstallDialog(UpdateInstallDialog &) SAL_DELETED_FUNCTION;
-    void operator =(UpdateInstallDialog &) SAL_DELETED_FUNCTION;
+    UpdateInstallDialog(UpdateInstallDialog &) = delete;
+    void operator =(UpdateInstallDialog &) = delete;
 
     class Thread;
     friend class Thread;

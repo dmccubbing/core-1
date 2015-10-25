@@ -370,9 +370,9 @@ ScImportAsciiDlg::ScImportAsciiDlg( vcl::Window* pParent, const OUString& aDatNa
     lcl_FillCombo( *pCbTextSep, aTextSepList, mcTextSep );
     pCbTextSep->SetText( sTextSeparators );
 
-    Link<> aSeparatorHdl =LINK( this, ScImportAsciiDlg, SeparatorHdl );
+    Link<Edit&,void> aSeparatorHdl = LINK( this, ScImportAsciiDlg, SeparatorEditHdl );
     Link<Button*,void> aSeparatorClickHdl =LINK( this, ScImportAsciiDlg, SeparatorClickHdl );
-    pCbTextSep->SetSelectHdl( aSeparatorHdl );
+    pCbTextSep->SetSelectHdl( LINK( this, ScImportAsciiDlg, SeparatorComboBoxHdl ) );
     pCbTextSep->SetModifyHdl( aSeparatorHdl );
     pCkbTab->SetClickHdl( aSeparatorClickHdl );
     pCkbSemicolon->SetClickHdl( aSeparatorClickHdl );
@@ -411,7 +411,7 @@ ScImportAsciiDlg::ScImportAsciiDlg( vcl::Window* pParent, const OUString& aDatNa
     pLbCharSet->SetSelectHdl( LINK( this, ScImportAsciiDlg, CharSetHdl ) );
 
     pLbCustomLang->SetLanguageList(
-        SvxLanguageListFlags::ALL | SvxLanguageListFlags::ONLY_KNOWN, false, false);
+        SvxLanguageListFlags::ALL | SvxLanguageListFlags::ONLY_KNOWN, false);
     pLbCustomLang->InsertLanguage(LANGUAGE_SYSTEM);
     pLbCustomLang->SelectLanguage(static_cast<LanguageType>(nLanguage));
 
@@ -680,7 +680,15 @@ IMPL_LINK_TYPED( ScImportAsciiDlg, SeparatorClickHdl, Button*, pCtrl, void )
 {
     SeparatorHdl(pCtrl);
 }
-IMPL_LINK( ScImportAsciiDlg, SeparatorHdl, Control*, pCtrl )
+IMPL_LINK_TYPED( ScImportAsciiDlg, SeparatorComboBoxHdl, ComboBox&, rCtrl, void )
+{
+    SeparatorHdl(&rCtrl);
+}
+IMPL_LINK_TYPED( ScImportAsciiDlg, SeparatorEditHdl, Edit&, rEdit, void )
+{
+    SeparatorHdl(&rEdit);
+}
+void ScImportAsciiDlg::SeparatorHdl( Control* pCtrl )
 {
     OSL_ENSURE( pCtrl, "ScImportAsciiDlg::SeparatorHdl - missing sender" );
     OSL_ENSURE( !pRbFixed->IsChecked(), "ScImportAsciiDlg::SeparatorHdl - not allowed in fixed width" );
@@ -702,13 +710,11 @@ IMPL_LINK( ScImportAsciiDlg, SeparatorHdl, Control*, pCtrl )
         UpdateVertical();
 
     mpTableBox->Execute( CSVCMD_NEWCELLTEXTS );
-    return 0;
 }
 
-IMPL_LINK( ScImportAsciiDlg, CharSetHdl, SvxTextEncodingBox*, pCharSetBox )
+IMPL_LINK_TYPED( ScImportAsciiDlg, CharSetHdl, ListBox&, rListBox, void )
 {
-    OSL_ENSURE( pCharSetBox, "ScImportAsciiDlg::CharSetHdl - missing sender" );
-
+    SvxTextEncodingBox* pCharSetBox = static_cast<SvxTextEncodingBox*>(&rListBox);
     if( (pCharSetBox == pLbCharSet) && (pCharSetBox->GetSelectEntryCount() == 1) )
     {
         SetPointer( Pointer( PointerStyle::Wait ) );
@@ -721,22 +727,18 @@ IMPL_LINK( ScImportAsciiDlg, CharSetHdl, SvxTextEncodingBox*, pCharSetBox )
         mpTableBox->Execute( CSVCMD_NEWCELLTEXTS );
         SetPointer( Pointer( PointerStyle::Arrow ) );
     }
-    return 0;
 }
 
-IMPL_LINK( ScImportAsciiDlg, FirstRowHdl, NumericField*, pNumField )
+IMPL_LINK_TYPED( ScImportAsciiDlg, FirstRowHdl, Edit&, rEdit, void )
 {
-    OSL_ENSURE( pNumField, "ScImportAsciiDlg::FirstRowHdl - missing sender" );
-    mpTableBox->Execute( CSVCMD_SETFIRSTIMPORTLINE, sal::static_int_cast<sal_Int32>( pNumField->GetValue() - 1 ) );
-    return 0;
+    NumericField& rNumField = static_cast<NumericField&>(rEdit);
+    mpTableBox->Execute( CSVCMD_SETFIRSTIMPORTLINE, sal::static_int_cast<sal_Int32>( rNumField.GetValue() - 1 ) );
 }
 
-IMPL_LINK( ScImportAsciiDlg, LbColTypeHdl, ListBox*, pListBox )
+IMPL_LINK_TYPED( ScImportAsciiDlg, LbColTypeHdl, ListBox&, rListBox, void )
 {
-    OSL_ENSURE( pListBox, "ScImportAsciiDlg::LbColTypeHdl - missing sender" );
-    if( pListBox == pLbType )
-        mpTableBox->Execute( CSVCMD_SETCOLUMNTYPE, pListBox->GetSelectEntryPos() );
-    return 0;
+    if( &rListBox == pLbType )
+        mpTableBox->Execute( CSVCMD_SETCOLUMNTYPE, rListBox.GetSelectEntryPos() );
 }
 
 IMPL_LINK_NOARG_TYPED(ScImportAsciiDlg, UpdateTextHdl, ScCsvTableBox&, void)
@@ -774,8 +776,8 @@ IMPL_LINK_TYPED( ScImportAsciiDlg, ColTypeHdl, ScCsvTableBox&, rTableBox, void )
     pFtType->Enable( bEnable );
     pLbType->Enable( bEnable );
 
-    Link<> aSelHdl = pLbType->GetSelectHdl();
-    pLbType->SetSelectHdl( Link<>() );
+    Link<ListBox&,void> aSelHdl = pLbType->GetSelectHdl();
+    pLbType->SetSelectHdl( Link<ListBox&,void>() );
     if( bEmpty )
         pLbType->SetNoSelection();
     else if( bEnable )

@@ -167,7 +167,7 @@ IMPL_LINK_NOARG_TYPED(AbstractApplyTabDialog_Impl, ApplyHdl, Button*, void)
         m_aHandler.Call(NULL);
 }
 
-void AbstractApplyTabDialog_Impl::SetApplyHdl( const Link<>& rLink )
+void AbstractApplyTabDialog_Impl::SetApplyHdl( const Link<LinkParamNone*,void>& rLink )
 {
     m_aHandler = rLink;
     pDlg->SetApplyHandler(LINK(this, AbstractApplyTabDialog_Impl, ApplyHdl));
@@ -592,7 +592,7 @@ AbstractMailMergeWizard_Impl::~AbstractMailMergeWizard_Impl()
     pDlg.disposeAndClear();
 }
 
-void AbstractMailMergeWizard_Impl::StartExecuteModal( const Link<>& rEndDialogHdl )
+void AbstractMailMergeWizard_Impl::StartExecuteModal( const Link<Dialog&,void>& rEndDialogHdl )
 {
     aEndDlgHdl = rEndDialogHdl;
     pDlg->StartExecuteModal(
@@ -604,15 +604,13 @@ long AbstractMailMergeWizard_Impl::GetResult()
     return pDlg->GetResult();
 }
 
-IMPL_LINK( AbstractMailMergeWizard_Impl, EndDialogHdl, SwMailMergeWizard*, pDialog )
+IMPL_LINK_TYPED( AbstractMailMergeWizard_Impl, EndDialogHdl, Dialog&, rDialog, void )
 {
-    OSL_ENSURE( pDialog == pDlg, "wrong dialog passed to EndDialogHdl!" );
-    (void) pDialog; // unused in non-debug
+    OSL_ENSURE( &rDialog == pDlg, "wrong dialog passed to EndDialogHdl!" );
+    (void) rDialog; // unused in non-debug
 
-    aEndDlgHdl.Call( this );
-    aEndDlgHdl = Link<>();
-
-    return 0L;
+    aEndDlgHdl.Call( *pDlg );
+    aEndDlgHdl = Link<Dialog&,void>();
 }
 
 OUString AbstractMailMergeWizard_Impl::GetReloadDocument() const

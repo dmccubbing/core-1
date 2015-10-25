@@ -1216,17 +1216,14 @@ void Test::testValueIterator()
     for (SCCOL i = 1; i <= 3; ++i)
         m_pDoc->SetValue(ScAddress(i,2,0), i);
 
-    double fVal;
-    sal_uInt16 nErr;
-
     {
         const double aChecks[] = { 1.0, 2.0, 3.0 };
         size_t nCheckLen = SAL_N_ELEMENTS(aChecks);
-
         ScValueIterator aIter(m_pDoc, ScRange(1,2,0,3,2,0));
         bool bHas = false;
-
         size_t nCheckPos = 0;
+        double fVal;
+        sal_uInt16 nErr;
         for (bHas = aIter.GetFirst(fVal, nErr); bHas; bHas = aIter.GetNext(fVal, nErr), ++nCheckPos)
         {
             CPPUNIT_ASSERT_MESSAGE("Iteration longer than expected.", nCheckPos < nCheckLen);
@@ -2051,7 +2048,7 @@ void Test::testEnterMixedMatrix()
     // Create a matrix range in A4:B5 referencing A1:B2.
     ScMarkData aMark;
     aMark.SelectOneTable(0);
-    m_pDoc->InsertMatrixFormula(0, 3, 1, 4, aMark, "=A1:B2", NULL);
+    m_pDoc->InsertMatrixFormula(0, 3, 1, 4, aMark, "=A1:B2");
 
     CPPUNIT_ASSERT_EQUAL(m_pDoc->GetString(0,0,0), m_pDoc->GetString(0,3,0));
     CPPUNIT_ASSERT_EQUAL(m_pDoc->GetString(1,0,0), m_pDoc->GetString(1,3,0));
@@ -2078,7 +2075,7 @@ void Test::testMatrixEditable()
     ScRange aMatRange(0,2,0,0,3,0);
     ScMarkData aMark;
     aMark.SetMarkArea(aMatRange);
-    m_pDoc->InsertMatrixFormula(0, 2, 0, 3, aMark, "=TRANSPOSE(A1:B1)", NULL);
+    m_pDoc->InsertMatrixFormula(0, 2, 0, 3, aMark, "=TRANSPOSE(A1:B1)");
 
     // Check their values.
     CPPUNIT_ASSERT_EQUAL(5.0, m_pDoc->GetValue(ScAddress(0,1,0)));
@@ -3793,7 +3790,7 @@ void Test::testCutPasteRefUndo()
     pUndoDoc->InitUndo(m_pDoc, 0, 0);
 
     // Do the pasting of 12 into C2.  This should update A2 to reference C2.
-    m_pDoc->CopyFromClip(ScAddress(2,1,0), aMark, IDF_CONTENTS, pUndoDoc, &aClipDoc, true, false);
+    m_pDoc->CopyFromClip(ScAddress(2,1,0), aMark, IDF_CONTENTS, pUndoDoc, &aClipDoc);
     CPPUNIT_ASSERT_EQUAL(12.0, m_pDoc->GetValue(0,1,0));
 
     if (!checkFormula(*m_pDoc, ScAddress(0,1,0), "C2"))
@@ -5133,7 +5130,7 @@ void Test::testNoteLifeCycle()
     ScDocument aClipDoc(SCDOCMODE_CLIP);
     ScMarkData aMarkData;
     aMarkData.SelectOneTable(0);
-    m_pDoc->CopyToClip(aClipParam, &aClipDoc, &aMarkData, false, false, true, true);
+    m_pDoc->CopyToClip(aClipParam, &aClipDoc, &aMarkData, false, false, true);
 
     ScPostIt* pClipNote = aClipDoc.GetNote(aPos);
     CPPUNIT_ASSERT_MESSAGE("Failed to copy note to the clipboard.", pClipNote);
@@ -5213,7 +5210,7 @@ void Test::testNoteCopyPaste()
     ScDocument aClipDoc(SCDOCMODE_CLIP);
     aClipDoc.ResetClip(m_pDoc, &aMark);
     ScClipParam aClipParam(aCopyRange, false);
-    m_pDoc->CopyToClip(aClipParam, &aClipDoc, &aMark, false, false, false, true);
+    m_pDoc->CopyToClip(aClipParam, &aClipDoc, &aMark);
 
     // Make sure the notes are in the clipboard.
     pNote = aClipDoc.GetNote(ScAddress(1,1,0));
@@ -5897,7 +5894,7 @@ void Test::testCondCopyPasteSheetBetweenDoc()
     m_pDoc->AddCondFormat(pFormat, 0);
 
     ScDocument aDoc;
-    aDoc.TransferTab(m_pDoc, 0, 0, true);
+    aDoc.TransferTab(m_pDoc, 0, 0);
 
     ScConditionalFormatList* pList = aDoc.GetCondFormList(0);
     CPPUNIT_ASSERT_EQUAL(size_t(1), pList->size());
@@ -6156,7 +6153,7 @@ void Test::testImportStream()
     ScImportExport aObj(m_pDoc, ScAddress(0,0,0));
     aObj.SetImportBroadcast(true);
     aObj.SetExtOptions(aOpt);
-    aObj.ImportString("1,2,3", SotClipboardFormatId::STRING);
+    aObj.ImportString("1,2,3");
 
     CPPUNIT_ASSERT_EQUAL(1.0, m_pDoc->GetValue(ScAddress(0,0,0)));
     CPPUNIT_ASSERT_EQUAL(2.0, m_pDoc->GetValue(ScAddress(1,0,0)));

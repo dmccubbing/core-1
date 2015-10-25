@@ -190,9 +190,9 @@ void SwView::ExecutePrint(SfxRequest& rReq)
         case SID_PRINTDOCDIRECT:
         {
             SwWrtShell* pSh = &GetWrtShell();
-            SFX_REQUEST_ARG(rReq, pSilentItem, SfxBoolItem, SID_SILENT, false);
+            const SfxBoolItem* pSilentItem = rReq.GetArg<SfxBoolItem>(SID_SILENT);
             bool bSilent = pSilentItem && pSilentItem->GetValue();
-            SFX_REQUEST_ARG(rReq, pPrintFromMergeItem, SfxBoolItem, FN_QRY_MERGE, false);
+            const SfxBoolItem* pPrintFromMergeItem = rReq.GetArg<SfxBoolItem>(FN_QRY_MERGE);
             if(pPrintFromMergeItem)
                 rReq.RemoveItem(FN_QRY_MERGE);
             bool bFromMerge = pPrintFromMergeItem && pPrintFromMergeItem->GetValue();
@@ -232,7 +232,7 @@ void SwView::ExecutePrint(SfxRequest& rReq)
             //#i61455# if master documentes are printed silently without loaded links then update the links now
             if( bSilent && pSh->IsGlobalDoc() && !pSh->IsGlblDocSaveLinks() )
             {
-                pSh->GetLinkManager().UpdateAllLinks( false, false, false, 0 );
+                pSh->GetLinkManager().UpdateAllLinks( false, false );
             }
             SfxRequest aReq( rReq );
             SfxBoolItem aBool(SID_SELECTION, bPrintSelection);

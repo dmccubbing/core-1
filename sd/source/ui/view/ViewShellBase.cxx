@@ -33,6 +33,7 @@
 #include "app.hrc"
 #include "strings.hrc"
 #include "glob.hrc"
+#include "slideshow.hxx"
 #include "unokywds.hxx"
 #include <svx/svxids.hrc>
 #include "DrawDocShell.hxx"
@@ -204,9 +205,9 @@ class FocusForwardingWindow : public vcl::Window
 public:
     FocusForwardingWindow (vcl::Window& rParentWindow, ViewShellBase& rBase);
     virtual ~FocusForwardingWindow();
-    virtual void dispose() SAL_OVERRIDE;
-    virtual void KeyInput (const KeyEvent& rEvent) SAL_OVERRIDE;
-    virtual void Command (const CommandEvent& rEvent) SAL_OVERRIDE;
+    virtual void dispose() override;
+    virtual void KeyInput (const KeyEvent& rEvent) override;
+    virtual void Command (const CommandEvent& rEvent) override;
 
 private:
     ViewShellBase& mrBase;
@@ -263,6 +264,11 @@ ViewShellBase::ViewShellBase (
 */
 ViewShellBase::~ViewShellBase()
 {
+    rtl::Reference<SlideShow> xSlideShow(SlideShow::GetSlideShow(*this));
+    if (xSlideShow.is() && xSlideShow->dependsOn(this))
+        SlideShow::Stop(*this);
+    xSlideShow.clear();
+
     // Tell the controller that the ViewShellBase is not available anymore.
     if (mpImpl->mpController.get() != NULL)
         mpImpl->mpController->ReleaseViewShellBase();
@@ -689,7 +695,7 @@ void ViewShellBase::ReadUserDataSequence (
             case ViewShell::ST_HANDOUT:
             {
                 OUString sViewURL;
-                switch (dynamic_cast<DrawViewShell*>( pShell)->GetPageKind() )
+                switch (dynamic_cast<DrawViewShell&>(*pShell).GetPageKind())
                 {
                     default:
                     case PK_STANDARD:
@@ -1270,12 +1276,13 @@ void ViewShellBase::Implementation::GetSlotState (SfxItemSet& rSet)
                     ViewShell* pCenterViewShell = FrameworkHelper::Instance(mrBase)->GetViewShell(
                         FrameworkHelper::msCenterPaneURL).get();
                     bool bMasterPageMode (false);
-                    if (pCenterViewShell!=NULL && dynamic_cast< DrawViewShell *>( pCenterViewShell ) !=  nullptr)
-                        if (dynamic_cast< DrawViewShell *>( pCenterViewShell )->GetEditMode()
-                            == EM_MASTERPAGE)
+                    if (DrawViewShell* pShell = dynamic_cast<DrawViewShell*>(pCenterViewShell))
+                    {
+                        if (pShell->GetEditMode() == EM_MASTERPAGE)
                         {
                             bMasterPageMode = true;
                         }
+                    }
 
                     bState &= !bMasterPageMode;
                     break;

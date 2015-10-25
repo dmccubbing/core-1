@@ -703,7 +703,7 @@ void SdrEscherImport::RecolorGraphic( SvStream& rSt, sal_uInt32 nRecLen, Graphic
                     }
                     GDIMetaFile aGdiMetaFile( rGraphic.GetGDIMetaFile() );
                     aGdiMetaFile.ReplaceColors( pSearchColors.get(), pReplaceColors.get(),
-                        nGlobalColorsChanged, NULL );
+                        nGlobalColorsChanged );
                     rGraphic = aGdiMetaFile;
                 }
             }
@@ -1506,10 +1506,10 @@ SdrPowerPointImport::SdrPowerPointImport( PowerPointImportParam& rParam, const O
                 pE->bStarDrawFiller = true;     // this is a dummy master page
             m_pMasterPages->insert(m_pMasterPages->begin(), std::move(pE));
 
-            sal_uInt16 nPageListNum = 0;
             DffRecordHeader* pSlideListWithTextHd = aDocRecManager.GetRecordHeader( PPT_PST_SlideListWithText );
             PptSlidePersistEntry* pPreviousPersist = NULL;
-            while ( pSlideListWithTextHd && ( nPageListNum < 3 ) )
+            for (sal_uInt16 nPageListNum = 0;
+                 pSlideListWithTextHd && nPageListNum < 3; ++nPageListNum)
             {
                 pSlideListWithTextHd->SeekToContent( rStCtrl );
                 PptSlidePersistList* pPageList = GetPageList( PptPageKind( nPageListNum ) );
@@ -1528,7 +1528,6 @@ SdrPowerPointImport::SdrPowerPointImport( PowerPointImportParam& rParam, const O
                 if ( pPreviousPersist )
                     pPreviousPersist->nSlidePersistEndOffset = nSlideListWithTextHdEndOffset;
                 pSlideListWithTextHd = aDocRecManager.GetRecordHeader( PPT_PST_SlideListWithText, SEEK_FROM_CURRENT );
-                nPageListNum++;
             }
 
             // we will ensure that there is at least one master page
@@ -1556,8 +1555,7 @@ SdrPowerPointImport::SdrPowerPointImport( PowerPointImportParam& rParam, const O
             }
 
             // read for each page the SlideAtom respectively the NotesAtom if it exists
-            nPageListNum = 0;
-            for ( nPageListNum = 0; nPageListNum < 3; nPageListNum++ )
+            for (sal_uInt16 nPageListNum = 0; nPageListNum < 3; ++nPageListNum)
             {
                 PptSlidePersistList* pPageList = GetPageList( PptPageKind( nPageListNum ) );
                 for ( size_t nPageNum = 0; nPageNum < pPageList->size(); nPageNum++ )
@@ -1624,7 +1622,7 @@ SdrPowerPointImport::SdrPowerPointImport( PowerPointImportParam& rParam, const O
                     }
                 }
             }
-            DffRecordHeader* pHeadersFootersHd = aDocRecManager.GetRecordHeader( PPT_PST_HeadersFooters, SEEK_FROM_BEGINNING );
+            DffRecordHeader* pHeadersFootersHd = aDocRecManager.GetRecordHeader( PPT_PST_HeadersFooters );
             if ( pHeadersFootersHd )
             {
                 HeaderFooterEntry aNormalMaster, aNotesMaster;
@@ -1998,7 +1996,7 @@ void SdrPowerPointImport::SeekOle( SfxObjectShell* pShell, sal_uInt32 nFilterOpt
         sal_uInt32 nOldPos = rStCtrl.Tell();
         if ( nFilterOptions & 1 )
         {
-            pHd = aDocRecManager.GetRecordHeader( PPT_PST_List, SEEK_FROM_BEGINNING );
+            pHd = aDocRecManager.GetRecordHeader( PPT_PST_List );
             if ( pHd )
             {
                 // we try to locate the basic atom
@@ -2089,7 +2087,7 @@ void SdrPowerPointImport::SeekOle( SfxObjectShell* pShell, sal_uInt32 nFilterOpt
                 }
             }
         }
-        pHd = aDocRecManager.GetRecordHeader( PPT_PST_ExObjList, SEEK_FROM_BEGINNING );
+        pHd = aDocRecManager.GetRecordHeader( PPT_PST_ExObjList );
         if ( pHd )
         {
             DffRecordHeader*    pExEmbed = NULL;
@@ -2105,7 +2103,7 @@ void SdrPowerPointImport::SeekOle( SfxObjectShell* pShell, sal_uInt32 nFilterOpt
                     case 0 : nRecType = PPT_PST_ExEmbed; break;
                     case 1 : nRecType = PPT_PST_ExControl; break;
                 }
-                for ( pExEmbed = pExObjListManager->GetRecordHeader( nRecType, SEEK_FROM_BEGINNING );
+                for ( pExEmbed = pExObjListManager->GetRecordHeader( nRecType );
                         pExEmbed; pExEmbed = pExObjListManager->GetRecordHeader( nRecType, SEEK_FROM_CURRENT ) )
                 {
                     pExEmbed->SeekToContent( rStCtrl );
@@ -3198,7 +3196,7 @@ PPTExtParaProv::PPTExtParaProv( SdrPowerPointImport& rMan, SvStream& rSt, const 
     DffRecordHeader aHd;
     DffRecordHeader aContentDataHd;
 
-    const DffRecordHeader* pListHd = rMan.aDocRecManager.GetRecordHeader( PPT_PST_List, SEEK_FROM_BEGINNING );
+    const DffRecordHeader* pListHd = rMan.aDocRecManager.GetRecordHeader( PPT_PST_List );
     if( pListHd )
         pListHd->SeekToContent( rSt );
     if ( pListHd && SdrPowerPointImport::SeekToContentOfProgTag( 9, rSt, *pListHd, aContentDataHd ) )
@@ -3221,7 +3219,7 @@ PPTExtParaProv::PPTExtParaProv( SdrPowerPointImport& rMan, SvStream& rSt, const 
                         {
                             rSt.ReadUInt16( nType );
                             Graphic aGraphic;
-                            if ( SvxMSDffManager::GetBLIPDirect( rSt, aGraphic, NULL ) )
+                            if ( SvxMSDffManager::GetBLIPDirect( rSt, aGraphic ) )
                             {
                                 sal_uInt32 nInstance = aBuGraAtomHd.nRecInstance;
                                 PPTBuGraEntry* pBuGra = new PPTBuGraEntry( aGraphic, nInstance );
@@ -5598,7 +5596,7 @@ void PPTPortionObj::ApplyTo(  SfxItemSet& rSet, SdrPowerPointImport& rManager, s
             case mso_fillTexture :
             {
                 Graphic aGraf;
-                if ( rManager.GetBLIP( rManager.GetPropertyValue( DFF_Prop_fillBlip, 0 ), aGraf, NULL ) )
+                if ( rManager.GetBLIP( rManager.GetPropertyValue( DFF_Prop_fillBlip, 0 ), aGraf ) )
                 {
                     Bitmap aBmp( aGraf.GetBitmap() );
                     Size aSize( aBmp.GetSizePixel() );

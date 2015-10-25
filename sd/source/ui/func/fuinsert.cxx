@@ -224,13 +224,17 @@ void FuInsertClipboard::DoExecute( SfxRequest&  )
         if( nFormatId != SotClipboardFormatId::NONE && aDataHelper.GetTransferable().is() )
         {
             sal_Int8 nAction = DND_ACTION_COPY;
+            DrawViewShell* pDrViewSh = nullptr;
 
-            if( !mpView->InsertData( aDataHelper,
+            if (!mpView->InsertData( aDataHelper,
                                     mpWindow->PixelToLogic( Rectangle( Point(), mpWindow->GetOutputSizePixel() ).Center() ),
-                                    nAction, false, nFormatId ) &&
-                ( mpViewShell && dynamic_cast< DrawViewShell *>( mpViewShell ) !=  nullptr ) )
+                                    nAction, false, nFormatId ))
             {
-                DrawViewShell* pDrViewSh = static_cast<DrawViewShell*>(mpViewShell);
+                pDrViewSh = dynamic_cast<DrawViewShell*>(mpViewShell);
+            }
+
+            if (pDrViewSh)
+            {
                 INetBookmark        aINetBookmark( "", "" );
 
                 if( ( aDataHelper.HasFormat( SotClipboardFormatId::NETSCAPE_BOOKMARK ) &&
@@ -428,7 +432,7 @@ void FuInsertOLE::DoExecute( SfxRequest& rReq )
         OUString aIconMediaType;
         uno::Reference< io::XInputStream > xIconMetaFile;
 
-        SFX_REQUEST_ARG( rReq, pNameItem, SfxGlobalNameItem, SID_INSERT_OBJECT, false );
+        const SfxGlobalNameItem* pNameItem = rReq.GetArg<SfxGlobalNameItem>(SID_INSERT_OBJECT);
         if ( nSlotId == SID_INSERT_OBJECT && pNameItem )
         {
             SvGlobalName aClassName = pNameItem->GetValue();

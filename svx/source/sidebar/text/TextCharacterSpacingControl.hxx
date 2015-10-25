@@ -45,7 +45,7 @@ public:
         svx::sidebar::TextPropertyPanel& rPanel,
         SfxBindings* pBindings);
     virtual ~TextCharacterSpacingControl();
-    virtual void dispose() SAL_OVERRIDE;
+    virtual void dispose() override;
     void Rearrange(bool bLBAvailable,bool bAvailable, long nKerning);
     //virtual void Paint(const Rectangle& rect);
 
@@ -87,8 +87,8 @@ private:
 
     void initial();
     DECL_LINK_TYPED(VSSelHdl, ValueSet*, void);
-    DECL_LINK(KerningSelectHdl, ListBox*);
-    DECL_LINK(KerningModifyHdl,  MetricField*);
+    DECL_LINK_TYPED(KerningSelectHdl, ListBox&, void);
+    DECL_LINK_TYPED(KerningModifyHdl, Edit&, void);
 };
 }}
 

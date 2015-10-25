@@ -200,8 +200,7 @@ class EDITENG_DLLPUBLIC SvxRTFParser : public SvRTFParser
     SfxItemPool* pAttrPool;
     Color*  pDfltColor;
     vcl::Font*   pDfltFont;
-    ::com::sun::star::uno::Reference<
-        ::com::sun::star::document::XDocumentProperties> m_xDocProps;
+    css::uno::Reference< css::document::XDocumentProperties> m_xDocProps;
     SfxItemSet *pRTFDefaults;
 
     long    nVersionNo;
@@ -256,10 +255,10 @@ protected:
     static OUString& DelCharAtEnd( OUString& rStr, const sal_Unicode cDel );
 
     // is called for each token that is recognized in CallParser
-    virtual void NextToken( int nToken ) SAL_OVERRIDE;
+    virtual void NextToken( int nToken ) override;
 
-    virtual void ReadBitmapData() SAL_OVERRIDE;
-    virtual void ReadOLEData() SAL_OVERRIDE;
+    virtual void ReadBitmapData() override;
+    virtual void ReadOLEData() override;
 
     void ReadStyleTable();
     void ReadColorTable();
@@ -268,7 +267,7 @@ protected:
     void ReadTabAttr( int nToken, SfxItemSet& rSet );
 
     // Read Document-Info
-    ::com::sun::star::util::DateTime GetDateTimeStamp( );
+    css::util::DateTime GetDateTimeStamp( );
     OUString& GetTextToEndGroup( OUString& rStr );
     void ReadInfo( const sal_Char* pChkForVerNo = 0 );
 
@@ -292,8 +291,7 @@ protected:
 
     SvxRTFParser( SfxItemPool& rAttrPool,
                     SvStream& rIn,
-                    ::com::sun::star::uno::Reference<
-                        ::com::sun::star::document::XDocumentProperties> i_xDocProps,
+                    css::uno::Reference< css::document::XDocumentProperties> i_xDocProps,
                     bool bReadNewDoc = true );
     virtual ~SvxRTFParser();
 
@@ -309,7 +307,7 @@ protected:
 
 public:
 
-    virtual SvParserState CallParser() SAL_OVERRIDE;
+    virtual SvParserState CallParser() override;
 
     inline const Color& GetColor( size_t nId ) const;
     const vcl::Font& GetFont( sal_uInt16 nId );      // Changes the default Font
@@ -326,7 +324,7 @@ public:
     void ReadBackgroundAttr( int nToken, SfxItemSet& rSet, bool bTableDef=false  );
 
     // for asynchronous read from the SvStream
-    virtual void Continue( int nToken ) SAL_OVERRIDE;
+    virtual void Continue( int nToken ) override;
 
     // get RTF default ItemSets. Must be used by pard/plain tokens or in
     // reset of Style-Items

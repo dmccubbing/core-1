@@ -41,7 +41,7 @@ class SW_DLLPUBLIC SwOLEObj
     svt::EmbeddedObjectRef xOLERef;
     OUString aName;
 
-    SwOLEObj( const SwOLEObj& rObj ) SAL_DELETED_FUNCTION;
+    SwOLEObj( const SwOLEObj& rObj ) = delete;
 
     void SetNode( SwOLENode* pNode );
 
@@ -88,7 +88,7 @@ class SW_DLLPUBLIC SwOLENode: public SwNoTextNode
                 SwGrfFormatColl *pGrfColl,
                 SwAttrSet* pAutoAttr = 0 );
 
-    SwOLENode( const SwOLENode & ) SAL_DELETED_FUNCTION;
+    SwOLENode( const SwOLENode & ) = delete;
 
     using SwNoTextNode::GetGraphic;
 
@@ -97,19 +97,19 @@ public:
           SwOLEObj& GetOLEObj()       { return aOLEObj; }
     virtual ~SwOLENode();
 
-    virtual SwContentNode *SplitContentNode( const SwPosition & ) SAL_OVERRIDE;
+    virtual SwContentNode *SplitContentNode( const SwPosition & ) override;
 
     /// Is in ndcopy.cxx.
-    virtual SwContentNode* MakeCopy( SwDoc*, const SwNodeIndex& ) const SAL_OVERRIDE;
+    virtual SwContentNode* MakeCopy( SwDoc*, const SwNodeIndex& ) const override;
 
-    virtual Size GetTwipSize() const SAL_OVERRIDE;
+    virtual Size GetTwipSize() const override;
 
     const Graphic* GetGraphic();
 
     void GetNewReplacement();
 
-    virtual bool SavePersistentData() SAL_OVERRIDE;
-    virtual bool RestorePersistentData() SAL_OVERRIDE;
+    virtual bool SavePersistentData() override;
+    virtual bool RestorePersistentData() override;
 
     bool IsInGlobalDocSection() const;
     bool IsOLEObjectDeleted() const;
